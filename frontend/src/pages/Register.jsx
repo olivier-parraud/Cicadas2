@@ -13,7 +13,7 @@ function Register() {
         e.preventDefault();
         setError('');
         try {
-            const response = await fetch('http://localhost:3000/api/auth/register', {
+            const response = await fetch('http://localhost:5000/api/auth/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ firstname, lastname, email, password })
@@ -25,9 +25,11 @@ function Register() {
                 // Inscription réussie, on redirige vers le login
                 navigate('/login');
             } else {
-                setError(data.message || 'Erreur lors de l\'inscription');
+                console.error("Données d'erreur retournées par l'API:", data);
+                setError(data.error || data.message || 'Erreur lors de l\'inscription');
             }
         } catch (err) {
+            console.error("Erreur réseau/serveur:", err);
             setError('Erreur de connexion au serveur');
         }
     };

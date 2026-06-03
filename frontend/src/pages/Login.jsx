@@ -11,7 +11,7 @@ function Login() {
         e.preventDefault();
         setError('');
         try {
-            const response = await fetch('http://localhost:3000/api/auth/login', {
+            const response = await fetch('http://localhost:5000/api/auth/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password })
@@ -25,9 +25,11 @@ function Login() {
                 // Rediriger vers l'accueil
                 window.location.href = '/';
             } else {
-                setError(data.message || 'Erreur lors de la connexion');
+                console.error("Données d'erreur retournées par l'API:", data);
+                setError(data.error || data.message || 'Erreur lors de la connexion');
             }
         } catch (err) {
+            console.error("Erreur réseau/serveur:", err);
             setError('Erreur de connexion au serveur');
         }
     };

@@ -24,7 +24,8 @@ export const register = async (req, res) => {
         const token = generateToken(user);
         res.status(201).json({ message: 'Inscription réussie', user, token });
     } catch (error) {
-        res.status(500).json({ error: 'Erreur serveur' });
+        console.error("Erreur serveur (inscription):", error);
+        res.status(500).json({ error: 'Erreur serveur - Vérifiez le terminal' });
     }
 };
 // POST /api/auth/login
