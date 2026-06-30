@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 function Register() {
     const [firstname, setFirstname] = useState('');
     const [lastname, setLastname] = useState('');
+    const [pseudo, setPseudo] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -16,7 +17,7 @@ function Register() {
             const response = await fetch('http://localhost:5000/api/auth/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ firstname, lastname, email, password })
+                body: JSON.stringify({ firstname, lastname, email, password, pseudo })
             });
 
             const data = await response.json();
@@ -69,6 +70,14 @@ function Register() {
                                     className="mt-1 appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                                     value={lastname} onChange={(e) => setLastname(e.target.value)} />
                             </div>
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700">Pseudo</label>
+                            <input type="text" required
+                                className="mt-1 appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                placeholder="Nom d'invocateur / de joueur"
+                                value={pseudo} onChange={(e) => setPseudo(e.target.value)} />
                         </div>
 
                         <div>

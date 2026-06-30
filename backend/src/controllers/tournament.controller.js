@@ -14,7 +14,7 @@ export const getTournaments = async (req, res) => {
 
         // Récupérer les participants inscrits pour tous les tournois
         const participantsSql = `
-            SELECT tr.tournament_id, u.firstname, u.lastname, u.email
+            SELECT tr.tournament_id, u.firstname, u.lastname, u.email, u.pseudo
             FROM tournament_registrations tr
             JOIN users u ON tr.user_id = u.id
         `;
@@ -25,6 +25,9 @@ export const getTournaments = async (req, res) => {
             const list = participants
                 .filter(p => p.tournament_id === t.id)
                 .map(p => {
+                    if (p.pseudo) {
+                        return p.pseudo;
+                    }
                     const fullName = `${p.firstname || ''} ${p.lastname || ''}`.trim();
                     return fullName || p.email.split('@')[0];
                 });

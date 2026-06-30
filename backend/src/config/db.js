@@ -2,17 +2,19 @@
 import mysql from 'mysql2/promise';
 // Création du pool de connexions
 const pool = mysql.createPool({
-host: process.env.DB_HOST || 'localhost',
-user: process.env.DB_USER || 'root',
-password: process.env.DB_PASSWORD || '',
-database: process.env.DB_NAME || 'cicados',
-waitForConnections: true,
-connectionLimit: 10
+    host: process.env.DB_HOST || 'localhost',
+    port: parseInt(process.env.DB_PORT || '3306', 10),
+    user: process.env.DB_USER || 'root',
+    password: process.env.DB_PASSWORD || '',
+    database: process.env.DB_NAME || 'cicados',
+    ...(process.env.DB_SOCKET ? { socketPath: process.env.DB_SOCKET } : {}),
+    waitForConnections: true,
+    connectionLimit: 10
 });
 // Fonction utilitaire pour les requêtes
 export async function query(sql, params = []) {
-const [results] = await pool.execute(sql, params);
-return results;
+    const [results] = await pool.execute(sql, params);
+    return results;
 }
 // Test de connexion
 export async function testConnection() {
@@ -27,6 +29,13 @@ export async function testConnection() {
             console.log("Colonne 'role' ajoutée à la table users");
         }
 
+        // Vérifier si la colonne 'pseudo' existe sur 'users'
+        const [pseudoCols] = await connection.execute("SHOW COLUMNS FROM users LIKE 'pseudo'");
+        if (pseudoCols.length === 0) {
+            await connection.execute("ALTER TABLE users ADD COLUMN pseudo VARCHAR(100) DEFAULT NULL");
+            console.log("Colonne 'pseudo' ajoutée à la table users");
+        }
+
         // Créer l'administrateur par défaut s'il n'existe pas
         const [adminRows] = await connection.execute("SELECT * FROM users WHERE email = 'admin@cicados.fr'");
         if (adminRows.length === 0) {
@@ -38,7 +47,7 @@ export async function testConnection() {
             );
             console.log("Administrateur par défaut créé : admin@cicados.fr / admincicados");
         }
-        
+
         // Créer la table des tournois si inexistante
         await connection.execute(`
             CREATE TABLE IF NOT EXISTS tournaments (
@@ -87,7 +96,7 @@ export async function testConnection() {
         connection.release();
         return true;
     } catch (error) {
-        console.error('Erreur MySQL:', error.message);
+        console.error('Erreur MySQL:', error);
         return false;
     }
 }
