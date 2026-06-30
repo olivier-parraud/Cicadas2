@@ -57,5 +57,99 @@
   },
   "footer": {
     "copyright": "© {{year}} Azim404"
+  },
+  "home_page": {
+    "hero": {
+      "title": "Votre Espace de Jeu Magic Ultime",
+      "description": "Cicados est l'endroit idéal pour vos parties de Magic: The Gathering, Yu-Gi-Oh!, Pokémon et Lorcana. Louez une table de jeu équipée, participez à nos tournois hebdomadaires et partagez des moments uniques avec une communauté de passionnés.",
+      "cta": "Réserver une table de jeu"
+    },
+    "features": {
+      "title": "Nos Fonctionnalités Principales",
+      "subtitle": "Tout ce dont vous avez besoin pour jouer dans les meilleures conditions.",
+      "items": {
+        "booking": {
+          "title": "Réservation de Table en Ligne",
+          "description": "Réservez votre espace de jeu en quelques clics. Choisissez l'heure, la table et la durée pour vous et vos amis."
+        },
+        "tournaments": {
+          "title": "Tournois Magic & TCG",
+          "description": "Rejoignez nos événements compétitifs ou amicaux hebdomadaires. Affrontez les meilleurs joueurs et remportez des boosters !"
+        },
+        "groups": {
+          "title": "Espaces Adaptés aux Groupes",
+          "description": "Des tables géantes et modulables idéales pour le format Commander, les drafts entre amis ou vos sessions de jeux de plateau."
+        }
+      }
+    },
+    "how_it_works": {
+      "title": "Comment ça marche ?",
+      "subtitle": "Trois étapes simples pour rejoindre la communauté et commencer votre partie.",
+      "steps": {
+        "step_1": {
+          "title": "Choisissez votre formule",
+          "description": "Sélectionnez le jeu de cartes (MTG, Yu-Gi-Oh!, Pokémon...) ou le format de table souhaité."
+        },
+        "step_2": {
+          "title": "Réservez votre créneau",
+          "description": "Sélectionnez la date, l'heure et la durée. Votre table vous est instantanément réservée."
+        },
+        "step_3": {
+          "title": "Installez-vous et jouez",
+          "description": "Présentez-vous à l'accueil le jour J. Vos playmats et accessoires de jeu sont déjà en place !"
+        }
+      }
+    },
+    "testimonials": {
+      "title": "Ce que disent nos joueurs",
+      "subtitle": "Découvrez les retours de notre communauté passionnée de joueurs de cartes.",
+      "items": [
+        {
+          "name": "Alexandre D.",
+          "role": "Joueur de Magic (Commander)",
+          "quote": "L'ambiance est incroyable et les tables sont super spacieuses ! C'est devenu notre QG hebdomadaire pour nos parties de Commander."
+        },
+        {
+          "name": "Sophie M.",
+          "role": "Organisatrice de Tournois",
+          "quote": "Superbe gestion des événements. L'infrastructure est top pour lancer des drafts et les joueurs adorent le confort des lieux."
+        },
+        {
+          "name": "Lucas R.",
+          "role": "Joueur Compétitif Modern",
+          "quote": "Enfin un endroit propre, bien éclairé et calme pour tester nos decks avant les grands tournois. Je recommande à 100% !"
+        }
+      ]
+    },
+    "cta": {
+      "title": "Prêt à lancer vos plus beaux sorts ?",
+      "description": "Réservez votre table de jeu dès aujourd'hui ou inscrivez-vous à notre prochain tournoi de cartes.",
+      "buttons": {
+        "book": "Réserver une table",
+        "tournaments": "Voir les tournois"
+      }
+    },
+    "faq": {
+      "title": "Questions Fréquentes",
+      "subtitle": "Tout ce que vous devez savoir sur notre espace de jeu et les réservations.",
+      "items": [
+        {
+          "question": "Quels sont les tarifs de réservation ?",
+          "answer": "La réservation d'une table standard commence à partir de 2€ par heure et par joueur, ou est gratuite sous réserve d'achat de boissons/snacks ou de boosters en boutique."
+        },
+        {
+          "question": "Faut-il amener ses propres cartes ?",
+          "answer": "Oui, pour les parties libres et les tournois construits, vous devez apporter vos decks. Cependant, nous vendons des boosters, des decks de démarrage et nous prêtons parfois des decks d'initiation."
+        },
+        {
+          "question": "Comment s'inscrire à un tournoi Magic ?",
+          "answer": "Vous pouvez vous inscrire directement en ligne depuis la page 'Tournois' ou sur place à l'accueil du magasin jusqu'à 15 minutes avant le début de l'événement."
+        },
+        {
+          "question": "Peut-on consommer de la nourriture sur place ?",
+          "answer": "Nous proposons un espace café avec boissons froides/chaudes et snacks. Par respect pour les tables et les cartes des autres joueurs, les nourritures extérieures ne sont pas autorisées."
+        }
+      ]
+    }
   }
 }

@@ -1,92 +1,280 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 function Home() {
+    const { t } = useTranslation();
+    const [activeFaq, setActiveFaq] = useState(null);
+
+    const toggleFaq = (index) => {
+        setActiveFaq(activeFaq === index ? null : index);
+    };
+
+    const testimonials = t('home_page.testimonials.items', { returnObjects: true }) || [];
+    const faqItems = t('home_page.faq.items', { returnObjects: true }) || [];
+
     return (
-        <div className="min-h-screen bg-gray-50 flex flex-col items-center">
+        <div className="min-h-screen bg-slate-50 text-slate-800 selection:bg-indigo-600 selection:text-white">
             {/* Hero Section */}
-            <div className="w-full bg-indigo-900 text-white py-20 px-4 text-center">
-                <h1 className="text-5xl font-bold mb-4">Bienvenue chez Cicados</h1>
-                <p className="text-xl max-w-2xl mx-auto mb-8 text-indigo-200">
-                    L'endroit idéal pour vos parties de Magic The Gathering, Yu-Gi-Oh!, Pokémon, et tous vos autres TCG favoris.
-                </p>
-                <Link to="/reservations" className="bg-indigo-500 hover:bg-indigo-400 text-white font-bold py-3 px-8 rounded-full text-lg transition duration-300 shadow-lg">
-                    Réserver une salle
-                </Link>
+            <div className="relative overflow-hidden bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-950 text-white py-24 md:py-32 px-4 border-b border-indigo-900/50">
+                {/* Decorative glowing circles */}
+                <div className="absolute top-1/4 left-1/10 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
+                <div className="absolute bottom-1/4 right-1/10 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+                <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative z-10">
+                    <div className="lg:col-span-7 text-center lg:text-left space-y-6">
+                        <span className="inline-flex items-center gap-1.5 py-1 px-3 rounded-full text-xs font-semibold bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
+                            ✨ Espace de jeu & Tournois TCG
+                        </span>
+                        <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight bg-clip-text bg-gradient-to-r from-white via-indigo-100 to-indigo-300 leading-tight">
+                            {t('home_page.hero.title')}
+                        </h1>
+                        <p className="text-lg md:text-xl text-slate-300 max-w-2xl mx-auto lg:mx-0 leading-relaxed font-light">
+                            {t('home_page.hero.description')}
+                        </p>
+                        <div className="pt-4 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                            <Link to="/reservations" className="inline-flex items-center justify-center bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-3.5 px-8 rounded-xl text-base transition-all duration-300 shadow-lg shadow-indigo-600/30 hover:scale-[1.02] active:scale-[0.98]">
+                                {t('home_page.hero.cta')}
+                            </Link>
+                        </div>
+                    </div>
+                    <div className="lg:col-span-5 flex justify-center">
+                        <div className="relative group w-full max-w-md lg:max-w-none">
+                            <div className="absolute -inset-1 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl blur opacity-30 group-hover:opacity-50 transition duration-1000"></div>
+                            <div className="relative bg-slate-900 rounded-2xl overflow-hidden border border-slate-800 shadow-2xl aspect-[4/3] flex items-center justify-center">
+                                <img 
+                                    src="/assets/img/hero_magic.png" 
+                                    alt="Espace de jeu Cicados" 
+                                    className="w-full h-full object-cover opacity-90 group-hover:scale-105 transition-transform duration-700 ease-out"
+                                    onError={(e) => {
+                                        // Fallback if image isn't loaded yet
+                                        e.target.style.display = 'none';
+                                        e.target.nextSibling.style.display = 'flex';
+                                    }}
+                                />
+                                <div className="hidden absolute inset-0 flex-col items-center justify-center bg-slate-950 text-indigo-400 p-6 text-center">
+                                    <span className="text-4xl mb-2">🃏</span>
+                                    <span className="font-semibold text-lg">Cicados Play Space</span>
+                                    <span className="text-xs text-slate-500 mt-2">Tables prêtes pour vos duels</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             {/* Features Section */}
-            <div className="max-w-6xl mx-auto py-16 px-4 grid grid-cols-1 md:grid-cols-2 gap-12">
-                <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition">
-                    <div className="text-4xl mb-4">🎴</div>
-                    <h2 className="text-2xl font-bold text-gray-800 mb-2">Jeux de Cartes à Collectionner (TCG)</h2>
-                    <p className="text-gray-600">
-                        Des tables spacieuses parfaites pour disposer vos tapis de jeu. Que vous soyez joueur de MTG, Yu-Gi-Oh, Pokémon ou Lorcana, installez-vous confortablement pour vos duels ou tournois.
+            <div className="max-w-7xl mx-auto py-20 px-4">
+                <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
+                    <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">
+                        {t('home_page.features.title')}
+                    </h2>
+                    <div className="h-1.5 w-20 bg-indigo-600 mx-auto rounded-full"></div>
+                    <p className="text-lg text-slate-600 font-light">
+                        {t('home_page.features.subtitle')}
                     </p>
                 </div>
-                
-                <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition">
-                    <div className="text-4xl mb-4">�</div>
-                    <h2 className="text-2xl font-bold text-gray-800 mb-2">Tournois et Événements</h2>
-                    <p className="text-gray-600">
-                        Participez à nos tournois hebdomadaires ou organisez vos propres événements compétitifs. Une communauté passionnée vous attend pour relever de nouveaux défis.
-                    </p>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    {/* Feature 1 */}
+                    <div className="bg-white p-8 rounded-2xl border border-slate-100 shadow-sm hover:shadow-xl hover:border-indigo-100 transition-all duration-300 group">
+                        <div className="w-14 h-14 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center mb-6 text-2xl font-semibold shadow-inner group-hover:bg-indigo-600 group-hover:text-white transition-colors duration-300">
+                            📅
+                        </div>
+                        <h3 className="text-xl font-bold text-slate-900 mb-3 group-hover:text-indigo-600 transition-colors">
+                            {t('home_page.features.items.booking.title')}
+                        </h3>
+                        <p className="text-slate-600 leading-relaxed font-light">
+                            {t('home_page.features.items.booking.description')}
+                        </p>
+                    </div>
+
+                    {/* Feature 2 */}
+                    <div className="bg-white p-8 rounded-2xl border border-slate-100 shadow-sm hover:shadow-xl hover:border-indigo-100 transition-all duration-300 group">
+                        <div className="w-14 h-14 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center mb-6 text-2xl font-semibold shadow-inner group-hover:bg-indigo-600 group-hover:text-white transition-colors duration-300">
+                            🏆
+                        </div>
+                        <h3 className="text-xl font-bold text-slate-900 mb-3 group-hover:text-indigo-600 transition-colors">
+                            {t('home_page.features.items.tournaments.title')}
+                        </h3>
+                        <p className="text-slate-600 leading-relaxed font-light">
+                            {t('home_page.features.items.tournaments.description')}
+                        </p>
+                    </div>
+
+                    {/* Feature 3 */}
+                    <div className="bg-white p-8 rounded-2xl border border-slate-100 shadow-sm hover:shadow-xl hover:border-indigo-100 transition-all duration-300 group">
+                        <div className="w-14 h-14 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center mb-6 text-2xl font-semibold shadow-inner group-hover:bg-indigo-600 group-hover:text-white transition-colors duration-300">
+                            👥
+                        </div>
+                        <h3 className="text-xl font-bold text-slate-900 mb-3 group-hover:text-indigo-600 transition-colors">
+                            {t('home_page.features.items.groups.title')}
+                        </h3>
+                        <p className="text-slate-600 leading-relaxed font-light">
+                            {t('home_page.features.items.groups.description')}
+                        </p>
+                    </div>
                 </div>
             </div>
 
-            {/* Info Section */}
-            <div className="w-full bg-gray-100 py-16 px-4">
-                <div className="max-w-4xl mx-auto text-center">
-                    <h3 className="text-2xl font-bold text-gray-800 mb-6">Comment ça marche ?</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
-                        <div>
-                            <span className="bg-indigo-200 text-indigo-800 font-bold rounded-full w-8 h-8 flex items-center justify-center mb-3">1</span>
-                            <h4 className="font-bold text-gray-800 mb-2">Choisissez votre activité</h4>
-                            <p className="text-sm text-gray-600">Sélectionnez le jeu de cartes (MTG, Yu-Gi-Oh!, Pokémon, etc.) pour lequel vous souhaitez jouer.</p>
+            {/* How It Works Section */}
+            <div className="w-full bg-slate-100 border-y border-slate-200 py-20 px-4">
+                <div className="max-w-7xl mx-auto">
+                    <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
+                        <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">
+                            {t('home_page.how_it_works.title')}
+                        </h2>
+                        <div className="h-1.5 w-20 bg-indigo-600 mx-auto rounded-full"></div>
+                        <p className="text-lg text-slate-600 font-light">
+                            {t('home_page.how_it_works.subtitle')}
+                        </p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-12 relative">
+                        {/* Connecting line for larger screens */}
+                        <div className="hidden md:block absolute top-1/4 left-[15%] right-[15%] h-0.5 bg-indigo-200/50 -z-0"></div>
+
+                        {/* Step 1 */}
+                        <div className="relative z-10 flex flex-col items-center text-center space-y-4 group">
+                            <div className="w-16 h-16 rounded-full bg-indigo-600 text-white font-bold text-xl flex items-center justify-center shadow-lg shadow-indigo-600/20 group-hover:scale-110 transition-transform">
+                                1
+                            </div>
+                            <h3 className="text-xl font-bold text-slate-900">
+                                {t('home_page.how_it_works.steps.step_1.title')}
+                            </h3>
+                            <p className="text-slate-600 text-sm leading-relaxed max-w-xs font-light">
+                                {t('home_page.how_it_works.steps.step_1.description')}
+                            </p>
                         </div>
-                        <div>
-                            <span className="bg-indigo-200 text-indigo-800 font-bold rounded-full w-8 h-8 flex items-center justify-center mb-3">2</span>
-                            <h4 className="font-bold text-gray-800 mb-2">Sélectionnez le créneau</h4>
-                            <p className="text-sm text-gray-600">Choisissez la date, l'heure et la durée de votre session de jeu selon nos disponibilités.</p>
+
+                        {/* Step 2 */}
+                        <div className="relative z-10 flex flex-col items-center text-center space-y-4 group">
+                            <div className="w-16 h-16 rounded-full bg-indigo-600 text-white font-bold text-xl flex items-center justify-center shadow-lg shadow-indigo-600/20 group-hover:scale-110 transition-transform">
+                                2
+                            </div>
+                            <h3 className="text-xl font-bold text-slate-900">
+                                {t('home_page.how_it_works.steps.step_2.title')}
+                            </h3>
+                            <p className="text-slate-600 text-sm leading-relaxed max-w-xs font-light">
+                                {t('home_page.how_it_works.steps.step_2.description')}
+                            </p>
                         </div>
-                        <div>
-                            <span className="bg-indigo-200 text-indigo-800 font-bold rounded-full w-8 h-8 flex items-center justify-center mb-3">3</span>
-                            <h4 className="font-bold text-gray-800 mb-2">Rejoignez-nous et jouez</h4>
-                            <p className="text-sm text-gray-600">Une fois confirmé, présentez-vous à l'accueil le jour J. Votre table vous attendra !</p>
+
+                        {/* Step 3 */}
+                        <div className="relative z-10 flex flex-col items-center text-center space-y-4 group">
+                            <div className="w-16 h-16 rounded-full bg-indigo-600 text-white font-bold text-xl flex items-center justify-center shadow-lg shadow-indigo-600/20 group-hover:scale-110 transition-transform">
+                                3
+                            </div>
+                            <h3 className="text-xl font-bold text-slate-900">
+                                {t('home_page.how_it_works.steps.step_3.title')}
+                            </h3>
+                            <p className="text-slate-600 text-sm leading-relaxed max-w-xs font-light">
+                                {t('home_page.how_it_works.steps.step_3.description')}
+                            </p>
                         </div>
                     </div>
                 </div>
             </div>
 
-            {/* Location Section */}
-            <div className="w-full bg-white py-16 px-4 border-t border-gray-200">
-                <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between bg-indigo-50 p-8 rounded-2xl">
-                    <div className="mb-6 md:mb-0 md:mr-8 text-center md:text-left">
-                        <h3 className="text-2xl font-bold text-gray-800 mb-2">Où nous trouver ?</h3>
-                        <p className="text-gray-600 mb-4">Venez jouer avec nous directement en boutique !</p>
-                        <div className="flex items-start justify-center md:justify-start gap-3 text-indigo-900 font-medium">
-                            <span className="text-xl">📍</span>
-                            <div className="text-left">
-                                <p>Cicados</p>
-                                <p>123 Rue de la République</p>
-                                <p>75001 Paris</p>
+            {/* Testimonials Section */}
+            <div className="max-w-7xl mx-auto py-20 px-4">
+                <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
+                    <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">
+                        {t('home_page.testimonials.title')}
+                    </h2>
+                    <div className="h-1.5 w-20 bg-indigo-600 mx-auto rounded-full"></div>
+                    <p className="text-lg text-slate-600 font-light">
+                        {t('home_page.testimonials.subtitle')}
+                    </p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    {Array.isArray(testimonials) && testimonials.map((t, idx) => (
+                        <div key={idx} className="bg-white p-8 rounded-2xl border border-slate-100 shadow-sm flex flex-col justify-between hover:shadow-md transition">
+                            <div className="space-y-4">
+                                <div className="flex text-amber-400 gap-0.5">
+                                    {"★★★★★".split("").map((star, i) => (
+                                        <span key={i} className="text-xl">{star}</span>
+                                    ))}
+                                </div>
+                                <p className="text-slate-600 italic leading-relaxed font-light">
+                                    "{t.quote}"
+                                </p>
+                            </div>
+                            <div className="flex items-center gap-4 mt-6 pt-6 border-t border-slate-100">
+                                <div className="w-11 h-11 bg-gradient-to-tr from-indigo-500 to-purple-600 text-white rounded-full flex items-center justify-center font-bold text-sm shadow">
+                                    {t.name ? t.name.charAt(0) : "P"}
+                                </div>
+                                <div>
+                                    <h4 className="font-bold text-slate-900 text-sm">{t.name}</h4>
+                                    <p className="text-xs text-indigo-600">{t.role}</p>
+                                </div>
                             </div>
                         </div>
-                        <div className="flex items-start justify-center md:justify-start gap-3 text-indigo-900 font-medium mt-4">
-                            <span className="text-xl">🕒</span>
-                            <div className="text-left">
-                                <p>Du Lundi au Samedi</p>
-                                <p>09h00 - 00h00</p>
-                                <p className="text-xs text-indigo-500 mt-1">Fermé le Dimanche</p>
+                    ))}
+                </div>
+            </div>
+
+            {/* CTA Section */}
+            <div className="max-w-7xl mx-auto px-4 pb-20">
+                <div className="relative rounded-3xl overflow-hidden bg-gradient-to-r from-indigo-900 to-purple-900 py-16 px-8 md:px-16 text-center text-white shadow-2xl">
+                    <div className="absolute top-0 right-0 w-96 h-96 bg-white/5 rounded-full blur-3xl pointer-events-none"></div>
+                    <div className="absolute bottom-0 left-0 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+                    <div className="max-w-3xl mx-auto space-y-6 relative z-10">
+                        <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight">
+                            {t('home_page.cta.title')}
+                        </h2>
+                        <p className="text-lg text-indigo-100 font-light leading-relaxed max-w-xl mx-auto">
+                            {t('home_page.cta.description')}
+                        </p>
+                        <div className="pt-4 flex flex-col sm:flex-row gap-4 justify-center">
+                            <Link to="/reservations" className="bg-white hover:bg-slate-100 text-indigo-900 font-bold py-3.5 px-8 rounded-xl transition duration-300 shadow-md">
+                                {t('home_page.cta.buttons.book')}
+                            </Link>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* FAQ Section */}
+            <div className="max-w-4xl mx-auto py-20 px-4 border-t border-slate-200">
+                <div className="text-center mb-12 space-y-4">
+                    <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight">
+                        {t('home_page.faq.title')}
+                    </h2>
+                    <div className="h-1 w-16 bg-indigo-600 mx-auto rounded-full"></div>
+                    <p className="text-slate-600 font-light">
+                        {t('home_page.faq.subtitle')}
+                    </p>
+                </div>
+
+                <div className="space-y-4">
+                    {Array.isArray(faqItems) && faqItems.map((item, index) => (
+                        <div 
+                            key={index} 
+                            className="bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden transition-all duration-300"
+                        >
+                            <button
+                                onClick={() => toggleFaq(index)}
+                                className="w-full py-5 px-6 flex justify-between items-center text-left hover:bg-slate-50 transition-colors"
+                            >
+                                <span className="font-bold text-slate-950 text-base md:text-lg">
+                                    {item.question}
+                                </span>
+                                <span className={`w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-indigo-600 transition-transform duration-300 font-mono text-xl ${activeFaq === index ? 'rotate-45' : ''}`}>
+                                    ＋
+                                </span>
+                            </button>
+                            <div 
+                                className={`transition-all duration-300 ease-in-out ${activeFaq === index ? 'max-h-96 border-t border-slate-50' : 'max-h-0'}`}
+                            >
+                                <div className="p-6 text-slate-600 font-light leading-relaxed">
+                                    {item.answer}
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div className="w-full md:w-1/2 h-48 bg-gray-300 rounded-xl overflow-hidden shadow-inner">
-                        {/* Placeholder pour une vraie carte (ex: Google Maps iframe) */}
-                        <div className="w-full h-full flex flex-col items-center justify-center bg-indigo-100 text-indigo-400">
-                            <span className="text-3xl mb-2">🗺️</span>
-                            <span className="font-medium text-sm">Emplacement de la boutique</span>
-                        </div>
-                    </div>
+                    ))}
                 </div>
             </div>
         </div>
