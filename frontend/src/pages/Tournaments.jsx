@@ -14,9 +14,16 @@ function Tournaments() {
     const [actionLoadingId, setActionLoadingId] = useState(null);
     const [message, setMessage] = useState({ type: '', text: '' });
 
+    // Track which tournament's participants dropdown is open
+    const [openParticipantsId, setOpenParticipantsId] = useState(null);
+
+    const toggleParticipants = (id) => {
+        setOpenParticipantsId(openParticipantsId === id ? null : id);
+    };
+
     // Fetch tournaments & user registrations
-    const fetchData = async () => {
-        setLoading(true);
+    const fetchData = async (silent = false) => {
+        if (!silent) setLoading(true);
         try {
             // Load tournaments list
             const resTourneys = await fetch('http://localhost:5000/api/tournaments');
@@ -40,7 +47,7 @@ function Tournaments() {
             console.error("Erreur de chargement des tournois :", error);
             setMessage({ type: 'error', text: 'Impossible de contacter le serveur.' });
         } finally {
-            setLoading(false);
+            if (!silent) setLoading(false);
         }
     };
 
@@ -75,8 +82,8 @@ function Tournaments() {
                     type: 'success', 
                     text: isRegistered ? 'Désinscription réussie.' : 'Inscription au tournoi réussie ! Votre place est réservée.' 
                 });
-                // Reload data to update numbers
-                await fetchData();
+                // Reload data silently to update numbers and lists without full-page spinner
+                await fetchData(true);
             } else {
                 setMessage({ type: 'error', text: data.error || 'Une erreur est survenue.' });
             }
@@ -254,10 +261,39 @@ function Tournaments() {
                                         <p className="text-slate-600 text-sm leading-relaxed font-light pt-2">
                                             {t.description}
                                         </p>
+
+                                        {/* Collapsible Registered Players List */}
+                                        <div className="mt-4 pt-3 border-t border-slate-100">
+                                            <button 
+                                                type="button"
+                                                onClick={() => toggleParticipants(t.id)}
+                                                className="flex items-center justify-between w-full text-left text-xs font-semibold text-slate-500 hover:text-indigo-600 transition"
+                                            >
+                                                <span>👥 Liste des inscrits ({t.participants?.length || 0})</span>
+                                                <span className={`transition-transform duration-200 transform ${openParticipantsId === t.id ? 'rotate-180' : ''}`}>
+                                                    ▼
+                                                </span>
+                                            </button>
+                                            
+                                            {openParticipantsId === t.id && (
+                                                <div className="mt-2 space-y-1.5 bg-slate-50 p-3 rounded-xl border border-slate-200/50 max-h-36 overflow-y-auto">
+                                                    {t.participants && t.participants.length > 0 ? (
+                                                        t.participants.map((pName, index) => (
+                                                            <div key={index} className="text-xs text-slate-700 flex items-center gap-2">
+                                                                <span className="w-1.5 h-1.5 bg-indigo-500 rounded-full"></span>
+                                                                <span>{pName}</span>
+                                                            </div>
+                                                        ))
+                                                    ) : (
+                                                        <div className="text-xs text-slate-400 italic">Aucun inscrit pour le moment.</div>
+                                                    )}
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
 
                                     {/* Action button */}
-                                    <div className="mt-8 pt-4 border-t border-slate-50 flex items-center justify-between gap-4">
+                                    <div className="mt-6 pt-4 border-t border-slate-50 flex items-center justify-between gap-4">
                                         {!isAuthenticated ? (
                                             <Link 
                                                 to="/login"

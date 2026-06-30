@@ -10,7 +10,7 @@ const User = {
     },
     // Trouver par ID (sans le password)
     async findById(id) {
-        const sql = 'SELECT id, email, firstname, lastname, created_at FROM users WHERE id = ?';
+        const sql = 'SELECT id, email, firstname, lastname, role, created_at FROM users WHERE id = ?';
         const results = await query(sql, [id]);
         return results[0] || null;
     },

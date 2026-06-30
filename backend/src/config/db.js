@@ -19,6 +19,25 @@ export async function testConnection() {
     try {
         const connection = await pool.getConnection();
         console.log('MySQL connecté');
+
+        // Vérifier si la colonne 'role' existe sur 'users'
+        const [cols] = await connection.execute("SHOW COLUMNS FROM users LIKE 'role'");
+        if (cols.length === 0) {
+            await connection.execute("ALTER TABLE users ADD COLUMN role ENUM('USER', 'ADMIN') DEFAULT 'USER'");
+            console.log("Colonne 'role' ajoutée à la table users");
+        }
+
+        // Créer l'administrateur par défaut s'il n'existe pas
+        const [adminRows] = await connection.execute("SELECT * FROM users WHERE email = 'admin@cicados.fr'");
+        if (adminRows.length === 0) {
+            const bcrypt = await import('bcrypt');
+            const hashedPassword = await bcrypt.default.hash('admincicados', 10);
+            await connection.execute(
+                "INSERT INTO users (email, password, firstname, lastname, role) VALUES ('admin@cicados.fr', ?, 'Admin', 'Cicados', 'ADMIN')",
+                [hashedPassword]
+            );
+            console.log("Administrateur par défaut créé : admin@cicados.fr / admincicados");
+        }
         
         // Créer la table des tournois si inexistante
         await connection.execute(`

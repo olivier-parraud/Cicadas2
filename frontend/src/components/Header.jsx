@@ -14,6 +14,7 @@ function Header() {
     
     // On vérifie si l'utilisateur est connecté (présence du token)
     const isAuthenticated = !!localStorage.getItem('token');
+    const isAdmin = localStorage.getItem('user_role') === 'ADMIN';
 
     const currentLanguage = (i18n.resolvedLanguage || i18n.language || 'fr').slice(0, 2);
     const handleLanguageChange = (event) => {
@@ -22,7 +23,9 @@ function Header() {
 
     const handleLogout = () => {
         localStorage.removeItem('token');
+        localStorage.removeItem('user_role');
         navigate('/');
+        window.location.reload();
     };
 
     return (
@@ -36,6 +39,9 @@ function Header() {
                     <Link to="/" className="hover:text-indigo-300 transition">Accueil</Link>
                     <Link to="/reservations" className="hover:text-indigo-300 transition">Réserver une table</Link>
                     <Link to="/tournaments" className="hover:text-indigo-300 transition">Tournois</Link>
+                    {isAuthenticated && isAdmin && (
+                        <Link to="/admin" className="hover:text-indigo-300 text-indigo-200 font-bold transition">Admin</Link>
+                    )}
                 </nav>
 
                 <div className="flex gap-4 items-center">

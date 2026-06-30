@@ -6,6 +6,7 @@ import Login from './pages/Login.jsx';
 import Register from './pages/Register.jsx';
 import Reservations from './pages/Reservations.jsx';
 import Tournaments from './pages/Tournaments.jsx';
+import DashboardAdmin from './pages/DashboardAdmin.jsx';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/reservations" element={<Reservations />} />
         <Route path="/tournaments" element={<Tournaments />} />
+        <Route path="/admin" element={<DashboardAdmin />} />
       </Route>
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>

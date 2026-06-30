@@ -1,6 +1,6 @@
 import { query } from '../config/db.js';
 
-// Récupérer la liste des tournois avec le nombre d'inscrits actuels
+// Récupérer la liste des tournois avec le nombre d'inscrits actuels et leurs noms
 export const getTournaments = async (req, res) => {
     try {
         const sql = `
@@ -11,7 +11,30 @@ export const getTournaments = async (req, res) => {
             ORDER BY t.date ASC
         `;
         const tournaments = await query(sql);
-        res.json(tournaments);
+
+        // Récupérer les participants inscrits pour tous les tournois
+        const participantsSql = `
+            SELECT tr.tournament_id, u.firstname, u.lastname, u.email
+            FROM tournament_registrations tr
+            JOIN users u ON tr.user_id = u.id
+        `;
+        const participants = await query(participantsSql);
+
+        // Associer les participants à chaque tournoi
+        const tournamentsWithParticipants = tournaments.map(t => {
+            const list = participants
+                .filter(p => p.tournament_id === t.id)
+                .map(p => {
+                    const fullName = `${p.firstname || ''} ${p.lastname || ''}`.trim();
+                    return fullName || p.email.split('@')[0];
+                });
+            return {
+                ...t,
+                participants: list
+            };
+        });
+
+        res.json(tournamentsWithParticipants);
     } catch (error) {
         console.error("Erreur récupération tournois :", error);
         res.status(500).json({ error: "Impossible de charger les tournois." });

@@ -20,8 +20,9 @@ function Login() {
             const data = await response.json();
             
             if (response.ok) {
-                // Stocker le token (localStorage)
+                // Stocker le token et le rôle (localStorage)
                 localStorage.setItem('token', data.token);
+                localStorage.setItem('user_role', data.user.role || 'USER');
                 // Rediriger vers l'accueil
                 window.location.href = '/';
             } else {
