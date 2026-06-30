@@ -153,3 +153,49 @@ export const deleteTournament = async (req, res) => {
         res.status(500).json({ error: "Erreur de suppression." });
     }
 };
+
+// --- GESTION DES JEUX DE SOCIÉTÉ ---
+
+// Créer un nouveau jeu de société
+export const createBoardGame = async (req, res) => {
+    try {
+        const { name, min_players, max_players, play_time, category, description, image_url, rules_url } = req.body;
+
+        if (!name || !min_players || !max_players || !play_time || !category) {
+            return res.status(400).json({ error: "Nom, joueurs (min/max), durée et catégorie requis." });
+        }
+
+        const sql = `
+            INSERT INTO board_games (name, min_players, max_players, play_time, category, description, image_url, rules_url)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        `;
+        const result = await query(sql, [
+            name,
+            Number(min_players),
+            Number(max_players),
+            Number(play_time),
+            category,
+            description || null,
+            image_url || '/images/boardgames/catan.png',
+            rules_url || null
+        ]);
+
+        res.status(201).json({ message: "Jeu de société ajouté avec succès !", boardGameId: result.insertId });
+    } catch (error) {
+        console.error("Erreur création jeu de société :", error);
+        res.status(500).json({ error: "Erreur lors de l'ajout du jeu de société." });
+    }
+};
+
+// Supprimer un jeu de société
+export const deleteBoardGame = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const sql = 'DELETE FROM board_games WHERE id = ?';
+        await query(sql, [id]);
+        res.json({ message: "Jeu de société supprimé." });
+    } catch (error) {
+        console.error("Erreur suppression jeu de société :", error);
+        res.status(500).json({ error: "Erreur de suppression." });
+    }
+};

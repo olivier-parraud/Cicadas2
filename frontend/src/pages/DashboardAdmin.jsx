@@ -9,6 +9,7 @@ function DashboardAdmin() {
     const [reservations, setReservations] = useState([]);
     const [users, setUsers] = useState([]);
     const [tournaments, setTournaments] = useState([]);
+    const [boardGames, setBoardGames] = useState([]);
     const [loading, setLoading] = useState(true);
     const [actionLoading, setActionLoading] = useState(false);
     const [message, setMessage] = useState({ type: '', text: '' });
@@ -24,6 +25,18 @@ function DashboardAdmin() {
         description: ''
     });
 
+    // Board Game Form state
+    const [bgForm, setBgForm] = useState({
+        name: '',
+        category: 'Stratégie',
+        min_players: 2,
+        max_players: 4,
+        play_time: 45,
+        description: '',
+        image_url: '',
+        rules_url: ''
+    });
+
     // Check if user is Admin on mount
     useEffect(() => {
         const verifyAdmin = async () => {
@@ -32,7 +45,7 @@ function DashboardAdmin() {
                 return;
             }
             try {
-                const res = await fetch('http://localhost:5000/api/auth/me', {
+                const res = await fetch('http://localhost:5050/api/auth/me', {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 if (res.ok) {
@@ -59,7 +72,7 @@ function DashboardAdmin() {
         setLoading(true);
         try {
             // Fetch reservations
-            const resRes = await fetch('http://localhost:5000/api/admin/reservations', {
+            const resRes = await fetch('http://localhost:5050/api/admin/reservations', {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             if (resRes.ok) {
@@ -68,7 +81,7 @@ function DashboardAdmin() {
             }
 
             // Fetch users
-            const resUsers = await fetch('http://localhost:5000/api/admin/users', {
+            const resUsers = await fetch('http://localhost:5050/api/admin/users', {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             if (resUsers.ok) {
@@ -77,10 +90,17 @@ function DashboardAdmin() {
             }
 
             // Fetch tournaments
-            const resTourneys = await fetch('http://localhost:5000/api/tournaments');
+            const resTourneys = await fetch('http://localhost:5050/api/tournaments');
             if (resTourneys.ok) {
                 const data = await resTourneys.json();
                 setTournaments(data);
+            }
+
+            // Fetch board games
+            const resBgs = await fetch('http://localhost:5050/api/boardgames');
+            if (resBgs.ok) {
+                const data = await resBgs.json();
+                setBoardGames(data);
             }
         } catch (error) {
             console.error("Erreur chargement données admin :", error);
@@ -95,7 +115,7 @@ function DashboardAdmin() {
     const handleUpdateResStatus = async (id, newStatus) => {
         setActionLoading(true);
         try {
-            const res = await fetch(`http://localhost:5000/api/admin/reservations/${id}`, {
+            const res = await fetch(`http://localhost:5050/api/admin/reservations/${id}`, {
                 method: 'PATCH',
                 headers: { 
                     'Content-Type': 'application/json',
@@ -121,7 +141,7 @@ function DashboardAdmin() {
         if (!window.confirm("Supprimer définitivement cette réservation ?")) return;
         setActionLoading(true);
         try {
-            const res = await fetch(`http://localhost:5000/api/admin/reservations/${id}`, {
+            const res = await fetch(`http://localhost:5050/api/admin/reservations/${id}`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -142,7 +162,7 @@ function DashboardAdmin() {
         const newRole = currentRole === 'ADMIN' ? 'USER' : 'ADMIN';
         setActionLoading(true);
         try {
-            const res = await fetch(`http://localhost:5000/api/admin/users/${userId}`, {
+            const res = await fetch(`http://localhost:5050/api/admin/users/${userId}`, {
                 method: 'PATCH',
                 headers: { 
                     'Content-Type': 'application/json',
@@ -168,7 +188,7 @@ function DashboardAdmin() {
         if (!window.confirm("Supprimer définitivement cet utilisateur ? Ses réservations associées seront effacées.")) return;
         setActionLoading(true);
         try {
-            const res = await fetch(`http://localhost:5000/api/admin/users/${userId}`, {
+            const res = await fetch(`http://localhost:5050/api/admin/users/${userId}`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -195,7 +215,7 @@ function DashboardAdmin() {
 
         try {
             const formattedDate = `${tourneyForm.date} ${tourneyForm.time}:00`;
-            const res = await fetch('http://localhost:5000/api/admin/tournaments', {
+            const res = await fetch('http://localhost:5050/api/admin/tournaments', {
                 method: 'POST',
                 headers: { 
                     'Content-Type': 'application/json',
@@ -238,13 +258,74 @@ function DashboardAdmin() {
         if (!window.confirm("Supprimer ce tournoi et toutes les inscriptions liées ?")) return;
         setActionLoading(true);
         try {
-            const res = await fetch(`http://localhost:5000/api/admin/tournaments/${id}`, {
+            const res = await fetch(`http://localhost:5050/api/admin/tournaments/${id}`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             if (res.ok) {
                 setMessage({ type: 'success', text: 'Tournoi supprimé.' });
                 fetchAdminData();
+            }
+        } catch (error) {
+            setMessage({ type: 'error', text: 'Erreur réseau.' });
+        } finally {
+            setActionLoading(false);
+        }
+    };
+
+    const handleCreateBoardGame = async (e) => {
+        e.preventDefault();
+        setActionLoading(true);
+        setMessage({ type: '', text: '' });
+
+        try {
+            const res = await fetch('http://localhost:5050/api/admin/boardgames', {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}` 
+                },
+                body: JSON.stringify(bgForm)
+            });
+
+            if (res.ok) {
+                setMessage({ type: 'success', text: 'Jeu de société ajouté avec succès !' });
+                setBgForm({
+                    name: '',
+                    category: 'Stratégie',
+                    min_players: 2,
+                    max_players: 4,
+                    play_time: 45,
+                    description: '',
+                    image_url: '',
+                    rules_url: ''
+                });
+                fetchAdminData();
+            } else {
+                const data = await res.json();
+                setMessage({ type: 'error', text: data.error || "Erreur lors de l'ajout." });
+            }
+        } catch (error) {
+            setMessage({ type: 'error', text: 'Erreur réseau.' });
+        } finally {
+            setActionLoading(false);
+        }
+    };
+
+    const handleDeleteBoardGame = async (id) => {
+        if (!window.confirm("Supprimer définitivement ce jeu de société de la boutique ?")) return;
+        setActionLoading(true);
+        try {
+            const res = await fetch(`http://localhost:5050/api/admin/boardgames/${id}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (res.ok) {
+                setMessage({ type: 'success', text: 'Jeu de société supprimé.' });
+                fetchAdminData();
+            } else {
+                const data = await res.json();
+                setMessage({ type: 'error', text: data.error || 'Erreur lors de la suppression.' });
             }
         } catch (error) {
             setMessage({ type: 'error', text: 'Erreur réseau.' });
@@ -275,6 +356,12 @@ function DashboardAdmin() {
                             className={`py-2 px-4 rounded-lg text-xs font-bold transition ${activeTab === 'tournaments' ? 'bg-indigo-600 text-white shadow' : 'text-slate-400 hover:text-white'}`}
                         >
                             🏆 Tournois
+                        </button>
+                        <button
+                            onClick={() => { setActiveTab('boardgames'); setMessage({ type: '', text: '' }); }}
+                            className={`py-2 px-4 rounded-lg text-xs font-bold transition ${activeTab === 'boardgames' ? 'bg-indigo-600 text-white shadow' : 'text-slate-400 hover:text-white'}`}
+                        >
+                            🎲 Jeux de société
                         </button>
                         <button
                             onClick={() => { setActiveTab('users'); setMessage({ type: '', text: '' }); }}
@@ -342,7 +429,26 @@ function DashboardAdmin() {
                                                         <td className="p-4 text-slate-600">{startStr}</td>
                                                         <td className="p-4 text-slate-600">{endStr}</td>
                                                         <td className="p-4">
-                                                            <span className="text-xs font-bold text-slate-500 uppercase">{res.game_type}</span>
+                                                            {res.game_type === 'BOARD_GAME' ? (
+                                                                <div className="flex flex-col gap-0.5">
+                                                                    <span className="text-[10px] font-bold text-purple-700 bg-purple-50 border border-purple-200 px-2 py-0.5 rounded-full inline-block w-fit uppercase">
+                                                                        🎲 Jeu de société
+                                                                    </span>
+                                                                    {res.specific_game && (
+                                                                        <span className="text-xs font-bold text-slate-900 ml-1">
+                                                                            {res.specific_game}
+                                                                        </span>
+                                                                    )}
+                                                                </div>
+                                                            ) : res.game_type === 'MTG' ? (
+                                                                <span className="text-[10px] font-bold text-blue-700 bg-blue-50 border border-blue-200 px-2 py-0.5 rounded-full inline-block w-fit uppercase">
+                                                                    🃏 TCG (Magic)
+                                                                </span>
+                                                            ) : (
+                                                                <span className="text-[10px] font-bold text-slate-600 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-full inline-block w-fit uppercase">
+                                                                    🃏 Autre / TCG
+                                                                </span>
+                                                            )}
                                                         </td>
                                                         <td className="p-4">
                                                             <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
@@ -596,6 +702,171 @@ function DashboardAdmin() {
                                             ))}
                                         </tbody>
                                     </table>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* TAB 4: BOARD GAMES */}
+                        {activeTab === 'boardgames' && (
+                            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                                {/* Create Board Game Form */}
+                                <form onSubmit={handleCreateBoardGame} className="lg:col-span-5 bg-white p-6 md:p-8 rounded-3xl border border-slate-100 shadow-xl space-y-4">
+                                    <h2 className="text-lg font-bold text-slate-900 pb-3 border-b border-slate-100 flex items-center gap-2">
+                                        <span>🎲</span> Ajouter un jeu de société
+                                    </h2>
+
+                                    <div className="space-y-1">
+                                        <label className="text-xs font-bold text-slate-500 uppercase">Nom du jeu</label>
+                                        <input
+                                            type="text"
+                                            required
+                                            placeholder="Ex: Carcassonne"
+                                            value={bgForm.name}
+                                            onChange={(e) => setBgForm({ ...bgForm, name: e.target.value })}
+                                            className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-600 font-light"
+                                        />
+                                    </div>
+
+                                    <div className="space-y-1">
+                                        <label className="text-xs font-bold text-slate-500 uppercase">Catégorie</label>
+                                        <select
+                                            value={bgForm.category}
+                                            onChange={(e) => setBgForm({ ...bgForm, category: e.target.value })}
+                                            className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-600 bg-white"
+                                        >
+                                            <option>Stratégie</option>
+                                            <option>Pose de tuiles</option>
+                                            <option>Famille</option>
+                                            <option>Abstrait</option>
+                                            <option>Ambiance</option>
+                                            <option>Ambiance / Réflexion</option>
+                                            <option>Autre</option>
+                                        </select>
+                                    </div>
+
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="space-y-1">
+                                            <label className="text-xs font-bold text-slate-500 uppercase">Joueurs Min</label>
+                                            <input
+                                                type="number"
+                                                required
+                                                min="1"
+                                                value={bgForm.min_players}
+                                                onChange={(e) => setBgForm({ ...bgForm, min_players: Number(e.target.value) })}
+                                                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-600 font-light"
+                                            />
+                                        </div>
+                                        <div className="space-y-1">
+                                            <label className="text-xs font-bold text-slate-500 uppercase">Joueurs Max</label>
+                                            <input
+                                                type="number"
+                                                required
+                                                min="1"
+                                                value={bgForm.max_players}
+                                                onChange={(e) => setBgForm({ ...bgForm, max_players: Number(e.target.value) })}
+                                                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-600 font-light"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-1">
+                                        <label className="text-xs font-bold text-slate-500 uppercase">Durée de partie (mins)</label>
+                                        <input
+                                            type="number"
+                                            required
+                                            min="5"
+                                            value={bgForm.play_time}
+                                            onChange={(e) => setBgForm({ ...bgForm, play_time: Number(e.target.value) })}
+                                            className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-600 font-light"
+                                        />
+                                    </div>
+
+                                    <div className="space-y-1">
+                                        <label className="text-xs font-bold text-slate-500 uppercase">Description</label>
+                                        <textarea
+                                            rows="3"
+                                            placeholder="Description du jeu, mécanique..."
+                                            value={bgForm.description}
+                                            onChange={(e) => setBgForm({ ...bgForm, description: e.target.value })}
+                                            className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-600 font-light"
+                                        ></textarea>
+                                    </div>
+
+                                    <div className="space-y-1">
+                                        <label className="text-xs font-bold text-slate-500 uppercase">URL de l'image (optionnel)</label>
+                                        <input
+                                            type="text"
+                                            placeholder="Ex: /images/boardgames/catan.png"
+                                            value={bgForm.image_url}
+                                            onChange={(e) => setBgForm({ ...bgForm, image_url: e.target.value })}
+                                            className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-600 font-light"
+                                        />
+                                    </div>
+
+                                    <div className="space-y-1">
+                                        <label className="text-xs font-bold text-slate-500 uppercase">Lien officiel / Règles (optionnel)</label>
+                                        <input
+                                            type="url"
+                                            placeholder="Ex: https://..."
+                                            value={bgForm.rules_url}
+                                            onChange={(e) => setBgForm({ ...bgForm, rules_url: e.target.value })}
+                                            className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-600 font-light"
+                                        />
+                                    </div>
+
+                                    <button
+                                        type="submit"
+                                        disabled={actionLoading}
+                                        className="w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs transition duration-300 shadow-md shadow-indigo-600/10 disabled:opacity-50"
+                                    >
+                                        Ajouter le jeu
+                                    </button>
+                                </form>
+
+                                {/* Board Games List */}
+                                <div className="lg:col-span-7 bg-white rounded-3xl border border-slate-100 shadow-xl overflow-hidden">
+                                    <div className="p-6 border-b border-slate-100 flex justify-between items-center">
+                                        <h2 className="text-lg font-bold text-slate-900">Jeux en boutique ({boardGames.length})</h2>
+                                    </div>
+
+                                    <div className="divide-y divide-slate-100">
+                                        {boardGames.map((game) => (
+                                            <div key={game.id} className="p-5 flex justify-between items-center gap-4 hover:bg-slate-50/50 transition">
+                                                <div className="flex items-center gap-4">
+                                                    <img 
+                                                        src={game.image_url} 
+                                                        alt={game.name} 
+                                                        className="w-12 h-12 rounded-lg object-cover bg-slate-100 border border-slate-100"
+                                                        onError={(e) => {
+                                                            e.target.onerror = null;
+                                                            e.target.src = 'https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?q=80&w=100';
+                                                        }}
+                                                    />
+                                                    <div>
+                                                        <span className="text-[10px] uppercase font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-100">
+                                                            {game.category}
+                                                        </span>
+                                                        <h3 className="font-extrabold text-slate-950 mt-1">{game.name}</h3>
+                                                        <p className="text-xs text-slate-500 font-light mt-0.5">
+                                                            👥 {game.min_players}-{game.max_players} joueurs | ⏱ {game.play_time} mins
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                <button
+                                                    onClick={() => handleDeleteBoardGame(game.id)}
+                                                    disabled={actionLoading}
+                                                    className="py-1.5 px-3 rounded-lg text-xs font-bold text-red-500 hover:bg-red-50 transition disabled:opacity-50"
+                                                >
+                                                    Supprimer
+                                                </button>
+                                            </div>
+                                        ))}
+                                        {boardGames.length === 0 && (
+                                            <div className="p-8 text-center text-slate-400 italic font-light">
+                                                Aucun jeu de société enregistré.
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
                         )}

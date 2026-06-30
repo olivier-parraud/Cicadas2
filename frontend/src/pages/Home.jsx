@@ -1,10 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
 function Home() {
     const { t } = useTranslation();
     const [activeFaq, setActiveFaq] = useState(null);
+    const [activeSlide, setActiveSlide] = useState(0);
+    const [featuredGames, setFeaturedGames] = useState([]);
 
     const toggleFaq = (index) => {
         setActiveFaq(activeFaq === index ? null : index);
@@ -12,6 +14,51 @@ function Home() {
 
     const testimonials = t('home_page.testimonials.items', { returnObjects: true }) || [];
     const faqItems = t('home_page.faq.items', { returnObjects: true }) || [];
+
+    const slides = [
+        {
+            image: "/assets/img/hero_magic.png",
+            title: "Cicados Play Space",
+            desc: "Espace principal avec tables prêtes pour vos duels"
+        },
+        {
+            image: "/images/place/ground_floor.png",
+            title: "Le Rez-de-chaussée",
+            desc: "Boutique, bar à boissons & étagères de jeux"
+        },
+        {
+            image: "/images/place/bar_zone.png",
+            title: "Le Coin Bar",
+            desc: "Sélection de boissons pour vos sessions de jeu"
+        },
+        {
+            image: "/images/place/upstairs_chill.png",
+            title: "La Mezzanine Gaming",
+            desc: "Lounge à l'étage avec poufs & chaises confortables"
+        }
+    ];
+
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setActiveSlide(prev => (prev + 1) % slides.length);
+        }, 6000);
+        return () => clearInterval(timer);
+    }, [slides.length]);
+
+    useEffect(() => {
+        const fetchFeaturedGames = async () => {
+            try {
+                const res = await fetch('http://localhost:5050/api/boardgames');
+                if (res.ok) {
+                    const data = await res.json();
+                    setFeaturedGames(data.slice(0, 3));
+                }
+            } catch (error) {
+                console.error("Erreur chargement jeux vedettes:", error);
+            }
+        };
+        fetchFeaturedGames();
+    }, []);
 
     return (
         <div className="min-h-screen bg-slate-50 text-slate-800 selection:bg-indigo-600 selection:text-white">
@@ -38,24 +85,70 @@ function Home() {
                             </Link>
                         </div>
                     </div>
-                    <div className="lg:col-span-5 flex justify-center">
+                    <div className="lg:col-span-5 flex justify-center w-full">
                         <div className="relative group w-full max-w-md lg:max-w-none">
+                            {/* Neon border background */}
                             <div className="absolute -inset-1 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl blur opacity-30 group-hover:opacity-50 transition duration-1000"></div>
-                            <div className="relative bg-slate-900 rounded-2xl overflow-hidden border border-slate-800 shadow-2xl aspect-[4/3] flex items-center justify-center">
-                                <img 
-                                    src="/assets/img/hero_magic.png" 
-                                    alt="Espace de jeu Cicados" 
-                                    className="w-full h-full object-cover opacity-90 group-hover:scale-105 transition-transform duration-700 ease-out"
-                                    onError={(e) => {
-                                        // Fallback if image isn't loaded yet
-                                        e.target.style.display = 'none';
-                                        e.target.nextSibling.style.display = 'flex';
-                                    }}
-                                />
-                                <div className="hidden absolute inset-0 flex-col items-center justify-center bg-slate-950 text-indigo-400 p-6 text-center">
-                                    <span className="text-4xl mb-2">🃏</span>
-                                    <span className="font-semibold text-lg">Cicados Play Space</span>
-                                    <span className="text-xs text-slate-500 mt-2">Tables prêtes pour vos duels</span>
+                            
+                            {/* Carousel Container */}
+                            <div className="relative bg-slate-900 rounded-2xl overflow-hidden border border-slate-800 shadow-2xl aspect-[4/3] w-full">
+                                {slides.map((slide, index) => (
+                                    <div
+                                        key={index}
+                                        className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
+                                            index === activeSlide ? 'opacity-100 z-10' : 'opacity-0 z-0'
+                                        }`}
+                                    >
+                                        <img 
+                                            src={slide.image} 
+                                            alt={slide.title} 
+                                            className="w-full h-full object-cover opacity-95"
+                                            onError={(e) => {
+                                                e.target.onerror = null;
+                                                e.target.src = 'https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?q=80&w=600';
+                                            }}
+                                        />
+                                        
+                                        {/* Info Overlay */}
+                                        <div className="absolute bottom-0 left-0 right-0 bg-slate-950/80 backdrop-blur-md p-4 border-t border-indigo-900/40">
+                                            <h4 className="font-bold text-white text-sm tracking-wide">
+                                                {slide.title}
+                                            </h4>
+                                            <p className="text-xs text-slate-400 font-light mt-0.5">
+                                                {slide.desc}
+                                            </p>
+                                        </div>
+                                    </div>
+                                ))}
+
+                                {/* Arrow Navigation */}
+                                <button
+                                    onClick={(e) => { e.preventDefault(); setActiveSlide(prev => (prev - 1 + slides.length) % slides.length); }}
+                                    className="absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-slate-950/70 border border-slate-800 flex items-center justify-center text-white hover:bg-indigo-600 transition z-20"
+                                    aria-label="Slide précédent"
+                                >
+                                    ❮
+                                </button>
+                                <button
+                                    onClick={(e) => { e.preventDefault(); setActiveSlide(prev => (prev + 1) % slides.length); }}
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-slate-950/70 border border-slate-800 flex items-center justify-center text-white hover:bg-indigo-600 transition z-20"
+                                    aria-label="Slide suivant"
+                                >
+                                    ❯
+                                </button>
+
+                                {/* Dot Indicators */}
+                                <div className="absolute top-3 right-3 flex gap-1.5 z-20 bg-slate-950/60 p-1.5 rounded-full border border-slate-800/40">
+                                    {slides.map((_, index) => (
+                                        <button
+                                            key={index}
+                                            onClick={(e) => { e.preventDefault(); setActiveSlide(index); }}
+                                            className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                                                index === activeSlide ? 'bg-indigo-500 scale-125' : 'bg-slate-600 hover:bg-slate-400'
+                                            }`}
+                                            aria-label={`Aller au slide ${index + 1}`}
+                                        />
+                                    ))}
                                 </div>
                             </div>
                         </div>
@@ -175,6 +268,83 @@ function Home() {
                     </div>
                 </div>
             </div>
+
+            {/* Featured Board Games Showcase */}
+            {featuredGames.length > 0 && (
+                <div className="max-w-7xl mx-auto py-20 px-4 border-t border-slate-200/10">
+                    <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
+                        <span className="inline-flex items-center gap-1.5 py-1 px-3 rounded-full text-xs font-semibold bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
+                            🎲 Ludothèque Vedette
+                        </span>
+                        <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight">
+                            Nos Jeux de Société Vedettes
+                        </h2>
+                        <div className="h-1.5 w-20 bg-indigo-600 mx-auto rounded-full"></div>
+                        <p className="text-lg text-slate-400 font-light">
+                            Découvrez une sélection de nos meilleurs jeux disponibles en boutique. Réservez une table et venez vous affronter !
+                        </p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        {featuredGames.map((game) => (
+                            <div 
+                                key={game.id}
+                                className="bg-white rounded-3xl border border-slate-100 overflow-hidden flex flex-col justify-between hover:shadow-xl hover:border-indigo-100 transition-all duration-300 group"
+                            >
+                                <div>
+                                    <div className="aspect-[4/3] w-full overflow-hidden bg-slate-100 relative">
+                                        <img 
+                                            src={game.image_url} 
+                                            alt={game.name} 
+                                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                        />
+                                        <span className="absolute top-4 left-4 inline-flex items-center py-1 px-3 rounded-full text-xs font-semibold bg-purple-50 text-purple-700 border border-purple-200 shadow-sm">
+                                            {game.category}
+                                        </span>
+                                    </div>
+
+                                    <div className="p-6 space-y-3">
+                                        <h3 className="text-xl font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">
+                                            {game.name}
+                                        </h3>
+
+                                        <div className="flex gap-2 text-xs font-bold text-slate-600">
+                                            <span className="bg-slate-100/50 py-1 px-2.5 rounded-lg">
+                                                👥 {game.min_players} - {game.max_players} joueurs
+                                            </span>
+                                            <span className="bg-slate-100/50 py-1 px-2.5 rounded-lg">
+                                                ⏱ {game.play_time} mins
+                                            </span>
+                                        </div>
+
+                                        <p className="text-slate-600 text-sm leading-relaxed font-light line-clamp-3">
+                                            {game.description}
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div className="p-6 pt-0">
+                                    <Link
+                                        to={`/reservations?game=${encodeURIComponent(game.name)}&type=BOARD_GAME`}
+                                        className="w-full text-center block py-3 px-4 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white transition-all duration-300"
+                                    >
+                                        Réserver pour y jouer
+                                    </Link>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    <div className="text-center mt-12">
+                        <Link 
+                            to="/boardgames" 
+                            className="inline-flex items-center gap-2 text-sm font-bold text-indigo-300 hover:text-indigo-400 transition"
+                        >
+                            Voir tout le catalogue de jeux de société ➔
+                        </Link>
+                    </div>
+                </div>
+            )}
 
             {/* Testimonials Section */}
             <div className="max-w-7xl mx-auto py-20 px-4">

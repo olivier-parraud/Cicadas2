@@ -1,8 +1,222 @@
-/* 1 seule ligne ! */
 @import "tailwindcss";
-/* Classes réutilisables (optionnel) */
-@layer components {
-.btn { @apply px-6 py-2 rounded-lg font-medium transition-all; }
-.btn-primary { @apply bg-indigo-600 text-white hover:bg-indigo-700; }
-.form-input { @apply w-full px-4 py-2 border-2 rounded-lg; }
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600;700&display=swap');
+
+@theme {
+  --font-sans: 'Inter', sans-serif;
+  --font-mono: 'Share Tech Mono', monospace;
+  --font-retro: 'Orbitron', sans-serif;
+
+  /* Deep Space Backgrounds & High Contrast Text */
+  --color-slate-50: #060212;
+  --color-slate-100: #100627;
+  --color-slate-200: #251254;
+  --color-slate-300: #3b1e7a;
+  --color-slate-400: #9d88df;
+  --color-slate-500: #a78bfa;
+  --color-slate-600: #c2b5eb;
+  --color-slate-700: #dbd5f5;
+  --color-slate-800: #eeeeff;
+  --color-slate-900: #ffffff;
+
+  --color-gray-50: #060212;
+  --color-gray-100: #100627;
+  --color-gray-200: #251254;
+  --color-gray-300: #3b1e7a;
+  --color-gray-400: #9d88df;
+  --color-gray-500: #a78bfa;
+  --color-gray-600: #c2b5eb;
+  --color-gray-700: #dbd5f5;
+  --color-gray-800: #eeeeff;
+  --color-gray-900: #ffffff;
+
+  /* Glassmorphism base */
+  --color-white: #ffffff;
+
+  /* Cyber Magenta & Neon Cyan */
+  --color-indigo-50: #1e0947;
+  --color-indigo-100: #f5d0fe;
+  --color-indigo-200: #d8b4fe;
+  --color-indigo-300: #00ffff; /* Neon Cyan */
+  --color-indigo-400: #00e5ff;
+  --color-indigo-500: #00f0ff;
+  --color-indigo-600: #ff007f; /* Cyber Pink */
+  --color-indigo-700: #ff00a0;
+  --color-indigo-800: #17073c;
+  --color-indigo-900: #060214;
+  --color-indigo-950: #03000b;
+
+  --color-blue-50: #021a36;
+  --color-blue-100: #00f0ff;
+  --color-blue-200: #00e5ff;
+  --color-blue-700: #00ffff;
+  --color-blue-800: #00e5ff;
+
+  --color-purple-50: #28054a;
+  --color-purple-200: #ff00ff;
+  --color-purple-700: #ff00ff;
+
+  --color-red-500: #ff2a5f;
+  --color-red-600: #ff0040;
+  
+  --color-green-50: #042517;
+  --color-green-700: #00ffaa;
+  
+  --color-emerald-50: #042517;
+  --color-emerald-200: #00ffaa;
+  --color-emerald-700: #00ffaa;
+  --color-emerald-800: #57ffc9;
+}
+
+/* --- Global Retro-Futuristic Styling Overrides --- */
+
+body {
+  background-color: #060212;
+  font-family: 'Inter', sans-serif;
+  color: #eeeeff;
+  /* Cyber Grid Background */
+  background-image: 
+    linear-gradient(rgba(255, 0, 127, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 0, 127, 0.05) 1px, transparent 1px);
+  background-size: 35px 35px;
+  background-position: center top;
+}
+
+/* Headings with Orbitron & Neon shadow */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Orbitron', sans-serif !important;
+  letter-spacing: 0.08em;
+  text-shadow: 0 0 8px rgba(0, 240, 255, 0.4), 0 0 20px rgba(255, 0, 127, 0.2);
+}
+
+/* Force dark text classes to high-contrast colors on dark theme */
+.text-slate-950, .text-gray-950, .text-zinc-950, .text-neutral-950, .text-black {
+  color: #ffffff !important;
+}
+.text-slate-900, .text-gray-900, .text-zinc-900, .text-neutral-900 {
+  color: #f1f5f9 !important; /* light slate */
+}
+.text-slate-800, .text-gray-800, .text-zinc-800, .text-neutral-800 {
+  color: #e2e8f0 !important; /* slate-200 */
+}
+.text-slate-700, .text-gray-700, .text-zinc-700, .text-neutral-700 {
+  color: #cbd5e1 !important; /* slate-300 */
+}
+.text-slate-600, .text-gray-600, .text-zinc-600, .text-neutral-600 {
+  color: #94a3b8 !important; /* slate-400 */
+}
+.text-slate-500, .text-gray-500, .text-zinc-500, .text-neutral-500 {
+  color: #a78bfa !important; /* soft violet/lavender instead of dark grey */
+}
+.text-slate-400, .text-gray-400, .text-zinc-400, .text-neutral-400 {
+  color: #c2b5eb !important; /* soft bright lavender */
+}
+.text-slate-300, .text-gray-300, .text-zinc-300, .text-neutral-300 {
+  color: #e2e8f0 !important; /* very bright lavender-white */
+}
+.text-slate-200, .text-gray-200, .text-zinc-200, .text-neutral-200 {
+  color: #f8fafc !important; /* near white */
+}
+.text-indigo-900, .text-indigo-950 {
+  color: #00ffff !important; /* Make dark indigo titles glowing cyan */
+}
+
+/* Glassmorphism card backgrounds */
+.bg-white {
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  background-color: rgba(14, 5, 41, 0.75) !important;
+  border: 1px solid rgba(0, 240, 255, 0.2) !important;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5), inset 0 0 15px rgba(255, 0, 127, 0.08) !important;
+}
+
+/* Global inputs style */
+input, select, textarea {
+  background-color: rgba(10, 3, 30, 0.9) !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(0, 240, 255, 0.3) !important;
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.6), 0 0 5px rgba(0, 240, 255, 0.1) !important;
+  transition: all 0.3s ease !important;
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: #ff007f !important;
+  box-shadow: 0 0 12px rgba(255, 0, 127, 0.4), inset 0 0 5px rgba(255, 0, 127, 0.2) !important;
+  outline: none;
+}
+
+/* Global button overlays */
+.bg-indigo-600 {
+  background-color: #ff007f !important;
+  box-shadow: 0 0 15px rgba(255, 0, 127, 0.4) !important;
+  border: 1px solid rgba(255, 0, 127, 0.6) !important;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.4);
+  transition: all 0.3s ease !important;
+}
+
+.bg-indigo-600:hover {
+  background-color: #ff00a0 !important;
+  box-shadow: 0 0 25px rgba(255, 0, 127, 0.7), 0 0 8px rgba(0, 240, 255, 0.5) !important;
+  transform: translateY(-1px);
+}
+
+.hover\:bg-indigo-500:hover {
+  background-color: #ff00a0 !important;
+  box-shadow: 0 0 20px rgba(255, 0, 127, 0.6) !important;
+}
+
+/* Custom badges */
+.bg-indigo-50 {
+  background-color: rgba(30, 9, 71, 0.7) !important;
+  color: #00ffff !important;
+  border-color: rgba(0, 240, 255, 0.3) !important;
+}
+
+.bg-indigo-500\/10 {
+  background-color: rgba(0, 240, 255, 0.1) !important;
+  color: #00ffff !important;
+  border-color: rgba(0, 240, 255, 0.3) !important;
+}
+
+.text-indigo-300 {
+  color: #00ffff !important;
+}
+
+/* Sub-alert badges */
+.bg-emerald-50 {
+  background-color: rgba(4, 37, 23, 0.8) !important;
+  color: #00ffaa !important;
+  border-color: rgba(0, 255, 170, 0.3) !important;
+}
+
+.bg-rose-50 {
+  background-color: rgba(40, 5, 25, 0.8) !important;
+  color: #ff2a5f !important;
+  border-color: rgba(255, 42, 95, 0.3) !important;
+}
+
+/* Header & Footer overrides */
+header {
+  background-color: rgba(6, 2, 18, 0.95) !important;
+  border-bottom: 2px solid #ff007f !important;
+  box-shadow: 0 4px 20px rgba(255, 0, 127, 0.25) !important;
+}
+
+/* Scrollbar retro styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #060212;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #251254;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #ff007f;
+  box-shadow: 0 0 8px #ff007f;
 }

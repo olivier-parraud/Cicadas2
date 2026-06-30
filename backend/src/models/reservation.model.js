@@ -1,7 +1,7 @@
 import { query } from '../config/db.js';
 
 const Reservation = {
-    async create({ user_id, date, time, duration, gameType }) {
+    async create({ user_id, date, time, duration, gameType, specific_game = null }) {
         // 1. Obtenir ou créer une salle (room) par défaut si elle n'existe pas encore
         let rooms = await query('SELECT id FROM rooms LIMIT 1');
         let roomId;
@@ -32,14 +32,16 @@ const Reservation = {
         let safeGameType = 'OTHER';
         if (gameType === 'MTG') {
             safeGameType = 'MTG';
+        } else if (gameType === 'BOARD_GAME') {
+            safeGameType = 'BOARD_GAME';
         }
 
         const sql = `
-            INSERT INTO reservations (user_id, room_id, start_time, end_time, game_type, status)
-            VALUES (?, ?, ?, ?, ?, 'CONFIRMED')
+            INSERT INTO reservations (user_id, room_id, start_time, end_time, game_type, status, specific_game)
+            VALUES (?, ?, ?, ?, ?, 'CONFIRMED', ?)
         `;
 
-        const result = await query(sql, [user_id, roomId, startTime, endTime, safeGameType]);
+        const result = await query(sql, [user_id, roomId, startTime, endTime, safeGameType, specific_game]);
         return { id: result.insertId };
     }
 };

@@ -75,6 +75,49 @@ export async function testConnection() {
             ) ENGINE=InnoDB;
         `);
 
+        // Vérifier si la colonne 'specific_game' existe sur 'reservations'
+        const [specificGameCols] = await connection.execute("SHOW COLUMNS FROM reservations LIKE 'specific_game'");
+        if (specificGameCols.length === 0) {
+            await connection.execute("ALTER TABLE reservations ADD COLUMN specific_game VARCHAR(255) DEFAULT NULL");
+            console.log("Colonne 'specific_game' ajoutée à la table reservations");
+        }
+
+        // Créer la table des jeux de société si inexistante
+        await connection.execute(`
+            CREATE TABLE IF NOT EXISTS board_games (
+                id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                name VARCHAR(255) NOT NULL,
+                min_players INT UNSIGNED NOT NULL,
+                max_players INT UNSIGNED NOT NULL,
+                play_time INT UNSIGNED NOT NULL,
+                category VARCHAR(100) NOT NULL,
+                description TEXT,
+                image_url VARCHAR(500),
+                rules_url VARCHAR(500),
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            ) ENGINE=InnoDB;
+        `);
+
+        // Insérer les jeux de société par défaut s'il n'y en a pas
+        const [bgRows] = await connection.execute('SELECT COUNT(*) as count FROM board_games');
+        if (bgRows[0].count === 0) {
+            const defaultBoardGames = [
+                ['Catan', 3, 4, 90, 'Stratégie', 'Lancez-vous à la conquête de l\'île de Catan ! Fondez des colonies, construisez des routes et commercez avec vos adversaires pour remporter la victoire.', '/images/boardgames/catan.png', 'https://www.catan.com/'],
+                ['Carcassonne', 2, 5, 45, 'Pose de tuiles', 'Posez vos tuiles pour construire des routes, des abbayes et des cités médiévales, et placez vos partisans pour contrôler le territoire.', '/images/boardgames/carcassonne.png', 'https://www.zmangames.com/'],
+                ['Ticket to Ride', 2, 5, 60, 'Famille', 'Voyagez en train à travers les États-Unis et reliez les plus grandes villes pour accomplir vos objectifs secrets avant vos concurrents.', '/images/boardgames/ticket_to_ride.png', 'https://www.daysofwonder.com/'],
+                ['Azul', 2, 4, 45, 'Abstrait', 'Embellissez le palais royal d\'Évora en posant des mosaïques colorées. Un jeu tactique d\'une grande beauté et d\'une grande finesse.', '/images/boardgames/azul.png', 'https://www.planbgames.com/'],
+                ['Dixit', 3, 6, 30, 'Ambiance', 'Laissez parler votre imagination ! Devinez et faites deviner des cartes illustrées à l\'aide d\'indices énigmatiques et poétiques.', '/images/boardgames/dixit.png', 'https://www.libellud.com/'],
+                ['Codenames', 2, 8, 15, 'Ambiance / Réflexion', 'Trouvez le bon mot-indice pour faire deviner tous vos noms de code d\'agents secrets avant l\'équipe adverse. Attention à ne pas tomber sur l\'assassin !', '/images/boardgames/codenames.png', 'https://czechgames.com/']
+            ];
+            for (const bg of defaultBoardGames) {
+                await connection.execute(
+                    'INSERT INTO board_games (name, min_players, max_players, play_time, category, description, image_url, rules_url) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+                    bg
+                );
+            }
+            console.log('Jeux de société par défaut insérés');
+        }
+
         // Insérer les tournois par défaut s'il n'y en a pas
         const [rows] = await connection.execute('SELECT COUNT(*) as count FROM tournaments');
         if (rows[0].count === 0) {

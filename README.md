@@ -1,4 +1,4 @@
-﻿# 🚀 Starter Kit — Application Fullstack
+# 🚀 Starter Kit — Application Fullstack
 
 [![Node.js](https://img.shields.io/badge/Node.js-22%2B-green)](https://nodejs.org/)
 [![React](https://img.shields.io/badge/React-19-blue)](https://reactjs.org/)
@@ -53,7 +53,7 @@ npm run dev:backend
 npm run dev:frontend
 ```
 
-- **Backend** : http://localhost:5000
+- **Backend** : http://localhost:5050
 - **Frontend** : http://localhost:5173
 
 ---
@@ -191,7 +191,7 @@ backend/
 Créer `backend/.env` :
 
 ```env
-PORT=5000
+PORT=5050
 NODE_ENV=development
 APP_URL=http://localhost:5173
 

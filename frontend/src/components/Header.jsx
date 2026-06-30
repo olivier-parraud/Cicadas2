@@ -38,6 +38,7 @@ function Header() {
                 <nav className="hidden md:flex gap-8 items-center font-medium">
                     <Link to="/" className="hover:text-indigo-300 transition">Accueil</Link>
                     <Link to="/reservations" className="hover:text-indigo-300 transition">Réserver une table</Link>
+                    <Link to="/boardgames" className="hover:text-indigo-300 transition">Jeux de société</Link>
                     <Link to="/tournaments" className="hover:text-indigo-300 transition">Tournois</Link>
                     {isAuthenticated && isAdmin && (
                         <Link to="/admin" className="hover:text-indigo-300 text-indigo-200 font-bold transition">Admin</Link>

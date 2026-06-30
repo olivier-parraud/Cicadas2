@@ -1,16 +1,32 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 
 function Reservations() {
     const isAuthenticated = !!localStorage.getItem('token');
+    const location = useLocation();
 
     const [formData, setFormData] = useState({
         gameType: 'MTG',
         date: '',
         time: '14:00',
-        duration: '2'
+        duration: '2',
+        specificGame: ''
     });
     const [status, setStatus] = useState({ type: '', message: '' });
+
+    useEffect(() => {
+        const queryParams = new URLSearchParams(location.search);
+        const game = queryParams.get('game');
+        const type = queryParams.get('type');
+        
+        if (game || type) {
+            setFormData(prev => ({
+                ...prev,
+                gameType: type || prev.gameType,
+                specificGame: game || prev.specificGame
+            }));
+        }
+    }, [location]);
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -23,7 +39,7 @@ function Reservations() {
         
         try {
             const token = localStorage.getItem('token');
-            const response = await fetch('http://localhost:5000/api/reservations', {
+            const response = await fetch('http://localhost:5050/api/reservations', {
                 method: 'POST',
                 headers: { 
                     'Content-Type': 'application/json',
@@ -36,7 +52,7 @@ function Reservations() {
 
             if (response.ok) {
                 setStatus({ type: 'success', message: 'Réservation confirmée ! Votre table vous attendra.' });
-                setFormData({ ...formData, date: '', time: '14:00', duration: '2' });
+                setFormData({ ...formData, date: '', time: '14:00', duration: '2', specificGame: '' });
             } else {
                 setStatus({ type: 'error', message: data.error || 'Erreur lors de la réservation' });
             }
@@ -91,21 +107,38 @@ function Reservations() {
 
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">
-                                À quel TCG voulez-vous jouer ?
+                                À quel jeu / TCG voulez-vous jouer ?
                             </label>
                             <select 
                                 name="gameType"
                                 value={formData.gameType}
                                 onChange={handleChange}
-                                className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-white"
                             >
                                 <option value="MTG">Magic: The Gathering</option>
                                 <option value="YUGIOH">Yu-Gi-Oh!</option>
                                 <option value="POKEMON">Pokémon TCG</option>
                                 <option value="LORCANA">Disney Lorcana</option>
+                                <option value="BOARD_GAME">Jeu de société</option>
                                 <option value="OTHER">Autre</option>
                             </select>
                         </div>
+
+                        {formData.gameType === 'BOARD_GAME' && (
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    Jeu de société sélectionné
+                                </label>
+                                <input 
+                                    type="text" 
+                                    name="specificGame"
+                                    placeholder="Ex: Catan, Azul..."
+                                    value={formData.specificGame}
+                                    onChange={handleChange}
+                                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                />
+                            </div>
+                        )}
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>

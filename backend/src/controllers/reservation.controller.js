@@ -2,7 +2,7 @@ import Reservation from '../models/reservation.model.js';
 
 export const createReservation = async (req, res) => {
     try {
-        const { gameType, date, time, duration } = req.body;
+        const { gameType, date, time, duration, specificGame } = req.body;
         
         // req.user est injecté automatiquement par notre authMiddleware !
         const userId = req.user.id; 
@@ -16,7 +16,8 @@ export const createReservation = async (req, res) => {
             date,
             time,
             duration,
-            gameType
+            gameType,
+            specific_game: specificGame
         });
 
         res.status(201).json({ message: 'Réservation réussie !', reservation });

@@ -1,0 +1,155 @@
+{
+  "nav": {
+    "home": "Home",
+    "dashboard": "Dashboard",
+    "email": "Email",
+    "login": "Sign in",
+    "register": "Sign up",
+    "logout": "Sign out"
+  },
+  "home": {
+    "title": "Welcome to the Starter Kit",
+    "subtitle": "Modern React + Node.js + MySQL template",
+    "cta_start": "Get started",
+    "cta_login": "Sign in",
+    "cta_dashboard": "Go to Dashboard"
+  },
+  "login": {
+    "title": "Sign in",
+    "email": "Email",
+    "password": "Password",
+    "submit": "Sign in",
+    "loading": "Signing in...",
+    "no_account": "No account?",
+    "register_link": "Sign up"
+  },
+  "register": {
+    "title": "Create an account",
+    "email": "Email",
+    "password": "Password",
+    "confirm_password": "Confirm password",
+    "submit": "Sign up",
+    "loading": "Creating account...",
+    "already_account": "Already have an account?",
+    "login_link": "Sign in"
+  },
+  "dashboard": {
+    "title": "Welcome {{name}}!",
+    "email_label": "Email :"
+  },
+  "email": {
+    "title": "Send an email",
+    "subtitle": "Test sending a transactional email via Brevo from the starter kit.",
+    "to": "Recipient",
+    "name": "Name (optional)",
+    "subject": "Subject",
+    "message": "Message",
+    "submit": "Send email",
+    "sending": "Sending...",
+    "success": "Email sent successfully",
+    "error": "Unable to send email"
+  },
+  "errors": {
+    "passwords_mismatch": "Passwords don't match",
+    "password_too_short": "Password must be at least 6 characters",
+    "login_error": "Sign in failed",
+    "register_error": "Registration failed"
+  },
+  "footer": {
+    "copyright": "© {{year}} Azim404"
+  },
+  "home_page": {
+    "hero": {
+      "title": "Your Ultimate Magic Play Space",
+      "description": "Cicados is the perfect spot for your Magic: The Gathering, Yu-Gi-Oh!, Pokémon, and Lorcana games. Book an equipped play table, participate in our weekly tournaments, and share unique moments with a passionate community.",
+      "cta": "Book a Game Table"
+    },
+    "features": {
+      "title": "Our Main Features",
+      "subtitle": "Everything you need to play under the best conditions.",
+      "items": {
+        "booking": {
+          "title": "Online Table Booking",
+          "description": "Book your play space in just a few clicks. Choose the time, table, and duration for you and your friends."
+        },
+        "tournaments": {
+          "title": "Magic & TCG Tournaments",
+          "description": "Join our weekly friendly or competitive events. Face the best players and win booster packs!"
+        },
+        "groups": {
+          "title": "Group-Friendly Spaces",
+          "description": "Giant modular tables ideal for Commander format, drafts with friends, or your board game sessions."
+        }
+      }
+    },
+    "how_it_works": {
+      "title": "How it works",
+      "subtitle": "Three simple steps to join the community and start your game.",
+      "steps": {
+        "step_1": {
+          "title": "Choose your package",
+          "description": "Select the card game (MTG, Yu-Gi-Oh!, Pokémon...) or the table format you want."
+        },
+        "step_2": {
+          "title": "Book your slot",
+          "description": "Select the date, time, and duration. Your table is instantly reserved for you."
+        },
+        "step_3": {
+          "title": "Settle in and play",
+          "description": "Show up at the front desk on the day. Your playmats and gaming accessories are already set up!"
+        }
+      }
+    },
+    "testimonials": {
+      "title": "What our players say",
+      "subtitle": "Discover feedback from our passionate card player community.",
+      "items": [
+        {
+          "name": "Alexandre D.",
+          "role": "Magic Player (Commander)",
+          "quote": "The atmosphere is amazing and the tables are super spacious! It has become our weekly HQ for our Commander games."
+        },
+        {
+          "name": "Sophie M.",
+          "role": "Tournament Organizer",
+          "quote": "Superb event management. The setup is perfect to run drafts, and the players love how comfortable the place is."
+        },
+        {
+          "name": "Lucas R.",
+          "role": "Modern Competitive Player",
+          "quote": "Finally a clean, well-lit, and quiet place to playtest our decks before big tournaments. 100% recommended!"
+        }
+      ]
+    },
+    "cta": {
+      "title": "Ready to cast your finest spells?",
+      "description": "Book your game table today or register for our next card tournament.",
+      "buttons": {
+        "book": "Book a table",
+        "tournaments": "View tournaments"
+      }
+    },
+    "faq": {
+      "title": "Frequently Asked Questions",
+      "subtitle": "Everything you need to know about our play space and bookings.",
+      "items": [
+        {
+          "question": "What are the booking rates?",
+          "answer": "A standard table booking starts at €2 per hour per player, or is free when purchasing drinks/snacks or booster packs in the shop."
+        },
+        {
+          "question": "Do I need to bring my own cards?",
+          "answer": "Yes, for open play and constructed tournaments, you must bring your own decks. However, we sell booster packs, starter decks, and occasionally lend out demo decks."
+        },
+        {
+          "question": "How do I register for a Magic tournament?",
+          "answer": "You can register directly online on the 'Tournaments' page or in person at the shop's front desk up to 15 minutes before the event starts."
+        },
+        {
+          "question": "Can we bring outside food or drinks?",
+          "answer": "We have a café area with hot/cold drinks and snacks. To protect the tables and other players' cards, outside food and drinks are not allowed."
+        }
+      ]
+    }
+  }
+}

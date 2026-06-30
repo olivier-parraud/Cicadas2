@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'react-hot-toast';
 
 function Tournaments() {
     const { t } = useTranslation();
@@ -12,7 +13,7 @@ function Tournaments() {
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState('all');
     const [actionLoadingId, setActionLoadingId] = useState(null);
-    const [message, setMessage] = useState({ type: '', text: '' });
+    const [currentUser, setCurrentUser] = useState(null);
 
     // Track which tournament's participants dropdown is open
     const [openParticipantsId, setOpenParticipantsId] = useState(null);
@@ -21,12 +22,37 @@ function Tournaments() {
         setOpenParticipantsId(openParticipantsId === id ? null : id);
     };
 
+    // Fetch user profile if logged in
+    const fetchUserProfile = async () => {
+        if (isAuthenticated) {
+            try {
+                const token = localStorage.getItem('token');
+                const res = await fetch('http://localhost:5050/api/auth/me', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    setCurrentUser(data.user);
+                }
+            } catch (error) {
+                console.error("Erreur de récupération du profil :", error);
+            }
+        }
+    };
+
+    const getDisplayName = (user) => {
+        if (!user) return '';
+        if (user.pseudo) return user.pseudo;
+        const fullName = `${user.firstname || ''} ${user.lastname || ''}`.trim();
+        return fullName || user.email.split('@')[0];
+    };
+
     // Fetch tournaments & user registrations
     const fetchData = async (silent = false) => {
         if (!silent) setLoading(true);
         try {
             // Load tournaments list
-            const resTourneys = await fetch('http://localhost:5000/api/tournaments');
+            const resTourneys = await fetch('http://localhost:5050/api/tournaments');
             if (resTourneys.ok) {
                 const data = await resTourneys.json();
                 setTournaments(data);
@@ -35,7 +61,7 @@ function Tournaments() {
             // Load logged in user's registrations
             if (isAuthenticated) {
                 const token = localStorage.getItem('token');
-                const resRegs = await fetch('http://localhost:5000/api/tournaments/my-registrations', {
+                const resRegs = await fetch('http://localhost:5050/api/tournaments/my-registrations', {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 if (resRegs.ok) {
@@ -45,7 +71,7 @@ function Tournaments() {
             }
         } catch (error) {
             console.error("Erreur de chargement des tournois :", error);
-            setMessage({ type: 'error', text: 'Impossible de contacter le serveur.' });
+            toast.error('Impossible de contacter le serveur.');
         } finally {
             if (!silent) setLoading(false);
         }
@@ -53,6 +79,7 @@ function Tournaments() {
 
     useEffect(() => {
         fetchData();
+        fetchUserProfile();
     }, [isAuthenticated]);
 
     // Handle register / unregister click
@@ -63,11 +90,10 @@ function Tournaments() {
         }
 
         setActionLoadingId(tourneyId);
-        setMessage({ type: '', text: '' });
 
         try {
             const token = localStorage.getItem('token');
-            const url = `http://localhost:5000/api/tournaments/${tourneyId}/register`;
+            const url = `http://localhost:5050/api/tournaments/${tourneyId}/register`;
             const method = isRegistered ? 'DELETE' : 'POST';
 
             const response = await fetch(url, {
@@ -78,17 +104,45 @@ function Tournaments() {
             const data = await response.json();
 
             if (response.ok) {
-                setMessage({ 
-                    type: 'success', 
-                    text: isRegistered ? 'Désinscription réussie.' : 'Inscription au tournoi réussie ! Votre place est réservée.' 
-                });
-                // Reload data silently to update numbers and lists without full-page spinner
-                await fetchData(true);
+                const userDisplayName = getDisplayName(currentUser);
+
+                // Update myRegistrations locally
+                setMyRegistrations(prev => 
+                    isRegistered 
+                        ? prev.filter(id => id !== tourneyId) 
+                        : [...prev, tourneyId]
+                );
+
+                // Update tournaments list locally to update count and participant list
+                setTournaments(prevTournaments => 
+                    prevTournaments.map(t => {
+                        if (t.id === tourneyId) {
+                            let updatedParticipants = t.participants ? [...t.participants] : [];
+                            if (isRegistered) {
+                                updatedParticipants = updatedParticipants.filter(p => p !== userDisplayName);
+                            } else {
+                                if (userDisplayName && !updatedParticipants.includes(userDisplayName)) {
+                                    updatedParticipants.push(userDisplayName);
+                                }
+                            }
+                            return {
+                                ...t,
+                                registeredCount: isRegistered 
+                                    ? Math.max(0, t.registeredCount - 1) 
+                                    : t.registeredCount + 1,
+                                participants: updatedParticipants
+                            };
+                        }
+                        return t;
+                    })
+                );
+
+                toast.success(isRegistered ? 'Désinscription réussie.' : 'Inscription au tournoi réussie ! Votre place est réservée.');
             } else {
-                setMessage({ type: 'error', text: data.error || 'Une erreur est survenue.' });
+                toast.error(data.error || 'Une erreur est survenue.');
             }
         } catch (error) {
-            setMessage({ type: 'error', text: 'Impossible de joindre le serveur.' });
+            toast.error('Impossible de joindre le serveur.');
         } finally {
             setActionLoadingId(null);
         }
@@ -140,14 +194,6 @@ function Tournaments() {
             </div>
 
             <div className="max-w-7xl mx-auto py-12 px-4 md:px-8 space-y-8">
-                {message.text && (
-                    <div className={`p-4 rounded-xl text-sm font-semibold max-w-2xl mx-auto border transition-all ${
-                        message.type === 'success' ? 'bg-emerald-50 border-emerald-200 text-emerald-800' : 'bg-rose-50 border-rose-200 text-rose-800'
-                    }`}>
-                        {message.text}
-                    </div>
-                )}
-
                 {/* Filter Controls */}
                 <div className="flex flex-wrap justify-center gap-2">
                     <button
