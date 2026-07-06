@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import TranslatedText from '../components/TranslatedText';
 
 function Home() {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const [activeFaq, setActiveFaq] = useState(null);
     const [activeSlide, setActiveSlide] = useState(0);
     const [featuredGames, setFeaturedGames] = useState([]);
@@ -26,23 +27,23 @@ function Home() {
     const slides = [
         {
             image: "/assets/img/hero_magic.png",
-            title: "Cicados Play Space",
-            desc: "Espace principal avec tables prêtes pour vos duels"
+            title: t('home_page.slides.slide_1.title'),
+            desc: t('home_page.slides.slide_1.desc')
         },
         {
             image: "/images/place/ground_floor.png",
-            title: "Le Rez-de-chaussée",
-            desc: "Boutique, bar à boissons & étagères de jeux"
+            title: t('home_page.slides.slide_2.title'),
+            desc: t('home_page.slides.slide_2.desc')
         },
         {
             image: "/images/place/bar_zone.png",
-            title: "Le Coin Bar",
-            desc: "Sélection de boissons pour vos sessions de jeu"
+            title: t('home_page.slides.slide_3.title'),
+            desc: t('home_page.slides.slide_3.desc')
         },
         {
             image: "/images/place/upstairs_chill.png",
-            title: "La Mezzanine Gaming",
-            desc: "Lounge à l'étage avec poufs & chaises confortables"
+            title: t('home_page.slides.slide_4.title'),
+            desc: t('home_page.slides.slide_4.desc')
         }
     ];
 
@@ -280,14 +281,14 @@ function Home() {
                 <div className="max-w-7xl mx-auto py-20 px-4 border-t border-slate-200/10">
                     <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
                         <span className="inline-flex items-center gap-1.5 py-1 px-3 rounded-full text-xs font-semibold bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
-                            🎲 Ludothèque Vedette
+                            {t('home_page.featured.badge')}
                         </span>
                         <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight">
-                            Nos Jeux de Société Vedettes
+                            {t('home_page.featured.title')}
                         </h2>
                         <div className="h-1.5 w-20 bg-indigo-600 mx-auto rounded-full"></div>
                         <p className="text-lg text-slate-400 font-light">
-                            Découvrez une sélection de nos meilleurs jeux disponibles en boutique. Réservez une table et venez vous affronter !
+                            {t('home_page.featured.subtitle')}
                         </p>
                     </div>
 
@@ -305,7 +306,7 @@ function Home() {
                                             className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-500"
                                         />
                                         <span className="absolute top-4 left-4 inline-flex items-center py-1 px-3 rounded-full text-xs font-semibold bg-purple-50 text-purple-700 border border-purple-200 shadow-sm">
-                                            {game.category}
+                                            {t('categories.' + game.category, { defaultValue: game.category })}
                                         </span>
                                     </div>
 
@@ -316,10 +317,10 @@ function Home() {
 
                                         <div className="flex gap-2 text-xs font-bold text-slate-600">
                                             <span className="bg-slate-100/50 py-1 px-2.5 rounded-lg">
-                                                👥 {game.min_players} - {game.max_players} joueurs
+                                                {t('boardgames_page.players_count', { min: game.min_players, max: game.max_players })}
                                             </span>
                                             <span className="bg-slate-100/50 py-1 px-2.5 rounded-lg">
-                                                ⏱ {game.play_time} mins
+                                                {t('boardgames_page.duration', { time: game.play_time })}
                                             </span>
                                         </div>
 
@@ -327,18 +328,19 @@ function Home() {
                                             const words = game.description ? game.description.split(/\s+/) : [];
                                             const isLong = words.length > 50;
                                             const isExpanded = !!expandedGames[game.id];
-                                            const displayText = isLong && !isExpanded 
-                                                ? words.slice(0, 50).join(' ') + '...' 
-                                                : game.description;
                                             return (
                                                 <p className="text-slate-600 text-sm leading-relaxed font-light">
-                                                    {displayText}
+                                                    <TranslatedText 
+                                                        text={game.description} 
+                                                        toLang={i18n.resolvedLanguage || i18n.language || 'fr'} 
+                                                        isExpanded={isExpanded} 
+                                                    />
                                                     {isLong && (
                                                         <button
                                                             onClick={() => toggleExpand(game.id)}
                                                             className="text-indigo-600 hover:text-indigo-500 font-bold ml-1.5 inline-block focus:outline-none transition-colors cursor-pointer"
                                                         >
-                                                            {isExpanded ? 'Voir moins' : 'Voir plus'}
+                                                            {isExpanded ? t('boardgames_page.see_less') : t('boardgames_page.see_more')}
                                                         </button>
                                                     )}
                                                 </p>
@@ -352,7 +354,7 @@ function Home() {
                                         to={`/reservations?game=${encodeURIComponent(game.name)}&type=BOARD_GAME`}
                                         className="w-full text-center block py-3 px-4 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white transition-all duration-300"
                                     >
-                                        Réserver pour y jouer
+                                        {t('home_page.featured.book_to_play')}
                                     </Link>
                                 </div>
                             </div>
@@ -364,7 +366,7 @@ function Home() {
                             to="/boardgames"
                             className="inline-flex items-center gap-2 text-sm font-bold text-indigo-300 hover:text-indigo-400 transition"
                         >
-                            Voir tout le catalogue de jeux de société ➔
+                            {t('home_page.featured.view_all')}
                         </Link>
                     </div>
                 </div>

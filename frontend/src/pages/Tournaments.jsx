@@ -2,9 +2,10 @@ import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-hot-toast';
+import TranslatedText from '../components/TranslatedText';
 
 function Tournaments() {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const navigate = useNavigate();
     const isAuthenticated = !!localStorage.getItem('token');
 
@@ -71,7 +72,7 @@ function Tournaments() {
             }
         } catch (error) {
             console.error("Erreur de chargement des tournois :", error);
-            toast.error('Impossible de contacter le serveur.');
+            toast.error(t('tournaments_page.err_conn'));
         } finally {
             if (!silent) setLoading(false);
         }
@@ -137,12 +138,12 @@ function Tournaments() {
                     })
                 );
 
-                toast.success(isRegistered ? 'Désinscription réussie.' : 'Inscription au tournoi réussie ! Votre place est réservée.');
+                toast.success(isRegistered ? t('tournaments_page.success_unregister') : t('tournaments_page.success_register'));
             } else {
-                toast.error(data.error || 'Une erreur est survenue.');
+                toast.error(data.error || t('my_reservations_page.load_tables_error'));
             }
         } catch (error) {
-            toast.error('Impossible de joindre le serveur.');
+            toast.error(t('tournaments_page.err_conn'));
         } finally {
             setActionLoadingId(null);
         }
@@ -182,13 +183,13 @@ function Tournaments() {
 
                 <div className="max-w-4xl mx-auto space-y-6 relative z-10">
                     <span className="inline-flex items-center gap-1.5 py-1 px-3 rounded-full text-xs font-semibold bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
-                        🏆 Événements Officiels Cicados
+                        🏆 {t('tournaments_page.badge')}
                     </span>
                     <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight bg-clip-text bg-gradient-to-r from-white via-indigo-100 to-indigo-300 leading-tight">
-                        Tournois & Soirées TCG
+                        {t('tournaments_page.title')}
                     </h1>
                     <p className="text-lg text-slate-300 max-w-2xl mx-auto leading-relaxed font-light">
-                        Rejoignez nos compétitions locales, défiez la communauté et tentez de remporter des boosters promo et des lots exclusifs !
+                        {t('tournaments_page.subtitle')}
                     </p>
                 </div>
             </div>
@@ -204,7 +205,7 @@ function Tournaments() {
                                 : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
                         }`}
                     >
-                        Tous les tournois
+                        {t('tournaments_page.all_tournaments')}
                     </button>
                     <button
                         onClick={() => setFilter('mtg')}
@@ -241,53 +242,53 @@ function Tournaments() {
                 {loading ? (
                     <div className="text-center py-12 space-y-4">
                         <div className="w-10 h-10 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
-                        <p className="text-slate-500 text-sm">Chargement des événements...</p>
+                        <p className="text-slate-500 text-sm">{t('tournaments_page.loading')}</p>
                     </div>
                 ) : filteredTournaments.length === 0 ? (
                     <div className="bg-white p-12 rounded-3xl border border-slate-200/60 text-center max-w-xl mx-auto space-y-4 shadow-sm">
                         <span className="text-4xl">🏆</span>
-                        <h3 className="text-lg font-bold text-slate-900">Aucun tournoi planifié</h3>
+                        <h3 className="text-lg font-bold text-slate-900">{t('tournaments_page.no_tourneys')}</h3>
                         <p className="text-slate-500 font-light text-sm">
-                            Il n'y a pas de tournois correspondants à cette catégorie pour le moment. Revenez bientôt !
+                            {t('tournaments_page.no_tourneys_desc')}
                         </p>
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
-                        {filteredTournaments.map((t) => {
-                            const isRegistered = myRegistrations.includes(t.id);
-                            const isFull = t.registeredCount >= t.capacity;
-                            const tourneyDate = new Date(t.date);
+                        {filteredTournaments.map((tourney) => {
+                            const isRegistered = myRegistrations.includes(tourney.id);
+                            const isFull = tourney.registeredCount >= tourney.capacity;
+                            const tourneyDate = new Date(tourney.date);
 
-                            const formattedDate = tourneyDate.toLocaleDateString('fr-FR', {
+                            const formattedDate = tourneyDate.toLocaleDateString(i18n.resolvedLanguage || i18n.language || 'fr', {
                                 weekday: 'long', 
                                 year: 'numeric', 
                                 month: 'long', 
                                 day: 'numeric'
                             });
-                            const formattedTime = tourneyDate.toLocaleTimeString('fr-FR', {
+                            const formattedTime = tourneyDate.toLocaleTimeString(i18n.resolvedLanguage || i18n.language || 'fr', {
                                 hour: '2-digit', 
                                 minute: '2-digit'
                             });
 
                             return (
                                 <div 
-                                    key={t.id}
+                                    key={tourney.id}
                                     className="bg-white rounded-3xl border border-slate-100 p-6 md:p-8 flex flex-col justify-between hover:shadow-xl hover:border-indigo-100 transition-all duration-300 relative group"
                                 >
                                     <div className="space-y-4">
                                         {/* Game badge & price */}
                                         <div className="flex justify-between items-center gap-4">
-                                            <span className={`inline-flex items-center gap-1.5 py-1 px-3 rounded-full text-xs font-semibold border ${getGameColorClass(t.game)}`}>
-                                                {getGameEmoji(t.game)} {t.game}
+                                            <span className={`inline-flex items-center gap-1.5 py-1 px-3 rounded-full text-xs font-semibold border ${getGameColorClass(tourney.game)}`}>
+                                                {getGameEmoji(tourney.game)} {tourney.game}
                                             </span>
                                             <span className="text-sm font-extrabold text-indigo-600 bg-indigo-50 py-1.5 px-3.5 rounded-xl font-mono">
-                                                {t.price === 0 || t.price === "0.00" ? 'Gratuit' : `${Number(t.price).toFixed(2)}€`}
+                                                {tourney.price === 0 || tourney.price === "0.00" ? t('tournaments_page.free') : `${Number(tourney.price).toFixed(2)}€`}
                                             </span>
                                         </div>
 
                                         {/* Tournament title */}
                                         <h3 className="text-xl font-extrabold text-slate-950 tracking-tight group-hover:text-indigo-600 transition-colors">
-                                            {t.name}
+                                            {tourney.name}
                                         </h3>
 
                                         {/* Date and details */}
@@ -299,39 +300,39 @@ function Tournaments() {
                                             <div className="flex items-center gap-2.5">
                                                 <span>👥</span>
                                                 <span>
-                                                    Capacité : <strong className="text-slate-950 font-bold">{t.registeredCount}</strong> / {t.capacity} joueurs
+                                                    {t('tournaments_page.capacity', { registered: tourney.registeredCount, capacity: tourney.capacity })}
                                                 </span>
                                             </div>
                                         </div>
 
                                         <p className="text-slate-600 text-sm leading-relaxed font-light pt-2">
-                                            {t.description}
+                                            <TranslatedText text={tourney.description} toLang={i18n.resolvedLanguage || i18n.language || 'fr'} />
                                         </p>
 
                                         {/* Collapsible Registered Players List */}
                                         <div className="mt-4 pt-3 border-t border-slate-100">
                                             <button 
                                                 type="button"
-                                                onClick={() => toggleParticipants(t.id)}
+                                                onClick={() => toggleParticipants(tourney.id)}
                                                 className="flex items-center justify-between w-full text-left text-xs font-semibold text-slate-500 hover:text-indigo-600 transition"
                                             >
-                                                <span>👥 Liste des inscrits ({t.participants?.length || 0})</span>
-                                                <span className={`transition-transform duration-200 transform ${openParticipantsId === t.id ? 'rotate-180' : ''}`}>
+                                                <span>{t('tournaments_page.registered_list', { count: tourney.participants?.length || 0 })}</span>
+                                                <span className={`transition-transform duration-200 transform ${openParticipantsId === tourney.id ? 'rotate-180' : ''}`}>
                                                     ▼
                                                 </span>
                                             </button>
                                             
-                                            {openParticipantsId === t.id && (
+                                            {openParticipantsId === tourney.id && (
                                                 <div className="mt-2 space-y-1.5 bg-slate-50 p-3 rounded-xl border border-slate-200/50 max-h-36 overflow-y-auto">
-                                                    {t.participants && t.participants.length > 0 ? (
-                                                        t.participants.map((pName, index) => (
+                                                    {tourney.participants && tourney.participants.length > 0 ? (
+                                                        tourney.participants.map((pName, index) => (
                                                             <div key={index} className="text-xs text-slate-700 flex items-center gap-2">
                                                                 <span className="w-1.5 h-1.5 bg-indigo-500 rounded-full"></span>
                                                                 <span>{pName}</span>
                                                             </div>
                                                         ))
                                                     ) : (
-                                                        <div className="text-xs text-slate-400 italic">Aucun inscrit pour le moment.</div>
+                                                        <div className="text-xs text-slate-400 italic">{t('tournaments_page.no_registered')}</div>
                                                     )}
                                                 </div>
                                             )}
@@ -345,12 +346,12 @@ function Tournaments() {
                                                 to="/login"
                                                 className="w-full text-center py-3 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold rounded-xl text-xs transition duration-300"
                                             >
-                                                Connexion requise pour participer
+                                                {t('tournaments_page.login_required')}
                                             </Link>
                                         ) : (
                                             <button
-                                                onClick={() => handleAction(t.id, isRegistered)}
-                                                disabled={actionLoadingId === t.id || (!isRegistered && isFull)}
+                                                onClick={() => handleAction(tourney.id, isRegistered)}
+                                                disabled={actionLoadingId === tourney.id || (!isRegistered && isFull)}
                                                 className={`w-full py-3 px-4 rounded-xl text-xs font-bold transition-all duration-300 flex items-center justify-center gap-2 shadow-sm ${
                                                     isRegistered 
                                                         ? 'bg-red-50 text-red-700 hover:bg-red-100/80 border border-red-200' 
@@ -359,14 +360,14 @@ function Tournaments() {
                                                             : 'bg-indigo-600 hover:bg-indigo-500 text-white shadow-indigo-600/10'
                                                 }`}
                                             >
-                                                {actionLoadingId === t.id ? (
+                                                {actionLoadingId === tourney.id ? (
                                                     <span className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></span>
                                                 ) : isRegistered ? (
-                                                    'Se désinscrire'
+                                                    t('tournaments_page.unregister')
                                                 ) : isFull ? (
-                                                    'Complet'
+                                                    t('tournaments_page.full')
                                                 ) : (
-                                                    "S'inscrire"
+                                                    t('tournaments_page.register')
                                                 )}
                                             </button>
                                         )}

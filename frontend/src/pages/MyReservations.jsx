@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import TranslatedText from '../components/TranslatedText';
 
 function MyReservations() {
+    const { t, i18n } = useTranslation();
     const isAuthenticated = !!localStorage.getItem('token');
 
     // Reservations state
@@ -44,11 +47,11 @@ function MyReservations() {
                 const data = await response.json();
                 setReservations(data);
             } else {
-                setReservationsError('Impossible de charger vos réservations.');
+                setReservationsError(t('my_reservations_page.load_tables_error'));
             }
         } catch (err) {
             console.error(err);
-            setReservationsError('Erreur de connexion pour les réservations.');
+            setReservationsError(t('my_reservations_page.err_conn'));
         } finally {
             setLoadingReservations(false);
         }
@@ -67,11 +70,11 @@ function MyReservations() {
                 const data = await response.json();
                 setTournaments(data);
             } else {
-                setTournamentsError('Impossible de charger vos inscriptions aux tournois.');
+                setTournamentsError(t('my_reservations_page.load_tourneys_error'));
             }
         } catch (err) {
             console.error(err);
-            setTournamentsError('Erreur de connexion pour les tournois.');
+            setTournamentsError(t('my_reservations_page.err_conn'));
         } finally {
             setLoadingTournaments(false);
         }
@@ -100,7 +103,7 @@ function MyReservations() {
     }, []);
 
     const handleCancel = async (id) => {
-        if (!window.confirm('Êtes-vous sûr de vouloir annuler cette réservation ?')) return;
+        if (!window.confirm(t('my_reservations_page.confirm_cancel'))) return;
 
         try {
             const token = localStorage.getItem('token');
@@ -114,16 +117,16 @@ function MyReservations() {
             if (response.ok) {
                 setReservations(prev => prev.filter(res => res.id !== id));
             } else {
-                alert("Une erreur s'est produite lors de l'annulation.");
+                alert(t('my_reservations_page.load_tables_error'));
             }
         } catch (err) {
             console.error(err);
-            alert("Erreur de connexion avec le serveur.");
+            alert(t('my_reservations_page.err_conn'));
         }
     };
 
     const handleUnregisterTournament = async (tournamentId) => {
-        if (!window.confirm('Êtes-vous sûr de vouloir vous désinscrire de ce tournoi ?')) return;
+        if (!window.confirm(t('my_reservations_page.confirm_unregister'))) return;
 
         try {
             const token = localStorage.getItem('token');
@@ -137,11 +140,11 @@ function MyReservations() {
             if (response.ok) {
                 setTournaments(prev => prev.filter(t => t.id !== tournamentId));
             } else {
-                alert("Une erreur s'est produite lors de la désinscription.");
+                alert(t('my_reservations_page.load_tourneys_error'));
             }
         } catch (err) {
             console.error(err);
-            alert("Erreur de connexion avec le serveur.");
+            alert(t('my_reservations_page.err_conn'));
         }
     };
 
@@ -198,17 +201,17 @@ function MyReservations() {
             const data = await response.json();
 
             if (response.ok) {
-                setEditSuccess('Réservation modifiée avec succès !');
+                setEditSuccess(t('my_reservations_page.edit_success'));
                 setTimeout(() => {
                     setEditingReservation(null);
                     fetchUserReservations();
                 }, 1000);
             } else {
-                setEditError(data.error || 'Erreur lors de la modification.');
+                setEditError(data.error || t('my_reservations_page.load_tables_error'));
             }
         } catch (err) {
             console.error(err);
-            setEditError('Impossible de contacter le serveur.');
+            setEditError(t('my_reservations_page.err_conn'));
         }
     };
 
@@ -218,9 +221,9 @@ function MyReservations() {
             case 'YUGIOH': return 'Yu-Gi-Oh!';
             case 'POKEMON': return 'Pokémon TCG';
             case 'LORCANA': return 'Disney Lorcana';
-            case 'BOARD_GAME': return 'Jeux de plateau';
-            case 'BYOG': return "J'apporte mon jeu";
-            default: return 'Autre';
+            case 'BOARD_GAME': return t('my_reservations_page.board_game_type');
+            case 'BYOG': return t('my_reservations_page.byog_type');
+            default: return t('my_reservations_page.other_type');
         }
     };
 
@@ -272,12 +275,12 @@ function MyReservations() {
             <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4">
                 <div className="bg-white p-8 rounded-3xl shadow-xl border border-slate-100 max-w-md w-full text-center space-y-6">
                     <div className="text-5xl">🔒</div>
-                    <h2 className="text-2xl font-bold text-slate-900">Connexion requise</h2>
+                    <h2 className="text-2xl font-bold text-slate-900">{t('my_reservations_page.need_auth')}</h2>
                     <p className="text-slate-500 font-light text-sm">
-                        Vous devez être connecté à votre compte Cicados pour consulter vos réservations et inscriptions.
+                        {t('my_reservations_page.need_auth_desc')}
                     </p>
                     <Link to="/login" className="bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 px-6 rounded-xl transition shadow-md w-full block text-xs">
-                        Se connecter
+                        {t('my_reservations_page.login_btn')}
                     </Link>
                 </div>
             </div>
@@ -291,18 +294,18 @@ function MyReservations() {
                 {/* Header */}
                 <div className="text-center space-y-3">
                     <span className="inline-flex items-center gap-1.5 py-1 px-3 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-100">
-                        📋 Votre agenda Cicados
+                        {t('my_reservations_page.badge')}
                     </span>
-                    <h1 className="text-3xl md:text-5xl font-extrabold text-slate-950 tracking-tight">Mes Activités</h1>
+                    <h1 className="text-3xl md:text-5xl font-extrabold text-slate-950 tracking-tight">{t('my_reservations_page.title')}</h1>
                     <p className="text-sm md:text-base text-slate-500 max-w-xl mx-auto font-light">
-                        Retrouvez ici vos tables réservées et vos tournois à venir. Modifiez vos créneaux ou désinscrivez-vous en un clic.
+                        {t('my_reservations_page.subtitle')}
                     </p>
                 </div>
 
                 {/* Section Réservations de table */}
                 <div className="space-y-6">
                     <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
-                        <span>🪑</span> Mes réservations de tables
+                        <span>🪑</span> {t('my_reservations_page.tables_title')}
                     </h2>
 
                     {reservationsError && (
@@ -314,30 +317,30 @@ function MyReservations() {
                     {loadingReservations ? (
                         <div className="py-10 text-center space-y-3">
                             <div className="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
-                            <p className="text-xs text-slate-400">Chargement de vos tables...</p>
+                            <p className="text-xs text-slate-400">{t('my_reservations_page.loading_tables')}</p>
                         </div>
                     ) : reservations.length === 0 ? (
                         <div className="py-12 text-center bg-white rounded-3xl border border-slate-100 shadow-md max-w-md mx-auto p-6 space-y-4">
                             <span className="text-4xl">🗓️</span>
-                            <h3 className="text-sm font-bold text-slate-900">Aucune table réservée</h3>
+                            <h3 className="text-sm font-bold text-slate-900">{t('my_reservations_page.no_tables')}</h3>
                             <p className="text-xs text-slate-400 font-light leading-relaxed">
-                                Vous n'avez pas de table réservée pour le moment.
+                                {t('my_reservations_page.no_tables_desc')}
                             </p>
                             <Link to="/reservations" className="bg-indigo-650 hover:bg-indigo-600 text-white font-bold py-2.5 px-6 rounded-xl transition shadow-md w-full block text-xs">
-                                Réserver une table
+                                {t('my_reservations_page.book_table_btn')}
                             </Link>
                         </div>
                     ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             {reservations.map((res) => {
                                 const startTimeLocal = new Date(res.start_time);
-                                const formattedDate = startTimeLocal.toLocaleDateString('fr-FR', {
+                                const formattedDate = startTimeLocal.toLocaleDateString(i18n.resolvedLanguage || i18n.language || 'fr', {
                                     weekday: 'long',
                                     day: 'numeric',
                                     month: 'long',
                                     year: 'numeric'
                                 });
-                                const formattedTime = startTimeLocal.toLocaleTimeString('fr-FR', {
+                                const formattedTime = startTimeLocal.toLocaleTimeString(i18n.resolvedLanguage || i18n.language || 'fr', {
                                     hour: '2-digit',
                                     minute: '2-digit'
                                 });
@@ -377,11 +380,16 @@ function MyReservations() {
                                                 </div>
                                                 <div className="flex items-center gap-2">
                                                     <span>⏱️</span>
-                                                    <span>Arrivée à <strong>{formattedTime}</strong> ({res.end_time ? 'durée ' + Math.round((new Date(res.end_time) - new Date(res.start_time)) / (1000 * 60 * 60)) + 'h' : ''})</span>
+                                                    <span>
+                                                        {t('my_reservations_page.duration_hours', {
+                                                            time: formattedTime,
+                                                            duration: res.end_time ? Math.round((new Date(res.end_time) - new Date(res.start_time)) / (1000 * 60 * 60)) : 2
+                                                        })}
+                                                    </span>
                                                 </div>
                                                 <div className="flex items-center gap-2">
                                                     <span>👥</span>
-                                                    <span>{res.players_count} joueurs</span>
+                                                    <span>{t('reservations_page.players', { count: res.players_count })}</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -392,13 +400,13 @@ function MyReservations() {
                                                 onClick={() => openEditModal(res)}
                                                 className="flex-1 py-2.5 bg-slate-50 hover:bg-slate-100 text-slate-800 font-bold border border-slate-200 rounded-xl text-xs transition cursor-pointer"
                                             >
-                                                ✏️ Modifier
+                                                {t('my_reservations_page.edit_btn')}
                                             </button>
                                             <button
                                                 onClick={() => handleCancel(res.id)}
                                                 className="flex-1 py-2.5 bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold border border-rose-150 rounded-xl text-xs transition cursor-pointer"
                                             >
-                                                ❌ Annuler
+                                                {t('my_reservations_page.cancel_btn')}
                                             </button>
                                         </div>
                                     </div>
@@ -411,7 +419,7 @@ function MyReservations() {
                 {/* Section Inscriptions aux tournois */}
                 <div className="space-y-6 pt-6 border-t border-slate-200">
                     <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
-                        <span>🏆</span> Mes inscriptions aux tournois
+                        <span>🏆</span> {t('my_reservations_page.tournaments_title')}
                     </h2>
 
                     {tournamentsError && (
@@ -423,53 +431,53 @@ function MyReservations() {
                     {loadingTournaments ? (
                         <div className="py-10 text-center space-y-3">
                             <div className="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
-                            <p className="text-xs text-slate-400">Chargement de vos tournois...</p>
+                            <p className="text-xs text-slate-400">{t('my_reservations_page.loading_tourneys')}</p>
                         </div>
                     ) : tournaments.length === 0 ? (
                         <div className="py-12 text-center bg-white rounded-3xl border border-slate-100 shadow-md max-w-md mx-auto p-6 space-y-4">
                             <span className="text-4xl">⚔️</span>
-                            <h3 className="text-sm font-bold text-slate-900">Aucun tournoi planifié</h3>
+                            <h3 className="text-sm font-bold text-slate-900">{t('my_reservations_page.no_tourneys')}</h3>
                             <p className="text-xs text-slate-400 font-light leading-relaxed">
-                                Vous n'êtes inscrit à aucun tournoi de cartes ou de jeux pour le moment.
+                                {t('my_reservations_page.no_tourneys_desc')}
                             </p>
                             <Link to="/tournaments" className="bg-indigo-650 hover:bg-indigo-600 text-white font-bold py-2.5 px-6 rounded-xl transition shadow-md w-full block text-xs">
-                                Voir les tournois
+                                {t('my_reservations_page.view_tourneys_btn')}
                             </Link>
                         </div>
                     ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            {tournaments.map((t) => {
-                                const tournamentDate = new Date(t.date);
-                                const formattedDate = tournamentDate.toLocaleDateString('fr-FR', {
+                            {tournaments.map((tItem) => {
+                                const tournamentDate = new Date(tItem.date);
+                                const formattedDate = tournamentDate.toLocaleDateString(i18n.resolvedLanguage || i18n.language || 'fr', {
                                     weekday: 'long',
                                     day: 'numeric',
                                     month: 'long',
                                     year: 'numeric'
                                 });
-                                const formattedTime = tournamentDate.toLocaleTimeString('fr-FR', {
+                                const formattedTime = tournamentDate.toLocaleTimeString(i18n.resolvedLanguage || i18n.language || 'fr', {
                                     hour: '2-digit',
                                     minute: '2-digit'
                                 });
 
                                 return (
-                                    <div key={t.id} className="bg-white rounded-3xl border border-slate-100 shadow-xl overflow-hidden hover:shadow-2xl transition duration-300 flex flex-col justify-between">
+                                    <div key={tItem.id} className="bg-white rounded-3xl border border-slate-100 shadow-xl overflow-hidden hover:shadow-2xl transition duration-300 flex flex-col justify-between">
                                         <div className="p-6 space-y-4">
                                             <div className="flex justify-between items-start gap-2">
                                                 <div>
                                                     <span className="inline-block text-[10px] uppercase font-bold tracking-wider text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-100">
-                                                        {t.game}
+                                                        {tItem.game}
                                                     </span>
                                                     <h3 className="text-base font-extrabold text-slate-950 mt-1">
-                                                        {t.name}
+                                                        {tItem.name}
                                                     </h3>
                                                 </div>
                                                 <span className="text-xs font-extrabold text-indigo-600 bg-indigo-50 py-1.5 px-3 rounded-xl border border-indigo-100">
-                                                    {parseFloat(t.price) === 0 ? 'Gratuit' : `${t.price} €`}
+                                                    {parseFloat(tItem.price) === 0 ? t('my_reservations_page.free_price') : `${tItem.price} €`}
                                                 </span>
                                             </div>
 
                                             <p className="text-xs text-slate-500 font-light leading-relaxed line-clamp-2">
-                                                {t.description}
+                                                 <TranslatedText text={tItem.description} toLang={i18n.resolvedLanguage || i18n.language || 'fr'} />
                                             </p>
 
                                             <div className="space-y-2 pt-2 border-t border-slate-50 text-xs font-medium text-slate-600">
@@ -483,17 +491,17 @@ function MyReservations() {
                                                 </div>
                                                 <div className="flex items-center gap-2">
                                                     <span>👥</span>
-                                                    <span>{t.registeredCount} / {t.capacity} joueurs inscrits</span>
+                                                    <span>{t('tournaments_page.capacity', { registered: tItem.registeredCount, capacity: tItem.capacity })}</span>
                                                 </div>
                                             </div>
                                         </div>
 
                                         <div className="p-6 pt-0 border-t border-slate-50 flex">
                                             <button
-                                                onClick={() => handleUnregisterTournament(t.id)}
+                                                onClick={() => handleUnregisterTournament(tItem.id)}
                                                 className="w-full py-2.5 bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold border border-rose-150 rounded-xl text-xs transition cursor-pointer"
                                             >
-                                                ❌ Se désinscrire du tournoi
+                                                {t('my_reservations_page.unregister_tourney_btn')}
                                             </button>
                                         </div>
                                     </div>
@@ -511,7 +519,7 @@ function MyReservations() {
                     <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full overflow-hidden border border-slate-100 space-y-6 p-6 animate-in fade-in zoom-in duration-200">
                         <div className="flex justify-between items-center pb-3 border-b border-slate-100">
                             <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-                                <span>✏️</span> Modifier la réservation
+                                <span>✏️</span> {t('my_reservations_page.modal_edit_title')}
                             </h2>
                             <button
                                 onClick={() => setEditingReservation(null)}
@@ -535,7 +543,7 @@ function MyReservations() {
                             )}
 
                             <div className="space-y-1">
-                                <label className="text-xs font-bold text-slate-500 uppercase">Jeu / TCG</label>
+                                <label className="text-xs font-bold text-slate-500 uppercase">{t('reservations_page.game_type_label')}</label>
                                 <select
                                     name="gameType"
                                     value={editFormData.gameType}
@@ -546,15 +554,15 @@ function MyReservations() {
                                     <option value="YUGIOH">Yu-Gi-Oh!</option>
                                     <option value="POKEMON">Pokémon TCG</option>
                                     <option value="LORCANA">Disney Lorcana</option>
-                                    <option value="BOARD_GAME">Jeu de société</option>
-                                    <option value="BYOG">J'apporte mon jeu</option>
-                                    <option value="OTHER">Autre</option>
+                                    <option value="BOARD_GAME">{t('my_reservations_page.board_game_type')}</option>
+                                    <option value="BYOG">{t('reservations_page.byog_label')}</option>
+                                    <option value="OTHER">{t('reservations_page.other_label')}</option>
                                 </select>
                             </div>
 
                             {editFormData.gameType === 'BOARD_GAME' && (
                                 <div className="space-y-1 relative">
-                                    <label className="text-xs font-bold text-slate-500 uppercase">Jeu de société</label>
+                                    <label className="text-xs font-bold text-slate-500 uppercase">{t('reservations_page.specific_game_label')}</label>
                                     <input
                                         type="text"
                                         name="specificGame"
@@ -603,7 +611,7 @@ function MyReservations() {
                                                 }
                                                 {boardGames.filter(g => g.name.toLowerCase().includes((editFormData.specificGame || '').toLowerCase())).length === 0 && (
                                                     <div className="p-4 text-xs text-slate-500 font-light text-center">
-                                                        Aucun jeu trouvé (vous pouvez écrire le nom manuellement)
+                                                        {t('reservations_page.no_game_found')}
                                                     </div>
                                                 )}
                                             </div>
@@ -613,27 +621,27 @@ function MyReservations() {
                             )}
 
                              <div className="space-y-1">
-                                 <label className="text-xs font-bold text-slate-500 uppercase">Nombre de joueurs</label>
+                                 <label className="text-xs font-bold text-slate-500 uppercase">{t('reservations_page.players_count_label')}</label>
                                  <select
                                      name="playersCount"
                                      value={editFormData.playersCount}
                                      onChange={handleEditChange}
                                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-650 bg-white"
                                  >
-                                     <option value="1">1 joueur</option>
-                                     <option value="2">2 joueurs</option>
-                                     <option value="3">3 joueurs</option>
-                                     <option value="4">4 joueurs</option>
-                                     <option value="5">5 joueurs</option>
-                                     <option value="6">6 joueurs</option>
-                                     <option value="7">7 joueurs</option>
-                                     <option value="8">8+ joueurs</option>
+                                     <option value="1">{t('reservations_page.player')}</option>
+                                     <option value="2">{t('reservations_page.players', { count: 2 })}</option>
+                                     <option value="3">{t('reservations_page.players', { count: 3 })}</option>
+                                     <option value="4">{t('reservations_page.players', { count: 4 })}</option>
+                                     <option value="5">{t('reservations_page.players', { count: 5 })}</option>
+                                     <option value="6">{t('reservations_page.players', { count: 6 })}</option>
+                                     <option value="7">{t('reservations_page.players', { count: 7 })}</option>
+                                     <option value="8">{t('reservations_page.players_8')}</option>
                                  </select>
                              </div>
 
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-1">
-                                    <label className="text-xs font-bold text-slate-500 uppercase">Date</label>
+                                    <label className="text-xs font-bold text-slate-500 uppercase">{t('reservations_page.date_label')}</label>
                                     <input
                                         type="date"
                                         name="date"
@@ -646,7 +654,7 @@ function MyReservations() {
                                 </div>
 
                                 <div className="space-y-1">
-                                    <label className="text-xs font-bold text-slate-500 uppercase">Heure</label>
+                                    <label className="text-xs font-bold text-slate-500 uppercase">{t('reservations_page.time_label')}</label>
                                     <input
                                         type="time"
                                         name="time"
@@ -661,7 +669,7 @@ function MyReservations() {
                             </div>
 
                             <div className="space-y-1">
-                                <label className="text-xs font-bold text-slate-500 uppercase">Durée (heures)</label>
+                                <label className="text-xs font-bold text-slate-500 uppercase">{t('reservations_page.duration_label')}</label>
                                 <input
                                     type="number"
                                     name="duration"
@@ -680,13 +688,13 @@ function MyReservations() {
                                     onClick={() => setEditingReservation(null)}
                                     className="flex-1 py-3 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold rounded-xl text-xs transition cursor-pointer"
                                 >
-                                    Fermer
+                                    {t('my_reservations_page.modal_close')}
                                 </button>
                                 <button
                                     type="submit"
                                     className="flex-1 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs transition cursor-pointer"
                                 >
-                                    Enregistrer
+                                    {t('my_reservations_page.modal_save')}
                                 </button>
                             </div>
                         </form>

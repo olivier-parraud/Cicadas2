@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import TranslatedText from '../components/TranslatedText';
 
 function BoardGames() {
+    const { t, i18n } = useTranslation();
     const navigate = useNavigate();
     const [boardGames, setBoardGames] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -26,13 +29,13 @@ function BoardGames() {
             try {
                 const response = await fetch('http://localhost:5050/api/boardgames');
                 if (!response.ok) {
-                    throw new Error('Erreur lors du chargement des jeux de société');
+                    throw new Error(t('boardgames_page.load_err'));
                 }
                 const data = await response.json();
                 setBoardGames(data);
             } catch (err) {
                 console.error(err);
-                setError(err.message || 'Impossible de se connecter au serveur.');
+                setError(err.message || t('tournaments_page.err_conn'));
             } finally {
                 setLoading(false);
             }
@@ -79,13 +82,13 @@ function BoardGames() {
 
                 <div className="max-w-4xl mx-auto space-y-6 relative z-10">
                     <span className="inline-flex items-center gap-1.5 py-1 px-3 rounded-full text-xs font-semibold bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
-                        🎲 Ludothèque de la Boutique
+                        🎲 {t('boardgames_page.badge')}
                     </span>
                     <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight bg-clip-text bg-gradient-to-r from-white via-indigo-100 to-indigo-300 leading-tight">
-                        Nos Jeux de Société Disponibles
+                        {t('boardgames_page.title')}
                     </h1>
                     <p className="text-lg text-slate-300 max-w-2xl mx-auto leading-relaxed font-light">
-                        Parcourez notre catalogue de jeux en libre accès à la boutique. Réservez une table et venez passer un moment convivial en famille ou entre amis !
+                        {t('boardgames_page.subtitle')}
                     </p>
                 </div>
             </div>
@@ -101,10 +104,10 @@ function BoardGames() {
                 <div className="bg-white p-6 rounded-3xl border border-slate-200/60 shadow-sm flex flex-col md:flex-row gap-4 items-stretch justify-between">
                     {/* Search Field */}
                     <div className="flex-1 min-w-[250px]">
-                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Rechercher un jeu</label>
+                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">{t('boardgames_page.search_label')}</label>
                         <input
                             type="text"
-                            placeholder="Rechercher par nom, description..."
+                            placeholder={t('boardgames_page.search_placeholder')}
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             className="w-full py-2.5 px-4 rounded-xl text-sm border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-colors"
@@ -113,7 +116,7 @@ function BoardGames() {
 
                     {/* Category Filter */}
                     <div className="w-full md:w-64">
-                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Catégorie</label>
+                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">{t('boardgames_page.category_label')}</label>
                         <select
                             value={selectedCategory}
                             onChange={(e) => setSelectedCategory(e.target.value)}
@@ -121,7 +124,7 @@ function BoardGames() {
                         >
                             {categories.map(cat => (
                                 <option key={cat} value={cat}>
-                                    {cat === 'All' ? 'Toutes les catégories' : cat}
+                                    {cat === 'All' ? t('boardgames_page.all_categories') : t('categories.' + cat, { defaultValue: cat })}
                                 </option>
                             ))}
                         </select>
@@ -129,10 +132,10 @@ function BoardGames() {
 
                     {/* Players Filter */}
                     <div className="w-full md:w-48">
-                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Nombre de joueurs</label>
+                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">{t('boardgames_page.players_label')}</label>
                         <input
                             type="number"
-                            placeholder="Ex: 4"
+                            placeholder={t('boardgames_page.players_placeholder')}
                             min="1"
                             value={playersFilter}
                             onChange={(e) => setPlayersFilter(e.target.value)}
@@ -145,14 +148,14 @@ function BoardGames() {
                 {loading ? (
                     <div className="text-center py-20 space-y-4">
                         <div className="w-10 h-10 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
-                        <p className="text-slate-500 text-sm">Chargement de la ludothèque...</p>
+                        <p className="text-slate-500 text-sm">{t('boardgames_page.loading')}</p>
                     </div>
                 ) : filteredGames.length === 0 ? (
                     <div className="bg-white p-12 rounded-3xl border border-slate-200/60 text-center max-w-xl mx-auto space-y-4 shadow-sm">
                         <span className="text-4xl">🎲</span>
-                        <h3 className="text-lg font-bold text-slate-900">Aucun jeu trouvé</h3>
+                        <h3 className="text-lg font-bold text-slate-900">{t('boardgames_page.no_game')}</h3>
                         <p className="text-slate-500 font-light text-sm">
-                            Il n'y a pas de jeux correspondants à vos critères de recherche pour le moment. Réessayez avec d'autres filtres !
+                            {t('boardgames_page.no_game_desc')}
                         </p>
                     </div>
                 ) : (
@@ -176,7 +179,7 @@ function BoardGames() {
                                             }}
                                         />
                                         <span className={`absolute top-4 left-4 inline-flex items-center py-1 px-3 rounded-full text-xs font-semibold border shadow-sm ${getCategoryColorClass(game.category)}`}>
-                                            {game.category}
+                                            {t('categories.' + game.category, { defaultValue: game.category })}
                                         </span>
                                     </div>
 
@@ -189,10 +192,10 @@ function BoardGames() {
                                         {/* Badges row */}
                                         <div className="flex flex-wrap gap-2 text-xs font-bold text-slate-600">
                                             <span className="bg-slate-100 py-1.5 px-3 rounded-xl flex items-center gap-1.5">
-                                                👥 {game.min_players} - {game.max_players} joueurs
+                                                {t('boardgames_page.players_count', { min: game.min_players, max: game.max_players })}
                                             </span>
                                             <span className="bg-slate-100 py-1.5 px-3 rounded-xl flex items-center gap-1.5">
-                                                ⏱ {game.play_time} mins
+                                                {t('boardgames_page.duration', { time: game.play_time })}
                                             </span>
                                         </div>
 
@@ -200,18 +203,19 @@ function BoardGames() {
                                             const words = game.description ? game.description.split(/\s+/) : [];
                                             const isLong = words.length > 50;
                                             const isExpanded = !!expandedGames[game.id];
-                                            const displayText = isLong && !isExpanded 
-                                                ? words.slice(0, 50).join(' ') + '...' 
-                                                : game.description;
                                             return (
                                                 <p className="text-slate-600 text-sm leading-relaxed font-light">
-                                                    {displayText}
+                                                    <TranslatedText 
+                                                        text={game.description} 
+                                                        toLang={i18n.resolvedLanguage || i18n.language || 'fr'} 
+                                                        isExpanded={isExpanded} 
+                                                    />
                                                     {isLong && (
                                                         <button
                                                             onClick={() => toggleExpand(game.id)}
                                                             className="text-indigo-600 hover:text-indigo-500 font-bold ml-1.5 inline-block focus:outline-none transition-colors cursor-pointer"
                                                         >
-                                                            {isExpanded ? 'Voir moins' : 'Voir plus'}
+                                                            {isExpanded ? t('boardgames_page.see_less') : t('boardgames_page.see_more')}
                                                         </button>
                                                     )}
                                                 </p>
@@ -229,14 +233,14 @@ function BoardGames() {
                                             rel="noopener noreferrer"
                                             className="text-center py-2 text-xs font-semibold text-slate-500 hover:text-indigo-600 transition duration-300"
                                         >
-                                            Voir le site officiel / Règles ↗
+                                            {t('boardgames_page.rules_link')}
                                         </a>
                                     )}
                                     <button
                                         onClick={() => navigate(`/reservations?game=${encodeURIComponent(game.name)}&type=BOARD_GAME`)}
                                         className="w-full py-3 px-4 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white shadow-sm transition-all duration-300"
                                     >
-                                        Réserver une table pour y jouer
+                                        {t('boardgames_page.book_to_play')}
                                     </button>
                                 </div>
                             </div>

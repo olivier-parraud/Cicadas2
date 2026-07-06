@@ -1,11 +1,15 @@
 {
   "nav": {
     "home": "Accueil",
-    "dashboard": "Dashboard",
-    "email": "Email",
+    "book_table": "Réserver une table",
+    "my_reservations": "Mes réservations",
+    "boardgames": "Jeux de société",
+    "tournaments": "Tournois",
+    "admin": "Admin",
+    "logout": "Déconnexion",
     "login": "Connexion",
-    "register": "S'inscrire",
-    "logout": "Déconnexion"
+    "register": "Inscription",
+    "language": "Langue"
   },
   "home": {
     "title": "Bienvenue sur le Starter Kit",
@@ -56,12 +60,37 @@
     "register_error": "Erreur lors de l'inscription"
   },
   "footer": {
-    "copyright": "© {{year}} Azim404"
+    "copyright": "© {{year}} Cicados"
   },
   "home_page": {
+    "slides": {
+      "slide_1": {
+        "title": "Cicados Play Space",
+        "desc": "Espace principal avec tables prêtes pour vos duels"
+      },
+      "slide_2": {
+        "title": "Le Rez-de-chaussée",
+        "desc": "Boutique, bar à boissons & étagères de jeux"
+      },
+      "slide_3": {
+        "title": "Le Coin Bar",
+        "desc": "Sélection de boissons pour vos sessions de jeu"
+      },
+      "slide_4": {
+        "title": "La Mezzanine Gaming",
+        "desc": "Lounge à l'étage avec poufs & chaises confortables"
+      }
+    },
+    "featured": {
+      "badge": "Ludothèque Vedette",
+      "title": "Nos Jeux de Société Vedettes",
+      "subtitle": "Découvrez une sélection de nos meilleurs jeux disponibles en boutique. Réservez une table et venez vous affronter !",
+      "book_to_play": "Réserver pour y jouer",
+      "view_all": "Voir tout le catalogue de jeux de société ➔"
+    },
     "hero": {
-      "title": "Votre Espace de Jeu Magic Ultime",
-      "description": "Cicados est l'endroit idéal pour vos parties de Magic: The Gathering, Yu-Gi-Oh!, Pokémon et Lorcana. Louez une table de jeu équipée, participez à nos tournois hebdomadaires et partagez des moments uniques avec une communauté de passionnés.",
+      "title": "Votre Espace de Jeu TCG & Jeux de société Ultime",
+      "description": "Cicados est l'endroit idéal pour vos parties de cartes (TCG) et de jeux de société. Louez une table de jeu équipée, participez à nos tournois hebdomadaires et partagez des moments uniques avec une communauté de passionnés.",
       "cta": "Réserver une table de jeu"
     },
     "features": {
@@ -73,7 +102,7 @@
           "description": "Réservez votre espace de jeu en quelques clics. Choisissez l'heure, la table et la durée pour vous et vos amis."
         },
         "tournaments": {
-          "title": "Tournois Magic & TCG",
+          "title": "Tournois de TCG & Jeux de société",
           "description": "Rejoignez nos événements compétitifs ou amicaux hebdomadaires. Affrontez les meilleurs joueurs et remportez des boosters !"
         },
         "groups": {
@@ -106,7 +135,7 @@
       "items": [
         {
           "name": "Alexandre D.",
-          "role": "Joueur de Magic (Commander)",
+          "role": "Joueur de TCG (Commander)",
           "quote": "L'ambiance est incroyable et les tables sont super spacieuses ! C'est devenu notre QG hebdomadaire pour nos parties de Commander."
         },
         {
@@ -116,13 +145,13 @@
         },
         {
           "name": "Lucas R.",
-          "role": "Joueur Compétitif Modern",
+          "role": "Joueur Compétitif de TCG",
           "quote": "Enfin un endroit propre, bien éclairé et calme pour tester nos decks avant les grands tournois. Je recommande à 100% !"
         }
       ]
     },
     "cta": {
-      "title": "Prêt à lancer vos plus beaux sorts ?",
+      "title": "Prêt à lancer votre prochaine partie ?",
       "description": "Réservez votre table de jeu dès aujourd'hui ou inscrivez-vous à notre prochain tournoi de cartes.",
       "buttons": {
         "book": "Réserver une table",
@@ -142,7 +171,7 @@
           "answer": "Oui, pour les parties libres et les tournois construits, vous devez apporter vos decks. Cependant, nous vendons des boosters, des decks de démarrage et nous prêtons parfois des decks d'initiation."
         },
         {
-          "question": "Comment s'inscrire à un tournoi Magic ?",
+          "question": "Comment s'inscrire à un tournoi de TCG ou jeu de société ?",
           "answer": "Vous pouvez vous inscrire directement en ligne depuis la page 'Tournois' ou sur place à l'accueil du magasin jusqu'à 15 minutes avant le début de l'événement."
         },
         {
@@ -151,5 +180,156 @@
         }
       ]
     }
+  },
+  "login_page": {
+    "title": "Connectez-vous à votre compte",
+    "or": "Ou",
+    "create_account": "créez un nouveau compte Cicados",
+    "email_label": "Adresse email",
+    "password_label": "Mot de passe",
+    "submit": "Se connecter",
+    "error_connection": "Erreur de connexion au serveur",
+    "default_error": "Erreur lors de la connexion"
+  },
+  "register_page": {
+    "title": "Créer un compte Cicados",
+    "already_account": "Vous avez déjà un compte ?",
+    "login_link": "Connectez-vous",
+    "firstname": "Prénom",
+    "lastname": "Nom",
+    "pseudo": "Pseudo",
+    "pseudo_placeholder": "Nom d'invocateur / de joueur",
+    "email_label": "Adresse email",
+    "password_label": "Mot de passe",
+    "submit": "S'inscrire",
+    "error_connection": "Erreur de connexion au serveur",
+    "default_error": "Erreur lors de l'inscription"
+  },
+  "reservations_page": {
+    "need_auth": "Vous devez être connecté à votre compte Cicados pour pouvoir réserver une table de jeu.",
+    "login_btn": "Se connecter",
+    "no_account": "Pas encore de compte ?",
+    "register_link": "S'inscrire",
+    "badge": "☕ Salle de Jeu & TCG",
+    "title": "Réserver une table",
+    "subtitle": "Choisissez votre jeu, planifiez votre séance en consultant les créneaux libres, et venez vous affronter chez Cicados !",
+    "demand_title": "Demande de réservation",
+    "game_type_label": "Jeu / TCG",
+    "players_count_label": "Nombre de joueurs",
+    "player": "1 joueur",
+    "players": "{{count}} joueurs",
+    "players_8": "8+ joueurs",
+    "specific_game_label": "Jeu de société",
+    "specific_game_placeholder": "Ex: Catan, Azul...",
+    "no_game_found": "Aucun jeu trouvé (vous pouvez écrire le nom manuellement)",
+    "date_label": "Date",
+    "time_label": "Heure d'arrivée",
+    "duration_label": "Durée (heures)",
+    "submit_btn": "Réserver ma table",
+    "planning_title": "Disponibilité des tables de jeu",
+    "planning_subtitle": "Nous possédons 4 tables de jeux. Sélectionnez une date pour visualiser l'occupation et choisir un créneau libre.",
+    "no_date_selected": "Aucune date sélectionnée",
+    "no_date_selected_desc": "Veuillez indiquer une date de visite dans le formulaire de gauche pour charger le planning horaire de nos tables.",
+    "loading_planning": "Interrogation de l'agenda des tables...",
+    "date_dispo_title": "Disponibilités pour le :",
+    "tables_free": "{{count}} tables libres",
+    "table_free": "1 table libre",
+    "full": "Complet",
+    "legend_free": "Disponible (2 à 4 libres)",
+    "legend_few": "Presque plein (1 libre)",
+    "legend_full": "Complet (0 libre)",
+    "view_my_reservations": "📋 Voir mes réservations",
+    "success_msg": "Réservation réussie !",
+    "fill_form": "Remplissez le formulaire en entier",
+    "byog_label": "J'apporte mon jeu",
+    "other_label": "Autre"
+  },
+  "my_reservations_page": {
+    "need_auth": "Connexion requise",
+    "need_auth_desc": "Vous devez être connecté à votre compte Cicados pour consulter vos réservations et inscriptions.",
+    "login_btn": "Se connecter",
+    "badge": "📋 Votre agenda Cicados",
+    "title": "Mes Activités",
+    "subtitle": "Retrouvez ici vos tables réservées et vos tournois à venir. Modifiez vos créneaux ou désinscrivez-vous en un clic.",
+    "tables_title": "Mes réservations de tables",
+    "loading_tables": "Chargement de vos tables...",
+    "no_tables": "Aucune table réservée",
+    "no_tables_desc": "Vous n'avez pas de table réservée pour le moment.",
+    "book_table_btn": "Réserver une table",
+    "edit_btn": "✏️ Modifier",
+    "cancel_btn": "❌ Annuler",
+    "tournaments_title": "Mes inscriptions aux tournois",
+    "loading_tourneys": "Chargement de vos tournois...",
+    "no_tourneys": "Aucun tournoi planifié",
+    "no_tourneys_desc": "Vous n'êtes inscrit à aucun tournoi de cartes ou de jeux pour le moment.",
+    "view_tourneys_btn": "Voir les tournois",
+    "unregister_tourney_btn": "❌ Se désinscrire du tournoi",
+    "modal_edit_title": "Modifier la réservation",
+    "modal_close": "Fermer",
+    "modal_save": "Enregistrer",
+    "confirm_cancel": "Êtes-vous sûr de vouloir annuler cette réservation ?",
+    "confirm_unregister": "Êtes-vous sûr de vouloir vous désinscrire de ce tournoi ?",
+    "cancel_success": "Réservation annulée avec succès !",
+    "unregister_success": "Désinscription réussie.",
+    "edit_success": "Réservation modifiée avec succès !",
+    "duration_hours": "Arrivée à {{time}} (durée {{duration}}h)",
+    "free_price": "Gratuit",
+    "registered_players": "👥 Liste des inscrits ({{count}})",
+    "no_registered_players": "Aucun inscrit pour le moment.",
+    "board_game_type": "Jeux de plateau",
+    "byog_type": "J'apporte mon jeu",
+    "other_type": "Autre",
+    "load_tables_error": "Impossible de charger vos réservations.",
+    "load_tourneys_error": "Impossible de charger vos inscriptions aux tournois.",
+    "err_conn": "Erreur de connexion avec le serveur."
+  },
+  "boardgames_page": {
+    "badge": "Ludothèque de la Boutique",
+    "title": "Nos Jeux de Société Disponibles",
+    "subtitle": "Parcourez notre catalogue de jeux en libre accès à la boutique. Réservez une table et venez passer un moment convivial en famille ou entre amis !",
+    "search_label": "Rechercher un jeu",
+    "search_placeholder": "Rechercher par nom, description...",
+    "category_label": "Catégorie",
+    "all_categories": "Toutes les catégories",
+    "players_label": "Nombre de joueurs",
+    "players_placeholder": "Ex: 4",
+    "loading": "Chargement de la ludothèque...",
+    "no_game": "Aucun jeu trouvé",
+    "no_game_desc": "Il n'y a pas de jeux correspondants à vos critères de recherche pour le moment. Réessayez avec d'autres filtres !",
+    "players_count": "👥 {{min}} - {{max}} joueurs",
+    "duration": "⏱ {{time}} mins",
+    "rules_link": "Voir le site officiel / Règles ↗",
+    "book_to_play": "Réserver une table pour y jouer",
+    "see_more": "Voir plus",
+    "see_less": "Voir moins",
+    "load_err": "Erreur lors du chargement des jeux de société"
+  },
+  "tournaments_page": {
+    "badge": "Événements Officiels Cicados",
+    "title": "Tournois & Soirées TCG",
+    "subtitle": "Rejoignez nos compétitions locales, défiez la communauté et tentez de remporter des boosters promo et des lots exclusifs !",
+    "all_tournaments": "Tous les tournois",
+    "loading": "Chargement des événements...",
+    "no_tourneys": "Aucun tournoi planifié",
+    "no_tourneys_desc": "Il n'y a pas de tournois correspondants à cette catégorie pour le moment. Revenez bientôt !",
+    "free": "Gratuit",
+    "capacity": "Capacité : {{registered}} / {{capacity}} joueurs",
+    "registered_list": "👥 Liste des inscrits ({{count}})",
+    "no_registered": "Aucun inscrit pour le moment.",
+    "login_required": "Connexion requise pour participer",
+    "unregister": "Se désinscrire",
+    "full": "Complet",
+    "register": "S'inscrire",
+    "success_register": "Inscription au tournoi réussie ! Votre place est réservée.",
+    "success_unregister": "Désinscription réussie.",
+    "err_conn": "Impossible de contacter le serveur."
+  },
+  "categories": {
+    "Stratégie": "Stratégie",
+    "Pose de tuiles": "Pose de tuiles",
+    "Famille": "Famille",
+    "Abstrait": "Abstrait",
+    "Ambiance": "Ambiance",
+    "Autre": "Autre"
   }
 }
