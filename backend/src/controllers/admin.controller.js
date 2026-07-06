@@ -1,4 +1,7 @@
-import { query } from '../config/db.js';
+import User from '../models/user.model.js';
+import Reservation from '../models/reservation.model.js';
+import BoardGame from '../models/boardgame.model.js';
+import Tournament from '../models/tournament.model.js';
 import { XMLParser } from 'fast-xml-parser';
 
 // --- GESTION DES RÉSERVATIONS ---
@@ -6,14 +9,7 @@ import { XMLParser } from 'fast-xml-parser';
 // Récupérer toutes les réservations
 export const getAllReservations = async (req, res) => {
     try {
-        const sql = `
-            SELECT r.*, u.email, u.firstname, u.lastname, rm.name as tableName
-            FROM reservations r
-            JOIN users u ON r.user_id = u.id
-            JOIN rooms rm ON r.room_id = rm.id
-            ORDER BY r.start_time DESC
-        `;
-        const reservations = await query(sql);
+        const reservations = await Reservation.findAllWithDetails();
         res.json(reservations);
     } catch (error) {
         console.error("Erreur admin récup réservations :", error);
@@ -31,8 +27,7 @@ export const updateReservationStatus = async (req, res) => {
             return res.status(400).json({ error: "Statut invalide." });
         }
 
-        const sql = 'UPDATE reservations SET status = ? WHERE id = ?';
-        await query(sql, [status, id]);
+        await Reservation.updateStatus(id, status);
         res.json({ message: "Statut de la réservation mis à jour !" });
     } catch (error) {
         console.error("Erreur modif réservation :", error);
@@ -44,8 +39,7 @@ export const updateReservationStatus = async (req, res) => {
 export const deleteReservation = async (req, res) => {
     try {
         const { id } = req.params;
-        const sql = 'DELETE FROM reservations WHERE id = ?';
-        await query(sql, [id]);
+        await Reservation.delete(id);
         res.json({ message: "Réservation supprimée." });
     } catch (error) {
         console.error("Erreur suppression réservation :", error);
@@ -59,8 +53,7 @@ export const deleteReservation = async (req, res) => {
 // Récupérer tous les utilisateurs
 export const getAllUsers = async (req, res) => {
     try {
-        const sql = 'SELECT id, email, firstname, lastname, role, created_at FROM users ORDER BY created_at DESC';
-        const users = await query(sql);
+        const users = await User.findAll();
         res.json(users);
     } catch (error) {
         console.error("Erreur admin récup utilisateurs :", error);
@@ -83,8 +76,7 @@ export const updateUserRole = async (req, res) => {
             return res.status(400).json({ error: "Vous ne pouvez pas retirer vos propres droits administrateur." });
         }
 
-        const sql = 'UPDATE users SET role = ? WHERE id = ?';
-        await query(sql, [role, id]);
+        await User.updateRole(id, role);
         res.json({ message: "Rôle de l'utilisateur mis à jour !" });
     } catch (error) {
         console.error("Erreur modif rôle utilisateur :", error);
@@ -101,8 +93,7 @@ export const deleteUser = async (req, res) => {
             return res.status(400).json({ error: "Vous ne pouvez pas supprimer votre propre compte admin." });
         }
 
-        const sql = 'DELETE FROM users WHERE id = ?';
-        await query(sql, [id]);
+        await User.delete(id);
         res.json({ message: "Utilisateur supprimé." });
     } catch (error) {
         console.error("Erreur suppression utilisateur :", error);
@@ -122,20 +113,16 @@ export const createTournament = async (req, res) => {
             return res.status(400).json({ error: "Nom, jeu, date et capacité requis." });
         }
 
-        const sql = `
-            INSERT INTO tournaments (name, game, date, capacity, price, description)
-            VALUES (?, ?, ?, ?, ?, ?)
-        `;
-        const result = await query(sql, [
+        const newTournament = await Tournament.create({
             name,
             game,
-            date, // format YYYY-MM-DD HH:MM:ss
+            date,
             capacity,
-            price || 0.00,
-            description || null
-        ]);
+            price: price || 0.00,
+            description: description || null
+        });
 
-        res.status(201).json({ message: "Tournoi créé avec succès !", tournamentId: result.insertId });
+        res.status(201).json({ message: "Tournoi créé avec succès !", tournamentId: newTournament.id });
     } catch (error) {
         console.error("Erreur création tournoi :", error);
         res.status(500).json({ error: "Erreur de création du tournoi." });
@@ -146,8 +133,7 @@ export const createTournament = async (req, res) => {
 export const deleteTournament = async (req, res) => {
     try {
         const { id } = req.params;
-        const sql = 'DELETE FROM tournaments WHERE id = ?';
-        await query(sql, [id]);
+        await Tournament.delete(id);
         res.json({ message: "Tournoi supprimé." });
     } catch (error) {
         console.error("Erreur suppression tournoi :", error);
@@ -166,22 +152,18 @@ export const createBoardGame = async (req, res) => {
             return res.status(400).json({ error: "Nom, joueurs (min/max), durée et catégorie requis." });
         }
 
-        const sql = `
-            INSERT INTO board_games (name, min_players, max_players, play_time, category, description, image_url, rules_url)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-        `;
-        const result = await query(sql, [
+        const newGame = await BoardGame.create({
             name,
-            Number(min_players),
-            Number(max_players),
-            Number(play_time),
+            min_players: Number(min_players),
+            max_players: Number(max_players),
+            play_time: Number(play_time),
             category,
-            description || null,
-            image_url || '/images/boardgames/catan.png',
-            rules_url || null
-        ]);
+            description: description || null,
+            image_url: image_url || '/images/boardgames/catan.png',
+            rules_url: rules_url || null
+        });
 
-        res.status(201).json({ message: "Jeu de société ajouté avec succès !", boardGameId: result.insertId });
+        res.status(201).json({ message: "Jeu de société ajouté avec succès !", boardGameId: newGame.id });
     } catch (error) {
         console.error("Erreur création jeu de société :", error);
         res.status(500).json({ error: "Erreur lors de l'ajout du jeu de société." });
@@ -192,8 +174,7 @@ export const createBoardGame = async (req, res) => {
 export const deleteBoardGame = async (req, res) => {
     try {
         const { id } = req.params;
-        const sql = 'DELETE FROM board_games WHERE id = ?';
-        await query(sql, [id]);
+        await BoardGame.delete(id);
         res.json({ message: "Jeu de société supprimé." });
     } catch (error) {
         console.error("Erreur suppression jeu de société :", error);
@@ -392,8 +373,8 @@ export const importBggHotGames = async (req, res) => {
         
         await Promise.all(Array.from({ length: concurrency }, () => worker()));
 
-        // 4. Vider la table
-        await query('DELETE FROM board_games');
+        // 4. Vider la table via le modèle
+        await BoardGame.deleteAll();
         
         // 5. Insérer les nouveaux jeux
         let inserted = 0;
@@ -418,10 +399,16 @@ export const importBggHotGames = async (req, res) => {
             const imageUrl = item.image || item.thumbnail || 'https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?q=80&w=600';
             const rulesUrl = `https://boardgamegeek.com/boardgame/${item['@_id']}`;
             
-            await query(
-                'INSERT INTO board_games (name, min_players, max_players, play_time, category, description, image_url, rules_url) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-                [name, minPlayers, maxPlayers, playTime, category, description, imageUrl, rulesUrl]
-            );
+            await BoardGame.create({
+                name,
+                min_players: minPlayers,
+                max_players: maxPlayers,
+                play_time: playTime,
+                category,
+                description,
+                image_url: imageUrl,
+                rules_url: rulesUrl
+            });
             inserted++;
         }
         

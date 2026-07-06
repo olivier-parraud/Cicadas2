@@ -33,6 +33,21 @@ VALUES (?, ?, ?, ?, ?)
     // Vérifier le mot de passe
     async verifyPassword(plainPassword, hashedPassword) {
         return bcrypt.compare(plainPassword, hashedPassword);
+    },
+    // Récupérer tous les utilisateurs
+    async findAll() {
+        const sql = 'SELECT id, email, firstname, lastname, role, created_at FROM users ORDER BY created_at DESC';
+        return query(sql);
+    },
+    // Mettre à jour le rôle d'un utilisateur
+    async updateRole(id, role) {
+        const sql = 'UPDATE users SET role = ? WHERE id = ?';
+        return query(sql, [role, id]);
+    },
+    // Supprimer un utilisateur
+    async delete(id) {
+        const sql = 'DELETE FROM users WHERE id = ?';
+        return query(sql, [id]);
     }
 };
 export default User;

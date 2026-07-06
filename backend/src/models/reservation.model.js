@@ -1,6 +1,7 @@
 import { query } from '../config/db.js';
 
 const Reservation = {
+    // Créer une réservation avec sélection automatique de table et résolution de conflits
     async create({ user_id, date, time, duration, gameType, specific_game = null, players_count = 2 }) {
         // 1. S'assurer de la présence d'au moins 4 tables de jeux distinctes
         let rooms = await query('SELECT id FROM rooms');
@@ -35,7 +36,6 @@ const Reservation = {
         const endTime = `${endYear}-${endMonth}-${endDay} ${endHour}:${endMin}:00`;
 
         // 3. Détecter les tables occupées pendant ce créneau horaire
-        // Deux intervalles [S1, E1] et [S2, E2] se chevauchent si S1 < E2 et E1 > S2
         const sqlOccupied = `
             SELECT room_id FROM reservations 
             WHERE start_time < ? AND end_time > ? AND status != 'CANCELLED'
@@ -62,6 +62,108 @@ const Reservation = {
 
         const result = await query(sql, [user_id, roomId, startTime, endTime, safeGameType, specific_game, players_count]);
         return { id: result.insertId };
+    },
+
+    // Récupérer une réservation par son ID
+    async findById(id) {
+        const sql = 'SELECT * FROM reservations WHERE id = ?';
+        const results = await query(sql, [id]);
+        return results[0] || null;
+    },
+
+    // Récupérer toutes les réservations d'un jour donné (actives)
+    async findByDate(date) {
+        const sql = `
+            SELECT id, room_id, start_time, end_time, game_type, status, specific_game
+            FROM reservations
+            WHERE DATE(start_time) = ? AND status != 'CANCELLED'
+        `;
+        return query(sql, [date]);
+    },
+
+    // Récupérer toutes les réservations d'un utilisateur donné (actives & passées)
+    async findByUserId(userId) {
+        const sql = `
+            SELECT r.*, rm.name as room_name, rm.capacity as room_capacity
+            FROM reservations r
+            JOIN rooms rm ON r.room_id = rm.id
+            WHERE r.user_id = ?
+            ORDER BY r.start_time DESC
+        `;
+        return query(sql, [userId]);
+    },
+
+    // Mettre à jour une réservation avec nouveau calcul de disponibilité
+    async update(id, { gameType, date, time, duration, specificGame, playersCount }) {
+        // 1. Calculer les dates de fin
+        const startTime = `${date} ${time}:00`;
+        const startObj = new Date(startTime);
+        startObj.setHours(startObj.getHours() + parseInt(duration, 10));
+        
+        const endYear = startObj.getFullYear();
+        const endMonth = String(startObj.getMonth() + 1).padStart(2, '0');
+        const endDay = String(startObj.getDate()).padStart(2, '0');
+        const endHour = String(startObj.getHours()).padStart(2, '0');
+        const endMin = String(startObj.getMinutes()).padStart(2, '0');
+        const endTime = `${endYear}-${endMonth}-${endDay} ${endHour}:${endMin}:00`;
+
+        // 2. Détecter si une table est libre (en excluant la réservation actuelle pour éviter l'auto-conflit)
+        const rooms = await query('SELECT id FROM rooms');
+        const sqlOccupied = `
+            SELECT room_id FROM reservations 
+            WHERE start_time < ? AND end_time > ? AND status != 'CANCELLED' AND id != ?
+        `;
+        const occupiedRooms = await query(sqlOccupied, [endTime, startTime, id]);
+        const occupiedIds = occupiedRooms.map(r => r.room_id);
+        
+        const availableRoom = rooms.find(r => !occupiedIds.includes(r.id));
+        if (!availableRoom) {
+            throw new Error("Toutes les tables de jeux sont complètes pour ce créneau horaire.");
+        }
+        const roomId = availableRoom.id;
+
+        // 3. Normaliser le type de jeu 
+        const allowedTypes = ['MTG', 'YUGIOH', 'POKEMON', 'LORCANA', 'BOARD_GAME', 'OTHER'];
+        let safeGameType = allowedTypes.includes(gameType) ? gameType : 'OTHER';
+
+        const updateSql = `
+            UPDATE reservations 
+            SET room_id = ?, start_time = ?, end_time = ?, game_type = ?, specific_game = ?, players_count = ?
+            WHERE id = ?
+        `;
+        return query(updateSql, [
+            roomId, 
+            startTime, 
+            endTime, 
+            safeGameType, 
+            specificGame || null, 
+            playersCount ? parseInt(playersCount, 10) : 2,
+            id
+        ]);
+    },
+
+    // Annuler/supprimer définitivement une réservation
+    async delete(id) {
+        const sql = 'DELETE FROM reservations WHERE id = ?';
+        return query(sql, [id]);
+    },
+
+    // Récupérer toutes les réservations avec détails des utilisateurs et tables (Admin)
+    async findAllWithDetails() {
+        const sql = `
+            SELECT r.*, u.email, u.firstname, u.lastname, rm.name as tableName
+            FROM reservations r
+            JOIN users u ON r.user_id = u.id
+            JOIN rooms rm ON r.room_id = rm.id
+            ORDER BY r.start_time DESC
+        `;
+        return query(sql);
+    },
+
+    // Mettre à jour le statut d'une réservation (CONFIRMED, CANCELLED...) (Admin)
+    async updateStatus(id, status) {
+        const sql = 'UPDATE reservations SET status = ? WHERE id = ?';
+        return query(sql, [status, id]);
     }
 };
 

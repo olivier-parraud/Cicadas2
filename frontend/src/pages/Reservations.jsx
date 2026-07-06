@@ -9,9 +9,11 @@ function Reservations() {
     const isAuthenticated = !!localStorage.getItem('token');
     const location = useLocation();
 
+    const today = new Date().toISOString().split('T')[0];
+
     const [formData, setFormData] = useState({
         gameType: 'MTG',
-        date: '',
+        date: today,
         time: '14:00',
         duration: '2',
         specificGame: '',
@@ -20,8 +22,6 @@ function Reservations() {
     const [status, setStatus] = useState({ type: '', message: '' });
     const [existingReservations, setExistingReservations] = useState([]);
     const [loadingPlanning, setLoadingPlanning] = useState(false);
-
-    const today = new Date().toISOString().split('T')[0];
 
     useEffect(() => {
         const queryParams = new URLSearchParams(location.search);

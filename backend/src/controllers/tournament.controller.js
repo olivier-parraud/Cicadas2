@@ -1,25 +1,10 @@
-import { query } from '../config/db.js';
+import Tournament from '../models/tournament.model.js';
 
 // Récupérer la liste des tournois avec le nombre d'inscrits actuels et leurs noms
 export const getTournaments = async (req, res) => {
     try {
-        const sql = `
-            SELECT t.*, COUNT(tr.id) as registeredCount
-            FROM tournaments t
-            LEFT JOIN tournament_registrations tr ON t.id = tr.tournament_id
-            WHERE t.date >= NOW()
-            GROUP BY t.id
-            ORDER BY t.date ASC
-        `;
-        const tournaments = await query(sql);
-
-        // Récupérer les participants inscrits pour tous les tournois
-        const participantsSql = `
-            SELECT tr.tournament_id, u.firstname, u.lastname, u.email, u.pseudo
-            FROM tournament_registrations tr
-            JOIN users u ON tr.user_id = u.id
-        `;
-        const participants = await query(participantsSql);
+        const tournaments = await Tournament.findAllUpcoming();
+        const participants = await Tournament.findParticipants();
 
         // Associer les participants à chaque tournoi
         const tournamentsWithParticipants = tournaments.map(t => {
@@ -52,30 +37,19 @@ export const registerForTournament = async (req, res) => {
         const userId = req.user.id; // Injecté par authMiddleware
 
         // 1. Vérifier si le tournoi existe et sa capacité
-        const tourneySql = `
-            SELECT t.capacity, COUNT(tr.id) as registeredCount
-            FROM tournaments t
-            LEFT JOIN tournament_registrations tr ON t.id = tr.tournament_id
-            WHERE t.id = ?
-            GROUP BY t.id
-        `;
-        const results = await query(tourneySql, [tournamentId]);
-        if (results.length === 0) {
+        const tourneyInfo = await Tournament.getCapacityAndCount(tournamentId);
+        if (!tourneyInfo) {
             return res.status(404).json({ error: "Tournoi non trouvé." });
         }
 
-        const { capacity, registeredCount } = results[0];
+        const { capacity, registeredCount } = tourneyInfo;
 
         if (registeredCount >= capacity) {
             return res.status(400).json({ error: "Ce tournoi est complet." });
         }
 
         // 2. Inscrire l'utilisateur
-        const insertSql = `
-            INSERT INTO tournament_registrations (tournament_id, user_id)
-            VALUES (?, ?)
-        `;
-        await query(insertSql, [tournamentId, userId]);
+        await Tournament.register(tournamentId, userId);
 
         res.status(201).json({ message: "Inscription au tournoi réussie !" });
     } catch (error) {
@@ -93,11 +67,7 @@ export const unregisterFromTournament = async (req, res) => {
         const tournamentId = req.params.id;
         const userId = req.user.id;
 
-        const deleteSql = `
-            DELETE FROM tournament_registrations
-            WHERE tournament_id = ? AND user_id = ?
-        `;
-        const result = await query(deleteSql, [tournamentId, userId]);
+        const result = await Tournament.unregister(tournamentId, userId);
 
         if (result.affectedRows === 0) {
             return res.status(400).json({ error: "Vous n'étiez pas inscrit à ce tournoi." });
@@ -114,13 +84,7 @@ export const unregisterFromTournament = async (req, res) => {
 export const getMyRegistrations = async (req, res) => {
     try {
         const userId = req.user.id;
-        const sql = `
-            SELECT tournament_id
-            FROM tournament_registrations
-            WHERE user_id = ?
-        `;
-        const regs = await query(sql, [userId]);
-        const ids = regs.map(r => r.tournament_id);
+        const ids = await Tournament.findRegisteredIdsByUserId(userId);
         res.json(ids);
     } catch (error) {
         console.error("Erreur récupération inscriptions utilisateur :", error);
@@ -132,16 +96,7 @@ export const getMyRegistrations = async (req, res) => {
 export const getUserTournaments = async (req, res) => {
     try {
         const userId = req.user.id;
-        const sql = `
-            SELECT t.*, COUNT(tr_all.id) as registeredCount
-            FROM tournament_registrations tr
-            JOIN tournaments t ON tr.tournament_id = t.id
-            LEFT JOIN tournament_registrations tr_all ON t.id = tr_all.tournament_id
-            WHERE tr.user_id = ?
-            GROUP BY t.id
-            ORDER BY t.date ASC
-        `;
-        const tournaments = await query(sql, [userId]);
+        const tournaments = await Tournament.findByUserId(userId);
         res.json(tournaments);
     } catch (error) {
         console.error("Erreur récup tournois utilisateur:", error);

@@ -1,10 +1,9 @@
-import { query } from '../config/db.js';
+import BoardGame from '../models/boardgame.model.js';
 
 // Récupérer tous les jeux de société
 export const getBoardGames = async (req, res) => {
     try {
-        const sql = 'SELECT * FROM board_games ORDER BY name ASC';
-        const games = await query(sql);
+        const games = await BoardGame.findAll();
         res.json(games);
     } catch (error) {
         console.error("Erreur récupération jeux de société :", error);
