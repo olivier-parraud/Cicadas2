@@ -3,7 +3,8 @@ import {
     getTournaments, 
     registerForTournament, 
     unregisterFromTournament, 
-    getMyRegistrations 
+    getMyRegistrations,
+    getUserTournaments
 } from '../controllers/tournament.controller.js';
 import authMiddleware from '../middlewares/auth.middleware.js';
 
@@ -14,6 +15,7 @@ router.get('/', getTournaments);
 
 // Routes privées (requièrent connexion)
 router.get('/my-registrations', authMiddleware, getMyRegistrations);
+router.get('/user', authMiddleware, getUserTournaments);
 router.post('/:id/register', authMiddleware, registerForTournament);
 router.delete('/:id/register', authMiddleware, unregisterFromTournament);
 

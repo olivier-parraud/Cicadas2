@@ -9,7 +9,8 @@ import {
     createTournament,
     deleteTournament,
     createBoardGame,
-    deleteBoardGame
+    deleteBoardGame,
+    importBggHotGames
 } from '../controllers/admin.controller.js';
 import authMiddleware from '../middlewares/auth.middleware.js';
 import adminMiddleware from '../middlewares/admin.middleware.js';
@@ -36,5 +37,6 @@ router.delete('/tournaments/:id', deleteTournament);
 // Jeux de société
 router.post('/boardgames', createBoardGame);
 router.delete('/boardgames/:id', deleteBoardGame);
+router.post('/boardgames/import-hot', importBggHotGames);
 
 export default router;

@@ -7,6 +7,14 @@ function Home() {
     const [activeFaq, setActiveFaq] = useState(null);
     const [activeSlide, setActiveSlide] = useState(0);
     const [featuredGames, setFeaturedGames] = useState([]);
+    const [expandedGames, setExpandedGames] = useState({});
+
+    const toggleExpand = (gameId) => {
+        setExpandedGames(prev => ({
+            ...prev,
+            [gameId]: !prev[gameId]
+        }));
+    };
 
     const toggleFaq = (index) => {
         setActiveFaq(activeFaq === index ? null : index);
@@ -89,26 +97,25 @@ function Home() {
                         <div className="relative group w-full max-w-md lg:max-w-none">
                             {/* Neon border background */}
                             <div className="absolute -inset-1 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl blur opacity-30 group-hover:opacity-50 transition duration-1000"></div>
-                            
+
                             {/* Carousel Container */}
                             <div className="relative bg-slate-900 rounded-2xl overflow-hidden border border-slate-800 shadow-2xl aspect-[4/3] w-full">
                                 {slides.map((slide, index) => (
                                     <div
                                         key={index}
-                                        className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
-                                            index === activeSlide ? 'opacity-100 z-10' : 'opacity-0 z-0'
-                                        }`}
+                                        className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${index === activeSlide ? 'opacity-100 z-10' : 'opacity-0 z-0'
+                                            }`}
                                     >
-                                        <img 
-                                            src={slide.image} 
-                                            alt={slide.title} 
+                                        <img
+                                            src={slide.image}
+                                            alt={slide.title}
                                             className="w-full h-full object-cover opacity-95"
                                             onError={(e) => {
                                                 e.target.onerror = null;
                                                 e.target.src = 'https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?q=80&w=600';
                                             }}
                                         />
-                                        
+
                                         {/* Info Overlay */}
                                         <div className="absolute bottom-0 left-0 right-0 bg-slate-950/80 backdrop-blur-md p-4 border-t border-indigo-900/40">
                                             <h4 className="font-bold text-white text-sm tracking-wide">
@@ -143,9 +150,8 @@ function Home() {
                                         <button
                                             key={index}
                                             onClick={(e) => { e.preventDefault(); setActiveSlide(index); }}
-                                            className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                                                index === activeSlide ? 'bg-indigo-500 scale-125' : 'bg-slate-600 hover:bg-slate-400'
-                                            }`}
+                                            className={`w-2 h-2 rounded-full transition-all duration-300 ${index === activeSlide ? 'bg-indigo-500 scale-125' : 'bg-slate-600 hover:bg-slate-400'
+                                                }`}
                                             aria-label={`Aller au slide ${index + 1}`}
                                         />
                                     ))}
@@ -287,16 +293,16 @@ function Home() {
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         {featuredGames.map((game) => (
-                            <div 
+                            <div
                                 key={game.id}
                                 className="bg-white rounded-3xl border border-slate-100 overflow-hidden flex flex-col justify-between hover:shadow-xl hover:border-indigo-100 transition-all duration-300 group"
                             >
                                 <div>
                                     <div className="aspect-[4/3] w-full overflow-hidden bg-slate-100 relative">
-                                        <img 
-                                            src={game.image_url} 
-                                            alt={game.name} 
-                                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                        <img
+                                            src={game.image_url}
+                                            alt={game.name}
+                                            className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-500"
                                         />
                                         <span className="absolute top-4 left-4 inline-flex items-center py-1 px-3 rounded-full text-xs font-semibold bg-purple-50 text-purple-700 border border-purple-200 shadow-sm">
                                             {game.category}
@@ -317,9 +323,27 @@ function Home() {
                                             </span>
                                         </div>
 
-                                        <p className="text-slate-600 text-sm leading-relaxed font-light line-clamp-3">
-                                            {game.description}
-                                        </p>
+                                        {(() => {
+                                            const words = game.description ? game.description.split(/\s+/) : [];
+                                            const isLong = words.length > 50;
+                                            const isExpanded = !!expandedGames[game.id];
+                                            const displayText = isLong && !isExpanded 
+                                                ? words.slice(0, 50).join(' ') + '...' 
+                                                : game.description;
+                                            return (
+                                                <p className="text-slate-600 text-sm leading-relaxed font-light">
+                                                    {displayText}
+                                                    {isLong && (
+                                                        <button
+                                                            onClick={() => toggleExpand(game.id)}
+                                                            className="text-indigo-600 hover:text-indigo-500 font-bold ml-1.5 inline-block focus:outline-none transition-colors cursor-pointer"
+                                                        >
+                                                            {isExpanded ? 'Voir moins' : 'Voir plus'}
+                                                        </button>
+                                                    )}
+                                                </p>
+                                            );
+                                        })()}
                                     </div>
                                 </div>
 
@@ -336,8 +360,8 @@ function Home() {
                     </div>
 
                     <div className="text-center mt-12">
-                        <Link 
-                            to="/boardgames" 
+                        <Link
+                            to="/boardgames"
                             className="inline-flex items-center gap-2 text-sm font-bold text-indigo-300 hover:text-indigo-400 transition"
                         >
                             Voir tout le catalogue de jeux de société ➔
@@ -421,8 +445,8 @@ function Home() {
 
                 <div className="space-y-4">
                     {Array.isArray(faqItems) && faqItems.map((item, index) => (
-                        <div 
-                            key={index} 
+                        <div
+                            key={index}
                             className="bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden transition-all duration-300"
                         >
                             <button
@@ -436,7 +460,7 @@ function Home() {
                                     ＋
                                 </span>
                             </button>
-                            <div 
+                            <div
                                 className={`transition-all duration-300 ease-in-out ${activeFaq === index ? 'max-h-96 border-t border-slate-50' : 'max-h-0'}`}
                             >
                                 <div className="p-6 text-slate-600 font-light leading-relaxed">

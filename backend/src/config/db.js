@@ -89,6 +89,24 @@ export async function testConnection() {
             console.log("Colonne 'specific_game' ajoutée à la table reservations");
         }
 
+        // Vérifier si la colonne 'players_count' existe sur 'reservations'
+        const [playersCountCols] = await connection.execute("SHOW COLUMNS FROM reservations LIKE 'players_count'");
+        if (playersCountCols.length === 0) {
+            await connection.execute("ALTER TABLE reservations ADD COLUMN players_count INT UNSIGNED DEFAULT 2");
+            console.log("Colonne 'players_count' ajoutée à la table reservations");
+        }
+
+        // Mettre à jour l'ENUM de la colonne game_type
+        try {
+            await connection.execute(`
+                ALTER TABLE reservations 
+                MODIFY COLUMN game_type ENUM('MTG', 'YUGIOH', 'POKEMON', 'LORCANA', 'BOARD_GAME', 'OTHER') DEFAULT 'OTHER'
+            `);
+            console.log("Colonne 'game_type' de reservations mise à jour avec l'ENUM étendu");
+        } catch (err) {
+            console.error("Erreur lors de la mise à jour de game_type ENUM:", err);
+        }
+
         // Créer la table des jeux de société si inexistante
         await connection.execute(`
             CREATE TABLE IF NOT EXISTS board_games (

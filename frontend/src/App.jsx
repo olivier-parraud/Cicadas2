@@ -8,6 +8,7 @@ import Reservations from './pages/Reservations.jsx';
 import Tournaments from './pages/Tournaments.jsx';
 import DashboardAdmin from './pages/DashboardAdmin.jsx';
 import BoardGames from './pages/BoardGames.jsx';
+import MyReservations from './pages/MyReservations.jsx';
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/reservations" element={<Reservations />} />
+        <Route path="/my-reservations" element={<MyReservations />} />
         <Route path="/boardgames" element={<BoardGames />} />
         <Route path="/tournaments" element={<Tournaments />} />
         <Route path="/admin" element={<DashboardAdmin />} />

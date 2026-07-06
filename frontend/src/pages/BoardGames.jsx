@@ -12,6 +12,15 @@ function BoardGames() {
     const [selectedCategory, setSelectedCategory] = useState('All');
     const [playersFilter, setPlayersFilter] = useState('');
 
+    const [expandedGames, setExpandedGames] = useState({});
+
+    const toggleExpand = (gameId) => {
+        setExpandedGames(prev => ({
+            ...prev,
+            [gameId]: !prev[gameId]
+        }));
+    };
+
     useEffect(() => {
         const fetchBoardGames = async () => {
             try {
@@ -37,11 +46,11 @@ function BoardGames() {
 
     // Filter logic
     const filteredGames = boardGames.filter(game => {
-        const matchesSearch = game.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                              game.description.toLowerCase().includes(searchQuery.toLowerCase());
-        
+        const matchesSearch = game.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            game.description.toLowerCase().includes(searchQuery.toLowerCase());
+
         const matchesCategory = selectedCategory === 'All' || game.category === selectedCategory;
-        
+
         let matchesPlayers = true;
         if (playersFilter !== '') {
             const count = parseInt(playersFilter, 10);
@@ -150,17 +159,17 @@ function BoardGames() {
                     /* Games Grid */
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch">
                         {filteredGames.map((game) => (
-                            <div 
+                            <div
                                 key={game.id}
                                 className="bg-white rounded-3xl border border-slate-100 overflow-hidden flex flex-col justify-between hover:shadow-xl hover:border-indigo-100 transition-all duration-300 group"
                             >
                                 <div>
                                     {/* Cover image */}
                                     <div className="aspect-[4/3] w-full overflow-hidden bg-slate-100 relative">
-                                        <img 
-                                            src={game.image_url} 
-                                            alt={game.name} 
-                                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                        <img
+                                            src={game.image_url}
+                                            alt={game.name}
+                                            className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-500"
                                             onError={(e) => {
                                                 e.target.onerror = null;
                                                 e.target.src = 'https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?q=80&w=600';
@@ -187,19 +196,37 @@ function BoardGames() {
                                             </span>
                                         </div>
 
-                                        <p className="text-slate-600 text-sm leading-relaxed font-light">
-                                            {game.description}
-                                        </p>
+                                        {(() => {
+                                            const words = game.description ? game.description.split(/\s+/) : [];
+                                            const isLong = words.length > 50;
+                                            const isExpanded = !!expandedGames[game.id];
+                                            const displayText = isLong && !isExpanded 
+                                                ? words.slice(0, 50).join(' ') + '...' 
+                                                : game.description;
+                                            return (
+                                                <p className="text-slate-600 text-sm leading-relaxed font-light">
+                                                    {displayText}
+                                                    {isLong && (
+                                                        <button
+                                                            onClick={() => toggleExpand(game.id)}
+                                                            className="text-indigo-600 hover:text-indigo-500 font-bold ml-1.5 inline-block focus:outline-none transition-colors cursor-pointer"
+                                                        >
+                                                            {isExpanded ? 'Voir moins' : 'Voir plus'}
+                                                        </button>
+                                                    )}
+                                                </p>
+                                            );
+                                        })()}
                                     </div>
                                 </div>
 
                                 {/* Actions */}
                                 <div className="p-6 md:p-8 pt-0 border-t border-slate-50 flex flex-col gap-3">
                                     {game.rules_url && (
-                                        <a 
-                                            href={game.rules_url} 
-                                            target="_blank" 
-                                            rel="noopener noreferrer" 
+                                        <a
+                                            href={game.rules_url}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
                                             className="text-center py-2 text-xs font-semibold text-slate-500 hover:text-indigo-600 transition duration-300"
                                         >
                                             Voir le site officiel / Règles ↗

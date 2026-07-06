@@ -7,6 +7,7 @@ export const getTournaments = async (req, res) => {
             SELECT t.*, COUNT(tr.id) as registeredCount
             FROM tournaments t
             LEFT JOIN tournament_registrations tr ON t.id = tr.tournament_id
+            WHERE t.date >= NOW()
             GROUP BY t.id
             ORDER BY t.date ASC
         `;
@@ -124,5 +125,26 @@ export const getMyRegistrations = async (req, res) => {
     } catch (error) {
         console.error("Erreur récupération inscriptions utilisateur :", error);
         res.status(500).json({ error: "Erreur serveur." });
+    }
+};
+
+// Récupérer la liste des tournois auxquels l'utilisateur est inscrit
+export const getUserTournaments = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const sql = `
+            SELECT t.*, COUNT(tr_all.id) as registeredCount
+            FROM tournament_registrations tr
+            JOIN tournaments t ON tr.tournament_id = t.id
+            LEFT JOIN tournament_registrations tr_all ON t.id = tr_all.tournament_id
+            WHERE tr.user_id = ?
+            GROUP BY t.id
+            ORDER BY t.date ASC
+        `;
+        const tournaments = await query(sql, [userId]);
+        res.json(tournaments);
+    } catch (error) {
+        console.error("Erreur récup tournois utilisateur:", error);
+        res.status(500).json({ error: "Impossible de récupérer vos inscriptions aux tournois." });
     }
 };

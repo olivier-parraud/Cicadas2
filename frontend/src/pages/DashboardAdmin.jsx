@@ -334,6 +334,29 @@ function DashboardAdmin() {
         }
     };
 
+    const handleImportBggHot = async () => {
+        if (!window.confirm("Importer les 50 jeux populaires depuis BoardGameGeek ? Cela remplacera la liste actuelle de la boutique.")) return;
+        setActionLoading(true);
+        setMessage({ type: 'info', text: "Importation des 50 jeux les plus populaires depuis BGG... Cela peut prendre quelques secondes." });
+        try {
+            const res = await fetch('http://localhost:5050/api/admin/boardgames/import-hot', {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const data = await res.json();
+            if (res.ok) {
+                setMessage({ type: 'success', text: data.message || 'Importation BGG réussie !' });
+                fetchAdminData();
+            } else {
+                setMessage({ type: 'error', text: data.error || "Erreur lors de l'importation BGG." });
+            }
+        } catch (error) {
+            setMessage({ type: 'error', text: 'Erreur réseau.' });
+        } finally {
+            setActionLoading(false);
+        }
+    };
+
     return (
         <div className="min-h-screen bg-slate-50 text-slate-800 pb-20">
             {/* Dark Premium Admin Header */}
@@ -825,8 +848,16 @@ function DashboardAdmin() {
 
                                 {/* Board Games List */}
                                 <div className="lg:col-span-7 bg-white rounded-3xl border border-slate-100 shadow-xl overflow-hidden">
-                                    <div className="p-6 border-b border-slate-100 flex justify-between items-center">
+                                    <div className="p-6 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                                         <h2 className="text-lg font-bold text-slate-900">Jeux en boutique ({boardGames.length})</h2>
+                                        <button
+                                            type="button"
+                                            onClick={handleImportBggHot}
+                                            disabled={actionLoading}
+                                            className="inline-flex items-center gap-1.5 py-2 px-3 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white shadow-sm transition disabled:opacity-50"
+                                        >
+                                            {actionLoading && message.text?.includes("BGG") ? 'Importation...' : '⚡ Importer 50 Populaires BGG'}
+                                        </button>
                                     </div>
 
                                     <div className="divide-y divide-slate-100">
@@ -836,7 +867,7 @@ function DashboardAdmin() {
                                                     <img 
                                                         src={game.image_url} 
                                                         alt={game.name} 
-                                                        className="w-12 h-12 rounded-lg object-cover bg-slate-100 border border-slate-100"
+                                                        className="w-12 h-12 rounded-lg object-contain p-0.5 bg-white border border-slate-100"
                                                         onError={(e) => {
                                                             e.target.onerror = null;
                                                             e.target.src = 'https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?q=80&w=100';
