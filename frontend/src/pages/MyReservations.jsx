@@ -17,6 +17,11 @@ function MyReservations() {
     const [loadingTournaments, setLoadingTournaments] = useState(true);
     const [tournamentsError, setTournamentsError] = useState('');
 
+    // Events state
+    const [events, setEvents] = useState([]);
+    const [loadingEvents, setLoadingEvents] = useState(true);
+    const [eventsError, setEventsError] = useState('');
+
     // Modal states for editing table reservations
     const [editingReservation, setEditingReservation] = useState(null);
     const [editFormData, setEditFormData] = useState({
@@ -80,10 +85,34 @@ function MyReservations() {
         }
     };
 
+    const fetchUserEvents = async () => {
+        setLoadingEvents(true);
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch('http://localhost:5050/api/events/user', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            if (response.ok) {
+                const data = await response.json();
+                setEvents(data);
+            } else {
+                setEventsError(t('my_reservations_page.load_events_error', 'Impossible de charger vos événements.'));
+            }
+        } catch (err) {
+            console.error(err);
+            setEventsError(t('my_reservations_page.err_conn'));
+        } finally {
+            setLoadingEvents(false);
+        }
+    };
+
     useEffect(() => {
         if (isAuthenticated) {
             fetchUserReservations();
             fetchUserTournaments();
+            fetchUserEvents();
         }
     }, [isAuthenticated]);
 
@@ -141,6 +170,29 @@ function MyReservations() {
                 setTournaments(prev => prev.filter(t => t.id !== tournamentId));
             } else {
                 alert(t('my_reservations_page.load_tourneys_error'));
+            }
+        } catch (err) {
+            console.error(err);
+            alert(t('my_reservations_page.err_conn'));
+        }
+    };
+
+    const handleUnregisterEvent = async (eventId) => {
+        if (!window.confirm(t('my_reservations_page.confirm_unregister_event', 'Voulez-vous vraiment vous désinscrire de cet événement ?'))) return;
+
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch(`http://localhost:5050/api/events/${eventId}/register`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (response.ok) {
+                setEvents(prev => prev.filter(e => e.id !== eventId));
+            } else {
+                alert(t('my_reservations_page.load_events_error', 'Impossible de se désinscrire.'));
             }
         } catch (err) {
             console.error(err);
@@ -217,10 +269,15 @@ function MyReservations() {
 
     const getGameTypeName = (type) => {
         switch (type) {
+            case 'POKEMON': return 'Pokémon';
             case 'MTG': return 'Magic: The Gathering';
+            case 'ONE_PIECE': return 'One Piece Card Game';
             case 'YUGIOH': return 'Yu-Gi-Oh!';
-            case 'POKEMON': return 'Pokémon TCG';
+            case 'STAR_WARS': return 'Star Wars: Unlimited';
             case 'LORCANA': return 'Disney Lorcana';
+            case 'FINAL_FF': return 'Final Fantasy TCG';
+            case 'ALTERED': return 'Altered';
+            case 'DBS': return 'Dragon Ball Super Card Game';
             case 'BOARD_GAME': return t('my_reservations_page.board_game_type');
             case 'BYOG': return t('my_reservations_page.byog_type');
             default: return t('my_reservations_page.other_type');
@@ -511,6 +568,114 @@ function MyReservations() {
                     )}
                 </div>
 
+                {/* Section Inscriptions aux événements */}
+                <div className="space-y-6 pt-6 border-t border-slate-200">
+                    <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+                        <span>📅</span> {t('my_reservations_page.events_title', 'Mes Événements')}
+                    </h2>
+
+                    {eventsError && (
+                        <div className="p-4 rounded-2xl bg-rose-50 border border-rose-250 text-rose-800 text-sm font-semibold text-center">
+                            {eventsError}
+                        </div>
+                    )}
+
+                    {loadingEvents ? (
+                        <div className="py-10 text-center space-y-3">
+                            <div className="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
+                            <p className="text-xs text-slate-400">{t('my_reservations_page.loading_events', 'Chargement de vos événements...')}</p>
+                        </div>
+                    ) : events.length === 0 ? (
+                        <div className="py-12 text-center bg-white rounded-3xl border border-slate-100 shadow-md max-w-md mx-auto p-6 space-y-4">
+                            <span className="text-4xl">📆</span>
+                            <h3 className="text-sm font-bold text-slate-900">{t('my_reservations_page.no_events', 'Aucun événement rejoint')}</h3>
+                            <p className="text-xs text-slate-400 font-light leading-relaxed">
+                                {t('my_reservations_page.no_events_desc', 'Vous n\'êtes inscrit à aucun événement pour le moment.')}
+                            </p>
+                            <Link to="/events" className="bg-indigo-650 hover:bg-indigo-600 text-white font-bold py-2.5 px-6 rounded-xl transition shadow-md w-full block text-xs">
+                                {t('my_reservations_page.view_events_btn', 'Voir l\'agenda des événements')}
+                            </Link>
+                        </div>
+                    ) : (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {events.map((eItem) => {
+                                const eventDate = new Date(eItem.date);
+                                const formattedDate = eventDate.toLocaleDateString(i18n.resolvedLanguage || i18n.language || 'fr', {
+                                    weekday: 'long',
+                                    day: 'numeric',
+                                    month: 'long',
+                                    year: 'numeric'
+                                });
+                                const formattedTime = eventDate.toLocaleTimeString(i18n.resolvedLanguage || i18n.language || 'fr', {
+                                    hour: '2-digit',
+                                    minute: '2-digit'
+                                });
+
+                                const typeNames = {
+                                    avant_premiere: t('events_page.prerelease', 'Avant-première'),
+                                    draft: t('events_page.draft', 'Draft'),
+                                    initiation: t('events_page.initiation', 'Initiation')
+                                };
+
+                                return (
+                                    <div key={eItem.id} className="bg-white rounded-3xl border border-slate-100 shadow-xl overflow-hidden hover:shadow-2xl transition duration-300 flex flex-col justify-between">
+                                        <div className="p-6 space-y-4">
+                                            <div className="flex justify-between items-start gap-2">
+                                                <div>
+                                                    <div className="flex flex-wrap gap-1.5">
+                                                        <span className="inline-block text-[10px] uppercase font-bold tracking-wider text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-100">
+                                                            {eItem.game}
+                                                        </span>
+                                                        <span className="inline-block text-[10px] uppercase font-bold tracking-wider text-amber-600 bg-amber-50 px-2 py-0.5 rounded border border-amber-100">
+                                                            {typeNames[eItem.type] || eItem.type}
+                                                        </span>
+                                                    </div>
+                                                    <h3 className="text-base font-extrabold text-slate-950 mt-2.5">
+                                                        {eItem.name}
+                                                    </h3>
+                                                </div>
+                                                <span className="text-xs font-extrabold text-indigo-600 bg-indigo-50 py-1.5 px-3 rounded-xl border border-indigo-100">
+                                                    {parseFloat(eItem.price) === 0 ? t('my_reservations_page.free_price', 'Gratuit') : `${eItem.price} €`}
+                                                </span>
+                                            </div>
+
+                                            {eItem.description && (
+                                                <p className="text-xs text-slate-500 font-light leading-relaxed line-clamp-2">
+                                                    {eItem.description}
+                                                </p>
+                                            )}
+
+                                            <div className="space-y-2 pt-2 border-t border-slate-50 text-xs font-medium text-slate-600">
+                                                <div className="flex items-center gap-2">
+                                                    <span>📆</span>
+                                                    <span className="capitalize">{formattedDate}</span>
+                                                </div>
+                                                <div className="flex items-center gap-2">
+                                                    <span>⏱️</span>
+                                                    <span>Début à <strong>{formattedTime}</strong></span>
+                                                </div>
+                                                <div className="flex items-center gap-2">
+                                                    <span>👥</span>
+                                                    <span>{t('tournaments_page.capacity', { registered: eItem.registeredCount, capacity: eItem.capacity })}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="p-6 pt-0 border-t border-slate-50 flex">
+                                            <button
+                                                onClick={() => handleUnregisterEvent(eItem.id)}
+                                                className="w-full py-2.5 bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold border border-rose-150 rounded-xl text-xs transition cursor-pointer"
+                                            >
+                                                {t('my_reservations_page.unregister_event_btn', 'Se désinscrire')}
+                                            </button>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    )}
+                </div>
+
             </div>
 
             {/* Modal d'édition */}
@@ -550,10 +715,15 @@ function MyReservations() {
                                     onChange={handleEditChange}
                                     className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-650 bg-white"
                                 >
+                                    <option value="POKEMON">Pokémon</option>
                                     <option value="MTG">Magic: The Gathering</option>
+                                    <option value="ONE_PIECE">One Piece Card Game</option>
                                     <option value="YUGIOH">Yu-Gi-Oh!</option>
-                                    <option value="POKEMON">Pokémon TCG</option>
+                                    <option value="STAR_WARS">Star Wars: Unlimited</option>
                                     <option value="LORCANA">Disney Lorcana</option>
+                                    <option value="FINAL_FF">Final Fantasy TCG</option>
+                                    <option value="ALTERED">Altered</option>
+                                    <option value="DBS">Dragon Ball Super Card Game</option>
                                     <option value="BOARD_GAME">{t('my_reservations_page.board_game_type')}</option>
                                     <option value="BYOG">{t('reservations_page.byog_label')}</option>
                                     <option value="OTHER">{t('reservations_page.other_label')}</option>

@@ -184,10 +184,15 @@ function Reservations() {
                                     onChange={handleChange}
                                     className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-650 bg-white"
                                 >
+                                    <option value="POKEMON">Pokémon</option>
                                     <option value="MTG">Magic: The Gathering</option>
+                                    <option value="ONE_PIECE">One Piece Card Game</option>
                                     <option value="YUGIOH">Yu-Gi-Oh!</option>
-                                    <option value="POKEMON">Pokémon TCG</option>
+                                    <option value="STAR_WARS">Star Wars: Unlimited</option>
                                     <option value="LORCANA">Disney Lorcana</option>
+                                    <option value="FINAL_FF">Final Fantasy TCG</option>
+                                    <option value="ALTERED">Altered</option>
+                                    <option value="DBS">Dragon Ball Super Card Game</option>
                                     <option value="BOARD_GAME">{t('my_reservations_page.board_game_type')}</option>
                                     <option value="BYOG">{t('reservations_page.byog_label')}</option>
                                     <option value="OTHER">{t('reservations_page.other_label')}</option>

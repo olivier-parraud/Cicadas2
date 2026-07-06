@@ -169,7 +169,6 @@ function Home() {
                     <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">
                         {t('home_page.features.title')}
                     </h2>
-                    <div className="h-1.5 w-20 bg-indigo-600 mx-auto rounded-full"></div>
                     <p className="text-lg text-slate-600 font-light">
                         {t('home_page.features.subtitle')}
                     </p>
@@ -224,7 +223,6 @@ function Home() {
                         <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">
                             {t('home_page.how_it_works.title')}
                         </h2>
-                        <div className="h-1.5 w-20 bg-indigo-600 mx-auto rounded-full"></div>
                         <p className="text-lg text-slate-600 font-light">
                             {t('home_page.how_it_works.subtitle')}
                         </p>
@@ -286,7 +284,6 @@ function Home() {
                         <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight">
                             {t('home_page.featured.title')}
                         </h2>
-                        <div className="h-1.5 w-20 bg-indigo-600 mx-auto rounded-full"></div>
                         <p className="text-lg text-slate-400 font-light">
                             {t('home_page.featured.subtitle')}
                         </p>
@@ -378,7 +375,6 @@ function Home() {
                     <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">
                         {t('home_page.testimonials.title')}
                     </h2>
-                    <div className="h-1.5 w-20 bg-indigo-600 mx-auto rounded-full"></div>
                     <p className="text-lg text-slate-600 font-light">
                         {t('home_page.testimonials.subtitle')}
                     </p>
@@ -439,7 +435,6 @@ function Home() {
                     <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight">
                         {t('home_page.faq.title')}
                     </h2>
-                    <div className="h-1 w-16 bg-indigo-600 mx-auto rounded-full"></div>
                     <p className="text-slate-600 font-light">
                         {t('home_page.faq.subtitle')}
                     </p>

@@ -20,6 +20,7 @@
     "express": "^5.2.1",
     "fast-xml-parser": "^5.9.3",
     "jsonwebtoken": "^9.0.3",
+    "multer": "^2.2.0",
     "mysql2": "^3.16.3",
     "zod": "^4.3.6"
   }

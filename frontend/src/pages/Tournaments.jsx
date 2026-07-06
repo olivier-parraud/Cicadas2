@@ -150,19 +150,32 @@ function Tournaments() {
     };
 
     // Filter tournaments list
-    const filteredTournaments = tournaments.filter(t => {
+    const filteredTournaments = tournaments.filter(tourney => {
         if (filter === 'all') return true;
-        if (filter === 'mtg') return t.game.toLowerCase().includes('magic');
-        if (filter === 'pokemon') return t.game.toLowerCase().includes('pokémon') || t.game.toLowerCase().includes('pokemon');
-        if (filter === 'lorcana') return t.game.toLowerCase().includes('lorcana');
-        return true;
+        const gameLower = tourney.game.toLowerCase();
+        if (filter === 'mtg') return gameLower.includes('magic');
+        if (filter === 'pokemon') return gameLower.includes('pokémon') || gameLower.includes('pokemon');
+        if (filter === 'one_piece') return gameLower.includes('one piece');
+        if (filter === 'yugioh') return gameLower.includes('yu-gi-oh') || gameLower.includes('yugioh');
+        if (filter === 'star_wars') return gameLower.includes('star wars');
+        if (filter === 'lorcana') return gameLower.includes('lorcana');
+        if (filter === 'final_ff') return gameLower.includes('final fantasy');
+        if (filter === 'altered') return gameLower.includes('altered');
+        if (filter === 'dbs') return gameLower.includes('dragon ball');
+        return false;
     });
 
     const getGameColorClass = (game) => {
         const gameLower = game.toLowerCase();
         if (gameLower.includes('magic')) return 'bg-orange-50 text-orange-700 border-orange-200/50';
         if (gameLower.includes('pokémon') || gameLower.includes('pokemon')) return 'bg-amber-50 text-amber-700 border-amber-200/50';
+        if (gameLower.includes('one piece')) return 'bg-cyan-50 text-cyan-700 border-cyan-200/50';
+        if (gameLower.includes('yu-gi-oh') || gameLower.includes('yugioh')) return 'bg-rose-50 text-rose-700 border-rose-200/50';
+        if (gameLower.includes('star wars')) return 'bg-blue-50 text-blue-700 border-blue-200/50';
         if (gameLower.includes('lorcana')) return 'bg-purple-50 text-purple-700 border-purple-200/50';
+        if (gameLower.includes('final fantasy')) return 'bg-teal-50 text-teal-700 border-teal-200/50';
+        if (gameLower.includes('altered')) return 'bg-indigo-50 text-indigo-700 border-indigo-200/50';
+        if (gameLower.includes('dragon ball')) return 'bg-emerald-50 text-emerald-700 border-emerald-200/50';
         return 'bg-slate-50 text-slate-700 border-slate-200/50';
     };
 
@@ -170,7 +183,13 @@ function Tournaments() {
         const gameLower = game.toLowerCase();
         if (gameLower.includes('magic')) return '🃏';
         if (gameLower.includes('pokémon') || gameLower.includes('pokemon')) return '⚡';
+        if (gameLower.includes('one piece')) return '🏴‍☠️';
+        if (gameLower.includes('yu-gi-oh') || gameLower.includes('yugioh')) return '🐉';
+        if (gameLower.includes('star wars')) return '🚀';
         if (gameLower.includes('lorcana')) return '🏰';
+        if (gameLower.includes('final fantasy')) return '💎';
+        if (gameLower.includes('altered')) return '🔮';
+        if (gameLower.includes('dragon ball')) return '💥';
         return '🎲';
     };
 
@@ -207,36 +226,29 @@ function Tournaments() {
                     >
                         {t('tournaments_page.all_tournaments')}
                     </button>
-                    <button
-                        onClick={() => setFilter('mtg')}
-                        className={`py-2.5 px-6 rounded-xl text-sm font-semibold border transition ${
-                            filter === 'mtg' 
-                                ? 'bg-indigo-600 border-indigo-600 text-white shadow-md' 
-                                : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
-                        }`}
-                    >
-                        Magic: The Gathering
-                    </button>
-                    <button
-                        onClick={() => setFilter('pokemon')}
-                        className={`py-2.5 px-6 rounded-xl text-sm font-semibold border transition ${
-                            filter === 'pokemon' 
-                                ? 'bg-indigo-600 border-indigo-600 text-white shadow-md' 
-                                : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
-                        }`}
-                    >
-                        Pokémon TCG
-                    </button>
-                    <button
-                        onClick={() => setFilter('lorcana')}
-                        className={`py-2.5 px-6 rounded-xl text-sm font-semibold border transition ${
-                            filter === 'lorcana' 
-                                ? 'bg-indigo-600 border-indigo-600 text-white shadow-md' 
-                                : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
-                        }`}
-                    >
-                        Disney Lorcana
-                    </button>
+                    {[
+                        { id: 'pokemon', name: 'Pokémon' },
+                        { id: 'mtg', name: 'Magic: The Gathering' },
+                        { id: 'one_piece', name: 'One Piece' },
+                        { id: 'yugioh', name: 'Yu-Gi-Oh!' },
+                        { id: 'star_wars', name: 'Star Wars' },
+                        { id: 'lorcana', name: 'Lorcana' },
+                        { id: 'final_ff', name: 'Final Fantasy' },
+                        { id: 'altered', name: 'Altered' },
+                        { id: 'dbs', name: 'Dragon Ball' }
+                    ].map(tcg => (
+                        <button
+                            key={tcg.id}
+                            onClick={() => setFilter(tcg.id)}
+                            className={`py-2.5 px-6 rounded-xl text-sm font-semibold border transition ${
+                                filter === tcg.id 
+                                    ? 'bg-indigo-600 border-indigo-600 text-white shadow-md' 
+                                    : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
+                            }`}
+                        >
+                            {tcg.name}
+                        </button>
+                    ))}
                 </div>
 
                 {loading ? (

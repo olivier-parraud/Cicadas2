@@ -1,229 +1,242 @@
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&display=swap');
 
 @theme {
   --font-sans: 'Inter', sans-serif;
-  --font-mono: 'Share Tech Mono', monospace;
-  --font-retro: 'Orbitron', sans-serif;
+  --font-display: 'Outfit', sans-serif;
 
-  /* Deep Space Backgrounds & High Contrast Text */
-  --color-slate-50: #060212;
-  --color-slate-100: #100627;
-  --color-slate-200: #251254;
-  --color-slate-300: #3b1e7a;
-  --color-slate-400: #9d88df;
-  --color-slate-500: #a78bfa;
-  --color-slate-600: #c2b5eb;
-  --color-slate-700: #dbd5f5;
-  --color-slate-800: #eeeeff;
+  /* Human-centric Cozy Dark Slate Palette */
+  --color-slate-50: #07060f;
+  --color-slate-100: #0d0c18;
+  --color-slate-200: #1b192e;
+  --color-slate-300: #292645;
+  --color-slate-400: #7a759c;
+  --color-slate-500: #8d88b3;
+  --color-slate-600: #a7a2cc;
+  --color-slate-700: #c2bddf;
+  --color-slate-800: #e2e0f0;
   --color-slate-900: #ffffff;
 
-  --color-gray-50: #060212;
-  --color-gray-100: #100627;
-  --color-gray-200: #251254;
-  --color-gray-300: #3b1e7a;
-  --color-gray-400: #9d88df;
-  --color-gray-500: #a78bfa;
-  --color-gray-600: #c2b5eb;
-  --color-gray-700: #dbd5f5;
-  --color-gray-800: #eeeeff;
+  --color-gray-50: #07060f;
+  --color-gray-100: #0d0c18;
+  --color-gray-200: #1b192e;
+  --color-gray-300: #292645;
+  --color-gray-400: #7a759c;
+  --color-gray-500: #8d88b3;
+  --color-gray-600: #a7a2cc;
+  --color-gray-700: #c2bddf;
+  --color-gray-800: #e2e0f0;
   --color-gray-900: #ffffff;
 
-  /* Glassmorphism base */
+  /* Translucent base */
   --color-white: #ffffff;
 
-  /* Cyber Magenta & Neon Cyan */
-  --color-indigo-50: #1e0947;
-  --color-indigo-100: #f5d0fe;
-  --color-indigo-200: #d8b4fe;
-  --color-indigo-300: #00ffff; /* Neon Cyan */
-  --color-indigo-400: #00e5ff;
-  --color-indigo-500: #00f0ff;
-  --color-indigo-600: #ff007f; /* Cyber Pink */
-  --color-indigo-700: #ff00a0;
-  --color-indigo-800: #17073c;
-  --color-indigo-900: #060214;
-  --color-indigo-950: #03000b;
+  /* Modern Warm Accents (Indigo & Purple) */
+  --color-indigo-50: #121026;
+  --color-indigo-100: #e0e7ff;
+  --color-indigo-200: #c7d2fe;
+  --color-indigo-300: #a5b4fc;
+  --color-indigo-400: #818cf8;
+  --color-indigo-500: #6366f1; /* Main Indigo */
+  --color-indigo-600: #4f46e5;
+  --color-indigo-700: #4338ca;
+  --color-indigo-800: #0a0918;
+  --color-indigo-900: #05040d;
+  --color-indigo-950: #030208;
 
-  --color-blue-50: #021a36;
-  --color-blue-100: #00f0ff;
-  --color-blue-200: #00e5ff;
-  --color-blue-700: #00ffff;
-  --color-blue-800: #00e5ff;
+  --color-blue-50: #081126;
+  --color-blue-100: #818cf8;
+  --color-blue-200: #6366f1;
+  --color-blue-700: #4f46e5;
+  --color-blue-800: #4338ca;
 
-  --color-purple-50: #28054a;
-  --color-purple-200: #ff00ff;
-  --color-purple-700: #ff00ff;
+  --color-purple-50: #1b0c36;
+  --color-purple-200: #d8b4fe;
+  --color-purple-700: #a78bfa;
 
-  --color-red-500: #ff2a5f;
-  --color-red-600: #ff0040;
+  --color-red-500: #f43f5e;
+  --color-red-600: #e11d48;
   
-  --color-green-50: #042517;
-  --color-green-700: #00ffaa;
+  --color-green-50: #062419;
+  --color-green-700: #10b981;
   
-  --color-emerald-50: #042517;
-  --color-emerald-200: #00ffaa;
-  --color-emerald-700: #00ffaa;
-  --color-emerald-800: #57ffc9;
+  --color-emerald-50: #062419;
+  --color-emerald-200: #34d399;
+  --color-emerald-700: #10b981;
+  --color-emerald-800: #059669;
 }
 
-/* --- Global Retro-Futuristic Styling Overrides --- */
+/* --- Crafted Modern Aesthetic Styling --- */
 
 body {
-  background-color: #060212;
+  background-color: #080711;
   font-family: 'Inter', sans-serif;
-  color: #eeeeff;
-  /* Cyber Grid Background */
+  color: #cbd5e1;
+  /* Soft, organic radial gradients for visual depth and premium feel */
   background-image: 
-    linear-gradient(rgba(255, 0, 127, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 0, 127, 0.05) 1px, transparent 1px);
-  background-size: 35px 35px;
-  background-position: center top;
+    radial-gradient(circle at 10% 15%, rgba(99, 102, 241, 0.07) 0%, transparent 45%),
+    radial-gradient(circle at 90% 75%, rgba(167, 139, 250, 0.06) 0%, transparent 45%),
+    radial-gradient(circle at 50% 50%, rgba(99, 102, 241, 0.02) 0%, transparent 50%);
+  background-attachment: fixed;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Headings with Orbitron & Neon shadow */
+/* Clean, modern headings with Outfit and slight letter-spacing reduction */
 h1, h2, h3, h4, h5, h6 {
-  font-family: 'Orbitron', sans-serif !important;
-  letter-spacing: 0.08em;
-  text-shadow: 0 0 8px rgba(0, 240, 255, 0.4), 0 0 20px rgba(255, 0, 127, 0.2);
+  font-family: 'Outfit', sans-serif !important;
+  letter-spacing: -0.02em;
+  font-weight: 800;
+  color: #ffffff;
 }
 
-/* Force dark text classes to high-contrast colors on dark theme */
+/* Map standard text utility classes dynamically to readable dark theme colors */
 .text-slate-950, .text-gray-950, .text-zinc-950, .text-neutral-950, .text-black {
   color: #ffffff !important;
 }
 .text-slate-900, .text-gray-900, .text-zinc-900, .text-neutral-900 {
-  color: #f1f5f9 !important; /* light slate */
+  color: #f1f5f9 !important;
 }
 .text-slate-800, .text-gray-800, .text-zinc-800, .text-neutral-800 {
-  color: #e2e8f0 !important; /* slate-200 */
+  color: #e2e8f0 !important;
 }
 .text-slate-700, .text-gray-700, .text-zinc-700, .text-neutral-700 {
-  color: #cbd5e1 !important; /* slate-300 */
+  color: #cbd5e1 !important;
 }
 .text-slate-600, .text-gray-600, .text-zinc-600, .text-neutral-600 {
-  color: #94a3b8 !important; /* slate-400 */
+  color: #94a3b8 !important;
 }
 .text-slate-500, .text-gray-500, .text-zinc-500, .text-neutral-500 {
-  color: #a78bfa !important; /* soft violet/lavender instead of dark grey */
+  color: #64748b !important;
 }
 .text-slate-400, .text-gray-400, .text-zinc-400, .text-neutral-400 {
-  color: #c2b5eb !important; /* soft bright lavender */
+  color: #94a3b8 !important;
 }
 .text-slate-300, .text-gray-300, .text-zinc-300, .text-neutral-300 {
-  color: #e2e8f0 !important; /* very bright lavender-white */
+  color: #cbd5e1 !important;
 }
 .text-slate-200, .text-gray-200, .text-zinc-200, .text-neutral-200 {
-  color: #f8fafc !important; /* near white */
+  color: #e2e8f0 !important;
 }
 .text-indigo-900, .text-indigo-950 {
-  color: #00ffff !important; /* Make dark indigo titles glowing cyan */
+  color: #818cf8 !important;
 }
 
-/* Glassmorphism card backgrounds */
+/* Translucent glass card background for high-end feel */
 .bg-white {
-  backdrop-filter: blur(12px) !important;
-  -webkit-backdrop-filter: blur(12px) !important;
-  background-color: rgba(14, 5, 41, 0.75) !important;
-  border: 1px solid rgba(0, 240, 255, 0.2) !important;
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5), inset 0 0 15px rgba(255, 0, 127, 0.08) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  background-color: rgba(21, 20, 37, 0.45) !important;
+  border: 1px solid rgba(255, 255, 255, 0.06) !important;
+  box-shadow: 0 12px 40px -12px rgba(0, 0, 0, 0.5) !important;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* Global inputs style */
+/* Sub-card/element styling */
+.bg-slate-50 {
+  background-color: rgba(13, 12, 24, 0.5) !important;
+  border: 1px solid rgba(255, 255, 255, 0.04) !important;
+}
+
+.bg-slate-100 {
+  background-color: rgba(13, 12, 24, 0.8) !important;
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+}
+
+/* Styled inputs for a seamless dark-theme look */
 input, select, textarea {
-  background-color: rgba(10, 3, 30, 0.9) !important;
+  background-color: rgba(13, 12, 24, 0.6) !important;
   color: #ffffff !important;
-  border: 1px solid rgba(0, 240, 255, 0.3) !important;
-  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.6), 0 0 5px rgba(0, 240, 255, 0.1) !important;
-  transition: all 0.3s ease !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
 }
 
 input:focus, select:focus, textarea:focus {
-  border-color: #ff007f !important;
-  box-shadow: 0 0 12px rgba(255, 0, 127, 0.4), inset 0 0 5px rgba(255, 0, 127, 0.2) !important;
+  border-color: #6366f1 !important;
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2) !important;
   outline: none;
 }
 
-/* Global button overlays */
+/* Sophisticated, responsive button design (no hard neons) */
 .bg-indigo-600 {
-  background-color: #ff007f !important;
-  box-shadow: 0 0 15px rgba(255, 0, 127, 0.4) !important;
-  border: 1px solid rgba(255, 0, 127, 0.6) !important;
-  text-shadow: 0 0 5px rgba(255, 255, 255, 0.4);
-  transition: all 0.3s ease !important;
+  background-color: #6366f1 !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.2) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
 .bg-indigo-600:hover {
-  background-color: #ff00a0 !important;
-  box-shadow: 0 0 25px rgba(255, 0, 127, 0.7), 0 0 8px rgba(0, 240, 255, 0.5) !important;
-  transform: translateY(-1px);
+  background-color: #4f46e5 !important;
+  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.35) !important;
+  transform: translateY(-0.5px);
 }
 
 .hover\:bg-indigo-500:hover {
-  background-color: #ff00a0 !important;
-  box-shadow: 0 0 20px rgba(255, 0, 127, 0.6) !important;
+  background-color: #4f46e5 !important;
 }
 
-/* Custom badges */
+/* Translucent pill badges */
 .bg-indigo-50 {
-  background-color: rgba(30, 9, 71, 0.7) !important;
-  color: #00ffff !important;
-  border-color: rgba(0, 240, 255, 0.3) !important;
+  background-color: rgba(99, 102, 241, 0.12) !important;
+  color: #a5b4fc !important;
+  border: 1px solid rgba(99, 102, 241, 0.2) !important;
 }
 
 .bg-indigo-500\/10 {
-  background-color: rgba(0, 240, 255, 0.1) !important;
-  color: #00ffff !important;
-  border-color: rgba(0, 240, 255, 0.3) !important;
+  background-color: rgba(99, 102, 241, 0.08) !important;
+  color: #a5b4fc !important;
+  border: 1px solid rgba(99, 102, 241, 0.15) !important;
 }
 
 .text-indigo-300 {
-  color: #00ffff !important;
+  color: #a5b4fc !important;
 }
 
-/* Sub-alert badges */
 .bg-emerald-50 {
-  background-color: rgba(4, 37, 23, 0.8) !important;
-  color: #00ffaa !important;
-  border-color: rgba(0, 255, 170, 0.3) !important;
+  background-color: rgba(16, 185, 129, 0.1) !important;
+  color: #34d399 !important;
+  border: 1px solid rgba(16, 185, 129, 0.2) !important;
 }
 
 .bg-rose-50 {
-  background-color: rgba(40, 5, 25, 0.8) !important;
-  color: #ff2a5f !important;
-  border-color: rgba(255, 42, 95, 0.3) !important;
+  background-color: rgba(244, 63, 94, 0.1) !important;
+  color: #f43f5e !important;
+  border: 1px solid rgba(244, 63, 94, 0.2) !important;
 }
 
-/* Header & Footer overrides */
+/* Ambient nav bar */
 header {
-  background-color: rgba(6, 2, 18, 0.95) !important;
-  border-bottom: 2px solid #ff007f !important;
-  box-shadow: 0 4px 20px rgba(255, 0, 127, 0.25) !important;
+  background-color: rgba(8, 7, 17, 0.8) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.15) !important;
 }
 
-/* Scrollbar retro styling */
+/* Minimalist scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #060212;
+  background: #080711;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #251254;
-  border-radius: 4px;
+  background: #1b192e;
+  border-radius: 99px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #ff007f;
-  box-shadow: 0 0 8px #ff007f;
+  background: #6366f1;
 }
 
-/* Inverser la couleur des logos/indicateurs natifs des champs date et heure pour les afficher en blanc */
 input[type="date"]::-webkit-calendar-picker-indicator,
 input[type="time"]::-webkit-calendar-picker-indicator {
-  filter: invert(1) !important;
+  filter: invert(0.85) !important;
   cursor: pointer;
 }

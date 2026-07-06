@@ -82,6 +82,34 @@ export async function testConnection() {
             ) ENGINE=InnoDB;
         `);
 
+        // Créer la table des événements si inexistante
+        await connection.execute(`
+            CREATE TABLE IF NOT EXISTS events (
+                id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                name VARCHAR(255) NOT NULL,
+                type ENUM('avant_premiere', 'draft', 'initiation') NOT NULL,
+                game VARCHAR(100) NOT NULL,
+                date DATETIME NOT NULL,
+                capacity INT UNSIGNED NOT NULL,
+                price DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+                description TEXT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            ) ENGINE=InnoDB;
+        `);
+
+        // Créer la table des inscriptions aux événements si inexistante
+        await connection.execute(`
+            CREATE TABLE IF NOT EXISTS event_registrations (
+                id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                event_id INT UNSIGNED NOT NULL,
+                user_id INT UNSIGNED NOT NULL,
+                registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE,
+                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+                UNIQUE KEY idx_event_user (event_id, user_id)
+            ) ENGINE=InnoDB;
+        `);
+
         // Vérifier si la colonne 'specific_game' existe sur 'reservations'
         const [specificGameCols] = await connection.execute("SHOW COLUMNS FROM reservations LIKE 'specific_game'");
         if (specificGameCols.length === 0) {
@@ -100,7 +128,7 @@ export async function testConnection() {
         try {
             await connection.execute(`
                 ALTER TABLE reservations 
-                MODIFY COLUMN game_type ENUM('MTG', 'YUGIOH', 'POKEMON', 'LORCANA', 'BOARD_GAME', 'BYOG', 'OTHER') DEFAULT 'OTHER'
+                MODIFY COLUMN game_type ENUM('MTG', 'YUGIOH', 'POKEMON', 'LORCANA', 'ONE_PIECE', 'STAR_WARS', 'FINAL_FF', 'ALTERED', 'DBS', 'BOARD_GAME', 'BYOG', 'OTHER') DEFAULT 'OTHER'
             `);
             console.log("Colonne 'game_type' de reservations mise à jour avec l'ENUM étendu");
         } catch (err) {

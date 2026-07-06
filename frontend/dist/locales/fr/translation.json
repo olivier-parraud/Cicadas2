@@ -5,6 +5,7 @@
     "my_reservations": "Mes réservations",
     "boardgames": "Jeux de société",
     "tournaments": "Tournois",
+    "events": "Événements",
     "admin": "Admin",
     "logout": "Déconnexion",
     "login": "Connexion",
@@ -281,6 +282,14 @@
     "other_type": "Autre",
     "load_tables_error": "Impossible de charger vos réservations.",
     "load_tourneys_error": "Impossible de charger vos inscriptions aux tournois.",
+    "events_title": "Mes inscriptions aux événements",
+    "loading_events": "Chargement de vos événements...",
+    "no_events": "Aucun événement planifié",
+    "no_events_desc": "Vous n'êtes inscrit à aucun événement ou initiation pour le moment.",
+    "view_events_btn": "Voir les événements",
+    "unregister_event_btn": "❌ Se désinscrire de l'événement",
+    "confirm_unregister_event": "Êtes-vous sûr de vouloir vous désinscrire de cet événement ?",
+    "load_events_error": "Impossible de charger vos inscriptions aux événements.",
     "err_conn": "Erreur de connexion avec le serveur."
   },
   "boardgames_page": {
@@ -331,5 +340,21 @@
     "Abstrait": "Abstrait",
     "Ambiance": "Ambiance",
     "Autre": "Autre"
+  },
+  "events_page": {
+    "title": "Événements à venir",
+    "subtitle": "Participez à nos avant-premières, drafts, initiations et découvrez de nouvelles manières de jouer !",
+    "badge": "AGENDA",
+    "all_events": "Tous les événements",
+    "prerelease": "Avant-première",
+    "draft": "Draft",
+    "initiation": "Initiation",
+    "btn_register": "S'inscrire",
+    "btn_registered": "Inscrit",
+    "btn_full": "Complet",
+    "price_free": "Gratuit",
+    "spots_left": "{{count}} place restante",
+    "spots_left_plural": "{{count}} places restantes",
+    "no_events": "Aucun événement prévu pour le moment. Repassez plus tard !"
   }
 }

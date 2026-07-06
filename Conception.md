@@ -51,7 +51,7 @@
 | 🔐 Authentification | Inscription, connexion, gestion de profil avec JWT |
 | 📅 Réservation de table | Réservation en ligne avec planning interactif et détection de conflits |
 | 🏆 Tournois | Inscription/désinscription aux tournois de TCG avec jauge de capacité |
-| 🎲 Catalogue de jeux | Consultation d'un catalogue de 50+ jeux de société avec images et descriptions |
+| 🎲 Catalogue de jeux | Consultation d'un catalogue de 100+ jeux de société avec images et descriptions |
 | 👤 Espace utilisateur | Consultation, modification et annulation de ses réservations/tournois |
 | 🛡️ Dashboard admin | Gestion complète des utilisateurs, réservations, tournois et catalogue |
 | 🌐 Internationalisation | Support bilingue français/anglais avec détection automatique |

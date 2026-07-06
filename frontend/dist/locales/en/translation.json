@@ -5,6 +5,7 @@
     "my_reservations": "My Reservations",
     "boardgames": "Board Games",
     "tournaments": "Tournaments",
+    "events": "Events",
     "admin": "Admin",
     "logout": "Logout",
     "login": "Login",
@@ -281,6 +282,14 @@
     "other_type": "Other",
     "load_tables_error": "Unable to load your bookings.",
     "load_tourneys_error": "Unable to load your tournament registrations.",
+    "events_title": "My Event Registrations",
+    "loading_events": "Loading your events...",
+    "no_events": "No upcoming event",
+    "no_events_desc": "You are not registered in any event or initiation at the moment.",
+    "view_events_btn": "See events",
+    "unregister_event_btn": "❌ Unregister from event",
+    "confirm_unregister_event": "Are you sure you want to unregister from this event?",
+    "load_events_error": "Unable to load your event registrations.",
     "err_conn": "Server connection error."
   },
   "boardgames_page": {
@@ -331,5 +340,21 @@
     "Abstrait": "Abstract",
     "Ambiance": "Party",
     "Autre": "Other"
+  },
+  "events_page": {
+    "title": "Upcoming Events",
+    "subtitle": "Join our pre-releases, drafts, initiations and discover new ways to play!",
+    "badge": "SCHEDULE",
+    "all_events": "All Events",
+    "prerelease": "Pre-release",
+    "draft": "Draft",
+    "initiation": "Initiation",
+    "btn_register": "Register",
+    "btn_registered": "Registered",
+    "btn_full": "Full",
+    "price_free": "Free",
+    "spots_left": "{{count}} spot left",
+    "spots_left_plural": "{{count}} spots left",
+    "no_events": "No events scheduled at the moment. Check back soon!"
   }
 }

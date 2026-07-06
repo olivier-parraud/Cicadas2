@@ -55,6 +55,7 @@ function Header() {
                     )}
                     <Link to="/boardgames" className="hover:text-indigo-300 transition">{t('nav.boardgames')}</Link>
                     <Link to="/tournaments" className="hover:text-indigo-300 transition">{t('nav.tournaments')}</Link>
+                    <Link to="/events" className="hover:text-indigo-300 transition">{t('nav.events')}</Link>
                     {isAuthenticated && isAdmin && (
                         <Link to="/admin" className="hover:text-indigo-300 text-indigo-200 font-bold transition">{t('nav.admin')}</Link>
                     )}
@@ -115,6 +116,7 @@ function Header() {
                     )}
                     <Link to="/boardgames" className="hover:text-indigo-300 transition py-2 border-b border-indigo-900/50" onClick={closeMenu}>{t('nav.boardgames')}</Link>
                     <Link to="/tournaments" className="hover:text-indigo-300 transition py-2 border-b border-indigo-900/50" onClick={closeMenu}>{t('nav.tournaments')}</Link>
+                    <Link to="/events" className="hover:text-indigo-300 transition py-2 border-b border-indigo-900/50" onClick={closeMenu}>{t('nav.events')}</Link>
                     {isAuthenticated && isAdmin && (
                         <Link to="/admin" className="hover:text-indigo-300 text-indigo-200 font-bold transition py-2 border-b border-indigo-900/50" onClick={closeMenu}>{t('nav.admin')}</Link>
                     )}

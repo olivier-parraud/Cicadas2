@@ -12,13 +12,46 @@ import {
     deleteBoardGame,
     importBggHotGames
 } from '../controllers/admin.controller.js';
+import { createEvent, deleteEvent } from '../controllers/event.controller.js';
 import authMiddleware from '../middlewares/auth.middleware.js';
 import adminMiddleware from '../middlewares/admin.middleware.js';
+import multer from 'multer';
+import path from 'path';
+import fs from 'fs';
 
 const router = Router();
 
+// Configuration du stockage de Multer pour les images téléversées
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        const uploadDir = 'public/uploads/boardgames';
+        if (!fs.existsSync(uploadDir)) {
+            fs.mkdirSync(uploadDir, { recursive: true });
+        }
+        cb(null, uploadDir);
+    },
+    filename: (req, file, cb) => {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+        cb(null, uniqueSuffix + path.extname(file.originalname));
+    }
+});
+
+const upload = multer({ 
+    storage,
+    limits: { fileSize: 5 * 1024 * 1024 } // Limite à 5 Mo
+});
+
 // Toutes les routes admin nécessitent d'être connecté ET d'avoir le rôle ADMIN
 router.use(authMiddleware, adminMiddleware);
+
+// Route de téléversement d'image
+router.post('/upload-image', upload.single('image'), (req, res) => {
+    if (!req.file) {
+        return res.status(400).json({ error: 'Aucun fichier fourni.' });
+    }
+    const fileUrl = `${req.protocol}://${req.get('host')}/public/uploads/boardgames/${req.file.filename}`;
+    res.json({ imageUrl: fileUrl });
+});
 
 // Réservations
 router.get('/reservations', getAllReservations);
@@ -33,6 +66,10 @@ router.delete('/users/:id', deleteUser);
 // Tournois
 router.post('/tournaments', createTournament);
 router.delete('/tournaments/:id', deleteTournament);
+
+// Événements (avant-premières, drafts, initiations)
+router.post('/events', createEvent);
+router.delete('/events/:id', deleteEvent);
 
 // Jeux de société
 router.post('/boardgames', createBoardGame);

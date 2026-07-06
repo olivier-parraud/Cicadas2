@@ -24,7 +24,13 @@ async function fetchBgg(endpoint, params = {}) {
     
     console.log(`BGG Proxy: Fetching URL ${url}`);
     
-    const response = await fetch(url, { headers });
+    let response = await fetch(url, { headers });
+    if (!response.ok && (response.status === 401 || response.status === 403) && headers['Authorization']) {
+        console.warn(`BGG Proxy: Auth failed (${response.status}), retrying without Authorization header...`);
+        delete headers['Authorization'];
+        response = await fetch(url, { headers });
+    }
+
     if (!response.ok) {
         throw new Error(`BGG API returned status ${response.status}`);
     }

@@ -10,6 +10,7 @@ import tournamentRoutes from './src/routes/tournament.routes.js';
 import adminRoutes from './src/routes/admin.routes.js';
 import boardgameRoutes from './src/routes/boardgame.routes.js';
 import bggRoutes from './src/routes/bgg.routes.js';
+import eventRoutes from './src/routes/event.routes.js';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -27,6 +28,7 @@ app.use(cors({
     credentials: true
 }));
 app.use(express.json());
+app.use('/public', express.static('public'));
 // Logger (dev)
 if (process.env.NODE_ENV !== 'production') {
     app.use((req, res, next) => {
@@ -42,6 +44,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/email', emailRoutes);
 app.use('/api/reservations', reservationRoutes);
 app.use('/api/tournaments', tournamentRoutes);
+app.use('/api/events', eventRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/boardgames', boardgameRoutes);
 app.use('/api/bgg', bggRoutes);

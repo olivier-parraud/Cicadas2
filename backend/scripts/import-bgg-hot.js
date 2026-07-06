@@ -68,7 +68,7 @@ async function translateTextToFrench(text) {
 }
 
 async function main() {
-    console.log("Début de l'importation des 50 jeux les plus populaires depuis BGG...");
+    console.log("Début de l'importation des 100 jeux les plus populaires depuis BGG...");
     
     // 1. Récupérer la liste "Hot"
     const hotUrl = `${BGG_BASE_URL}/hot?type=boardgame`;
@@ -78,7 +78,12 @@ async function main() {
     }
     
     console.log(`Récupération du classement Hot de BGG : ${hotUrl}`);
-    const hotResponse = await fetch(hotUrl, { headers });
+    let hotResponse = await fetch(hotUrl, { headers });
+    if (!hotResponse.ok && (hotResponse.status === 401 || hotResponse.status === 403) && headers['Authorization']) {
+        console.warn(`BGG Proxy: Auth failed (${hotResponse.status}), retrying without Authorization header...`);
+        delete headers['Authorization'];
+        hotResponse = await fetch(hotUrl, { headers });
+    }
     if (!hotResponse.ok) {
         throw new Error(`Erreur lors de la récupération du classement BGG (Status: ${hotResponse.status})`);
     }
@@ -91,11 +96,30 @@ async function main() {
         throw new Error("Impossible de récupérer la liste des jeux chauds (format incorrect).");
     }
     
-    // Récupérer les 50 premiers IDs
-    const allIds = items.slice(0, 50).map(item => item['@_id']);
+    const hotIds = items.slice(0, 50).map(item => String(item['@_id']));
+    
+    // Predefined BGG IDs of all-time popular board games to fill up the list to 100
+    const ALL_TIME_POPULAR_IDS = [
+        '224517', '161936', '174430', '342942', '233078', '316554', '187686', '220308', '115746', '182028',
+        '193738', '162886', '84876',  '28720',  '169786', '246900', '124369', '266192', '177736', '167791',
+        '205637', '199792', '172287', '173090', '183394', '205059', '110327', '102652', '31260',  '230802',
+        '3076',   '228638', '120677', '2651',   '68448',  '173346', '30549',  '270514', '13',     '822',
+        '92030',  '148228', '192372', '178900', '28143',  '400315', '396790', '395729', '385761', '375718',
+        '360692', '353059', '332164', '306560', '298065', '284545', '266507', '251247', '246784', '244521',
+        '229853', '204583', '188834', '175914', '170216', '163067', '155068', '140308', '133473', '12333',
+        '1219',   '118',    '54',     '3'
+    ];
+
+    const allIds = [...hotIds];
+    for (const staticId of ALL_TIME_POPULAR_IDS) {
+        if (allIds.length >= 100) break;
+        if (!allIds.includes(staticId)) {
+            allIds.push(staticId);
+        }
+    }
     console.log(`IDs récupérés (${allIds.length} jeux).`);
     
-    // 2. Récupérer les détails de ces 50 jeux par lots de 20
+    // 2. Récupérer les détails de ces 100 jeux par lots de 20
     const chunkSize = 20;
     let gameItems = [];
     
@@ -105,7 +129,12 @@ async function main() {
         const thingUrl = `${BGG_BASE_URL}/thing?id=${idsString}`;
         console.log(`Récupération du lot de détails (${i + 1} à ${Math.min(i + chunkSize, allIds.length)}) : ${thingUrl}`);
         
-        const detailsResponse = await fetch(thingUrl, { headers });
+        let detailsResponse = await fetch(thingUrl, { headers });
+        if (!detailsResponse.ok && (detailsResponse.status === 401 || detailsResponse.status === 403) && headers['Authorization']) {
+            console.warn(`BGG Proxy: Auth failed (${detailsResponse.status}), retrying without Authorization header...`);
+            delete headers['Authorization'];
+            detailsResponse = await fetch(thingUrl, { headers });
+        }
         if (!detailsResponse.ok) {
             throw new Error(`Erreur lors de la récupération des détails des jeux (Status: ${detailsResponse.status})`);
         }

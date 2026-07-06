@@ -10,14 +10,29 @@ function DashboardAdmin() {
     const [users, setUsers] = useState([]);
     const [tournaments, setTournaments] = useState([]);
     const [boardGames, setBoardGames] = useState([]);
+    const [events, setEvents] = useState([]);
     const [loading, setLoading] = useState(true);
     const [actionLoading, setActionLoading] = useState(false);
     const [message, setMessage] = useState({ type: '', text: '' });
+    const [deleteConfirmId, setDeleteConfirmId] = useState(null);
+    const [deleteConfirmType, setDeleteConfirmType] = useState(null);
+
+    // Event Form state
+    const [eventForm, setEventForm] = useState({
+        name: '',
+        type: 'avant_premiere',
+        game: 'Pokémon',
+        date: '',
+        time: '19:30',
+        capacity: 16,
+        price: 5.00,
+        description: ''
+    });
 
     // Tournament Form state
     const [tourneyForm, setTourneyForm] = useState({
         name: '',
-        game: 'Magic: The Gathering',
+        game: 'Pokémon',
         date: '',
         time: '19:30',
         capacity: 16,
@@ -36,6 +51,41 @@ function DashboardAdmin() {
         image_url: '',
         rules_url: ''
     });
+
+    const [uploadingImage, setUploadingImage] = useState(false);
+
+    const handleImageUpload = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        setUploadingImage(true);
+        setMessage({ type: '', text: '' });
+
+        const formData = new FormData();
+        formData.append('image', file);
+
+        try {
+            const res = await fetch('http://localhost:5050/api/admin/upload-image', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                body: formData
+            });
+
+            const data = await res.json();
+            if (res.ok) {
+                setBgForm(prev => ({ ...prev, image_url: data.imageUrl }));
+                setMessage({ type: 'success', text: 'Image téléversée avec succès !' });
+            } else {
+                setMessage({ type: 'error', text: data.error || 'Erreur lors du téléversement.' });
+            }
+        } catch (error) {
+            setMessage({ type: 'error', text: "Erreur réseau lors de l'envoi." });
+        } finally {
+            setUploadingImage(false);
+        }
+    };
 
     // Check if user is Admin on mount
     useEffect(() => {
@@ -102,6 +152,13 @@ function DashboardAdmin() {
                 const data = await resBgs.json();
                 setBoardGames(data);
             }
+
+            // Fetch events
+            const resEvents = await fetch('http://localhost:5050/api/events');
+            if (resEvents.ok) {
+                const data = await resEvents.json();
+                setEvents(data);
+            }
         } catch (error) {
             console.error("Erreur chargement données admin :", error);
             setMessage({ type: 'error', text: 'Erreur lors du chargement des données.' });
@@ -137,22 +194,87 @@ function DashboardAdmin() {
         }
     };
 
-    const handleDeleteRes = async (id) => {
-        if (!window.confirm("Supprimer définitivement cette réservation ?")) return;
+    const handleDeleteRes = (id) => {
+        setDeleteConfirmId(id);
+        setDeleteConfirmType('reservation');
+    };
+
+    const confirmDelete = async () => {
+        if (!deleteConfirmId || !deleteConfirmType) return;
+        const id = deleteConfirmId;
+        const type = deleteConfirmType;
+        
+        setDeleteConfirmId(null);
+        setDeleteConfirmType(null);
         setActionLoading(true);
         try {
-            const res = await fetch(`http://localhost:5050/api/admin/reservations/${id}`, {
+            let url = '';
+            let successMsg = '';
+            
+            if (type === 'reservation') {
+                url = `http://localhost:5050/api/admin/reservations/${id}`;
+                successMsg = 'Réservation supprimée.';
+            } else if (type === 'user') {
+                url = `http://localhost:5050/api/admin/users/${id}`;
+                successMsg = 'Utilisateur supprimé.';
+            } else if (type === 'tournament') {
+                url = `http://localhost:5050/api/admin/tournaments/${id}`;
+                successMsg = 'Tournoi supprimé.';
+            } else if (type === 'boardgame') {
+                url = `http://localhost:5050/api/admin/boardgames/${id}`;
+                successMsg = 'Jeu de société supprimé.';
+            } else if (type === 'event') {
+                url = `http://localhost:5050/api/admin/events/${id}`;
+                successMsg = 'Événement supprimé.';
+            }
+            
+            const res = await fetch(url, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             if (res.ok) {
-                setMessage({ type: 'success', text: 'Réservation supprimée.' });
+                setMessage({ type: 'success', text: successMsg });
                 fetchAdminData();
+            } else {
+                const data = await res.json();
+                setMessage({ type: 'error', text: data.error || 'Erreur de suppression.' });
             }
         } catch (error) {
             setMessage({ type: 'error', text: 'Erreur réseau.' });
         } finally {
             setActionLoading(false);
+        }
+    };
+
+    const getDeleteModalInfo = () => {
+        switch (deleteConfirmType) {
+            case 'reservation':
+                return {
+                    title: 'Supprimer la réservation',
+                    description: 'Voulez-vous vraiment supprimer définitivement cette réservation ? Cette action est irréversible.'
+                };
+            case 'user':
+                return {
+                    title: 'Supprimer l\'utilisateur',
+                    description: 'Voulez-vous vraiment supprimer définitivement cet utilisateur ? Ses réservations associées seront effacées.'
+                };
+            case 'tournament':
+                return {
+                    title: 'Supprimer le tournoi',
+                    description: 'Voulez-vous vraiment supprimer définitivement ce tournoi ? Toutes les inscriptions de joueurs liées seront perdues.'
+                };
+            case 'boardgame':
+                return {
+                    title: 'Supprimer le jeu',
+                    description: 'Voulez-vous vraiment retirer définitivement ce jeu de société du catalogue ?'
+                };
+            case 'event':
+                return {
+                    title: 'Supprimer l\'événement',
+                    description: 'Voulez-vous vraiment supprimer définitivement cet événement ? Toutes les inscriptions de joueurs liées seront perdues.'
+                };
+            default:
+                return { title: 'Confirmer la suppression', description: 'Voulez-vous vraiment effectuer cette suppression ?' };
         }
     };
 
@@ -184,26 +306,9 @@ function DashboardAdmin() {
         }
     };
 
-    const handleDeleteUser = async (userId) => {
-        if (!window.confirm("Supprimer définitivement cet utilisateur ? Ses réservations associées seront effacées.")) return;
-        setActionLoading(true);
-        try {
-            const res = await fetch(`http://localhost:5050/api/admin/users/${userId}`, {
-                method: 'DELETE',
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            if (res.ok) {
-                setMessage({ type: 'success', text: 'Utilisateur supprimé.' });
-                fetchAdminData();
-            } else {
-                const data = await res.json();
-                setMessage({ type: 'error', text: data.error || 'Erreur.' });
-            }
-        } catch (error) {
-            setMessage({ type: 'error', text: 'Erreur réseau.' });
-        } finally {
-            setActionLoading(false);
-        }
+    const handleDeleteUser = (userId) => {
+        setDeleteConfirmId(userId);
+        setDeleteConfirmType('user');
     };
 
     // --- TOURNAMENT ACTIONS ---
@@ -235,7 +340,7 @@ function DashboardAdmin() {
                 setMessage({ type: 'success', text: 'Tournoi créé avec succès !' });
                 setTourneyForm({
                     name: '',
-                    game: 'Magic: The Gathering',
+                    game: 'Pokémon',
                     date: '',
                     time: '19:30',
                     capacity: 16,
@@ -254,23 +359,64 @@ function DashboardAdmin() {
         }
     };
 
-    const handleDeleteTourney = async (id) => {
-        if (!window.confirm("Supprimer ce tournoi et toutes les inscriptions liées ?")) return;
+    const handleDeleteTourney = (id) => {
+        setDeleteConfirmId(id);
+        setDeleteConfirmType('tournament');
+    };
+
+    // --- EVENT ACTIONS ---
+
+    const handleCreateEvent = async (e) => {
+        e.preventDefault();
         setActionLoading(true);
+        setMessage({ type: '', text: '' });
+
         try {
-            const res = await fetch(`http://localhost:5050/api/admin/tournaments/${id}`, {
-                method: 'DELETE',
-                headers: { 'Authorization': `Bearer ${token}` }
+            const formattedDate = `${eventForm.date} ${eventForm.time}:00`;
+            const res = await fetch('http://localhost:5050/api/admin/events', {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}` 
+                },
+                body: JSON.stringify({
+                    name: eventForm.name,
+                    type: eventForm.type,
+                    game: eventForm.game,
+                    date: formattedDate,
+                    capacity: Number(eventForm.capacity),
+                    price: Number(eventForm.price),
+                    description: eventForm.description
+                })
             });
+
             if (res.ok) {
-                setMessage({ type: 'success', text: 'Tournoi supprimé.' });
+                setMessage({ type: 'success', text: 'Événement créé avec succès !' });
+                setEventForm({
+                    name: '',
+                    type: 'avant_premiere',
+                    game: 'Pokémon',
+                    date: '',
+                    time: '19:30',
+                    capacity: 16,
+                    price: 5.00,
+                    description: ''
+                });
                 fetchAdminData();
+            } else {
+                const data = await res.json();
+                setMessage({ type: 'error', text: data.error || 'Erreur de création.' });
             }
         } catch (error) {
             setMessage({ type: 'error', text: 'Erreur réseau.' });
         } finally {
             setActionLoading(false);
         }
+    };
+
+    const handleDeleteEvent = (id) => {
+        setDeleteConfirmId(id);
+        setDeleteConfirmType('event');
     };
 
     const handleCreateBoardGame = async (e) => {
@@ -312,32 +458,15 @@ function DashboardAdmin() {
         }
     };
 
-    const handleDeleteBoardGame = async (id) => {
-        if (!window.confirm("Supprimer définitivement ce jeu de société de la boutique ?")) return;
-        setActionLoading(true);
-        try {
-            const res = await fetch(`http://localhost:5050/api/admin/boardgames/${id}`, {
-                method: 'DELETE',
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            if (res.ok) {
-                setMessage({ type: 'success', text: 'Jeu de société supprimé.' });
-                fetchAdminData();
-            } else {
-                const data = await res.json();
-                setMessage({ type: 'error', text: data.error || 'Erreur lors de la suppression.' });
-            }
-        } catch (error) {
-            setMessage({ type: 'error', text: 'Erreur réseau.' });
-        } finally {
-            setActionLoading(false);
-        }
+    const handleDeleteBoardGame = (id) => {
+        setDeleteConfirmId(id);
+        setDeleteConfirmType('boardgame');
     };
 
     const handleImportBggHot = async () => {
-        if (!window.confirm("Importer les 50 jeux populaires depuis BoardGameGeek ? Cela remplacera la liste actuelle de la boutique.")) return;
+        if (!window.confirm("Importer les 100 jeux populaires depuis BoardGameGeek ? Cela remplacera la liste actuelle de la boutique.")) return;
         setActionLoading(true);
-        setMessage({ type: 'info', text: "Importation des 50 jeux les plus populaires depuis BGG... Cela peut prendre quelques secondes." });
+        setMessage({ type: 'info', text: "Importation des 100 jeux les plus populaires depuis BGG... Cela peut prendre quelques secondes." });
         try {
             const res = await fetch('http://localhost:5050/api/admin/boardgames/import-hot', {
                 method: 'POST',
@@ -379,6 +508,12 @@ function DashboardAdmin() {
                             className={`py-2 px-4 rounded-lg text-xs font-bold transition ${activeTab === 'tournaments' ? 'bg-indigo-600 text-white shadow' : 'text-slate-400 hover:text-white'}`}
                         >
                             🏆 Tournois
+                        </button>
+                        <button
+                            onClick={() => { setActiveTab('events'); setMessage({ type: '', text: '' }); }}
+                            className={`py-2 px-4 rounded-lg text-xs font-bold transition ${activeTab === 'events' ? 'bg-indigo-600 text-white shadow' : 'text-slate-400 hover:text-white'}`}
+                        >
+                            📅 Événements
                         </button>
                         <button
                             onClick={() => { setActiveTab('boardgames'); setMessage({ type: '', text: '' }); }}
@@ -554,10 +689,15 @@ function DashboardAdmin() {
                                             onChange={(e) => setTourneyForm({ ...tourneyForm, game: e.target.value })}
                                             className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-600 bg-white"
                                         >
+                                            <option>Pokémon</option>
                                             <option>Magic: The Gathering</option>
-                                            <option>Pokémon TCG</option>
+                                            <option>One Piece Card Game</option>
+                                            <option>Yu-Gi-Oh!</option>
+                                            <option>Star Wars: Unlimited</option>
                                             <option>Disney Lorcana</option>
-                                            <option>Autre jeu de société / rôle</option>
+                                            <option>Final Fantasy TCG</option>
+                                            <option>Altered</option>
+                                            <option>Dragon Ball Super Card Game</option>
                                         </select>
                                     </div>
 
@@ -660,6 +800,189 @@ function DashboardAdmin() {
                                         {tournaments.length === 0 && (
                                             <div className="p-8 text-center text-slate-400 italic font-light">
                                                 Aucun tournoi enregistré.
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* TAB: EVENTS */}
+                        {activeTab === 'events' && (
+                            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                                {/* Create Event Form */}
+                                <form onSubmit={handleCreateEvent} className="lg:col-span-5 bg-white p-6 md:p-8 rounded-3xl border border-slate-100 shadow-xl space-y-4">
+                                    <h2 className="text-lg font-bold text-slate-900 pb-3 border-b border-slate-100 flex items-center gap-2">
+                                        <span>➕</span> Créer un événement
+                                    </h2>
+
+                                    <div className="space-y-1">
+                                        <label className="text-xs font-bold text-slate-500 uppercase">Nom de l'événement</label>
+                                        <input
+                                            type="text"
+                                            required
+                                            placeholder="Ex: Avant-première Pokémon Écarlate et Violet"
+                                            value={eventForm.name}
+                                            onChange={(e) => setEventForm({ ...eventForm, name: e.target.value })}
+                                            className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-650 bg-white"
+                                        />
+                                    </div>
+
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="space-y-1">
+                                            <label className="text-xs font-bold text-slate-500 uppercase">Type d'événement</label>
+                                            <select
+                                                value={eventForm.type}
+                                                onChange={(e) => setEventForm({ ...eventForm, type: e.target.value })}
+                                                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-650 bg-white"
+                                            >
+                                                <option value="avant_premiere">Avant-première</option>
+                                                <option value="draft">Draft</option>
+                                                <option value="initiation">Initiation</option>
+                                            </select>
+                                        </div>
+
+                                        <div className="space-y-1">
+                                            <label className="text-xs font-bold text-slate-500 uppercase">Jeu associé</label>
+                                            <select
+                                                value={eventForm.game}
+                                                onChange={(e) => setEventForm({ ...eventForm, game: e.target.value })}
+                                                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-650 bg-white"
+                                            >
+                                                <option>Pokémon</option>
+                                                <option>Magic: The Gathering</option>
+                                                <option>One Piece Card Game</option>
+                                                <option>Yu-Gi-Oh!</option>
+                                                <option>Star Wars: Unlimited</option>
+                                                <option>Disney Lorcana</option>
+                                                <option>Final Fantasy TCG</option>
+                                                <option>Altered</option>
+                                                <option>Dragon Ball Super Card Game</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="space-y-1">
+                                            <label className="text-xs font-bold text-slate-500 uppercase">Date</label>
+                                            <input
+                                                type="date"
+                                                required
+                                                value={eventForm.date}
+                                                onChange={(e) => setEventForm({ ...eventForm, date: e.target.value })}
+                                                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-650 bg-white"
+                                            />
+                                        </div>
+                                        <div className="space-y-1">
+                                            <label className="text-xs font-bold text-slate-500 uppercase">Heure</label>
+                                            <input
+                                                type="time"
+                                                required
+                                                value={eventForm.time}
+                                                onChange={(e) => setEventForm({ ...eventForm, time: e.target.value })}
+                                                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-650 bg-white"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="space-y-1">
+                                            <label className="text-xs font-bold text-slate-500 uppercase">Nombre de places</label>
+                                            <input
+                                                type="number"
+                                                required
+                                                min="2"
+                                                value={eventForm.capacity}
+                                                onChange={(e) => setEventForm({ ...eventForm, capacity: Number(e.target.value) })}
+                                                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-650 bg-white"
+                                            />
+                                        </div>
+                                        <div className="space-y-1">
+                                            <label className="text-xs font-bold text-slate-500 uppercase">Tarif (€)</label>
+                                            <input
+                                                type="number"
+                                                required
+                                                min="0"
+                                                step="0.5"
+                                                value={eventForm.price}
+                                                onChange={(e) => setEventForm({ ...eventForm, price: Number(e.target.value) })}
+                                                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-650 bg-white"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-1">
+                                        <label className="text-xs font-bold text-slate-500 uppercase">Description</label>
+                                        <textarea
+                                            rows="3"
+                                            placeholder="Infos pratiques, lots à gagner..."
+                                            value={eventForm.description}
+                                            onChange={(e) => setEventForm({ ...eventForm, description: e.target.value })}
+                                            className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-650 bg-white font-light"
+                                        ></textarea>
+                                    </div>
+
+                                    <button
+                                        type="submit"
+                                        disabled={actionLoading}
+                                        className="w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold text-sm shadow-md transition disabled:opacity-50 mt-2"
+                                    >
+                                        {actionLoading ? 'Création...' : 'Créer l\'événement'}
+                                    </button>
+                                </form>
+
+                                {/* Events List */}
+                                <div className="lg:col-span-7 bg-white rounded-3xl border border-slate-100 shadow-xl overflow-hidden">
+                                    <div className="p-6 border-b border-slate-100">
+                                        <h2 className="text-lg font-bold text-slate-900">Événements enregistrés ({events.length})</h2>
+                                    </div>
+
+                                    <div className="divide-y divide-slate-100">
+                                        {events.map((e) => {
+                                            const typeNames = {
+                                                avant_premiere: "Avant-première",
+                                                draft: "Draft",
+                                                initiation: "Initiation"
+                                            };
+                                            const typeEmojis = {
+                                                avant_premiere: "✨",
+                                                draft: "🃏",
+                                                initiation: "🎓"
+                                            };
+                                            return (
+                                                <div key={e.id} className="p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-slate-50/50 transition">
+                                                    <div className="space-y-1">
+                                                        <div className="flex items-center gap-2">
+                                                            <span className="text-[10px] uppercase font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-100">
+                                                                {e.game}
+                                                            </span>
+                                                            <span className="text-[10px] uppercase font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded border border-amber-100">
+                                                                {typeEmojis[e.type]} {typeNames[e.type]}
+                                                            </span>
+                                                        </div>
+                                                        <h3 className="font-extrabold text-slate-950 mt-1">{e.name}</h3>
+                                                        <p className="text-xs text-slate-500 font-light">
+                                                            📅 {new Date(e.date).toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' })} | 👥 {e.registeredCount} / {e.capacity} places | 💰 {parseFloat(e.price) === 0 ? 'Gratuit' : `${e.price}€`}
+                                                        </p>
+                                                        {e.participants && e.participants.length > 0 && (
+                                                            <p className="text-[11px] text-slate-400 font-light pt-1">
+                                                                👤 Inscrits : <span className="font-medium text-slate-600">{e.participants.join(', ')}</span>
+                                                            </p>
+                                                        )}
+                                                    </div>
+                                                    <button
+                                                        onClick={() => handleDeleteEvent(e.id)}
+                                                        disabled={actionLoading}
+                                                        className="self-end md:self-center py-1.5 px-3 rounded-lg text-xs font-bold text-red-500 hover:bg-red-50 transition disabled:opacity-50"
+                                                    >
+                                                        Supprimer
+                                                    </button>
+                                                </div>
+                                            );
+                                        })}
+                                        {events.length === 0 && (
+                                            <div className="p-8 text-center text-slate-400 italic font-light">
+                                                Aucun événement enregistré.
                                             </div>
                                         )}
                                     </div>
@@ -815,15 +1138,39 @@ function DashboardAdmin() {
                                         ></textarea>
                                     </div>
 
-                                    <div className="space-y-1">
-                                        <label className="text-xs font-bold text-slate-500 uppercase">URL de l'image (optionnel)</label>
-                                        <input
-                                            type="text"
-                                            placeholder="Ex: /images/boardgames/catan.png"
-                                            value={bgForm.image_url}
-                                            onChange={(e) => setBgForm({ ...bgForm, image_url: e.target.value })}
-                                            className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-600 font-light"
-                                        />
+                                    <div className="space-y-2">
+                                        <label className="text-xs font-bold text-slate-500 uppercase">Image du jeu (Depuis votre PC)</label>
+                                        <div className="flex flex-wrap gap-3 items-center">
+                                            <input
+                                                type="file"
+                                                accept="image/*"
+                                                onChange={handleImageUpload}
+                                                className="hidden"
+                                                id="bg-image-upload"
+                                            />
+                                            <label
+                                                htmlFor="bg-image-upload"
+                                                className="cursor-pointer py-2.5 px-4 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 rounded-xl text-xs font-bold transition shadow-sm"
+                                            >
+                                                📁 Choisir une image
+                                            </label>
+                                            {uploadingImage && <span className="text-xs text-slate-500 animate-pulse">Téléversement...</span>}
+                                            {bgForm.image_url && !uploadingImage && (
+                                                <span className="text-xs text-emerald-600 font-medium truncate max-w-xs">
+                                                    ✅ Image sélectionnée
+                                                </span>
+                                            )}
+                                        </div>
+                                        <div className="pt-1">
+                                            <label className="text-[10px] font-bold text-slate-400 uppercase">Ou URL de l'image</label>
+                                            <input
+                                                type="text"
+                                                placeholder="Ex: https://..."
+                                                value={bgForm.image_url}
+                                                onChange={(e) => setBgForm({ ...bgForm, image_url: e.target.value })}
+                                                className="w-full px-3.5 py-2.5 mt-1 rounded-xl border border-slate-200 text-xs focus:outline-none focus:border-indigo-600 font-light"
+                                            />
+                                        </div>
                                     </div>
 
                                     <div className="space-y-1">
@@ -856,7 +1203,7 @@ function DashboardAdmin() {
                                             disabled={actionLoading}
                                             className="inline-flex items-center gap-1.5 py-2 px-3 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white shadow-sm transition disabled:opacity-50"
                                         >
-                                            {actionLoading && message.text?.includes("BGG") ? 'Importation...' : '⚡ Importer 50 Populaires BGG'}
+                                            {actionLoading && message.text?.includes("BGG") ? 'Importation...' : '⚡ Importer 100 Populaires BGG'}
                                         </button>
                                     </div>
 
@@ -904,6 +1251,40 @@ function DashboardAdmin() {
                     </>
                 )}
             </div>
+
+            {/* Custom Confirmation Modal for Deletion */}
+            {deleteConfirmId && deleteConfirmType && (() => {
+                const info = getDeleteModalInfo();
+                return (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/40 backdrop-blur-sm transition-all duration-300">
+                        <div className="bg-white rounded-3xl p-6 md:p-8 max-w-md w-full mx-4 shadow-2xl border border-slate-100/50 space-y-6 animate-in zoom-in-95 duration-200">
+                            <div className="flex items-center gap-3 text-red-600">
+                                <span className="text-3xl">⚠️</span>
+                                <h3 className="text-xl font-black text-slate-950 tracking-tight">{info.title}</h3>
+                            </div>
+                            <p className="text-slate-600 text-sm leading-relaxed font-light">
+                                {info.description}
+                            </p>
+                            <div className="flex justify-end gap-3 pt-2">
+                                <button
+                                    type="button"
+                                    onClick={() => { setDeleteConfirmId(null); setDeleteConfirmType(null); }}
+                                    className="py-2.5 px-5 rounded-xl text-sm font-bold text-slate-700 hover:bg-slate-50 border border-slate-200 transition"
+                                >
+                                    Annuler
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={confirmDelete}
+                                    className="py-2.5 px-5 rounded-xl text-sm font-bold bg-red-600 hover:bg-red-500 text-white shadow-sm transition"
+                                >
+                                    Confirmer la suppression
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                );
+            })()}
         </div>
     );
 }

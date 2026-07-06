@@ -199,7 +199,11 @@ export const importBggHotGames = async (req, res) => {
             headers['Authorization'] = `Bearer ${process.env.BGG_API_KEY}`;
         }
         
-        const hotResponse = await fetch(hotUrl, { headers });
+        let hotResponse = await fetch(hotUrl, { headers });
+        if (!hotResponse.ok && (hotResponse.status === 401 || hotResponse.status === 403) && headers['Authorization']) {
+            delete headers['Authorization'];
+            hotResponse = await fetch(hotUrl, { headers });
+        }
         if (!hotResponse.ok) {
             throw new Error(`Erreur récupération classement BGG: ${hotResponse.status}`);
         }
@@ -212,7 +216,27 @@ export const importBggHotGames = async (req, res) => {
             return res.status(500).json({ error: "Impossible de récupérer la liste des jeux chauds BGG." });
         }
         
-        const allIds = items.slice(0, 50).map(item => item['@_id']);
+        const hotIds = items.slice(0, 50).map(item => String(item['@_id']));
+        
+        // Predefined BGG IDs of all-time popular board games to fill up the list to 100
+        const ALL_TIME_POPULAR_IDS = [
+            '224517', '161936', '174430', '342942', '233078', '316554', '187686', '220308', '115746', '182028',
+            '193738', '162886', '84876',  '28720',  '169786', '246900', '124369', '266192', '177736', '167791',
+            '205637', '199792', '172287', '173090', '183394', '205059', '110327', '102652', '31260',  '230802',
+            '3076',   '228638', '120677', '2651',   '68448',  '173346', '30549',  '270514', '13',     '822',
+            '92030',  '148228', '192372', '178900', '28143',  '400315', '396790', '395729', '385761', '375718',
+            '360692', '353059', '332164', '306560', '298065', '284545', '266507', '251247', '246784', '244521',
+            '229853', '204583', '188834', '175914', '170216', '163067', '155068', '140308', '133473', '12333',
+            '1219',   '118',    '54',     '3'
+        ];
+
+        const allIds = [...hotIds];
+        for (const staticId of ALL_TIME_POPULAR_IDS) {
+            if (allIds.length >= 100) break;
+            if (!allIds.includes(staticId)) {
+                allIds.push(staticId);
+            }
+        }
         
         // 2. Récupérer les détails par lots de 20
         const chunkSize = 20;
@@ -223,7 +247,11 @@ export const importBggHotGames = async (req, res) => {
             const idsString = chunk.join(',');
             const thingUrl = `${BGG_BASE_URL}/thing?id=${idsString}`;
             
-            const detailsResponse = await fetch(thingUrl, { headers });
+            let detailsResponse = await fetch(thingUrl, { headers });
+            if (!detailsResponse.ok && (detailsResponse.status === 401 || detailsResponse.status === 403) && headers['Authorization']) {
+                delete headers['Authorization'];
+                detailsResponse = await fetch(thingUrl, { headers });
+            }
             if (!detailsResponse.ok) {
                 throw new Error(`Erreur récupération détails BGG: ${detailsResponse.status}`);
             }
