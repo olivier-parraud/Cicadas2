@@ -60,8 +60,8 @@
   },
   "home_page": {
     "hero": {
-      "title": "Votre Espace de Jeu Magic Ultime",
-      "description": "Cicados est l'endroit idéal pour vos parties de Magic: The Gathering, Yu-Gi-Oh!, Pokémon et Lorcana. Louez une table de jeu équipée, participez à nos tournois hebdomadaires et partagez des moments uniques avec une communauté de passionnés.",
+      "title": "Votre Espace de Jeu TCG & Jeux de société Ultime",
+      "description": "Cicados est l'endroit idéal pour vos parties de cartes (TCG) et de jeux de société. Louez une table de jeu équipée, participez à nos tournois hebdomadaires et partagez des moments uniques avec une communauté de passionnés.",
       "cta": "Réserver une table de jeu"
     },
     "features": {
@@ -73,7 +73,7 @@
           "description": "Réservez votre espace de jeu en quelques clics. Choisissez l'heure, la table et la durée pour vous et vos amis."
         },
         "tournaments": {
-          "title": "Tournois Magic & TCG",
+          "title": "Tournois de TCG & Jeux de société",
           "description": "Rejoignez nos événements compétitifs ou amicaux hebdomadaires. Affrontez les meilleurs joueurs et remportez des boosters !"
         },
         "groups": {
@@ -106,7 +106,7 @@
       "items": [
         {
           "name": "Alexandre D.",
-          "role": "Joueur de Magic (Commander)",
+          "role": "Joueur de TCG (Commander)",
           "quote": "L'ambiance est incroyable et les tables sont super spacieuses ! C'est devenu notre QG hebdomadaire pour nos parties de Commander."
         },
         {
@@ -116,13 +116,13 @@
         },
         {
           "name": "Lucas R.",
-          "role": "Joueur Compétitif Modern",
+          "role": "Joueur Compétitif de TCG",
           "quote": "Enfin un endroit propre, bien éclairé et calme pour tester nos decks avant les grands tournois. Je recommande à 100% !"
         }
       ]
     },
     "cta": {
-      "title": "Prêt à lancer vos plus beaux sorts ?",
+      "title": "Prêt à lancer votre prochaine partie ?",
       "description": "Réservez votre table de jeu dès aujourd'hui ou inscrivez-vous à notre prochain tournoi de cartes.",
       "buttons": {
         "book": "Réserver une table",
@@ -142,7 +142,7 @@
           "answer": "Oui, pour les parties libres et les tournois construits, vous devez apporter vos decks. Cependant, nous vendons des boosters, des decks de démarrage et nous prêtons parfois des decks d'initiation."
         },
         {
-          "question": "Comment s'inscrire à un tournoi Magic ?",
+          "question": "Comment s'inscrire à un tournoi de TCG ou jeu de société ?",
           "answer": "Vous pouvez vous inscrire directement en ligne depuis la page 'Tournois' ou sur place à l'accueil du magasin jusqu'à 15 minutes avant le début de l'événement."
         },
         {

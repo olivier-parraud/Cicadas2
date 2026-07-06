@@ -60,8 +60,8 @@
   },
   "home_page": {
     "hero": {
-      "title": "Your Ultimate Magic Play Space",
-      "description": "Cicados is the perfect spot for your Magic: The Gathering, Yu-Gi-Oh!, Pokémon, and Lorcana games. Book an equipped play table, participate in our weekly tournaments, and share unique moments with a passionate community.",
+      "title": "Your Ultimate TCG & Board Games Play Space",
+      "description": "Cicados is the perfect spot for your cards (TCG) and board games. Book an equipped play table, participate in our weekly tournaments, and share unique moments with a passionate community.",
       "cta": "Book a Game Table"
     },
     "features": {
@@ -73,7 +73,7 @@
           "description": "Book your play space in just a few clicks. Choose the time, table, and duration for you and your friends."
         },
         "tournaments": {
-          "title": "Magic & TCG Tournaments",
+          "title": "TCG & Board Games Tournaments",
           "description": "Join our weekly friendly or competitive events. Face the best players and win booster packs!"
         },
         "groups": {
@@ -106,7 +106,7 @@
       "items": [
         {
           "name": "Alexandre D.",
-          "role": "Magic Player (Commander)",
+          "role": "TCG Player (Commander)",
           "quote": "The atmosphere is amazing and the tables are super spacious! It has become our weekly HQ for our Commander games."
         },
         {
@@ -116,13 +116,13 @@
         },
         {
           "name": "Lucas R.",
-          "role": "Modern Competitive Player",
+          "role": "TCG Competitive Player",
           "quote": "Finally a clean, well-lit, and quiet place to playtest our decks before big tournaments. 100% recommended!"
         }
       ]
     },
     "cta": {
-      "title": "Ready to cast your finest spells?",
+      "title": "Ready to start your next game?",
       "description": "Book your game table today or register for our next card tournament.",
       "buttons": {
         "book": "Book a table",
@@ -142,7 +142,7 @@
           "answer": "Yes, for open play and constructed tournaments, you must bring your own decks. However, we sell booster packs, starter decks, and occasionally lend out demo decks."
         },
         {
-          "question": "How do I register for a Magic tournament?",
+          "question": "How do I register for a TCG or board game tournament?",
           "answer": "You can register directly online on the 'Tournaments' page or in person at the shop's front desk up to 15 minutes before the event starts."
         },
         {

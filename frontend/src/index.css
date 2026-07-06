@@ -220,3 +220,10 @@ header {
   background: #ff007f;
   box-shadow: 0 0 8px #ff007f;
 }
+
+/* Inverser la couleur des logos/indicateurs natifs des champs date et heure pour les afficher en blanc */
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="time"]::-webkit-calendar-picker-indicator {
+  filter: invert(1) !important;
+  cursor: pointer;
+}

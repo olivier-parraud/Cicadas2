@@ -52,7 +52,7 @@ const Reservation = {
         const roomId = availableRoom.id;
 
         // 4. Normaliser le type de jeu 
-        const allowedTypes = ['MTG', 'YUGIOH', 'POKEMON', 'LORCANA', 'BOARD_GAME', 'OTHER'];
+        const allowedTypes = ['MTG', 'YUGIOH', 'POKEMON', 'LORCANA', 'BOARD_GAME', 'BYOG', 'OTHER'];
         let safeGameType = allowedTypes.includes(gameType) ? gameType : 'OTHER';
 
         const sql = `
@@ -84,9 +84,10 @@ const Reservation = {
     // Récupérer toutes les réservations d'un utilisateur donné (actives & passées)
     async findByUserId(userId) {
         const sql = `
-            SELECT r.*, rm.name as room_name, rm.capacity as room_capacity
+            SELECT r.*, rm.name as room_name, rm.capacity as room_capacity, bg.image_url as boardgame_image_url
             FROM reservations r
             JOIN rooms rm ON r.room_id = rm.id
+            LEFT JOIN board_games bg ON LOWER(TRIM(r.specific_game)) = LOWER(TRIM(bg.name))
             WHERE r.user_id = ?
             ORDER BY r.start_time DESC
         `;
@@ -123,7 +124,7 @@ const Reservation = {
         const roomId = availableRoom.id;
 
         // 3. Normaliser le type de jeu 
-        const allowedTypes = ['MTG', 'YUGIOH', 'POKEMON', 'LORCANA', 'BOARD_GAME', 'OTHER'];
+        const allowedTypes = ['MTG', 'YUGIOH', 'POKEMON', 'LORCANA', 'BOARD_GAME', 'BYOG', 'OTHER'];
         let safeGameType = allowedTypes.includes(gameType) ? gameType : 'OTHER';
 
         const updateSql = `

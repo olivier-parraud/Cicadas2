@@ -26,6 +26,8 @@ function MyReservations() {
     });
     const [editError, setEditError] = useState('');
     const [editSuccess, setEditSuccess] = useState('');
+    const [boardGames, setBoardGames] = useState([]);
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
     const today = new Date().toISOString().split('T')[0];
 
@@ -81,6 +83,21 @@ function MyReservations() {
             fetchUserTournaments();
         }
     }, [isAuthenticated]);
+
+    useEffect(() => {
+        const fetchBoardGames = async () => {
+            try {
+                const response = await fetch('http://localhost:5050/api/boardgames');
+                if (response.ok) {
+                    const data = await response.json();
+                    setBoardGames(data);
+                }
+            } catch (err) {
+                console.error("Erreur chargement jeux de société:", err);
+            }
+        };
+        fetchBoardGames();
+    }, []);
 
     const handleCancel = async (id) => {
         if (!window.confirm('Êtes-vous sûr de vouloir annuler cette réservation ?')) return;
@@ -202,7 +219,36 @@ function MyReservations() {
             case 'POKEMON': return 'Pokémon TCG';
             case 'LORCANA': return 'Disney Lorcana';
             case 'BOARD_GAME': return 'Jeux de plateau';
+            case 'BYOG': return "J'apporte mon jeu";
             default: return 'Autre';
+        }
+    };
+
+    const getGameImage = (type, specificGame) => {
+        const gameLower = (specificGame || '').toLowerCase();
+        if (type === 'BOARD_GAME') {
+            if (gameLower.includes('catan')) {
+                return 'https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?q=80&w=600';
+            }
+            if (gameLower.includes('azul')) {
+                return 'https://images.unsplash.com/photo-1596464716127-f2a82984de30?q=80&w=600';
+            }
+            return 'https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?q=80&w=600';
+        }
+
+        switch (type) {
+            case 'MTG':
+                return 'https://images.unsplash.com/photo-1611195974226-a6a9be9dd763?q=80&w=600';
+            case 'YUGIOH':
+                return 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?q=80&w=600';
+            case 'POKEMON':
+                return 'https://images.unsplash.com/photo-1605870445919-838d190e8e1b?q=80&w=600';
+            case 'LORCANA':
+                return 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?q=80&w=600';
+            case 'BYOG':
+                return 'https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=600';
+            default:
+                return 'https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=600';
         }
     };
 
@@ -298,7 +344,16 @@ function MyReservations() {
 
                                 return (
                                     <div key={res.id} className="bg-white rounded-3xl border border-slate-100 shadow-xl overflow-hidden hover:shadow-2xl transition duration-300 flex flex-col justify-between">
-                                        <div className="p-6 space-y-4">
+                                        <div>
+                                            <div className="h-32 w-full overflow-hidden relative">
+                                                <img 
+                                                    src={res.boardgame_image_url || getGameImage(res.game_type, res.specific_game)} 
+                                                    alt={res.specific_game || res.game_type} 
+                                                    className="w-full h-full object-cover object-center"
+                                                />
+                                                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent"></div>
+                                            </div>
+                                            <div className="p-6 space-y-4">
                                             <div className="flex justify-between items-start gap-2">
                                                 <div>
                                                     <span className="inline-block text-[10px] uppercase font-bold tracking-wider text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-100">
@@ -329,6 +384,7 @@ function MyReservations() {
                                                     <span>{res.players_count} joueurs</span>
                                                 </div>
                                             </div>
+                                        </div>
                                         </div>
 
                                         <div className="p-6 pt-0 border-t border-slate-50 flex gap-3">
@@ -491,42 +547,89 @@ function MyReservations() {
                                     <option value="POKEMON">Pokémon TCG</option>
                                     <option value="LORCANA">Disney Lorcana</option>
                                     <option value="BOARD_GAME">Jeu de société</option>
+                                    <option value="BYOG">J'apporte mon jeu</option>
                                     <option value="OTHER">Autre</option>
                                 </select>
                             </div>
 
                             {editFormData.gameType === 'BOARD_GAME' && (
-                                <div className="space-y-1">
+                                <div className="space-y-1 relative">
                                     <label className="text-xs font-bold text-slate-500 uppercase">Jeu de société</label>
                                     <input
                                         type="text"
                                         name="specificGame"
                                         placeholder="Ex: Catan, Azul..."
                                         value={editFormData.specificGame}
-                                        onChange={handleEditChange}
+                                        onChange={(e) => {
+                                            setEditFormData(prev => ({ ...prev, specificGame: e.target.value }));
+                                            setIsDropdownOpen(true);
+                                        }}
+                                        onFocus={() => setIsDropdownOpen(true)}
                                         className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-650 font-light"
                                     />
+                                    {isDropdownOpen && (
+                                        <>
+                                            <div className="fixed inset-0 z-40" onClick={() => setIsDropdownOpen(false)}></div>
+                                            <div className="absolute left-0 right-0 top-full mt-1 max-h-60 overflow-y-auto bg-slate-950 border border-slate-800 rounded-xl shadow-2xl z-50 divide-y divide-slate-900">
+                                                {boardGames
+                                                    .filter(g => g.name.toLowerCase().includes((editFormData.specificGame || '').toLowerCase()))
+                                                    .map(game => (
+                                                        <button
+                                                            key={game.id}
+                                                            type="button"
+                                                            onClick={() => {
+                                                                setEditFormData(prev => ({ 
+                                                                    ...prev, 
+                                                                    specificGame: game.name,
+                                                                    playersCount: Math.max(parseInt(prev.playersCount, 10), game.min_players || 1).toString()
+                                                                }));
+                                                                setIsDropdownOpen(false);
+                                                            }}
+                                                            className="w-full text-left px-4 py-2.5 text-xs text-slate-350 hover:bg-indigo-900/40 hover:text-white transition flex items-center gap-3 cursor-pointer"
+                                                        >
+                                                            {game.image_url && (
+                                                                <img 
+                                                                    src={game.image_url} 
+                                                                    alt={game.name} 
+                                                                    className="w-8 h-8 object-contain bg-white/10 rounded-md"
+                                                                />
+                                                            )}
+                                                            <div className="flex flex-col">
+                                                                <span className="font-bold text-slate-200 text-sm">{game.name}</span>
+                                                                <span className="text-[10px] text-slate-400 font-light">{game.category} • {game.min_players}-{game.max_players} pl.</span>
+                                                            </div>
+                                                        </button>
+                                                    ))
+                                                }
+                                                {boardGames.filter(g => g.name.toLowerCase().includes((editFormData.specificGame || '').toLowerCase())).length === 0 && (
+                                                    <div className="p-4 text-xs text-slate-500 font-light text-center">
+                                                        Aucun jeu trouvé (vous pouvez écrire le nom manuellement)
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </>
+                                    )}
                                 </div>
                             )}
 
-                            <div className="space-y-1">
-                                <label className="text-xs font-bold text-slate-500 uppercase">Nombre de joueurs</label>
-                                <select
-                                    name="playersCount"
-                                    value={editFormData.playersCount}
-                                    onChange={handleEditChange}
-                                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-650 bg-white"
-                                >
-                                    <option value="1">1 joueur</option>
-                                    <option value="2">2 joueurs</option>
-                                    <option value="3">3 joueurs</option>
-                                    <option value="4">4 joueurs</option>
-                                    <option value="5">5 joueurs</option>
-                                    <option value="6">6 joueurs</option>
-                                    <option value="7">7 joueurs</option>
-                                    <option value="8">8+ joueurs</option>
-                                </select>
-                            </div>
+                             <div className="space-y-1">
+                                 <label className="text-xs font-bold text-slate-500 uppercase">Nombre de joueurs</label>
+                                 <select
+                                     name="playersCount"
+                                     value={editFormData.playersCount}
+                                     onChange={handleEditChange}
+                                     className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-650 bg-white"
+                                 >
+                                     <option value="1">1 joueur</option>
+                                     <option value="2">2 joueurs</option>
+                                     <option value="3">3 joueurs</option>
+                                     <option value="4">4 joueurs</option>
+                                     <option value="5">5 joueurs</option>
+                                     <option value="6">6 joueurs</option>
+                                     <option value="7">7 joueurs</option>
+                                     <option value="8">8+ joueurs</option>
+                                 </select>
+                             </div>
 
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-1">

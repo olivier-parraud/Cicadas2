@@ -22,12 +22,14 @@ function Reservations() {
     const [status, setStatus] = useState({ type: '', message: '' });
     const [existingReservations, setExistingReservations] = useState([]);
     const [loadingPlanning, setLoadingPlanning] = useState(false);
+    const [boardGames, setBoardGames] = useState([]);
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
     useEffect(() => {
         const queryParams = new URLSearchParams(location.search);
         const game = queryParams.get('game');
         const type = queryParams.get('type');
-        
+
         if (game || type) {
             setFormData(prev => ({
                 ...prev,
@@ -36,6 +38,21 @@ function Reservations() {
             }));
         }
     }, [location]);
+
+    useEffect(() => {
+        const fetchBoardGames = async () => {
+            try {
+                const response = await fetch('http://localhost:5050/api/boardgames');
+                if (response.ok) {
+                    const data = await response.json();
+                    setBoardGames(data);
+                }
+            } catch (err) {
+                console.error("Erreur chargement jeux de société:", err);
+            }
+        };
+        fetchBoardGames();
+    }, []);
 
     const fetchReservationsForDate = async (selectedDate) => {
         if (!selectedDate) return;
@@ -63,9 +80,9 @@ function Reservations() {
 
     const getOccupiedTablesCount = (slotTime) => {
         if (!formData.date || !existingReservations.length) return 0;
-        
+
         const slotDateTime = new Date(`${formData.date} ${slotTime}:00`);
-        
+
         return existingReservations.filter(res => {
             const start = new Date(res.start_time);
             const end = new Date(res.end_time);
@@ -75,16 +92,16 @@ function Reservations() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
+
         setStatus({ type: 'info', message: 'Envoi de votre demande de réservation...' });
-        
+
         try {
             const token = localStorage.getItem('token');
             const response = await fetch('http://localhost:5050/api/reservations', {
                 method: 'POST',
-                headers: { 
+                headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}` 
+                    'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify(formData)
             });
@@ -149,18 +166,17 @@ function Reservations() {
 
                         <form onSubmit={handleSubmit} className="space-y-4">
                             {status.message && (
-                                <div className={`p-4 rounded-xl text-xs font-semibold border ${
-                                    status.type === 'success' 
-                                        ? 'bg-emerald-50 border-emerald-250 text-emerald-800' 
+                                <div className={`p-4 rounded-xl text-xs font-semibold border ${status.type === 'success'
+                                        ? 'bg-emerald-50 border-emerald-250 text-emerald-800'
                                         : (status.type === 'error' ? 'bg-rose-50 border-rose-200 text-rose-800' : 'bg-indigo-50 border-indigo-100 text-indigo-800')
-                                }`}>
+                                    }`}>
                                     {status.message}
                                 </div>
                             )}
 
                             <div className="space-y-1">
                                 <label className="text-xs font-bold text-slate-500 uppercase">Jeu / TCG</label>
-                                <select 
+                                <select
                                     name="gameType"
                                     value={formData.gameType}
                                     onChange={handleChange}
@@ -171,13 +187,14 @@ function Reservations() {
                                     <option value="POKEMON">Pokémon TCG</option>
                                     <option value="LORCANA">Disney Lorcana</option>
                                     <option value="BOARD_GAME">Jeu de société</option>
+                                    <option value="BYOG">J'apporte mon jeu</option>
                                     <option value="OTHER">Autre</option>
                                 </select>
                             </div>
 
                             <div className="space-y-1">
                                 <label className="text-xs font-bold text-slate-500 uppercase">Nombre de joueurs</label>
-                                <select 
+                                <select
                                     name="playersCount"
                                     value={formData.playersCount}
                                     onChange={handleChange}
@@ -195,24 +212,70 @@ function Reservations() {
                             </div>
 
                             {formData.gameType === 'BOARD_GAME' && (
-                                <div className="space-y-1">
+                                <div className="space-y-1 relative">
                                     <label className="text-xs font-bold text-slate-500 uppercase">Jeu de société</label>
-                                    <input 
-                                        type="text" 
+                                    <input
+                                        type="text"
                                         name="specificGame"
                                         placeholder="Ex: Catan, Azul..."
                                         value={formData.specificGame}
-                                        onChange={handleChange}
+                                        onChange={(e) => {
+                                            setFormData(prev => ({ ...prev, specificGame: e.target.value }));
+                                            setIsDropdownOpen(true);
+                                        }}
+                                        onFocus={() => setIsDropdownOpen(true)}
                                         className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-650 font-light"
                                     />
+                                    {isDropdownOpen && (
+                                        <>
+                                            <div className="fixed inset-0 z-40" onClick={() => setIsDropdownOpen(false)}></div>
+                                            <div className="absolute left-0 right-0 top-full mt-1 max-h-60 overflow-y-auto bg-slate-950 border border-slate-800 rounded-xl shadow-2xl z-50 divide-y divide-slate-900">
+                                                {boardGames
+                                                    .filter(g => g.name.toLowerCase().includes(formData.specificGame.toLowerCase()))
+                                                    .map(game => (
+                                                        <button
+                                                            key={game.id}
+                                                            type="button"
+                                                            onClick={() => {
+                                                                setFormData(prev => ({ 
+                                                                    ...prev, 
+                                                                    specificGame: game.name,
+                                                                    playersCount: Math.max(parseInt(prev.playersCount, 10), game.min_players || 1).toString()
+                                                                }));
+                                                                setIsDropdownOpen(false);
+                                                            }}
+                                                            className="w-full text-left px-4 py-2.5 text-xs text-slate-350 hover:bg-indigo-900/40 hover:text-white transition flex items-center gap-3 cursor-pointer"
+                                                        >
+                                                            {game.image_url && (
+                                                                <img 
+                                                                    src={game.image_url} 
+                                                                    alt={game.name} 
+                                                                    className="w-8 h-8 object-contain bg-white/10 rounded-md"
+                                                                />
+                                                            )}
+                                                            <div className="flex flex-col">
+                                                                <span className="font-bold text-slate-200 text-sm">{game.name}</span>
+                                                                <span className="text-[10px] text-slate-400 font-light">{game.category} • {game.min_players}-{game.max_players} pl.</span>
+                                                            </div>
+                                                        </button>
+                                                    ))
+                                                }
+                                                {boardGames.filter(g => g.name.toLowerCase().includes(formData.specificGame.toLowerCase())).length === 0 && (
+                                                    <div className="p-4 text-xs text-slate-500 font-light text-center">
+                                                        Aucun jeu trouvé (vous pouvez écrire le nom manuellement)
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </>
+                                    )}
                                 </div>
                             )}
 
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-1">
                                     <label className="text-xs font-bold text-slate-500 uppercase">Date</label>
-                                    <input 
-                                        type="date" 
+                                    <input
+                                        type="date"
                                         name="date"
                                         required
                                         min={today}
@@ -221,11 +284,11 @@ function Reservations() {
                                         className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-650 font-light bg-white"
                                     />
                                 </div>
-                                
+
                                 <div className="space-y-1">
                                     <label className="text-xs font-bold text-slate-500 uppercase">Heure d'arrivée</label>
-                                    <input 
-                                        type="time" 
+                                    <input
+                                        type="time"
                                         name="time"
                                         required
                                         min="09:00"
@@ -239,8 +302,8 @@ function Reservations() {
 
                             <div className="space-y-1">
                                 <label className="text-xs font-bold text-slate-500 uppercase">Durée (heures)</label>
-                                <input 
-                                    type="number" 
+                                <input
+                                    type="number"
                                     name="duration"
                                     required
                                     min="1"
@@ -251,7 +314,7 @@ function Reservations() {
                                 />
                             </div>
 
-                            <button 
+                            <button
                                 type="submit"
                                 className="w-full py-3.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs transition duration-300 shadow-md shadow-indigo-600/10 cursor-pointer"
                             >
@@ -288,7 +351,7 @@ function Reservations() {
                             <div className="space-y-6">
                                 <div className="flex justify-between items-center bg-indigo-50/50 p-4 rounded-2xl border border-indigo-100/50 text-xs">
                                     <span className="font-bold text-slate-700">Disponibilités pour le :</span>
-                                    <span className="font-extrabold text-indigo-750 bg-indigo-100 py-1.5 px-3.5 rounded-full border border-indigo-200/50">
+                                    <span className="font-extrabold text-indigo-300 bg-indigo-950 py-1.5 px-3.5 rounded-full border border-indigo-500/20">
                                         {new Date(formData.date).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
                                     </span>
                                 </div>
@@ -298,9 +361,9 @@ function Reservations() {
                                         const occupied = getOccupiedTablesCount(slot);
                                         const available = 4 - occupied;
                                         const isSelected = formData.time === slot;
-                                        
+
                                         let bgClass = "bg-emerald-50 hover:bg-emerald-100/80 border-emerald-150 text-emerald-800 cursor-pointer";
-                                        let badgeClass = "bg-emerald-600 text-white";
+                                        let badgeClass = "bg-indigo-950 text-indigo-300 border border-indigo-500/20";
                                         let label = `${available} tables libres`;
                                         let disabled = false;
 
@@ -311,13 +374,13 @@ function Reservations() {
                                             disabled = true;
                                         } else if (available === 1) {
                                             bgClass = "bg-amber-50 hover:bg-amber-100/80 border-amber-150 text-amber-800 cursor-pointer";
-                                            badgeClass = "bg-amber-600 text-white";
+                                            badgeClass = "bg-indigo-950 text-indigo-300 border border-indigo-500/20";
                                             label = "1 table libre";
                                         }
 
                                         if (isSelected && !disabled) {
                                             bgClass = "bg-indigo-600 border-indigo-600 text-white shadow-lg shadow-indigo-600/20 scale-102 cursor-pointer font-bold";
-                                            badgeClass = "bg-white text-indigo-700";
+                                            badgeClass = "bg-indigo-950 text-indigo-300 border border-indigo-500/20";
                                         }
 
                                         return (
@@ -336,7 +399,7 @@ function Reservations() {
                                         );
                                     })}
                                 </div>
-                                
+
                                 <div className="flex flex-wrap gap-4 pt-4 border-t border-slate-100 text-[10px] text-slate-400 font-bold uppercase tracking-wider">
                                     <span className="flex items-center gap-1.5">
                                         <span className="w-2.5 h-2.5 bg-emerald-500 rounded-full"></span> Disponible (2 à 4 libres)
@@ -351,6 +414,17 @@ function Reservations() {
                             </div>
                         )}
                     </div>
+                </div>
+
+                <div className="text-center pt-8">
+                    {isAuthenticated && (
+                        <Link 
+                            to="/my-reservations" 
+                            className="inline-flex items-center gap-3 px-12 py-5 bg-slate-100 hover:bg-slate-200 text-slate-800 font-extrabold border border-slate-250 rounded-2xl text-base md:text-lg transition cursor-pointer shadow-lg hover:shadow-indigo-500/10 hover:scale-102 duration-300"
+                        >
+                            📋 Voir mes réservations
+                        </Link>
+                    )}
                 </div>
             </div>
         </div>

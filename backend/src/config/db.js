@@ -100,7 +100,7 @@ export async function testConnection() {
         try {
             await connection.execute(`
                 ALTER TABLE reservations 
-                MODIFY COLUMN game_type ENUM('MTG', 'YUGIOH', 'POKEMON', 'LORCANA', 'BOARD_GAME', 'OTHER') DEFAULT 'OTHER'
+                MODIFY COLUMN game_type ENUM('MTG', 'YUGIOH', 'POKEMON', 'LORCANA', 'BOARD_GAME', 'BYOG', 'OTHER') DEFAULT 'OTHER'
             `);
             console.log("Colonne 'game_type' de reservations mise à jour avec l'ENUM étendu");
         } catch (err) {
