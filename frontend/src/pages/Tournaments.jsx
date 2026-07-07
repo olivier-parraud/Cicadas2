@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-hot-toast';
-import TranslatedText from '../components/TranslatedText';
+import TournamentCard from '../components/TournamentCard';
+import EventCard from '../components/EventCard';
 
 function Tournaments() {
     const { t, i18n } = useTranslation();
@@ -108,14 +109,14 @@ function Tournaments() {
                 const userDisplayName = getDisplayName(currentUser);
 
                 // Update myRegistrations locally
-                setMyRegistrations(prev => 
-                    isRegistered 
-                        ? prev.filter(id => id !== tourneyId) 
+                setMyRegistrations(prev =>
+                    isRegistered
+                        ? prev.filter(id => id !== tourneyId)
                         : [...prev, tourneyId]
                 );
 
                 // Update tournaments list locally to update count and participant list
-                setTournaments(prevTournaments => 
+                setTournaments(prevTournaments =>
                     prevTournaments.map(t => {
                         if (t.id === tourneyId) {
                             let updatedParticipants = t.participants ? [...t.participants] : [];
@@ -128,8 +129,8 @@ function Tournaments() {
                             }
                             return {
                                 ...t,
-                                registeredCount: isRegistered 
-                                    ? Math.max(0, t.registeredCount - 1) 
+                                registeredCount: isRegistered
+                                    ? Math.max(0, t.registeredCount - 1)
                                     : t.registeredCount + 1,
                                 participants: updatedParticipants
                             };
@@ -165,33 +166,7 @@ function Tournaments() {
         return false;
     });
 
-    const getGameColorClass = (game) => {
-        const gameLower = game.toLowerCase();
-        if (gameLower.includes('magic')) return 'bg-orange-50 text-orange-700 border-orange-200/50';
-        if (gameLower.includes('pokémon') || gameLower.includes('pokemon')) return 'bg-amber-50 text-amber-700 border-amber-200/50';
-        if (gameLower.includes('one piece')) return 'bg-cyan-50 text-cyan-700 border-cyan-200/50';
-        if (gameLower.includes('yu-gi-oh') || gameLower.includes('yugioh')) return 'bg-rose-50 text-rose-700 border-rose-200/50';
-        if (gameLower.includes('star wars')) return 'bg-blue-50 text-blue-700 border-blue-200/50';
-        if (gameLower.includes('lorcana')) return 'bg-purple-50 text-purple-700 border-purple-200/50';
-        if (gameLower.includes('final fantasy')) return 'bg-teal-50 text-teal-700 border-teal-200/50';
-        if (gameLower.includes('altered')) return 'bg-indigo-50 text-indigo-700 border-indigo-200/50';
-        if (gameLower.includes('dragon ball')) return 'bg-emerald-50 text-emerald-700 border-emerald-200/50';
-        return 'bg-slate-50 text-slate-700 border-slate-200/50';
-    };
-
-    const getGameEmoji = (game) => {
-        const gameLower = game.toLowerCase();
-        if (gameLower.includes('magic')) return '🃏';
-        if (gameLower.includes('pokémon') || gameLower.includes('pokemon')) return '⚡';
-        if (gameLower.includes('one piece')) return '🏴‍☠️';
-        if (gameLower.includes('yu-gi-oh') || gameLower.includes('yugioh')) return '🐉';
-        if (gameLower.includes('star wars')) return '🚀';
-        if (gameLower.includes('lorcana')) return '🏰';
-        if (gameLower.includes('final fantasy')) return '💎';
-        if (gameLower.includes('altered')) return '🔮';
-        if (gameLower.includes('dragon ball')) return '💥';
-        return '🎲';
-    };
+    // Helper color/emoji functions moved to TournamentCard component
 
     return (
         <div className="min-h-screen bg-slate-50 text-slate-800 selection:bg-indigo-600 selection:text-white pb-20">
@@ -218,11 +193,10 @@ function Tournaments() {
                 <div className="flex flex-wrap justify-center gap-2">
                     <button
                         onClick={() => setFilter('all')}
-                        className={`py-2.5 px-6 rounded-xl text-sm font-semibold border transition ${
-                            filter === 'all' 
-                                ? 'bg-indigo-600 border-indigo-600 text-white shadow-md shadow-indigo-600/10' 
-                                : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
-                        }`}
+                        className={`py-2.5 px-6 rounded-xl text-sm font-semibold border transition ${filter === 'all'
+                            ? 'bg-indigo-600 border-indigo-600 text-white shadow-md shadow-indigo-600/10'
+                            : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
+                            }`}
                     >
                         {t('tournaments_page.all_tournaments')}
                     </button>
@@ -240,11 +214,10 @@ function Tournaments() {
                         <button
                             key={tcg.id}
                             onClick={() => setFilter(tcg.id)}
-                            className={`py-2.5 px-6 rounded-xl text-sm font-semibold border transition ${
-                                filter === tcg.id 
-                                    ? 'bg-indigo-600 border-indigo-600 text-white shadow-md' 
-                                    : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
-                            }`}
+                            className={`py-2.5 px-6 rounded-xl text-sm font-semibold border transition ${filter === tcg.id
+                                ? 'bg-indigo-600 border-indigo-600 text-white shadow-md'
+                                : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
+                                }`}
                         >
                             {tcg.name}
                         </button>
@@ -266,127 +239,22 @@ function Tournaments() {
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
-                        {filteredTournaments.map((tourney) => {
-                            const isRegistered = myRegistrations.includes(tourney.id);
-                            const isFull = tourney.registeredCount >= tourney.capacity;
-                            const tourneyDate = new Date(tourney.date);
-
-                            const formattedDate = tourneyDate.toLocaleDateString(i18n.resolvedLanguage || i18n.language || 'fr', {
-                                weekday: 'long', 
-                                year: 'numeric', 
-                                month: 'long', 
-                                day: 'numeric'
-                            });
-                            const formattedTime = tourneyDate.toLocaleTimeString(i18n.resolvedLanguage || i18n.language || 'fr', {
-                                hour: '2-digit', 
-                                minute: '2-digit'
-                            });
-
-                            return (
-                                <div 
-                                    key={tourney.id}
-                                    className="bg-white rounded-3xl border border-slate-100 p-6 md:p-8 flex flex-col justify-between hover:shadow-xl hover:border-indigo-100 transition-all duration-300 relative group"
-                                >
-                                    <div className="space-y-4">
-                                        {/* Game badge & price */}
-                                        <div className="flex justify-between items-center gap-4">
-                                            <span className={`inline-flex items-center gap-1.5 py-1 px-3 rounded-full text-xs font-semibold border ${getGameColorClass(tourney.game)}`}>
-                                                {getGameEmoji(tourney.game)} {tourney.game}
-                                            </span>
-                                            <span className="text-sm font-extrabold text-indigo-600 bg-indigo-50 py-1.5 px-3.5 rounded-xl font-mono">
-                                                {tourney.price === 0 || tourney.price === "0.00" ? t('tournaments_page.free') : `${Number(tourney.price).toFixed(2)}€`}
-                                            </span>
-                                        </div>
-
-                                        {/* Tournament title */}
-                                        <h3 className="text-xl font-extrabold text-slate-950 tracking-tight group-hover:text-indigo-600 transition-colors">
-                                            {tourney.name}
-                                        </h3>
-
-                                        {/* Date and details */}
-                                        <div className="space-y-2 text-sm text-slate-600 font-light">
-                                            <div className="flex items-center gap-2.5">
-                                                <span>📅</span>
-                                                <span className="capitalize">{formattedDate} à {formattedTime}</span>
-                                            </div>
-                                            <div className="flex items-center gap-2.5">
-                                                <span>👥</span>
-                                                <span>
-                                                    {t('tournaments_page.capacity', { registered: tourney.registeredCount, capacity: tourney.capacity })}
-                                                </span>
-                                            </div>
-                                        </div>
-
-                                        <p className="text-slate-600 text-sm leading-relaxed font-light pt-2">
-                                            <TranslatedText text={tourney.description} toLang={i18n.resolvedLanguage || i18n.language || 'fr'} />
-                                        </p>
-
-                                        {/* Collapsible Registered Players List */}
-                                        <div className="mt-4 pt-3 border-t border-slate-100">
-                                            <button 
-                                                type="button"
-                                                onClick={() => toggleParticipants(tourney.id)}
-                                                className="flex items-center justify-between w-full text-left text-xs font-semibold text-slate-500 hover:text-indigo-600 transition"
-                                            >
-                                                <span>{t('tournaments_page.registered_list', { count: tourney.participants?.length || 0 })}</span>
-                                                <span className={`transition-transform duration-200 transform ${openParticipantsId === tourney.id ? 'rotate-180' : ''}`}>
-                                                    ▼
-                                                </span>
-                                            </button>
-                                            
-                                            {openParticipantsId === tourney.id && (
-                                                <div className="mt-2 space-y-1.5 bg-slate-50 p-3 rounded-xl border border-slate-200/50 max-h-36 overflow-y-auto">
-                                                    {tourney.participants && tourney.participants.length > 0 ? (
-                                                        tourney.participants.map((pName, index) => (
-                                                            <div key={index} className="text-xs text-slate-700 flex items-center gap-2">
-                                                                <span className="w-1.5 h-1.5 bg-indigo-500 rounded-full"></span>
-                                                                <span>{pName}</span>
-                                                            </div>
-                                                        ))
-                                                    ) : (
-                                                        <div className="text-xs text-slate-400 italic">{t('tournaments_page.no_registered')}</div>
-                                                    )}
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-
-                                    {/* Action button */}
-                                    <div className="mt-6 pt-4 border-t border-slate-50 flex items-center justify-between gap-4">
-                                        {!isAuthenticated ? (
-                                            <Link 
-                                                to="/login"
-                                                className="w-full text-center py-3 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold rounded-xl text-xs transition duration-300"
-                                            >
-                                                {t('tournaments_page.login_required')}
-                                            </Link>
-                                        ) : (
-                                            <button
-                                                onClick={() => handleAction(tourney.id, isRegistered)}
-                                                disabled={actionLoadingId === tourney.id || (!isRegistered && isFull)}
-                                                className={`w-full py-3 px-4 rounded-xl text-xs font-bold transition-all duration-300 flex items-center justify-center gap-2 shadow-sm ${
-                                                    isRegistered 
-                                                        ? 'bg-red-50 text-red-700 hover:bg-red-100/80 border border-red-200' 
-                                                        : isFull 
-                                                            ? 'bg-slate-100 text-slate-400 border border-slate-200/50 cursor-not-allowed' 
-                                                            : 'bg-indigo-600 hover:bg-indigo-500 text-white shadow-indigo-600/10'
-                                                }`}
-                                            >
-                                                {actionLoadingId === tourney.id ? (
-                                                    <span className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></span>
-                                                ) : isRegistered ? (
-                                                    t('tournaments_page.unregister')
-                                                ) : isFull ? (
-                                                    t('tournaments_page.full')
-                                                ) : (
-                                                    t('tournaments_page.register')
-                                                )}
-                                            </button>
-                                        )}
-                                    </div>
-                                </div>
-                            );
-                        })}
+                        {filteredTournaments.map((tourney) => (
+                            <TournamentCard
+                                key={tourney.id}
+                                activity={tourney}
+                                isAuthenticated={isAuthenticated}
+                                isRegistered={myRegistrations.includes(tourney.id)}
+                                actionLoading={actionLoadingId === tourney.id}
+                                isOpenParticipants={openParticipantsId === tourney.id}
+                                onToggleParticipants={() => toggleParticipants(tourney.id)}
+                                onAction={() => handleAction(tourney.id, myRegistrations.includes(tourney.id))}
+                                onLoginRedirect={() => navigate('/login')}
+                                t={t}
+                                i18n={i18n}
+                                theme="light"
+                            />
+                        ))}
                     </div>
                 )}
             </div>

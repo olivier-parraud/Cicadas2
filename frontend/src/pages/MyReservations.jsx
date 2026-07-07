@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import TranslatedText from '../components/TranslatedText';
+import Button from '../components/Button';
 
 function MyReservations() {
     const { t, i18n } = useTranslation();
@@ -298,26 +299,36 @@ function MyReservations() {
 
         switch (type) {
             case 'MTG':
-                return 'https://images.unsplash.com/photo-1611195974226-a6a9be9dd763?q=80&w=600';
-            case 'YUGIOH':
-                return 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?q=80&w=600';
+                return '/images/TCG/Magic.jpg';
             case 'POKEMON':
-                return 'https://images.unsplash.com/photo-1605870445919-838d190e8e1b?q=80&w=600';
+                return '/images/TCG/Pokemon';
+            case 'ONE_PIECE':
+                return '/images/TCG/ONE-PIECE-LOGO.jpg';
+            case 'YUGIOH':
+                return '/images/TCG/Yugioh.png';
+            case 'STAR_WARS':
+                return '/images/TCG/Star-Wars.jpeg';
             case 'LORCANA':
-                return 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?q=80&w=600';
+                return '/images/TCG/Lorcana.webp';
+            case 'FINAL_FF':
+                return '/images/TCG/FF-logo.png';
+            case 'ALTERED':
+                return '/images/TCG/altered-logo.webp';
+            case 'DBS':
+                return '/images/TCG/Dragon-ball.jpeg';
             case 'BYOG':
-                return 'https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=600';
+                return '/images/TCG/Magic.jpg';
             default:
-                return 'https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=600';
+                return '/images/TCG/Magic.jpg';
         }
     };
 
     const formatRoomName = (roomName, gameType) => {
         if (!roomName) return 'Table Standard';
-        
+
         const match = roomName.match(/Table\s+\d+/i);
         const prefix = match ? match[0] : roomName;
-        
+
         const isTcg = ['MTG', 'YUGIOH', 'POKEMON', 'LORCANA'].includes(gameType);
         if (isTcg) {
             return `${prefix} (TCG)`;
@@ -406,65 +417,67 @@ function MyReservations() {
                                     <div key={res.id} className="bg-white rounded-3xl border border-slate-100 shadow-xl overflow-hidden hover:shadow-2xl transition duration-300 flex flex-col justify-between">
                                         <div>
                                             <div className="h-32 w-full overflow-hidden relative">
-                                                <img 
-                                                    src={res.boardgame_image_url || getGameImage(res.game_type, res.specific_game)} 
-                                                    alt={res.specific_game || res.game_type} 
+                                                <img
+                                                    src={res.boardgame_image_url || getGameImage(res.game_type, res.specific_game)}
+                                                    alt={res.specific_game || res.game_type}
                                                     className="w-full h-full object-cover object-center"
                                                 />
                                                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent"></div>
                                             </div>
                                             <div className="p-6 space-y-4">
-                                            <div className="flex justify-between items-start gap-2">
-                                                <div>
-                                                    <span className="inline-block text-[10px] uppercase font-bold tracking-wider text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-100">
-                                                        {getGameTypeName(res.game_type)}
+                                                <div className="flex justify-between items-start gap-2">
+                                                    <div>
+                                                        <span className="inline-block text-[10px] uppercase font-bold tracking-wider text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-100">
+                                                            {getGameTypeName(res.game_type)}
+                                                        </span>
+                                                        {res.specific_game && (
+                                                            <h3 className="text-base font-extrabold text-slate-950 mt-1">
+                                                                {res.specific_game}
+                                                            </h3>
+                                                        )}
+                                                    </div>
+                                                    <span className="text-xs font-bold bg-slate-50 border border-slate-150 py-1.5 px-3 rounded-xl flex items-center gap-1.5 text-slate-700">
+                                                        🪑 {formatRoomName(res.room_name, res.game_type)}
                                                     </span>
-                                                    {res.specific_game && (
-                                                        <h3 className="text-base font-extrabold text-slate-950 mt-1">
-                                                            {res.specific_game}
-                                                        </h3>
-                                                    )}
                                                 </div>
-                                                <span className="text-xs font-bold bg-slate-50 border border-slate-150 py-1.5 px-3 rounded-xl flex items-center gap-1.5 text-slate-700">
-                                                    🪑 {formatRoomName(res.room_name, res.game_type)}
-                                                </span>
-                                            </div>
 
-                                            <div className="space-y-2 pt-2 border-t border-slate-50 text-xs font-medium text-slate-600">
-                                                <div className="flex items-center gap-2">
-                                                    <span>📆</span>
-                                                    <span className="capitalize">{formattedDate}</span>
-                                                </div>
-                                                <div className="flex items-center gap-2">
-                                                    <span>⏱️</span>
-                                                    <span>
-                                                        {t('my_reservations_page.duration_hours', {
-                                                            time: formattedTime,
-                                                            duration: res.end_time ? Math.round((new Date(res.end_time) - new Date(res.start_time)) / (1000 * 60 * 60)) : 2
-                                                        })}
-                                                    </span>
-                                                </div>
-                                                <div className="flex items-center gap-2">
-                                                    <span>👥</span>
-                                                    <span>{t('reservations_page.players', { count: res.players_count })}</span>
+                                                <div className="space-y-2 pt-2 border-t border-slate-50 text-xs font-medium text-slate-600">
+                                                    <div className="flex items-center gap-2">
+                                                        <span>📆</span>
+                                                        <span className="capitalize">{formattedDate}</span>
+                                                    </div>
+                                                    <div className="flex items-center gap-2">
+                                                        <span>⏱️</span>
+                                                        <span>
+                                                            {t('my_reservations_page.duration_hours', {
+                                                                time: formattedTime,
+                                                                duration: res.end_time ? Math.round((new Date(res.end_time) - new Date(res.start_time)) / (1000 * 60 * 60)) : 2
+                                                            })}
+                                                        </span>
+                                                    </div>
+                                                    <div className="flex items-center gap-2">
+                                                        <span>👥</span>
+                                                        <span>{t('reservations_page.players', { count: res.players_count })}</span>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
                                         </div>
 
                                         <div className="p-6 pt-0 border-t border-slate-50 flex gap-3">
-                                            <button
+                                            <Button
+                                                variant="secondary"
                                                 onClick={() => openEditModal(res)}
-                                                className="flex-1 py-2.5 bg-slate-50 hover:bg-slate-100 text-slate-800 font-bold border border-slate-200 rounded-xl text-xs transition cursor-pointer"
+                                                className="flex-1 py-2.5"
                                             >
                                                 {t('my_reservations_page.edit_btn')}
-                                            </button>
-                                            <button
+                                            </Button>
+                                            <Button
+                                                variant="danger"
                                                 onClick={() => handleCancel(res.id)}
-                                                className="flex-1 py-2.5 bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold border border-rose-150 rounded-xl text-xs transition cursor-pointer"
+                                                className="flex-1 py-2.5"
                                             >
                                                 {t('my_reservations_page.cancel_btn')}
-                                            </button>
+                                            </Button>
                                         </div>
                                     </div>
                                 );
@@ -534,7 +547,7 @@ function MyReservations() {
                                             </div>
 
                                             <p className="text-xs text-slate-500 font-light leading-relaxed line-clamp-2">
-                                                 <TranslatedText text={tItem.description} toLang={i18n.resolvedLanguage || i18n.language || 'fr'} />
+                                                <TranslatedText text={tItem.description} toLang={i18n.resolvedLanguage || i18n.language || 'fr'} />
                                             </p>
 
                                             <div className="space-y-2 pt-2 border-t border-slate-50 text-xs font-medium text-slate-600">
@@ -554,12 +567,13 @@ function MyReservations() {
                                         </div>
 
                                         <div className="p-6 pt-0 border-t border-slate-50 flex">
-                                            <button
+                                            <Button
+                                                variant="danger"
                                                 onClick={() => handleUnregisterTournament(tItem.id)}
-                                                className="w-full py-2.5 bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold border border-rose-150 rounded-xl text-xs transition cursor-pointer"
+                                                className="w-full py-2.5"
                                             >
                                                 {t('my_reservations_page.unregister_tourney_btn')}
-                                            </button>
+                                            </Button>
                                         </div>
                                     </div>
                                 );
@@ -662,12 +676,13 @@ function MyReservations() {
                                         </div>
 
                                         <div className="p-6 pt-0 border-t border-slate-50 flex">
-                                            <button
+                                            <Button
+                                                variant="danger"
                                                 onClick={() => handleUnregisterEvent(eItem.id)}
-                                                className="w-full py-2.5 bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold border border-rose-150 rounded-xl text-xs transition cursor-pointer"
+                                                className="w-full py-2.5"
                                             >
                                                 {t('my_reservations_page.unregister_event_btn', 'Se désinscrire')}
-                                            </button>
+                                            </Button>
                                         </div>
                                     </div>
                                 );
@@ -756,8 +771,8 @@ function MyReservations() {
                                                             key={game.id}
                                                             type="button"
                                                             onClick={() => {
-                                                                setEditFormData(prev => ({ 
-                                                                    ...prev, 
+                                                                setEditFormData(prev => ({
+                                                                    ...prev,
                                                                     specificGame: game.name,
                                                                     playersCount: Math.max(parseInt(prev.playersCount, 10), game.min_players || 1).toString()
                                                                 }));
@@ -766,9 +781,9 @@ function MyReservations() {
                                                             className="w-full text-left px-4 py-2.5 text-xs text-slate-350 hover:bg-indigo-900/40 hover:text-white transition flex items-center gap-3 cursor-pointer"
                                                         >
                                                             {game.image_url && (
-                                                                <img 
-                                                                    src={game.image_url} 
-                                                                    alt={game.name} 
+                                                                <img
+                                                                    src={game.image_url}
+                                                                    alt={game.name}
                                                                     className="w-8 h-8 object-contain bg-white/10 rounded-md"
                                                                 />
                                                             )}
@@ -790,24 +805,24 @@ function MyReservations() {
                                 </div>
                             )}
 
-                             <div className="space-y-1">
-                                 <label className="text-xs font-bold text-slate-500 uppercase">{t('reservations_page.players_count_label')}</label>
-                                 <select
-                                     name="playersCount"
-                                     value={editFormData.playersCount}
-                                     onChange={handleEditChange}
-                                     className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-650 bg-white"
-                                 >
-                                     <option value="1">{t('reservations_page.player')}</option>
-                                     <option value="2">{t('reservations_page.players', { count: 2 })}</option>
-                                     <option value="3">{t('reservations_page.players', { count: 3 })}</option>
-                                     <option value="4">{t('reservations_page.players', { count: 4 })}</option>
-                                     <option value="5">{t('reservations_page.players', { count: 5 })}</option>
-                                     <option value="6">{t('reservations_page.players', { count: 6 })}</option>
-                                     <option value="7">{t('reservations_page.players', { count: 7 })}</option>
-                                     <option value="8">{t('reservations_page.players_8')}</option>
-                                 </select>
-                             </div>
+                            <div className="space-y-1">
+                                <label className="text-xs font-bold text-slate-500 uppercase">{t('reservations_page.players_count_label')}</label>
+                                <select
+                                    name="playersCount"
+                                    value={editFormData.playersCount}
+                                    onChange={handleEditChange}
+                                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-650 bg-white"
+                                >
+                                    <option value="1">{t('reservations_page.player')}</option>
+                                    <option value="2">{t('reservations_page.players', { count: 2 })}</option>
+                                    <option value="3">{t('reservations_page.players', { count: 3 })}</option>
+                                    <option value="4">{t('reservations_page.players', { count: 4 })}</option>
+                                    <option value="5">{t('reservations_page.players', { count: 5 })}</option>
+                                    <option value="6">{t('reservations_page.players', { count: 6 })}</option>
+                                    <option value="7">{t('reservations_page.players', { count: 7 })}</option>
+                                    <option value="8">{t('reservations_page.players_8')}</option>
+                                </select>
+                            </div>
 
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-1">
@@ -853,19 +868,19 @@ function MyReservations() {
                             </div>
 
                             <div className="flex gap-3 pt-3">
-                                <button
-                                    type="button"
+                                <Button
+                                    variant="secondary"
                                     onClick={() => setEditingReservation(null)}
-                                    className="flex-1 py-3 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold rounded-xl text-xs transition cursor-pointer"
+                                    className="flex-1 py-3"
                                 >
                                     {t('my_reservations_page.modal_close')}
-                                </button>
-                                <button
+                                </Button>
+                                <Button
                                     type="submit"
-                                    className="flex-1 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs transition cursor-pointer"
+                                    className="flex-1 py-3"
                                 >
                                     {t('my_reservations_page.modal_save')}
-                                </button>
+                                </Button>
                             </div>
                         </form>
                     </div>

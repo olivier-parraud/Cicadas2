@@ -1,14 +1,28 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import TranslatedText from '../components/TranslatedText';
+import Button from '../components/Button';
+import BoardGameCard from '../components/BoardGameCard';
+import TournamentCard from '../components/TournamentCard';
+import { toast } from 'react-hot-toast';
 
 function Home() {
     const { t, i18n } = useTranslation();
+    const navigate = useNavigate();
     const [activeFaq, setActiveFaq] = useState(null);
     const [activeSlide, setActiveSlide] = useState(0);
     const [featuredGames, setFeaturedGames] = useState([]);
     const [expandedGames, setExpandedGames] = useState({});
+    const [upcomingEvents, setUpcomingEvents] = useState([]);
+    const [eventsLoading, setEventsLoading] = useState(true);
+    const [actionLoadingId, setActionLoadingId] = useState(null);
+    const [openParticipantsId, setOpenParticipantsId] = useState(null);
+    const [myTourneyRegistrations, setMyTourneyRegistrations] = useState([]);
+    const [myEventRegistrations, setMyEventRegistrations] = useState([]);
+
+    const toggleParticipants = (id) => {
+        setOpenParticipantsId(openParticipantsId === id ? null : id);
+    };
 
     const toggleExpand = (gameId) => {
         setExpandedGames(prev => ({
@@ -69,6 +83,99 @@ function Home() {
         fetchFeaturedGames();
     }, []);
 
+    const isAuthenticated = !!localStorage.getItem('token');
+
+    const fetchUpcomingEvents = async (silent = false) => {
+        if (!silent) setEventsLoading(true);
+        try {
+            const resTourneys = await fetch('http://localhost:5050/api/tournaments');
+            let tourneys = [];
+            if (resTourneys.ok) {
+                tourneys = await resTourneys.json();
+            }
+
+            const resEvents = await fetch('http://localhost:5050/api/events');
+            let events = [];
+            if (resEvents.ok) {
+                events = await resEvents.json();
+            }
+
+            const merged = [...tourneys, ...events].sort((a, b) => new Date(a.date) - new Date(b.date));
+            setUpcomingEvents(merged.slice(0, 3));
+        } catch (error) {
+            console.error("Erreur chargement événements à venir :", error);
+        } finally {
+            setEventsLoading(false);
+        }
+    };
+
+    const fetchRegistrations = async () => {
+        if (!isAuthenticated) return;
+        try {
+            const token = localStorage.getItem('token');
+            const resTourneys = await fetch('http://localhost:5050/api/tournaments/my-registrations', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (resTourneys.ok) {
+                const data = await resTourneys.json();
+                setMyTourneyRegistrations(data);
+            }
+
+            const resEvents = await fetch('http://localhost:5050/api/events/my-registrations', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (resEvents.ok) {
+                const data = await resEvents.json();
+                setMyEventRegistrations(data);
+            }
+        } catch (error) {
+            console.error("Erreur chargement inscriptions:", error);
+        }
+    };
+
+    useEffect(() => {
+        fetchUpcomingEvents();
+        fetchRegistrations();
+    }, [isAuthenticated]);
+
+    const handleRegisterToggle = async (activity, isRegistered) => {
+        if (!isAuthenticated) {
+            navigate('/login');
+            return;
+        }
+
+        const isEvent = !!activity.type;
+        const url = isEvent 
+            ? `http://localhost:5050/api/events/${activity.id}/register`
+            : `http://localhost:5050/api/tournaments/${activity.id}/register`;
+        const method = isRegistered ? 'DELETE' : 'POST';
+        const token = localStorage.getItem('token');
+
+        setActionLoadingId(activity.id);
+        try {
+            const res = await fetch(url, {
+                method,
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const data = await res.json();
+            if (res.ok) {
+                if (isEvent) {
+                    setMyEventRegistrations(prev => isRegistered ? prev.filter(id => id !== activity.id) : [...prev, activity.id]);
+                } else {
+                    setMyTourneyRegistrations(prev => isRegistered ? prev.filter(id => id !== activity.id) : [...prev, activity.id]);
+                }
+                toast.success(isRegistered ? t('tournaments_page.success_unregister') : t('tournaments_page.success_register'));
+                fetchUpcomingEvents(true);
+            } else {
+                toast.error(data.error || 'Une erreur est survenue.');
+            }
+        } catch (error) {
+            toast.error(t('tournaments_page.err_conn'));
+        } finally {
+            setActionLoadingId(null);
+        }
+    };
+
     return (
         <div className="min-h-screen bg-slate-50 text-slate-800 selection:bg-indigo-600 selection:text-white">
             {/* Hero Section */}
@@ -89,9 +196,13 @@ function Home() {
                             {t('home_page.hero.description')}
                         </p>
                         <div className="pt-4 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                            <Link to="/reservations" className="inline-flex items-center justify-center bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-3.5 px-8 rounded-xl text-base transition-all duration-300 shadow-lg shadow-indigo-600/30 hover:scale-[1.02] active:scale-[0.98]">
+                            <Button
+                                size="lg"
+                                onClick={() => navigate('/reservations')}
+                                className="font-semibold text-base py-3.5 px-8 shadow-lg shadow-indigo-600/30 hover:scale-[1.02]"
+                            >
                                 {t('home_page.hero.cta')}
-                            </Link>
+                            </Button>
                         </div>
                     </div>
                     <div className="lg:col-span-5 flex justify-center w-full">
@@ -274,9 +385,65 @@ function Home() {
                 </div>
             </div>
 
+            {/* Upcoming Activities Section */}
+            {upcomingEvents.length > 0 && (
+                <div className="max-w-7xl mx-auto py-20 px-4 border-t border-slate-200">
+                    <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
+                        <span className="inline-flex items-center gap-1.5 py-1 px-3 rounded-full text-xs font-semibold bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
+                            📅 {t('home_page.upcoming_badge', 'Prochains Événements & Tournois')}
+                        </span>
+                        <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-slate-900">
+                            {t('home_page.upcoming_title', 'Nos Prochains Rendez-vous')}
+                        </h2>
+                        <p className="text-lg text-slate-600 font-light">
+                            {t('home_page.upcoming_subtitle', "Rejoignez-nous pour nos soirées Draft, tournois officiels ou séances d'initiation.")}
+                        </p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        {upcomingEvents.map((activity) => {
+                            const isEvent = !!activity.type;
+                            const isReg = isEvent 
+                                ? myEventRegistrations.includes(activity.id) 
+                                : myTourneyRegistrations.includes(activity.id);
+                            return (
+                                <TournamentCard
+                                    key={activity.id}
+                                    activity={activity}
+                                    isAuthenticated={isAuthenticated}
+                                    isRegistered={isReg}
+                                    actionLoading={actionLoadingId === activity.id}
+                                    isOpenParticipants={openParticipantsId === activity.id}
+                                    onToggleParticipants={toggleParticipants}
+                                    onAction={() => handleRegisterToggle(activity, isReg)}
+                                    onLoginRedirect={() => navigate('/login')}
+                                    t={t}
+                                    i18n={i18n}
+                                />
+                            );
+                        })}
+                    </div>
+
+                    <div className="text-center mt-12 flex justify-center gap-6">
+                        <Link
+                            to="/events"
+                            className="inline-flex items-center gap-2 text-sm font-bold text-indigo-600 hover:text-indigo-700 transition"
+                        >
+                            📅 {t('home_page.upcoming_all_events', 'Tous les Événements')}
+                        </Link>
+                        <Link
+                            to="/tournaments"
+                            className="inline-flex items-center gap-2 text-sm font-bold text-indigo-600 hover:text-indigo-700 transition"
+                        >
+                            🏆 {t('home_page.upcoming_all_tournaments', 'Tous les Tournois')}
+                        </Link>
+                    </div>
+                </div>
+            )}
+
             {/* Featured Board Games Showcase */}
             {featuredGames.length > 0 && (
-                <div className="max-w-7xl mx-auto py-20 px-4 border-t border-slate-200/10">
+                <div className="max-w-7xl mx-auto py-20 px-4 border-t border-slate-200">
                     <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
                         <span className="inline-flex items-center gap-1.5 py-1 px-3 rounded-full text-xs font-semibold bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
                             {t('home_page.featured.badge')}
@@ -291,70 +458,15 @@ function Home() {
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         {featuredGames.map((game) => (
-                            <div
+                            <BoardGameCard
                                 key={game.id}
-                                className="bg-white rounded-3xl border border-slate-100 overflow-hidden flex flex-col justify-between hover:shadow-xl hover:border-indigo-100 transition-all duration-300 group"
-                            >
-                                <div>
-                                    <div className="aspect-[4/3] w-full overflow-hidden bg-slate-100 relative">
-                                        <img
-                                            src={game.image_url}
-                                            alt={game.name}
-                                            className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-500"
-                                        />
-                                        <span className="absolute top-4 left-4 inline-flex items-center py-1 px-3 rounded-full text-xs font-semibold bg-purple-50 text-purple-700 border border-purple-200 shadow-sm">
-                                            {t('categories.' + game.category, { defaultValue: game.category })}
-                                        </span>
-                                    </div>
-
-                                    <div className="p-6 space-y-3">
-                                        <h3 className="text-xl font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">
-                                            {game.name}
-                                        </h3>
-
-                                        <div className="flex gap-2 text-xs font-bold text-slate-600">
-                                            <span className="bg-slate-100/50 py-1 px-2.5 rounded-lg">
-                                                {t('boardgames_page.players_count', { min: game.min_players, max: game.max_players })}
-                                            </span>
-                                            <span className="bg-slate-100/50 py-1 px-2.5 rounded-lg">
-                                                {t('boardgames_page.duration', { time: game.play_time })}
-                                            </span>
-                                        </div>
-
-                                        {(() => {
-                                            const words = game.description ? game.description.split(/\s+/) : [];
-                                            const isLong = words.length > 50;
-                                            const isExpanded = !!expandedGames[game.id];
-                                            return (
-                                                <p className="text-slate-600 text-sm leading-relaxed font-light">
-                                                    <TranslatedText 
-                                                        text={game.description} 
-                                                        toLang={i18n.resolvedLanguage || i18n.language || 'fr'} 
-                                                        isExpanded={isExpanded} 
-                                                    />
-                                                    {isLong && (
-                                                        <button
-                                                            onClick={() => toggleExpand(game.id)}
-                                                            className="text-indigo-600 hover:text-indigo-500 font-bold ml-1.5 inline-block focus:outline-none transition-colors cursor-pointer"
-                                                        >
-                                                            {isExpanded ? t('boardgames_page.see_less') : t('boardgames_page.see_more')}
-                                                        </button>
-                                                    )}
-                                                </p>
-                                            );
-                                        })()}
-                                    </div>
-                                </div>
-
-                                <div className="p-6 pt-0">
-                                    <Link
-                                        to={`/reservations?game=${encodeURIComponent(game.name)}&type=BOARD_GAME`}
-                                        className="w-full text-center block py-3 px-4 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white transition-all duration-300"
-                                    >
-                                        {t('home_page.featured.book_to_play')}
-                                    </Link>
-                                </div>
-                            </div>
+                                game={game}
+                                isExpanded={!!expandedGames[game.id]}
+                                onToggleExpand={() => toggleExpand(game.id)}
+                                onBookClick={() => navigate(`/reservations?game=${encodeURIComponent(game.name)}&type=BOARD_GAME`)}
+                                t={t}
+                                i18n={i18n}
+                            />
                         ))}
                     </div>
 

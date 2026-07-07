@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import TournamentCard from '../components/TournamentCard';
 
 function DashboardAdmin() {
+    const { t, i18n } = useTranslation();
     const navigate = useNavigate();
     const token = localStorage.getItem('token');
 
@@ -16,6 +19,11 @@ function DashboardAdmin() {
     const [message, setMessage] = useState({ type: '', text: '' });
     const [deleteConfirmId, setDeleteConfirmId] = useState(null);
     const [deleteConfirmType, setDeleteConfirmType] = useState(null);
+    const [openParticipantsId, setOpenParticipantsId] = useState(null);
+
+    const toggleParticipants = (id) => {
+        setOpenParticipantsId(openParticipantsId === id ? null : id);
+    };
 
     // Event Form state
     const [eventForm, setEventForm] = useState({
@@ -486,6 +494,20 @@ function DashboardAdmin() {
         }
     };
 
+    // Construction de l'objet activity pour l'aperçu de l'événement en temps réel
+    const previewEvent = {
+        id: 'preview',
+        name: eventForm.name || "Aperçu de l'événement",
+        type: eventForm.type,
+        game: eventForm.game,
+        date: eventForm.date ? `${eventForm.date}T${eventForm.time || '19:30'}` : new Date().toISOString(),
+        capacity: eventForm.capacity || 16,
+        registeredCount: 0,
+        price: eventForm.price || 0,
+        description: eventForm.description || "Description de l'événement...",
+        participants: []
+    };
+
     return (
         <div className="min-h-screen bg-slate-50 text-slate-800 pb-20">
             {/* Dark Premium Admin Header */}
@@ -810,179 +832,175 @@ function DashboardAdmin() {
                         {/* TAB: EVENTS */}
                         {activeTab === 'events' && (
                             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-                                {/* Create Event Form */}
-                                <form onSubmit={handleCreateEvent} className="lg:col-span-5 bg-white p-6 md:p-8 rounded-3xl border border-slate-100 shadow-xl space-y-4">
-                                    <h2 className="text-lg font-bold text-slate-900 pb-3 border-b border-slate-100 flex items-center gap-2">
-                                        <span>➕</span> Créer un événement
-                                    </h2>
-
-                                    <div className="space-y-1">
-                                        <label className="text-xs font-bold text-slate-500 uppercase">Nom de l'événement</label>
-                                        <input
-                                            type="text"
-                                            required
-                                            placeholder="Ex: Avant-première Pokémon Écarlate et Violet"
-                                            value={eventForm.name}
-                                            onChange={(e) => setEventForm({ ...eventForm, name: e.target.value })}
-                                            className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-650 bg-white"
-                                        />
-                                    </div>
-
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <div className="space-y-1">
-                                            <label className="text-xs font-bold text-slate-500 uppercase">Type d'événement</label>
-                                            <select
-                                                value={eventForm.type}
-                                                onChange={(e) => setEventForm({ ...eventForm, type: e.target.value })}
-                                                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-650 bg-white"
-                                            >
-                                                <option value="avant_premiere">Avant-première</option>
-                                                <option value="draft">Draft</option>
-                                                <option value="initiation">Initiation</option>
-                                            </select>
-                                        </div>
+                                {/* Create Event Form & Live Preview */}
+                                <div className="lg:col-span-5 space-y-6">
+                                    <form onSubmit={handleCreateEvent} className="bg-white p-6 md:p-8 rounded-3xl border border-slate-100 shadow-xl space-y-4">
+                                        <h2 className="text-lg font-bold text-slate-900 pb-3 border-b border-slate-100 flex items-center gap-2">
+                                            <span>➕</span> Créer un événement
+                                        </h2>
 
                                         <div className="space-y-1">
-                                            <label className="text-xs font-bold text-slate-500 uppercase">Jeu associé</label>
-                                            <select
-                                                value={eventForm.game}
-                                                onChange={(e) => setEventForm({ ...eventForm, game: e.target.value })}
-                                                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-650 bg-white"
-                                            >
-                                                <option>Pokémon</option>
-                                                <option>Magic: The Gathering</option>
-                                                <option>One Piece Card Game</option>
-                                                <option>Yu-Gi-Oh!</option>
-                                                <option>Star Wars: Unlimited</option>
-                                                <option>Disney Lorcana</option>
-                                                <option>Final Fantasy TCG</option>
-                                                <option>Altered</option>
-                                                <option>Dragon Ball Super Card Game</option>
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <div className="space-y-1">
-                                            <label className="text-xs font-bold text-slate-500 uppercase">Date</label>
+                                            <label className="text-xs font-bold text-slate-500 uppercase">Nom de l'événement</label>
                                             <input
-                                                type="date"
+                                                type="text"
                                                 required
-                                                value={eventForm.date}
-                                                onChange={(e) => setEventForm({ ...eventForm, date: e.target.value })}
+                                                placeholder="Ex: Avant-première Pokémon Écarlate et Violet"
+                                                value={eventForm.name}
+                                                onChange={(e) => setEventForm({ ...eventForm, name: e.target.value })}
                                                 className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-650 bg-white"
                                             />
                                         </div>
+
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div className="space-y-1">
+                                                <label className="text-xs font-bold text-slate-500 uppercase">Type d'événement</label>
+                                                <select
+                                                    value={eventForm.type}
+                                                    onChange={(e) => setEventForm({ ...eventForm, type: e.target.value })}
+                                                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-650 bg-white"
+                                                >
+                                                    <option value="avant_premiere">Avant-première</option>
+                                                    <option value="draft">Draft</option>
+                                                    <option value="initiation">Initiation</option>
+                                                </select>
+                                            </div>
+
+                                            <div className="space-y-1">
+                                                <label className="text-xs font-bold text-slate-500 uppercase">Jeu associé</label>
+                                                <select
+                                                    value={eventForm.game}
+                                                    onChange={(e) => setEventForm({ ...eventForm, game: e.target.value })}
+                                                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-650 bg-white"
+                                                >
+                                                    <option>Pokémon</option>
+                                                    <option>Magic: The Gathering</option>
+                                                    <option>One Piece Card Game</option>
+                                                    <option>Yu-Gi-Oh!</option>
+                                                    <option>Star Wars: Unlimited</option>
+                                                    <option>Disney Lorcana</option>
+                                                    <option>Final Fantasy TCG</option>
+                                                    <option>Altered</option>
+                                                    <option>Dragon Ball Super Card Game</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div className="space-y-1">
+                                                <label className="text-xs font-bold text-slate-500 uppercase">Date</label>
+                                                <input
+                                                    type="date"
+                                                    required
+                                                    value={eventForm.date}
+                                                    onChange={(e) => setEventForm({ ...eventForm, date: e.target.value })}
+                                                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-650 bg-white"
+                                                />
+                                            </div>
+                                            <div className="space-y-1">
+                                                <label className="text-xs font-bold text-slate-500 uppercase">Heure</label>
+                                                <input
+                                                    type="time"
+                                                    required
+                                                    value={eventForm.time}
+                                                    onChange={(e) => setEventForm({ ...eventForm, time: e.target.value })}
+                                                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-650 bg-white"
+                                                />
+                                            </div>
+                                        </div>
+
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div className="space-y-1">
+                                                <label className="text-xs font-bold text-slate-500 uppercase">Nombre de places</label>
+                                                <input
+                                                    type="number"
+                                                    required
+                                                    min="2"
+                                                    value={eventForm.capacity}
+                                                    onChange={(e) => setEventForm({ ...eventForm, capacity: Number(e.target.value) })}
+                                                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-650 bg-white"
+                                                />
+                                            </div>
+                                            <div className="space-y-1">
+                                                <label className="text-xs font-bold text-slate-500 uppercase">Tarif (€)</label>
+                                                <input
+                                                    type="number"
+                                                    required
+                                                    min="0"
+                                                    step="0.5"
+                                                    value={eventForm.price}
+                                                    onChange={(e) => setEventForm({ ...eventForm, price: Number(e.target.value) })}
+                                                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-650 bg-white"
+                                                />
+                                            </div>
+                                        </div>
+
                                         <div className="space-y-1">
-                                            <label className="text-xs font-bold text-slate-500 uppercase">Heure</label>
-                                            <input
-                                                type="time"
-                                                required
-                                                value={eventForm.time}
-                                                onChange={(e) => setEventForm({ ...eventForm, time: e.target.value })}
-                                                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-650 bg-white"
+                                            <label className="text-xs font-bold text-slate-500 uppercase">Description</label>
+                                            <textarea
+                                                rows="3"
+                                                placeholder="Infos pratiques, lots à gagner..."
+                                                value={eventForm.description}
+                                                onChange={(e) => setEventForm({ ...eventForm, description: e.target.value })}
+                                                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-650 bg-white font-light"
+                                            ></textarea>
+                                        </div>
+
+                                        <button
+                                            type="submit"
+                                            disabled={actionLoading}
+                                            className="w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold text-sm shadow-md transition disabled:opacity-50 mt-2"
+                                        >
+                                            {actionLoading ? 'Création...' : 'Créer l\'événement'}
+                                        </button>
+                                    </form>
+
+                                    {/* Real-time Preview Box */}
+                                    <div className="bg-[#080711] p-6 md:p-8 rounded-3xl border border-indigo-950/40 shadow-xl space-y-4">
+                                        <h3 className="text-sm font-extrabold text-slate-200 uppercase tracking-wider pb-2 border-b border-indigo-950/40 flex items-center gap-2">
+                                            <span>✨</span> Aperçu en temps réel
+                                        </h3>
+                                        <div className="max-w-md mx-auto">
+                                            <TournamentCard
+                                                activity={previewEvent}
+                                                isAuthenticated={true}
+                                                isRegistered={false}
+                                                t={t}
+                                                i18n={i18n}
+                                                theme="dark"
+                                                onAction={() => {}}
                                             />
                                         </div>
                                     </div>
-
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <div className="space-y-1">
-                                            <label className="text-xs font-bold text-slate-500 uppercase">Nombre de places</label>
-                                            <input
-                                                type="number"
-                                                required
-                                                min="2"
-                                                value={eventForm.capacity}
-                                                onChange={(e) => setEventForm({ ...eventForm, capacity: Number(e.target.value) })}
-                                                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-650 bg-white"
-                                            />
-                                        </div>
-                                        <div className="space-y-1">
-                                            <label className="text-xs font-bold text-slate-500 uppercase">Tarif (€)</label>
-                                            <input
-                                                type="number"
-                                                required
-                                                min="0"
-                                                step="0.5"
-                                                value={eventForm.price}
-                                                onChange={(e) => setEventForm({ ...eventForm, price: Number(e.target.value) })}
-                                                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-650 bg-white"
-                                            />
-                                        </div>
-                                    </div>
-
-                                    <div className="space-y-1">
-                                        <label className="text-xs font-bold text-slate-500 uppercase">Description</label>
-                                        <textarea
-                                            rows="3"
-                                            placeholder="Infos pratiques, lots à gagner..."
-                                            value={eventForm.description}
-                                            onChange={(e) => setEventForm({ ...eventForm, description: e.target.value })}
-                                            className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-650 bg-white font-light"
-                                        ></textarea>
-                                    </div>
-
-                                    <button
-                                        type="submit"
-                                        disabled={actionLoading}
-                                        className="w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold text-sm shadow-md transition disabled:opacity-50 mt-2"
-                                    >
-                                        {actionLoading ? 'Création...' : 'Créer l\'événement'}
-                                    </button>
-                                </form>
+                                </div>
 
                                 {/* Events List */}
-                                <div className="lg:col-span-7 bg-white rounded-3xl border border-slate-100 shadow-xl overflow-hidden">
-                                    <div className="p-6 border-b border-slate-100">
-                                        <h2 className="text-lg font-bold text-slate-900">Événements enregistrés ({events.length})</h2>
+                                <div className="lg:col-span-7 bg-slate-950 p-6 rounded-3xl border border-indigo-950/40 shadow-xl space-y-4 text-white">
+                                    <div className="pb-4 border-b border-indigo-950/40">
+                                        <h2 className="text-lg font-bold text-slate-200">Événements enregistrés ({events.length})</h2>
                                     </div>
 
-                                    <div className="divide-y divide-slate-100">
-                                        {events.map((e) => {
-                                            const typeNames = {
-                                                avant_premiere: "Avant-première",
-                                                draft: "Draft",
-                                                initiation: "Initiation"
-                                            };
-                                            const typeEmojis = {
-                                                avant_premiere: "✨",
-                                                draft: "🃏",
-                                                initiation: "🎓"
-                                            };
-                                            return (
-                                                <div key={e.id} className="p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-slate-50/50 transition">
-                                                    <div className="space-y-1">
-                                                        <div className="flex items-center gap-2">
-                                                            <span className="text-[10px] uppercase font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-100">
-                                                                {e.game}
-                                                            </span>
-                                                            <span className="text-[10px] uppercase font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded border border-amber-100">
-                                                                {typeEmojis[e.type]} {typeNames[e.type]}
-                                                            </span>
-                                                        </div>
-                                                        <h3 className="font-extrabold text-slate-950 mt-1">{e.name}</h3>
-                                                        <p className="text-xs text-slate-500 font-light">
-                                                            📅 {new Date(e.date).toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' })} | 👥 {e.registeredCount} / {e.capacity} places | 💰 {parseFloat(e.price) === 0 ? 'Gratuit' : `${e.price}€`}
-                                                        </p>
-                                                        {e.participants && e.participants.length > 0 && (
-                                                            <p className="text-[11px] text-slate-400 font-light pt-1">
-                                                                👤 Inscrits : <span className="font-medium text-slate-600">{e.participants.join(', ')}</span>
-                                                            </p>
-                                                        )}
-                                                    </div>
-                                                    <button
-                                                        onClick={() => handleDeleteEvent(e.id)}
-                                                        disabled={actionLoading}
-                                                        className="self-end md:self-center py-1.5 px-3 rounded-lg text-xs font-bold text-red-500 hover:bg-red-50 transition disabled:opacity-50"
-                                                    >
-                                                        Supprimer
-                                                    </button>
-                                                </div>
-                                            );
-                                        })}
-                                        {events.length === 0 && (
+                                    <div className="max-h-[850px] overflow-y-auto pr-2 custom-scrollbar">
+                                        {events.length === 0 ? (
                                             <div className="p-8 text-center text-slate-400 italic font-light">
                                                 Aucun événement enregistré.
+                                            </div>
+                                        ) : (
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                                {events.map((e) => (
+                                                    <TournamentCard
+                                                        key={e.id}
+                                                        activity={e}
+                                                        isAuthenticated={true}
+                                                        isAdmin={true}
+                                                        actionLoading={actionLoading}
+                                                        isOpenParticipants={openParticipantsId === e.id}
+                                                        onToggleParticipants={() => toggleParticipants(e.id)}
+                                                        onAction={() => handleDeleteEvent(e.id)}
+                                                        t={t}
+                                                        i18n={i18n}
+                                                        theme="dark"
+                                                    />
+                                                ))}
                                             </div>
                                         )}
                                     </div>

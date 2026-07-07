@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import TranslatedText from '../components/TranslatedText';
+import BoardGameCard from '../components/BoardGameCard';
 
 function BoardGames() {
     const { t, i18n } = useTranslation();
@@ -62,16 +62,6 @@ function BoardGames() {
 
         return matchesSearch && matchesCategory && matchesPlayers;
     });
-
-    const getCategoryColorClass = (cat) => {
-        const catLower = cat.toLowerCase();
-        if (catLower.includes('stratégie')) return 'bg-orange-50 text-orange-700 border-orange-200/50';
-        if (catLower.includes('tuiles')) return 'bg-emerald-50 text-emerald-700 border-emerald-200/50';
-        if (catLower.includes('famille')) return 'bg-blue-50 text-blue-700 border-blue-200/50';
-        if (catLower.includes('abstrait')) return 'bg-purple-50 text-purple-700 border-purple-200/50';
-        if (catLower.includes('ambiance')) return 'bg-rose-50 text-rose-700 border-rose-200/50';
-        return 'bg-slate-50 text-slate-700 border-slate-200/50';
-    };
 
     return (
         <div className="min-h-screen bg-slate-50 text-slate-800 selection:bg-indigo-600 selection:text-white pb-20">
@@ -162,88 +152,15 @@ function BoardGames() {
                     /* Games Grid */
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch">
                         {filteredGames.map((game) => (
-                            <div
+                            <BoardGameCard
                                 key={game.id}
-                                className="bg-white rounded-3xl border border-slate-100 overflow-hidden flex flex-col justify-between hover:shadow-xl hover:border-indigo-100 transition-all duration-300 group"
-                            >
-                                <div>
-                                    {/* Cover image */}
-                                    <div className="aspect-[4/3] w-full overflow-hidden bg-slate-100 relative">
-                                        <img
-                                            src={game.image_url}
-                                            alt={game.name}
-                                            className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-500"
-                                            onError={(e) => {
-                                                e.target.onerror = null;
-                                                e.target.src = 'https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?q=80&w=600';
-                                            }}
-                                        />
-                                        <span className={`absolute top-4 left-4 inline-flex items-center py-1 px-3 rounded-full text-xs font-semibold border shadow-sm ${getCategoryColorClass(game.category)}`}>
-                                            {t('categories.' + game.category, { defaultValue: game.category })}
-                                        </span>
-                                    </div>
-
-                                    {/* Game details */}
-                                    <div className="p-6 md:p-8 space-y-4">
-                                        <h3 className="text-xl font-extrabold text-slate-950 tracking-tight group-hover:text-indigo-600 transition-colors">
-                                            {game.name}
-                                        </h3>
-
-                                        {/* Badges row */}
-                                        <div className="flex flex-wrap gap-2 text-xs font-bold text-slate-600">
-                                            <span className="bg-slate-100 py-1.5 px-3 rounded-xl flex items-center gap-1.5">
-                                                {t('boardgames_page.players_count', { min: game.min_players, max: game.max_players })}
-                                            </span>
-                                            <span className="bg-slate-100 py-1.5 px-3 rounded-xl flex items-center gap-1.5">
-                                                {t('boardgames_page.duration', { time: game.play_time })}
-                                            </span>
-                                        </div>
-
-                                        {(() => {
-                                            const words = game.description ? game.description.split(/\s+/) : [];
-                                            const isLong = words.length > 50;
-                                            const isExpanded = !!expandedGames[game.id];
-                                            return (
-                                                <p className="text-slate-600 text-sm leading-relaxed font-light">
-                                                    <TranslatedText 
-                                                        text={game.description} 
-                                                        toLang={i18n.resolvedLanguage || i18n.language || 'fr'} 
-                                                        isExpanded={isExpanded} 
-                                                    />
-                                                    {isLong && (
-                                                        <button
-                                                            onClick={() => toggleExpand(game.id)}
-                                                            className="text-indigo-600 hover:text-indigo-500 font-bold ml-1.5 inline-block focus:outline-none transition-colors cursor-pointer"
-                                                        >
-                                                            {isExpanded ? t('boardgames_page.see_less') : t('boardgames_page.see_more')}
-                                                        </button>
-                                                    )}
-                                                </p>
-                                            );
-                                        })()}
-                                    </div>
-                                </div>
-
-                                {/* Actions */}
-                                <div className="p-6 md:p-8 pt-0 border-t border-slate-50 flex flex-col gap-3">
-                                    {game.rules_url && (
-                                        <a
-                                            href={game.rules_url}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="text-center py-2 text-xs font-semibold text-slate-500 hover:text-indigo-600 transition duration-300"
-                                        >
-                                            {t('boardgames_page.rules_link')}
-                                        </a>
-                                    )}
-                                    <button
-                                        onClick={() => navigate(`/reservations?game=${encodeURIComponent(game.name)}&type=BOARD_GAME`)}
-                                        className="w-full py-3 px-4 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white shadow-sm transition-all duration-300"
-                                    >
-                                        {t('boardgames_page.book_to_play')}
-                                    </button>
-                                </div>
-                            </div>
+                                game={game}
+                                isExpanded={!!expandedGames[game.id]}
+                                onToggleExpand={() => toggleExpand(game.id)}
+                                onBookClick={() => navigate(`/reservations?game=${encodeURIComponent(game.name)}&type=BOARD_GAME`)}
+                                t={t}
+                                i18n={i18n}
+                            />
                         ))}
                     </div>
                 )}

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import Button from '../components/Button';
 
 const TIME_SLOTS = [
     "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00"
@@ -321,12 +322,12 @@ function Reservations() {
                                 />
                             </div>
 
-                            <button
+                            <Button
                                 type="submit"
-                                className="w-full py-3.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs transition duration-300 shadow-md shadow-indigo-600/10 cursor-pointer"
+                                className="w-full py-3.5 shadow-md"
                             >
                                 {t('reservations_page.submit_btn')}
-                            </button>
+                            </Button>
                         </form>
                     </div>
 

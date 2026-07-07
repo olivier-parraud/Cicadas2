@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-hot-toast';
+import TournamentCard from '../components/TournamentCard';
 
 function Events() {
     const { t, i18n } = useTranslation();
@@ -152,45 +153,7 @@ function Events() {
         return e.type === filter;
     });
 
-    const getGameColorClass = (game) => {
-        const gameLower = game.toLowerCase();
-        if (gameLower.includes('magic')) return 'bg-orange-500/10 text-orange-400 border-orange-500/20';
-        if (gameLower.includes('pokémon') || gameLower.includes('pokemon')) return 'bg-amber-500/10 text-amber-400 border-amber-500/20';
-        if (gameLower.includes('one piece')) return 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20';
-        if (gameLower.includes('yu-gi-oh') || gameLower.includes('yugioh')) return 'bg-rose-500/10 text-rose-400 border-rose-500/20';
-        if (gameLower.includes('star wars')) return 'bg-blue-500/10 text-blue-400 border-blue-500/20';
-        if (gameLower.includes('lorcana')) return 'bg-purple-500/10 text-purple-400 border-purple-500/20';
-        if (gameLower.includes('final fantasy')) return 'bg-teal-500/10 text-teal-400 border-teal-500/20';
-        if (gameLower.includes('altered')) return 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20';
-        if (gameLower.includes('dragon ball')) return 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20';
-        return 'bg-slate-500/10 text-slate-400 border-slate-500/20';
-    };
-
-    const getTypeColorClass = (type) => {
-        if (type === 'avant_premiere') return 'bg-amber-500/10 text-amber-400 border-amber-500/20';
-        if (type === 'draft') return 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20';
-        return 'bg-purple-500/10 text-purple-400 border-purple-500/20';
-    };
-
-    const getGameEmoji = (game) => {
-        const gameLower = game.toLowerCase();
-        if (gameLower.includes('magic')) return '🃏';
-        if (gameLower.includes('pokémon') || gameLower.includes('pokemon')) return '⚡';
-        if (gameLower.includes('one piece')) return '🏴‍☠️';
-        if (gameLower.includes('yu-gi-oh') || gameLower.includes('yugioh')) return '🐉';
-        if (gameLower.includes('star wars')) return '🚀';
-        if (gameLower.includes('lorcana')) return '🏰';
-        if (gameLower.includes('final fantasy')) return '💎';
-        if (gameLower.includes('altered')) return '🔮';
-        if (gameLower.includes('dragon ball')) return '💥';
-        return '🎲';
-    };
-
-    const getTypeEmoji = (type) => {
-        if (type === 'avant_premiere') return '✨';
-        if (type === 'draft') return '🃏';
-        return '🎓';
-    };
+    // Helper color/emoji functions moved to EventCard component
 
     return (
         <div className="min-h-screen bg-[#080711] text-white selection:bg-indigo-650 selection:text-white pb-20">
@@ -258,135 +221,22 @@ function Events() {
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {filteredEvents.map((e) => {
-                            const isRegistered = myRegistrations.includes(e.id);
-                            const spotsLeft = e.capacity - e.registeredCount;
-                            const isFull = spotsLeft <= 0;
-                            const formattedDate = new Date(e.date).toLocaleString(i18n.resolvedLanguage, {
-                                weekday: 'long',
-                                day: 'numeric',
-                                month: 'long',
-                                hour: '2-digit',
-                                minute: '2-digit'
-                            });
-
-                            const typeNames = {
-                                avant_premiere: t('events_page.prerelease'),
-                                draft: t('events_page.draft'),
-                                initiation: t('events_page.initiation')
-                            };
-
-                            return (
-                                <div 
-                                    key={e.id} 
-                                    className="bg-[#151425]/45 backdrop-blur-md rounded-3xl p-6 flex flex-col justify-between border border-white/6 hover:border-indigo-500/25 transition duration-300 hover:translate-y-[-2px] shadow-lg group relative overflow-hidden"
-                                >
-                                    <div className="space-y-4 relative z-10">
-                                        {/* Badges */}
-                                        <div className="flex flex-wrap items-center gap-2">
-                                            <span className={`inline-flex items-center gap-1 py-0.5 px-2.5 rounded-full text-[10px] font-bold border ${getGameColorClass(e.game)}`}>
-                                                {getGameEmoji(e.game)} {e.game}
-                                            </span>
-                                            <span className={`inline-flex items-center gap-1 py-0.5 px-2.5 rounded-full text-[10px] font-bold border ${getTypeColorClass(e.type)}`}>
-                                                {getTypeEmoji(e.type)} {typeNames[e.type]}
-                                            </span>
-                                        </div>
-
-                                        {/* Title & Info */}
-                                        <div>
-                                            <h3 className="text-lg font-black tracking-tight text-white group-hover:text-indigo-300 transition duration-300">
-                                                {e.name}
-                                            </h3>
-                                            <p className="text-xs text-indigo-300/80 font-medium capitalize mt-1.5 flex items-center gap-1.5">
-                                                🕒 {formattedDate}
-                                            </p>
-                                        </div>
-
-                                        {/* Description */}
-                                        {e.description && (
-                                            <p className="text-xs text-slate-400 font-light leading-relaxed line-clamp-3">
-                                                {e.description}
-                                            </p>
-                                        )}
-
-                                        {/* Status Info */}
-                                        <div className="pt-2 flex items-center justify-between border-t border-white/5 text-xs text-slate-400 font-medium">
-                                            <span>
-                                                💰 {parseFloat(e.price) === 0 ? t('events_page.price_free') : `${e.price}€`}
-                                            </span>
-                                            <span className={spotsLeft <= 3 && spotsLeft > 0 ? "text-amber-400 font-bold" : isFull ? "text-red-400 font-bold" : "text-slate-400"}>
-                                                {isFull 
-                                                    ? t('events_page.btn_full') 
-                                                    : spotsLeft === 1 
-                                                        ? t('events_page.spots_left', { count: spotsLeft }) 
-                                                        : t('events_page.spots_left_plural', { count: spotsLeft })
-                                                }
-                                            </span>
-                                        </div>
-
-                                        {/* Dropdown for Participants list */}
-                                        <div className="pt-2">
-                                            <button
-                                                type="button"
-                                                onClick={() => toggleParticipants(e.id)}
-                                                className="text-[11px] text-indigo-400 hover:text-indigo-300 font-semibold transition flex items-center gap-1 cursor-pointer"
-                                            >
-                                                👥 {t('tournaments_page.participants', 'Inscrits')} ({e.registeredCount})
-                                                <svg 
-                                                    className={`w-3.5 h-3.5 transition-transform duration-200 ${openParticipantsId === e.id ? 'rotate-180' : ''}`} 
-                                                    fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                                                >
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7" />
-                                                </svg>
-                                            </button>
-
-                                            {openParticipantsId === e.id && (
-                                                <div className="mt-2 p-3 bg-slate-950/50 rounded-2xl border border-white/5 space-y-1.5 animate-in slide-in-from-top-2 duration-150">
-                                                    {e.participants && e.participants.length > 0 ? (
-                                                        <div className="flex flex-wrap gap-1">
-                                                            {e.participants.map((p, idx) => (
-                                                                <span key={idx} className="inline-block bg-[#151425]/60 text-slate-300 text-[10px] px-2 py-0.5 rounded-lg border border-white/5">
-                                                                    {p}
-                                                                </span>
-                                                            ))}
-                                                        </div>
-                                                    ) : (
-                                                        <p className="text-[10px] text-slate-500 italic">Aucun inscrit pour le moment.</p>
-                                                    )}
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-
-                                    {/* Action Button */}
-                                    <div className="mt-6 relative z-10">
-                                        {isRegistered ? (
-                                            <button
-                                                type="button"
-                                                disabled={actionLoadingId === e.id}
-                                                onClick={() => handleAction(e.id, true)}
-                                                className="w-full py-2.5 rounded-xl text-xs font-bold bg-[#1e1329] border border-red-500/20 hover:border-red-500/40 text-red-400 transition cursor-pointer disabled:opacity-50"
-                                            >
-                                                {actionLoadingId === e.id ? '...' : t('events_page.btn_registered') + ' (Se désinscrire)'}
-                                            </button>
-                                        ) : (
-                                            <button
-                                                type="button"
-                                                disabled={isFull || actionLoadingId === e.id}
-                                                onClick={() => handleAction(e.id, false)}
-                                                className={`w-full py-2.5 rounded-xl text-xs font-bold transition cursor-pointer shadow-sm disabled:opacity-40 disabled:cursor-not-allowed ${
-                                                    isFull 
-                                                        ? 'bg-slate-800 text-slate-500 border border-slate-700/50' 
-                                                        : 'bg-indigo-600 hover:bg-indigo-500 text-white shadow-indigo-650/10'
-                                                }`}
-                                            >
-                                                {actionLoadingId === e.id ? '...' : isFull ? t('events_page.btn_full') : t('events_page.btn_register')}
-                                            </button>
-                                        )}
-                                    </div>
-                                </div>
-                            );
-                        })}
+                        {filteredEvents.map((e) => (
+                            <TournamentCard
+                                key={e.id}
+                                activity={e}
+                                isAuthenticated={isAuthenticated}
+                                isRegistered={myRegistrations.includes(e.id)}
+                                actionLoading={actionLoadingId === e.id}
+                                isOpenParticipants={openParticipantsId === e.id}
+                                onToggleParticipants={() => toggleParticipants(e.id)}
+                                onAction={() => handleAction(e.id, myRegistrations.includes(e.id))}
+                                onLoginRedirect={() => navigate('/login')}
+                                t={t}
+                                i18n={i18n}
+                                theme="dark"
+                            />
+                        ))}
                     </div>
                 )}
             </div>
