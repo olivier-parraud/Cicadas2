@@ -9,6 +9,10 @@ export const createReservation = async (req, res) => {
             return res.status(400).json({ error: 'Remplissez le formulaire en entier' });
         }
 
+        if (new Date(`${date} ${time}:00`).getTime() < Date.now()) {
+            return res.status(400).json({ error: 'Impossible de réserver pour une date ou heure passée.' });
+        }
+
         const reservation = await Reservation.create({
             user_id: userId,
             date,
@@ -66,6 +70,10 @@ export const updateReservation = async (req, res) => {
         
         if (!date || !time || !duration) {
             return res.status(400).json({ error: 'Remplissez les informations requises (date, heure, durée)' });
+        }
+
+        if (new Date(`${date} ${time}:00`).getTime() < Date.now()) {
+            return res.status(400).json({ error: 'Impossible de réserver pour une date ou heure passée.' });
         }
 
         // 1. Vérifier la propriété de la réservation

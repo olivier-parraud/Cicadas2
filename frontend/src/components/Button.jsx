@@ -14,9 +14,11 @@ function Button({
     const baseStyles = 'inline-flex items-center justify-center font-bold transition-all duration-200 focus:outline-none select-none rounded-xl active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100 cursor-pointer';
 
     const variants = {
-        primary: 'bg-indigo-650 hover:bg-indigo-600 text-white shadow-md shadow-indigo-650/10 border border-transparent',
-        secondary: 'bg-slate-50 hover:bg-slate-100 text-slate-800 border border-slate-200 shadow-sm',
-        danger: 'bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-150',
+        primary: 'bg-indigo-600 hover:bg-indigo-500 text-white shadow-md shadow-indigo-600/20 border border-transparent',
+        secondary: 'bg-white hover:bg-slate-50 text-slate-900 border border-slate-250 shadow-sm',
+        'secondary-dark': 'bg-white/10 hover:bg-white/15 text-white border border-white/10 shadow-sm',
+        danger: 'bg-rose-600 hover:bg-rose-500 text-white shadow-md shadow-rose-600/20 border border-transparent',
+        'danger-dark': 'bg-rose-500/15 hover:bg-rose-500/25 text-rose-400 border border-rose-500/20 shadow-sm',
         ghost: 'text-slate-500 hover:text-indigo-600 hover:bg-indigo-50/50 border border-transparent'
     };
 

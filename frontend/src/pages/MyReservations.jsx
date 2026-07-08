@@ -1,8 +1,11 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { Calendar, Trophy, Swords, Edit, X } from 'lucide-react';
 import TranslatedText from '../components/TranslatedText';
 import Button from '../components/Button';
+import EventCard from '../components/EventCard';
+import TournamentCard from '../components/TournamentCard';
 
 function MyReservations() {
     const { t, i18n } = useTranslation();
@@ -37,6 +40,10 @@ function MyReservations() {
     const [editSuccess, setEditSuccess] = useState('');
     const [boardGames, setBoardGames] = useState([]);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const [openParticipantsId, setOpenParticipantsId] = useState(null);
+    const toggleParticipants = (id) => {
+        setOpenParticipantsId(openParticipantsId === id ? null : id);
+    };
 
     const today = new Date().toISOString().split('T')[0];
 
@@ -240,6 +247,12 @@ function MyReservations() {
         setEditError('');
         setEditSuccess('');
 
+        const selectedDateTime = new Date(`${editFormData.date} ${editFormData.time}:00`);
+        if (selectedDateTime.getTime() < Date.now()) {
+            setEditError(t('reservations_page.err_past_time', 'Impossible de réserver pour une date ou heure passée.'));
+            return;
+        }
+
         try {
             const token = localStorage.getItem('token');
             const response = await fetch(`http://localhost:5050/api/reservations/${editingReservation.id}`, {
@@ -317,7 +330,7 @@ function MyReservations() {
             case 'DBS':
                 return '/images/TCG/Dragon-ball.jpeg';
             case 'BYOG':
-                return '/images/TCG/Magic.jpg';
+                return 'https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?q=80&w=600';
             default:
                 return '/images/TCG/Magic.jpg';
         }
@@ -340,14 +353,14 @@ function MyReservations() {
 
     if (!isAuthenticated) {
         return (
-            <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4">
-                <div className="bg-white p-8 rounded-3xl shadow-xl border border-slate-100 max-w-md w-full text-center space-y-6">
+            <div className="min-h-screen bg-[#080711] flex flex-col items-center justify-center p-4 selection:bg-indigo-650 selection:text-white">
+                <div className="bg-[#151425]/45 p-8 rounded-3xl shadow-2xl border border-white/5 max-w-md w-full text-center space-y-6 backdrop-blur-md">
                     <div className="text-5xl">🔒</div>
-                    <h2 className="text-2xl font-bold text-slate-900">{t('my_reservations_page.need_auth')}</h2>
-                    <p className="text-slate-500 font-light text-sm">
+                    <h2 className="text-2xl font-black text-white">{t('my_reservations_page.need_auth')}</h2>
+                    <p className="text-slate-400 font-light text-sm">
                         {t('my_reservations_page.need_auth_desc')}
                     </p>
-                    <Link to="/login" className="bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 px-6 rounded-xl transition shadow-md w-full block text-xs">
+                    <Link to="/login" className="bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 px-6 rounded-xl transition shadow-lg w-full block text-xs">
                         {t('my_reservations_page.login_btn')}
                     </Link>
                 </div>
@@ -356,41 +369,45 @@ function MyReservations() {
     }
 
     return (
-        <div className="min-h-screen bg-slate-50 py-12 px-4 sm:px-6 lg:px-8 selection:bg-indigo-600 selection:text-white">
-            <div className="max-w-5xl mx-auto space-y-12">
+        <div className="min-h-screen bg-[#080711] text-white selection:bg-indigo-650 selection:text-white pb-20">
+            {/* Header Section */}
+            <div className="relative overflow-hidden bg-gradient-to-br from-[#0c0a1e] via-[#120f2e] to-[#080711] text-white py-20 px-4 border-b border-indigo-950/40 text-center">
+                <div className="absolute top-1/4 left-1/10 w-96 h-96 bg-indigo-500/5 rounded-full blur-3xl pointer-events-none"></div>
+                <div className="absolute bottom-1/4 right-1/10 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl pointer-events-none"></div>
 
-                {/* Header */}
-                <div className="text-center space-y-3">
-                    <span className="inline-flex items-center gap-1.5 py-1 px-3 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-100">
-                        {t('my_reservations_page.badge')}
-                    </span>
-                    <h1 className="text-3xl md:text-5xl font-extrabold text-slate-950 tracking-tight">{t('my_reservations_page.title')}</h1>
-                    <p className="text-sm md:text-base text-slate-500 max-w-xl mx-auto font-light">
+                <div className="max-w-4xl mx-auto space-y-6 relative z-10">
+                    <h1 className="text-3xl md:text-5xl font-black tracking-tight bg-clip-text bg-gradient-to-r from-white via-indigo-100 to-indigo-300 leading-tight">
+                        {t('my_reservations_page.title')}
+                    </h1>
+                    <p className="text-base md:text-lg text-slate-400 max-w-2xl mx-auto leading-relaxed font-light">
                         {t('my_reservations_page.subtitle')}
                     </p>
                 </div>
+            </div>
+
+            <div className="max-w-7xl mx-auto py-12 px-4 md:px-8 space-y-12">
 
                 {/* Section Réservations de table */}
                 <div className="space-y-6">
-                    <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
-                        <span>🪑</span> {t('my_reservations_page.tables_title')}
+                    <h2 className="text-2xl font-black text-white flex items-center gap-2">
+                        <Calendar className="w-6 h-6 text-indigo-400 shrink-0" /> {t('my_reservations_page.tables_title')}
                     </h2>
 
                     {reservationsError && (
-                        <div className="p-4 rounded-2xl bg-rose-50 border border-rose-250 text-rose-800 text-sm font-semibold text-center">
+                        <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-300 text-sm font-semibold text-center">
                             {reservationsError}
                         </div>
                     )}
 
                     {loadingReservations ? (
                         <div className="py-10 text-center space-y-3">
-                            <div className="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
+                            <div className="w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
                             <p className="text-xs text-slate-400">{t('my_reservations_page.loading_tables')}</p>
                         </div>
                     ) : reservations.length === 0 ? (
-                        <div className="py-12 text-center bg-white rounded-3xl border border-slate-100 shadow-md max-w-md mx-auto p-6 space-y-4">
-                            <span className="text-4xl">🗓️</span>
-                            <h3 className="text-sm font-bold text-slate-900">{t('my_reservations_page.no_tables')}</h3>
+                        <div className="py-12 text-center bg-[#151425]/35 rounded-3xl border border-white/5 max-w-md mx-auto p-6 space-y-4 shadow-inner">
+                            <Calendar className="w-12 h-12 text-slate-500 mx-auto" />
+                            <h3 className="text-sm font-bold text-white">{t('my_reservations_page.no_tables')}</h3>
                             <p className="text-xs text-slate-400 font-light leading-relaxed">
                                 {t('my_reservations_page.no_tables_desc')}
                             </p>
@@ -399,294 +416,116 @@ function MyReservations() {
                             </Link>
                         </div>
                     ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            {reservations.map((res) => {
-                                const startTimeLocal = new Date(res.start_time);
-                                const formattedDate = startTimeLocal.toLocaleDateString(i18n.resolvedLanguage || i18n.language || 'fr', {
-                                    weekday: 'long',
-                                    day: 'numeric',
-                                    month: 'long',
-                                    year: 'numeric'
-                                });
-                                const formattedTime = startTimeLocal.toLocaleTimeString(i18n.resolvedLanguage || i18n.language || 'fr', {
-                                    hour: '2-digit',
-                                    minute: '2-digit'
-                                });
-
-                                return (
-                                    <div key={res.id} className="bg-white rounded-3xl border border-slate-100 shadow-xl overflow-hidden hover:shadow-2xl transition duration-300 flex flex-col justify-between">
-                                        <div>
-                                            <div className="h-32 w-full overflow-hidden relative">
-                                                <img
-                                                    src={res.boardgame_image_url || getGameImage(res.game_type, res.specific_game)}
-                                                    alt={res.specific_game || res.game_type}
-                                                    className="w-full h-full object-cover object-center"
-                                                />
-                                                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent"></div>
-                                            </div>
-                                            <div className="p-6 space-y-4">
-                                                <div className="flex justify-between items-start gap-2">
-                                                    <div>
-                                                        <span className="inline-block text-[10px] uppercase font-bold tracking-wider text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-100">
-                                                            {getGameTypeName(res.game_type)}
-                                                        </span>
-                                                        {res.specific_game && (
-                                                            <h3 className="text-base font-extrabold text-slate-950 mt-1">
-                                                                {res.specific_game}
-                                                            </h3>
-                                                        )}
-                                                    </div>
-                                                    <span className="text-xs font-bold bg-slate-50 border border-slate-150 py-1.5 px-3 rounded-xl flex items-center gap-1.5 text-slate-700">
-                                                        🪑 {formatRoomName(res.room_name, res.game_type)}
-                                                    </span>
-                                                </div>
-
-                                                <div className="space-y-2 pt-2 border-t border-slate-50 text-xs font-medium text-slate-600">
-                                                    <div className="flex items-center gap-2">
-                                                        <span>📆</span>
-                                                        <span className="capitalize">{formattedDate}</span>
-                                                    </div>
-                                                    <div className="flex items-center gap-2">
-                                                        <span>⏱️</span>
-                                                        <span>
-                                                            {t('my_reservations_page.duration_hours', {
-                                                                time: formattedTime,
-                                                                duration: res.end_time ? Math.round((new Date(res.end_time) - new Date(res.start_time)) / (1000 * 60 * 60)) : 2
-                                                            })}
-                                                        </span>
-                                                    </div>
-                                                    <div className="flex items-center gap-2">
-                                                        <span>👥</span>
-                                                        <span>{t('reservations_page.players', { count: res.players_count })}</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div className="p-6 pt-0 border-t border-slate-50 flex gap-3">
-                                            <Button
-                                                variant="secondary"
-                                                onClick={() => openEditModal(res)}
-                                                className="flex-1 py-2.5"
-                                            >
-                                                {t('my_reservations_page.edit_btn')}
-                                            </Button>
-                                            <Button
-                                                variant="danger"
-                                                onClick={() => handleCancel(res.id)}
-                                                className="flex-1 py-2.5"
-                                            >
-                                                {t('my_reservations_page.cancel_btn')}
-                                            </Button>
-                                        </div>
-                                    </div>
-                                );
-                            })}
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {reservations.map((res) => (
+                                <EventCard
+                                    key={res.id}
+                                    isReservation={true}
+                                    reservation={res}
+                                    onEditReservation={() => openEditModal(res)}
+                                    onCancelReservation={() => handleCancel(res.id)}
+                                    t={t}
+                                    i18n={i18n}
+                                />
+                            ))}
                         </div>
                     )}
                 </div>
 
                 {/* Section Inscriptions aux tournois */}
-                <div className="space-y-6 pt-6 border-t border-slate-200">
-                    <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
-                        <span>🏆</span> {t('my_reservations_page.tournaments_title')}
+                <div className="space-y-6 pt-6 border-t border-indigo-950/40">
+                    <h2 className="text-2xl font-black text-white flex items-center gap-2">
+                        <Trophy className="w-6 h-6 text-indigo-400 shrink-0" /> {t('my_reservations_page.tournaments_title')}
                     </h2>
 
                     {tournamentsError && (
-                        <div className="p-4 rounded-2xl bg-rose-50 border border-rose-250 text-rose-800 text-sm font-semibold text-center">
+                        <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-300 text-sm font-semibold text-center">
                             {tournamentsError}
                         </div>
                     )}
 
                     {loadingTournaments ? (
                         <div className="py-10 text-center space-y-3">
-                            <div className="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
+                            <div className="w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
                             <p className="text-xs text-slate-400">{t('my_reservations_page.loading_tourneys')}</p>
                         </div>
                     ) : tournaments.length === 0 ? (
-                        <div className="py-12 text-center bg-white rounded-3xl border border-slate-100 shadow-md max-w-md mx-auto p-6 space-y-4">
-                            <span className="text-4xl">⚔️</span>
-                            <h3 className="text-sm font-bold text-slate-900">{t('my_reservations_page.no_tourneys')}</h3>
+                        <div className="py-12 text-center bg-[#151425]/35 rounded-3xl border border-white/5 max-w-md mx-auto p-6 space-y-4 shadow-inner">
+                            <Swords className="w-12 h-12 text-slate-500 mx-auto" />
+                            <h3 className="text-sm font-bold text-white">{t('my_reservations_page.no_tourneys')}</h3>
                             <p className="text-xs text-slate-400 font-light leading-relaxed">
                                 {t('my_reservations_page.no_tourneys_desc')}
                             </p>
-                            <Link to="/tournaments" className="bg-indigo-650 hover:bg-indigo-600 text-white font-bold py-2.5 px-6 rounded-xl transition shadow-md w-full block text-xs">
+                            <Link to="/tournaments" className="bg-indigo-650 hover:bg-indigo-600 text-white font-bold py-2.5 px-6 rounded-xl transition shadow-md w-full block text-xs text-center">
                                 {t('my_reservations_page.view_tourneys_btn')}
                             </Link>
                         </div>
                     ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            {tournaments.map((tItem) => {
-                                const tournamentDate = new Date(tItem.date);
-                                const formattedDate = tournamentDate.toLocaleDateString(i18n.resolvedLanguage || i18n.language || 'fr', {
-                                    weekday: 'long',
-                                    day: 'numeric',
-                                    month: 'long',
-                                    year: 'numeric'
-                                });
-                                const formattedTime = tournamentDate.toLocaleTimeString(i18n.resolvedLanguage || i18n.language || 'fr', {
-                                    hour: '2-digit',
-                                    minute: '2-digit'
-                                });
-
-                                return (
-                                    <div key={tItem.id} className="bg-white rounded-3xl border border-slate-100 shadow-xl overflow-hidden hover:shadow-2xl transition duration-300 flex flex-col justify-between">
-                                        <div className="p-6 space-y-4">
-                                            <div className="flex justify-between items-start gap-2">
-                                                <div>
-                                                    <span className="inline-block text-[10px] uppercase font-bold tracking-wider text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-100">
-                                                        {tItem.game}
-                                                    </span>
-                                                    <h3 className="text-base font-extrabold text-slate-950 mt-1">
-                                                        {tItem.name}
-                                                    </h3>
-                                                </div>
-                                                <span className="text-xs font-extrabold text-indigo-600 bg-indigo-50 py-1.5 px-3 rounded-xl border border-indigo-100">
-                                                    {parseFloat(tItem.price) === 0 ? t('my_reservations_page.free_price') : `${tItem.price} €`}
-                                                </span>
-                                            </div>
-
-                                            <p className="text-xs text-slate-500 font-light leading-relaxed line-clamp-2">
-                                                <TranslatedText text={tItem.description} toLang={i18n.resolvedLanguage || i18n.language || 'fr'} />
-                                            </p>
-
-                                            <div className="space-y-2 pt-2 border-t border-slate-50 text-xs font-medium text-slate-600">
-                                                <div className="flex items-center gap-2">
-                                                    <span>📆</span>
-                                                    <span className="capitalize">{formattedDate}</span>
-                                                </div>
-                                                <div className="flex items-center gap-2">
-                                                    <span>⏱️</span>
-                                                    <span>Début à <strong>{formattedTime}</strong></span>
-                                                </div>
-                                                <div className="flex items-center gap-2">
-                                                    <span>👥</span>
-                                                    <span>{t('tournaments_page.capacity', { registered: tItem.registeredCount, capacity: tItem.capacity })}</span>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div className="p-6 pt-0 border-t border-slate-50 flex">
-                                            <Button
-                                                variant="danger"
-                                                onClick={() => handleUnregisterTournament(tItem.id)}
-                                                className="w-full py-2.5"
-                                            >
-                                                {t('my_reservations_page.unregister_tourney_btn')}
-                                            </Button>
-                                        </div>
-                                    </div>
-                                );
-                            })}
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {tournaments.map((tItem) => (
+                                <TournamentCard
+                                    key={tItem.id}
+                                    activity={tItem}
+                                    isAuthenticated={isAuthenticated}
+                                    isRegistered={true}
+                                    actionLoading={false}
+                                    isOpenParticipants={openParticipantsId === tItem.id}
+                                    onToggleParticipants={() => toggleParticipants(tItem.id)}
+                                    onAction={() => handleUnregisterTournament(tItem.id)}
+                                    onLoginRedirect={() => {}}
+                                    t={t}
+                                    i18n={i18n}
+                                />
+                            ))}
                         </div>
                     )}
                 </div>
 
                 {/* Section Inscriptions aux événements */}
-                <div className="space-y-6 pt-6 border-t border-slate-200">
-                    <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
-                        <span>📅</span> {t('my_reservations_page.events_title', 'Mes Événements')}
+                <div className="space-y-6 pt-6 border-t border-indigo-950/40">
+                    <h2 className="text-2xl font-black text-white flex items-center gap-2">
+                        <Calendar className="w-6 h-6 text-indigo-400 shrink-0" /> {t('my_reservations_page.events_title', 'Mes Événements')}
                     </h2>
 
                     {eventsError && (
-                        <div className="p-4 rounded-2xl bg-rose-50 border border-rose-250 text-rose-800 text-sm font-semibold text-center">
+                        <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-300 text-sm font-semibold text-center">
                             {eventsError}
                         </div>
                     )}
 
                     {loadingEvents ? (
                         <div className="py-10 text-center space-y-3">
-                            <div className="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
+                            <div className="w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
                             <p className="text-xs text-slate-400">{t('my_reservations_page.loading_events', 'Chargement de vos événements...')}</p>
                         </div>
                     ) : events.length === 0 ? (
-                        <div className="py-12 text-center bg-white rounded-3xl border border-slate-100 shadow-md max-w-md mx-auto p-6 space-y-4">
-                            <span className="text-4xl">📆</span>
-                            <h3 className="text-sm font-bold text-slate-900">{t('my_reservations_page.no_events', 'Aucun événement rejoint')}</h3>
+                        <div className="py-12 text-center bg-[#151425]/35 rounded-3xl border border-white/5 max-w-md mx-auto p-6 space-y-4 shadow-inner">
+                            <Calendar className="w-12 h-12 text-slate-500 mx-auto" />
+                            <h3 className="text-sm font-bold text-white">{t('my_reservations_page.no_events', 'Aucun événement rejoint')}</h3>
                             <p className="text-xs text-slate-400 font-light leading-relaxed">
                                 {t('my_reservations_page.no_events_desc', 'Vous n\'êtes inscrit à aucun événement pour le moment.')}
                             </p>
-                            <Link to="/events" className="bg-indigo-650 hover:bg-indigo-600 text-white font-bold py-2.5 px-6 rounded-xl transition shadow-md w-full block text-xs">
+                            <Link to="/events" className="bg-indigo-650 hover:bg-indigo-600 text-white font-bold py-2.5 px-6 rounded-xl transition shadow-md w-full block text-xs text-center">
                                 {t('my_reservations_page.view_events_btn', 'Voir l\'agenda des événements')}
                             </Link>
                         </div>
                     ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            {events.map((eItem) => {
-                                const eventDate = new Date(eItem.date);
-                                const formattedDate = eventDate.toLocaleDateString(i18n.resolvedLanguage || i18n.language || 'fr', {
-                                    weekday: 'long',
-                                    day: 'numeric',
-                                    month: 'long',
-                                    year: 'numeric'
-                                });
-                                const formattedTime = eventDate.toLocaleTimeString(i18n.resolvedLanguage || i18n.language || 'fr', {
-                                    hour: '2-digit',
-                                    minute: '2-digit'
-                                });
-
-                                const typeNames = {
-                                    avant_premiere: t('events_page.prerelease', 'Avant-première'),
-                                    draft: t('events_page.draft', 'Draft'),
-                                    initiation: t('events_page.initiation', 'Initiation')
-                                };
-
-                                return (
-                                    <div key={eItem.id} className="bg-white rounded-3xl border border-slate-100 shadow-xl overflow-hidden hover:shadow-2xl transition duration-300 flex flex-col justify-between">
-                                        <div className="p-6 space-y-4">
-                                            <div className="flex justify-between items-start gap-2">
-                                                <div>
-                                                    <div className="flex flex-wrap gap-1.5">
-                                                        <span className="inline-block text-[10px] uppercase font-bold tracking-wider text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-100">
-                                                            {eItem.game}
-                                                        </span>
-                                                        <span className="inline-block text-[10px] uppercase font-bold tracking-wider text-amber-600 bg-amber-50 px-2 py-0.5 rounded border border-amber-100">
-                                                            {typeNames[eItem.type] || eItem.type}
-                                                        </span>
-                                                    </div>
-                                                    <h3 className="text-base font-extrabold text-slate-950 mt-2.5">
-                                                        {eItem.name}
-                                                    </h3>
-                                                </div>
-                                                <span className="text-xs font-extrabold text-indigo-600 bg-indigo-50 py-1.5 px-3 rounded-xl border border-indigo-100">
-                                                    {parseFloat(eItem.price) === 0 ? t('my_reservations_page.free_price', 'Gratuit') : `${eItem.price} €`}
-                                                </span>
-                                            </div>
-
-                                            {eItem.description && (
-                                                <p className="text-xs text-slate-500 font-light leading-relaxed line-clamp-2">
-                                                    {eItem.description}
-                                                </p>
-                                            )}
-
-                                            <div className="space-y-2 pt-2 border-t border-slate-50 text-xs font-medium text-slate-600">
-                                                <div className="flex items-center gap-2">
-                                                    <span>📆</span>
-                                                    <span className="capitalize">{formattedDate}</span>
-                                                </div>
-                                                <div className="flex items-center gap-2">
-                                                    <span>⏱️</span>
-                                                    <span>Début à <strong>{formattedTime}</strong></span>
-                                                </div>
-                                                <div className="flex items-center gap-2">
-                                                    <span>👥</span>
-                                                    <span>{t('tournaments_page.capacity', { registered: eItem.registeredCount, capacity: eItem.capacity })}</span>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div className="p-6 pt-0 border-t border-slate-50 flex">
-                                            <Button
-                                                variant="danger"
-                                                onClick={() => handleUnregisterEvent(eItem.id)}
-                                                className="w-full py-2.5"
-                                            >
-                                                {t('my_reservations_page.unregister_event_btn', 'Se désinscrire')}
-                                            </Button>
-                                        </div>
-                                    </div>
-                                );
-                            })}
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {events.map((eItem) => (
+                                <EventCard
+                                    key={eItem.id}
+                                    event={eItem}
+                                    isAuthenticated={isAuthenticated}
+                                    isRegistered={true}
+                                    actionLoading={false}
+                                    isOpenParticipants={openParticipantsId === eItem.id}
+                                    onToggleParticipants={() => toggleParticipants(eItem.id)}
+                                    onAction={() => handleUnregisterEvent(eItem.id)}
+                                    onLoginRedirect={() => {}}
+                                    t={t}
+                                    i18n={i18n}
+                                />
+                            ))}
                         </div>
                     )}
                 </div>
@@ -695,40 +534,40 @@ function MyReservations() {
 
             {/* Modal d'édition */}
             {editingReservation && (
-                <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-                    <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full overflow-hidden border border-slate-100 space-y-6 p-6 animate-in fade-in zoom-in duration-200">
-                        <div className="flex justify-between items-center pb-3 border-b border-slate-100">
-                            <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-                                <span>✏️</span> {t('my_reservations_page.modal_edit_title')}
+                <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+                    <div className="bg-[#121124] text-white rounded-3xl shadow-2xl max-w-md w-full overflow-hidden border border-white/5 space-y-6 p-6 animate-in fade-in zoom-in duration-200">
+                        <div className="flex justify-between items-center pb-3 border-b border-indigo-950/40">
+                            <h2 className="text-lg font-black text-white flex items-center gap-2">
+                                <Edit className="w-5 h-5 text-indigo-400 shrink-0" /> {t('my_reservations_page.modal_edit_title')}
                             </h2>
                             <button
                                 onClick={() => setEditingReservation(null)}
-                                className="text-slate-400 hover:text-slate-600 text-lg font-bold focus:outline-none"
+                                className="text-slate-400 hover:text-white focus:outline-none transition-colors"
                             >
-                                ✕
+                                <X className="w-5 h-5" />
                             </button>
                         </div>
 
                         <form onSubmit={handleEditSubmit} className="space-y-4">
                             {editError && (
-                                <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-semibold">
+                                <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-300 text-xs font-semibold">
                                     {editError}
                                 </div>
                             )}
 
                             {editSuccess && (
-                                <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-250 text-emerald-800 text-xs font-semibold">
+                                <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs font-semibold">
                                     {editSuccess}
                                 </div>
                             )}
 
                             <div className="space-y-1">
-                                <label className="text-xs font-bold text-slate-500 uppercase">{t('reservations_page.game_type_label')}</label>
+                                <label className="text-xs font-bold text-slate-400 uppercase">{t('reservations_page.game_type_label')}</label>
                                 <select
                                     name="gameType"
                                     value={editFormData.gameType}
                                     onChange={handleEditChange}
-                                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-650 bg-white"
+                                    className="w-full px-3.5 py-2.5 rounded-xl border border-[#1e1c3a] text-sm focus:outline-none focus:border-indigo-500 bg-[#191831] text-white"
                                 >
                                     <option value="POKEMON">Pokémon</option>
                                     <option value="MTG">Magic: The Gathering</option>
@@ -747,7 +586,7 @@ function MyReservations() {
 
                             {editFormData.gameType === 'BOARD_GAME' && (
                                 <div className="space-y-1 relative">
-                                    <label className="text-xs font-bold text-slate-500 uppercase">{t('reservations_page.specific_game_label')}</label>
+                                    <label className="text-xs font-bold text-slate-400 uppercase">{t('reservations_page.specific_game_label')}</label>
                                     <input
                                         type="text"
                                         name="specificGame"
@@ -758,7 +597,7 @@ function MyReservations() {
                                             setIsDropdownOpen(true);
                                         }}
                                         onFocus={() => setIsDropdownOpen(true)}
-                                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-650 font-light"
+                                        className="w-full px-3.5 py-2.5 rounded-xl border border-[#1e1c3a] text-sm focus:outline-none focus:border-indigo-500 bg-[#191831] text-white placeholder-slate-500 font-light"
                                     />
                                     {isDropdownOpen && (
                                         <>
@@ -806,12 +645,12 @@ function MyReservations() {
                             )}
 
                             <div className="space-y-1">
-                                <label className="text-xs font-bold text-slate-500 uppercase">{t('reservations_page.players_count_label')}</label>
+                                <label className="text-xs font-bold text-slate-400 uppercase">{t('reservations_page.players_count_label')}</label>
                                 <select
                                     name="playersCount"
                                     value={editFormData.playersCount}
                                     onChange={handleEditChange}
-                                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-650 bg-white"
+                                    className="w-full px-3.5 py-2.5 rounded-xl border border-[#1e1c3a] text-sm focus:outline-none focus:border-indigo-500 bg-[#191831] text-white"
                                 >
                                     <option value="1">{t('reservations_page.player')}</option>
                                     <option value="2">{t('reservations_page.players', { count: 2 })}</option>
@@ -826,7 +665,7 @@ function MyReservations() {
 
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-1">
-                                    <label className="text-xs font-bold text-slate-500 uppercase">{t('reservations_page.date_label')}</label>
+                                    <label className="text-xs font-bold text-slate-400 uppercase">{t('reservations_page.date_label')}</label>
                                     <input
                                         type="date"
                                         name="date"
@@ -834,12 +673,12 @@ function MyReservations() {
                                         min={today}
                                         value={editFormData.date}
                                         onChange={handleEditChange}
-                                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-650 font-light bg-white"
+                                        className="w-full px-3.5 py-2.5 rounded-xl border border-[#1e1c3a] text-sm focus:outline-none focus:border-indigo-500 bg-[#191831] text-white font-light"
                                     />
                                 </div>
 
                                 <div className="space-y-1">
-                                    <label className="text-xs font-bold text-slate-500 uppercase">{t('reservations_page.time_label')}</label>
+                                    <label className="text-xs font-bold text-slate-400 uppercase">{t('reservations_page.time_label')}</label>
                                     <input
                                         type="time"
                                         name="time"
@@ -848,13 +687,13 @@ function MyReservations() {
                                         max="23:00"
                                         value={editFormData.time}
                                         onChange={handleEditChange}
-                                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-650 font-light bg-white"
+                                        className="w-full px-3.5 py-2.5 rounded-xl border border-[#1e1c3a] text-sm focus:outline-none focus:border-indigo-500 bg-[#191831] text-white font-light"
                                     />
                                 </div>
                             </div>
 
                             <div className="space-y-1">
-                                <label className="text-xs font-bold text-slate-500 uppercase">{t('reservations_page.duration_label')}</label>
+                                <label className="text-xs font-bold text-slate-400 uppercase">{t('reservations_page.duration_label')}</label>
                                 <input
                                     type="number"
                                     name="duration"
@@ -863,13 +702,13 @@ function MyReservations() {
                                     max="10"
                                     value={editFormData.duration}
                                     onChange={handleEditChange}
-                                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-650 font-light"
+                                    className="w-full px-3.5 py-2.5 rounded-xl border border-[#1e1c3a] text-sm focus:outline-none focus:border-indigo-500 bg-[#191831] text-white font-light"
                                 />
                             </div>
 
                             <div className="flex gap-3 pt-3">
                                 <Button
-                                    variant="secondary"
+                                    variant="secondary-dark"
                                     onClick={() => setEditingReservation(null)}
                                     className="flex-1 py-3"
                                 >

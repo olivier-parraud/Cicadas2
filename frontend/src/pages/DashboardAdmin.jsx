@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { Calendar, Trophy, Users, Download, Clock, AlertTriangle, Trash2, Dice6, ImageIcon, Zap, Plus } from 'lucide-react';
 import TournamentCard from '../components/TournamentCard';
+import BoardGameCard from '../components/BoardGameCard';
 
 function DashboardAdmin() {
     const { t, i18n } = useTranslation();
@@ -20,6 +22,13 @@ function DashboardAdmin() {
     const [deleteConfirmId, setDeleteConfirmId] = useState(null);
     const [deleteConfirmType, setDeleteConfirmType] = useState(null);
     const [openParticipantsId, setOpenParticipantsId] = useState(null);
+    const [expandedPreviewBg, setExpandedPreviewBg] = useState(false);
+
+    // Search states
+    const [tourneySearch, setTourneySearch] = useState('');
+    const [eventSearch, setEventSearch] = useState('');
+    const [bgSearch, setBgSearch] = useState('');
+    const [userSearch, setUserSearch] = useState('');
 
     const toggleParticipants = (id) => {
         setOpenParticipantsId(openParticipantsId === id ? null : id);
@@ -508,6 +517,80 @@ function DashboardAdmin() {
         participants: []
     };
 
+    const previewTourney = {
+        id: 'preview-tourney',
+        name: tourneyForm.name || "Aperçu du tournoi",
+        game: tourneyForm.game,
+        date: tourneyForm.date ? `${tourneyForm.date}T${tourneyForm.time || '19:30'}` : new Date().toISOString(),
+        capacity: tourneyForm.capacity || 16,
+        registeredCount: 0,
+        price: tourneyForm.price || 0,
+        description: tourneyForm.description || "Description du tournoi...",
+        participants: []
+    };
+
+    const previewBoardGame = {
+        id: 'preview-boardgame',
+        name: bgForm.name || "Aperçu du jeu",
+        category: bgForm.category || "Stratégie",
+        min_players: bgForm.min_players || 2,
+        max_players: bgForm.max_players || 4,
+        play_time: bgForm.play_time || 45,
+        description: bgForm.description || "Description du jeu...",
+        image_url: bgForm.image_url || '',
+        rules_url: bgForm.rules_url || ''
+    };
+    const formatGameTypeName = (type) => {
+        switch (type) {
+            case 'POKEMON': return 'TCG (Pokémon)';
+            case 'MTG': return 'TCG (Magic)';
+            case 'ONE_PIECE': return 'TCG (One Piece)';
+            case 'YUGIOH': return 'TCG (Yu-Gi-Oh!)';
+            case 'STAR_WARS': return 'TCG (Star Wars)';
+            case 'LORCANA': return 'TCG (Lorcana)';
+            case 'FINAL_FF': return 'TCG (Final Fantasy)';
+            case 'ALTERED': return 'TCG (Altered)';
+            case 'DBS': return 'TCG (Dragon Ball)';
+            case 'BOARD_GAME': return 'Jeu de société';
+            case 'BYOG': return "J'apporte mon jeu";
+            default: return 'Autre';
+        }
+    };
+
+    const getGameBadgeStyles = (type) => {
+        if (type === 'BOARD_GAME') {
+            return 'text-purple-700 bg-purple-50 border-purple-200';
+        } else if (type === 'BYOG') {
+            return 'text-emerald-700 bg-emerald-50 border-emerald-200';
+        } else if (['MTG', 'POKEMON', 'ONE_PIECE', 'YUGIOH', 'STAR_WARS', 'LORCANA', 'FINAL_FF', 'ALTERED', 'DBS'].includes(type)) {
+            return 'text-blue-700 bg-blue-50 border-blue-200';
+        }
+        return 'text-slate-600 bg-slate-100 border-slate-200';
+    };
+
+    const filteredTournaments = tournaments.filter(t => 
+        (t.name || '').toLowerCase().includes(tourneySearch.toLowerCase()) || 
+        (t.game || '').toLowerCase().includes(tourneySearch.toLowerCase())
+    );
+
+    const filteredEvents = events.filter(e => 
+        (e.name || '').toLowerCase().includes(eventSearch.toLowerCase()) || 
+        (e.game || '').toLowerCase().includes(eventSearch.toLowerCase()) || 
+        (e.type || '').toLowerCase().includes(eventSearch.toLowerCase())
+    );
+
+    const filteredBoardGames = boardGames.filter(g => 
+        (g.name || '').toLowerCase().includes(bgSearch.toLowerCase()) || 
+        (g.category || '').toLowerCase().includes(bgSearch.toLowerCase())
+    );
+
+    const filteredUsers = users.filter(u => 
+        (u.firstname || '').toLowerCase().includes(userSearch.toLowerCase()) || 
+        (u.lastname || '').toLowerCase().includes(userSearch.toLowerCase()) || 
+        (u.pseudo || '').toLowerCase().includes(userSearch.toLowerCase()) || 
+        (u.email || '').toLowerCase().includes(userSearch.toLowerCase())
+    );
+
     return (
         <div className="min-h-screen bg-slate-50 text-slate-800 pb-20">
             {/* Dark Premium Admin Header */}
@@ -523,31 +606,31 @@ function DashboardAdmin() {
                             onClick={() => { setActiveTab('reservations'); setMessage({ type: '', text: '' }); }}
                             className={`py-2 px-4 rounded-lg text-xs font-bold transition ${activeTab === 'reservations' ? 'bg-indigo-600 text-white shadow' : 'text-slate-400 hover:text-white'}`}
                         >
-                            📅 Réservations
+                            Réservations
                         </button>
                         <button
                             onClick={() => { setActiveTab('tournaments'); setMessage({ type: '', text: '' }); }}
                             className={`py-2 px-4 rounded-lg text-xs font-bold transition ${activeTab === 'tournaments' ? 'bg-indigo-600 text-white shadow' : 'text-slate-400 hover:text-white'}`}
                         >
-                            🏆 Tournois
+                            Tournois
                         </button>
                         <button
                             onClick={() => { setActiveTab('events'); setMessage({ type: '', text: '' }); }}
                             className={`py-2 px-4 rounded-lg text-xs font-bold transition ${activeTab === 'events' ? 'bg-indigo-600 text-white shadow' : 'text-slate-400 hover:text-white'}`}
                         >
-                            📅 Événements
+                            Événements
                         </button>
                         <button
                             onClick={() => { setActiveTab('boardgames'); setMessage({ type: '', text: '' }); }}
                             className={`py-2 px-4 rounded-lg text-xs font-bold transition ${activeTab === 'boardgames' ? 'bg-indigo-600 text-white shadow' : 'text-slate-400 hover:text-white'}`}
                         >
-                            🎲 Jeux de société
+                            Jeux de société
                         </button>
                         <button
                             onClick={() => { setActiveTab('users'); setMessage({ type: '', text: '' }); }}
                             className={`py-2 px-4 rounded-lg text-xs font-bold transition ${activeTab === 'users' ? 'bg-indigo-600 text-white shadow' : 'text-slate-400 hover:text-white'}`}
                         >
-                            👥 Utilisateurs
+                            Utilisateurs
                         </button>
                     </div>
                 </div>
@@ -609,26 +692,16 @@ function DashboardAdmin() {
                                                         <td className="p-4 text-slate-600">{startStr}</td>
                                                         <td className="p-4 text-slate-600">{endStr}</td>
                                                         <td className="p-4">
-                                                            {res.game_type === 'BOARD_GAME' ? (
-                                                                <div className="flex flex-col gap-0.5">
-                                                                    <span className="text-[10px] font-bold text-purple-700 bg-purple-50 border border-purple-200 px-2 py-0.5 rounded-full inline-block w-fit uppercase">
-                                                                        🎲 Jeu de société
+                                                            <div className="flex flex-col gap-0.5">
+                                                                <span className={`text-[10px] font-bold border px-2 py-0.5 rounded-full inline-block w-fit uppercase ${getGameBadgeStyles(res.game_type)}`}>
+                                                                    {formatGameTypeName(res.game_type)}
+                                                                </span>
+                                                                {res.specific_game && (
+                                                                    <span className="text-xs font-bold text-slate-900 ml-1">
+                                                                        {res.specific_game}
                                                                     </span>
-                                                                    {res.specific_game && (
-                                                                        <span className="text-xs font-bold text-slate-900 ml-1">
-                                                                            {res.specific_game}
-                                                                        </span>
-                                                                    )}
-                                                                </div>
-                                                            ) : res.game_type === 'MTG' ? (
-                                                                <span className="text-[10px] font-bold text-blue-700 bg-blue-50 border border-blue-200 px-2 py-0.5 rounded-full inline-block w-fit uppercase">
-                                                                    🃏 TCG (Magic)
-                                                                </span>
-                                                            ) : (
-                                                                <span className="text-[10px] font-bold text-slate-600 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-full inline-block w-fit uppercase">
-                                                                    🃏 Autre / TCG
-                                                                </span>
-                                                            )}
+                                                                )}
+                                                            </div>
                                                         </td>
                                                         <td className="p-4">
                                                             <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
@@ -686,142 +759,167 @@ function DashboardAdmin() {
                         {/* TAB 2: TOURNAMENTS */}
                         {activeTab === 'tournaments' && (
                             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-                                {/* Create Tournament Form */}
-                                <form onSubmit={handleCreateTourney} className="lg:col-span-5 bg-white p-6 md:p-8 rounded-3xl border border-slate-100 shadow-xl space-y-4">
-                                    <h2 className="text-lg font-bold text-slate-900 pb-3 border-b border-slate-100 flex items-center gap-2">
-                                        <span>➕</span> Créer un tournoi
-                                    </h2>
+                                <div className="lg:col-span-5 space-y-6">
+                                    {/* Create Tournament Form */}
+                                    <form onSubmit={handleCreateTourney} className="bg-white p-6 md:p-8 rounded-3xl border border-slate-100 shadow-xl space-y-4">
+                                        <h2 className="text-lg font-bold text-slate-900 pb-3 border-b border-slate-100 flex items-center gap-2">
+                                            <Plus className="w-5 h-5 text-indigo-650" /> Créer un tournoi
+                                        </h2>
 
-                                    <div className="space-y-1">
-                                        <label className="text-xs font-bold text-slate-500 uppercase">Nom de l'événement</label>
+                                        <div className="space-y-1">
+                                            <label className="text-xs font-bold text-slate-500 uppercase">Nom de l'événement</label>
+                                            <input
+                                                type="text"
+                                                required
+                                                placeholder="Ex: Friday Night Magic - Draft"
+                                                value={tourneyForm.name}
+                                                onChange={(e) => setTourneyForm({ ...tourneyForm, name: e.target.value })}
+                                                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-600 font-light"
+                                            />
+                                        </div>
+
+                                        <div className="space-y-1">
+                                            <label className="text-xs font-bold text-slate-500 uppercase">Jeu / Licence</label>
+                                            <select
+                                                value={tourneyForm.game}
+                                                onChange={(e) => setTourneyForm({ ...tourneyForm, game: e.target.value })}
+                                                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-600 bg-white"
+                                            >
+                                                <option>Pokémon</option>
+                                                <option>Magic: The Gathering</option>
+                                                <option>One Piece Card Game</option>
+                                                <option>Yu-Gi-Oh!</option>
+                                                <option>Star Wars: Unlimited</option>
+                                                <option>Disney Lorcana</option>
+                                                <option>Final Fantasy TCG</option>
+                                                <option>Altered</option>
+                                                <option>Dragon Ball Super Card Game</option>
+                                            </select>
+                                        </div>
+
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div className="space-y-1">
+                                                <label className="text-xs font-bold text-slate-500 uppercase">Date</label>
+                                                <input
+                                                    type="date"
+                                                    required
+                                                    value={tourneyForm.date}
+                                                    onChange={(e) => setTourneyForm({ ...tourneyForm, date: e.target.value })}
+                                                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-600 font-light"
+                                                />
+                                            </div>
+                                            <div className="space-y-1">
+                                                <label className="text-xs font-bold text-slate-500 uppercase">Heure</label>
+                                                <input
+                                                    type="time"
+                                                    required
+                                                    value={tourneyForm.time}
+                                                    onChange={(e) => setTourneyForm({ ...tourneyForm, time: e.target.value })}
+                                                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-600 font-light"
+                                                />
+                                            </div>
+                                        </div>
+
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div className="space-y-1">
+                                                <label className="text-xs font-bold text-slate-500 uppercase">Places max</label>
+                                                <input
+                                                    type="number"
+                                                    required
+                                                    min="4"
+                                                    max="128"
+                                                    value={tourneyForm.capacity}
+                                                    onChange={(e) => setTourneyForm({ ...tourneyForm, capacity: Number(e.target.value) })}
+                                                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-600 font-light"
+                                                />
+                                            </div>
+                                            <div className="space-y-1">
+                                                <label className="text-xs font-bold text-slate-500 uppercase">Tarif (€)</label>
+                                                <input
+                                                    type="number"
+                                                    step="0.50"
+                                                    min="0"
+                                                    value={tourneyForm.price}
+                                                    onChange={(e) => setTourneyForm({ ...tourneyForm, price: Number(e.target.value) })}
+                                                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-600 font-light"
+                                                />
+                                            </div>
+                                        </div>
+
+                                        <div className="space-y-1">
+                                            <label className="text-xs font-bold text-slate-500 uppercase">Description / Dotations</label>
+                                            <textarea
+                                                rows="3"
+                                                placeholder="Indiquez le format, les lots..."
+                                                value={tourneyForm.description}
+                                                onChange={(e) => setTourneyForm({ ...tourneyForm, description: e.target.value })}
+                                                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-600 font-light"
+                                            ></textarea>
+                                        </div>
+
+                                        <button
+                                            type="submit"
+                                            disabled={actionLoading}
+                                            className="w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs transition duration-300 shadow-md shadow-indigo-600/10 disabled:opacity-50"
+                                        >
+                                            Créer le tournoi
+                                        </button>
+                                    </form>
+
+                                    {/* Real-time Preview Box */}
+                                    <div className="bg-[#080711] p-6 md:p-8 rounded-3xl border border-indigo-950/40 shadow-xl space-y-4">
+                                        <h3 className="text-sm font-extrabold text-slate-200 uppercase tracking-wider pb-2 border-b border-indigo-950/40 flex items-center gap-2">
+                                            <Zap className="w-3.5 h-3.5 text-indigo-400" /> Aperçu en temps réel
+                                        </h3>
+                                        <div className="max-w-md mx-auto">
+                                            <TournamentCard
+                                                activity={previewTourney}
+                                                isAuthenticated={true}
+                                                isRegistered={false}
+                                                t={t}
+                                                i18n={i18n}
+                                                theme="dark"
+                                                onAction={() => {}}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Tournaments List */}
+                                <div className="lg:col-span-7 bg-slate-950 p-6 rounded-3xl border border-indigo-950/40 shadow-xl space-y-4 text-white">
+                                    <div className="pb-4 border-b border-indigo-950/40 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                                        <h2 className="text-lg font-bold text-slate-200">Tournois existants ({filteredTournaments.length})</h2>
                                         <input
                                             type="text"
-                                            required
-                                            placeholder="Ex: Friday Night Magic - Draft"
-                                            value={tourneyForm.name}
-                                            onChange={(e) => setTourneyForm({ ...tourneyForm, name: e.target.value })}
-                                            className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-600 font-light"
+                                            placeholder="Rechercher un tournoi..."
+                                            value={tourneySearch}
+                                            onChange={(e) => setTourneySearch(e.target.value)}
+                                            className="px-3 py-1.5 rounded-xl border border-[#1e1c3a] bg-[#191831] text-white text-xs focus:outline-none focus:border-indigo-500 w-full sm:w-48 font-light"
                                         />
                                     </div>
 
-                                    <div className="space-y-1">
-                                        <label className="text-xs font-bold text-slate-500 uppercase">Jeu / Licence</label>
-                                        <select
-                                            value={tourneyForm.game}
-                                            onChange={(e) => setTourneyForm({ ...tourneyForm, game: e.target.value })}
-                                            className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-600 bg-white"
-                                        >
-                                            <option>Pokémon</option>
-                                            <option>Magic: The Gathering</option>
-                                            <option>One Piece Card Game</option>
-                                            <option>Yu-Gi-Oh!</option>
-                                            <option>Star Wars: Unlimited</option>
-                                            <option>Disney Lorcana</option>
-                                            <option>Final Fantasy TCG</option>
-                                            <option>Altered</option>
-                                            <option>Dragon Ball Super Card Game</option>
-                                        </select>
-                                    </div>
-
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <div className="space-y-1">
-                                            <label className="text-xs font-bold text-slate-500 uppercase">Date</label>
-                                            <input
-                                                type="date"
-                                                required
-                                                value={tourneyForm.date}
-                                                onChange={(e) => setTourneyForm({ ...tourneyForm, date: e.target.value })}
-                                                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-600 font-light"
-                                            />
-                                        </div>
-                                        <div className="space-y-1">
-                                            <label className="text-xs font-bold text-slate-500 uppercase">Heure</label>
-                                            <input
-                                                type="time"
-                                                required
-                                                value={tourneyForm.time}
-                                                onChange={(e) => setTourneyForm({ ...tourneyForm, time: e.target.value })}
-                                                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-600 font-light"
-                                            />
-                                        </div>
-                                    </div>
-
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <div className="space-y-1">
-                                            <label className="text-xs font-bold text-slate-500 uppercase">Places max</label>
-                                            <input
-                                                type="number"
-                                                required
-                                                min="4"
-                                                max="128"
-                                                value={tourneyForm.capacity}
-                                                onChange={(e) => setTourneyForm({ ...tourneyForm, capacity: Number(e.target.value) })}
-                                                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-600 font-light"
-                                            />
-                                        </div>
-                                        <div className="space-y-1">
-                                            <label className="text-xs font-bold text-slate-500 uppercase">Tarif (€)</label>
-                                            <input
-                                                type="number"
-                                                step="0.50"
-                                                min="0"
-                                                value={tourneyForm.price}
-                                                onChange={(e) => setTourneyForm({ ...tourneyForm, price: Number(e.target.value) })}
-                                                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-600 font-light"
-                                            />
-                                        </div>
-                                    </div>
-
-                                    <div className="space-y-1">
-                                        <label className="text-xs font-bold text-slate-500 uppercase">Description / Dotations</label>
-                                        <textarea
-                                            rows="3"
-                                            placeholder="Indiquez le format, les lots..."
-                                            value={tourneyForm.description}
-                                            onChange={(e) => setTourneyForm({ ...tourneyForm, description: e.target.value })}
-                                            className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-600 font-light"
-                                        ></textarea>
-                                    </div>
-
-                                    <button
-                                        type="submit"
-                                        disabled={actionLoading}
-                                        className="w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs transition duration-300 shadow-md shadow-indigo-600/10 disabled:opacity-50"
-                                    >
-                                        Créer le tournoi
-                                    </button>
-                                </form>
-
-                                {/* Tournaments List */}
-                                <div className="lg:col-span-7 bg-white rounded-3xl border border-slate-100 shadow-xl overflow-hidden">
-                                    <div className="p-6 border-b border-slate-100">
-                                        <h2 className="text-lg font-bold text-slate-900">Tournois existants</h2>
-                                    </div>
-
-                                    <div className="divide-y divide-slate-100">
-                                        {tournaments.map((t) => (
-                                            <div key={t.id} className="p-5 flex justify-between items-center gap-4 hover:bg-slate-50/50 transition">
-                                                <div>
-                                                    <span className="text-[10px] uppercase font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-100">
-                                                        {t.game}
-                                                    </span>
-                                                    <h3 className="font-extrabold text-slate-950 mt-1">{t.name}</h3>
-                                                    <p className="text-xs text-slate-500 font-light mt-0.5">
-                                                        📅 {new Date(t.date).toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' })} | 👥 {t.registeredCount} / {t.capacity} joueurs
-                                                    </p>
-                                                </div>
-                                                <button
-                                                    onClick={() => handleDeleteTourney(t.id)}
-                                                    disabled={actionLoading}
-                                                    className="py-1.5 px-3 rounded-lg text-xs font-bold text-red-500 hover:bg-red-50 transition disabled:opacity-50"
-                                                >
-                                                    Supprimer
-                                                </button>
-                                            </div>
-                                        ))}
-                                        {tournaments.length === 0 && (
+                                    <div className="max-h-[850px] overflow-y-auto pr-2 custom-scrollbar">
+                                        {filteredTournaments.length === 0 ? (
                                             <div className="p-8 text-center text-slate-400 italic font-light">
                                                 Aucun tournoi enregistré.
+                                            </div>
+                                        ) : (
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                                {filteredTournaments.map((tourney) => (
+                                                    <TournamentCard
+                                                        key={tourney.id}
+                                                        activity={tourney}
+                                                        isAuthenticated={true}
+                                                        isAdmin={true}
+                                                        actionLoading={actionLoading}
+                                                        isOpenParticipants={openParticipantsId === tourney.id}
+                                                        onToggleParticipants={() => toggleParticipants(tourney.id)}
+                                                        onAction={() => handleDeleteTourney(tourney.id)}
+                                                        t={t}
+                                                        i18n={i18n}
+                                                        theme="dark"
+                                                    />
+                                                ))}
                                             </div>
                                         )}
                                     </div>
@@ -836,7 +934,7 @@ function DashboardAdmin() {
                                 <div className="lg:col-span-5 space-y-6">
                                     <form onSubmit={handleCreateEvent} className="bg-white p-6 md:p-8 rounded-3xl border border-slate-100 shadow-xl space-y-4">
                                         <h2 className="text-lg font-bold text-slate-900 pb-3 border-b border-slate-100 flex items-center gap-2">
-                                            <span>➕</span> Créer un événement
+                                            <Plus className="w-5 h-5 text-indigo-600" /> Créer un événement
                                         </h2>
 
                                         <div className="space-y-1">
@@ -975,18 +1073,25 @@ function DashboardAdmin() {
 
                                 {/* Events List */}
                                 <div className="lg:col-span-7 bg-slate-950 p-6 rounded-3xl border border-indigo-950/40 shadow-xl space-y-4 text-white">
-                                    <div className="pb-4 border-b border-indigo-950/40">
-                                        <h2 className="text-lg font-bold text-slate-200">Événements enregistrés ({events.length})</h2>
+                                    <div className="pb-4 border-b border-indigo-950/40 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                                        <h2 className="text-lg font-bold text-slate-200">Événements enregistrés ({filteredEvents.length})</h2>
+                                        <input
+                                            type="text"
+                                            placeholder="Rechercher un événement..."
+                                            value={eventSearch}
+                                            onChange={(e) => setEventSearch(e.target.value)}
+                                            className="px-3 py-1.5 rounded-xl border border-[#1e1c3a] bg-[#191831] text-white text-xs focus:outline-none focus:border-indigo-500 w-full sm:w-48 font-light"
+                                        />
                                     </div>
 
                                     <div className="max-h-[850px] overflow-y-auto pr-2 custom-scrollbar">
-                                        {events.length === 0 ? (
+                                        {filteredEvents.length === 0 ? (
                                             <div className="p-8 text-center text-slate-400 italic font-light">
                                                 Aucun événement enregistré.
                                             </div>
                                         ) : (
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                                {events.map((e) => (
+                                                {filteredEvents.map((e) => (
                                                     <TournamentCard
                                                         key={e.id}
                                                         activity={e}
@@ -1011,10 +1116,19 @@ function DashboardAdmin() {
                         {/* TAB 3: USERS */}
                         {activeTab === 'users' && (
                             <div className="bg-white rounded-3xl border border-slate-100 shadow-xl overflow-hidden">
-                                <div className="p-6 border-b border-slate-100 flex justify-between items-center">
-                                    <h2 className="text-lg font-bold text-slate-900">Utilisateurs inscrits</h2>
-                                    <span className="text-xs bg-slate-100 text-slate-600 font-semibold py-1 px-3 rounded-full">
-                                        Total : {users.length}
+                                <div className="p-6 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                                    <div className="flex flex-col gap-1 w-full sm:w-auto">
+                                        <h2 className="text-lg font-bold text-slate-900">Utilisateurs inscrits</h2>
+                                        <input
+                                            type="text"
+                                            placeholder="Rechercher un utilisateur..."
+                                            value={userSearch}
+                                            onChange={(e) => setUserSearch(e.target.value)}
+                                            className="px-3 py-1.5 rounded-xl border border-slate-200 bg-white text-slate-800 text-xs focus:outline-none focus:border-indigo-600 w-full sm:w-64 font-light"
+                                        />
+                                    </div>
+                                    <span className="text-xs bg-slate-100 text-slate-600 font-semibold py-1 px-3 rounded-full shrink-0">
+                                        Total : {filteredUsers.length} / {users.length}
                                     </span>
                                 </div>
 
@@ -1030,7 +1144,7 @@ function DashboardAdmin() {
                                             </tr>
                                         </thead>
                                         <tbody className="divide-y divide-slate-100 text-sm">
-                                            {users.map((u) => (
+                                            {filteredUsers.map((u) => (
                                                 <tr key={u.id} className="hover:bg-slate-50/50 transition">
                                                     <td className="p-4 font-bold text-slate-900">
                                                         {u.firstname || u.lastname ? `${u.firstname || ''} ${u.lastname || ''}`.trim() : '—'}
@@ -1059,11 +1173,18 @@ function DashboardAdmin() {
                                                             disabled={actionLoading}
                                                             className="py-1 px-2 rounded-lg text-xs font-bold text-red-500 hover:bg-red-50 transition disabled:opacity-50"
                                                         >
-                                                            Supprimer
+                                                            <Trash2 className="w-3 h-3 inline" />
                                                         </button>
                                                     </td>
                                                 </tr>
                                             ))}
+                                            {filteredUsers.length === 0 && (
+                                                <tr>
+                                                    <td colSpan="5" className="p-8 text-center text-slate-400 italic font-light">
+                                                        Aucun utilisateur trouvé.
+                                                    </td>
+                                                </tr>
+                                            )}
                                         </tbody>
                                     </table>
                                 </div>
@@ -1073,160 +1194,188 @@ function DashboardAdmin() {
                         {/* TAB 4: BOARD GAMES */}
                         {activeTab === 'boardgames' && (
                             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-                                {/* Create Board Game Form */}
-                                <form onSubmit={handleCreateBoardGame} className="lg:col-span-5 bg-white p-6 md:p-8 rounded-3xl border border-slate-100 shadow-xl space-y-4">
-                                    <h2 className="text-lg font-bold text-slate-900 pb-3 border-b border-slate-100 flex items-center gap-2">
-                                        <span>🎲</span> Ajouter un jeu de société
-                                    </h2>
+                                <div className="lg:col-span-5 space-y-6">
+                                    {/* Create Board Game Form */}
+                                    <form onSubmit={handleCreateBoardGame} className="bg-white p-6 md:p-8 rounded-3xl border border-slate-100 shadow-xl space-y-4">
+                                        <h2 className="text-lg font-bold text-slate-900 pb-3 border-b border-slate-100 flex items-center gap-2">
+                                            <Dice6 className="w-5 h-5 text-indigo-600" /> Ajouter un jeu de société
+                                        </h2>
 
-                                    <div className="space-y-1">
-                                        <label className="text-xs font-bold text-slate-500 uppercase">Nom du jeu</label>
-                                        <input
-                                            type="text"
-                                            required
-                                            placeholder="Ex: Carcassonne"
-                                            value={bgForm.name}
-                                            onChange={(e) => setBgForm({ ...bgForm, name: e.target.value })}
-                                            className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-600 font-light"
-                                        />
-                                    </div>
-
-                                    <div className="space-y-1">
-                                        <label className="text-xs font-bold text-slate-500 uppercase">Catégorie</label>
-                                        <select
-                                            value={bgForm.category}
-                                            onChange={(e) => setBgForm({ ...bgForm, category: e.target.value })}
-                                            className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-600 bg-white"
-                                        >
-                                            <option>Stratégie</option>
-                                            <option>Pose de tuiles</option>
-                                            <option>Famille</option>
-                                            <option>Abstrait</option>
-                                            <option>Ambiance</option>
-                                            <option>Ambiance / Réflexion</option>
-                                            <option>Autre</option>
-                                        </select>
-                                    </div>
-
-                                    <div className="grid grid-cols-2 gap-4">
                                         <div className="space-y-1">
-                                            <label className="text-xs font-bold text-slate-500 uppercase">Joueurs Min</label>
-                                            <input
-                                                type="number"
-                                                required
-                                                min="1"
-                                                value={bgForm.min_players}
-                                                onChange={(e) => setBgForm({ ...bgForm, min_players: Number(e.target.value) })}
-                                                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-600 font-light"
-                                            />
-                                        </div>
-                                        <div className="space-y-1">
-                                            <label className="text-xs font-bold text-slate-500 uppercase">Joueurs Max</label>
-                                            <input
-                                                type="number"
-                                                required
-                                                min="1"
-                                                value={bgForm.max_players}
-                                                onChange={(e) => setBgForm({ ...bgForm, max_players: Number(e.target.value) })}
-                                                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-600 font-light"
-                                            />
-                                        </div>
-                                    </div>
-
-                                    <div className="space-y-1">
-                                        <label className="text-xs font-bold text-slate-500 uppercase">Durée de partie (mins)</label>
-                                        <input
-                                            type="number"
-                                            required
-                                            min="5"
-                                            value={bgForm.play_time}
-                                            onChange={(e) => setBgForm({ ...bgForm, play_time: Number(e.target.value) })}
-                                            className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-600 font-light"
-                                        />
-                                    </div>
-
-                                    <div className="space-y-1">
-                                        <label className="text-xs font-bold text-slate-500 uppercase">Description</label>
-                                        <textarea
-                                            rows="3"
-                                            placeholder="Description du jeu, mécanique..."
-                                            value={bgForm.description}
-                                            onChange={(e) => setBgForm({ ...bgForm, description: e.target.value })}
-                                            className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-600 font-light"
-                                        ></textarea>
-                                    </div>
-
-                                    <div className="space-y-2">
-                                        <label className="text-xs font-bold text-slate-500 uppercase">Image du jeu (Depuis votre PC)</label>
-                                        <div className="flex flex-wrap gap-3 items-center">
-                                            <input
-                                                type="file"
-                                                accept="image/*"
-                                                onChange={handleImageUpload}
-                                                className="hidden"
-                                                id="bg-image-upload"
-                                            />
-                                            <label
-                                                htmlFor="bg-image-upload"
-                                                className="cursor-pointer py-2.5 px-4 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 rounded-xl text-xs font-bold transition shadow-sm"
-                                            >
-                                                📁 Choisir une image
-                                            </label>
-                                            {uploadingImage && <span className="text-xs text-slate-500 animate-pulse">Téléversement...</span>}
-                                            {bgForm.image_url && !uploadingImage && (
-                                                <span className="text-xs text-emerald-600 font-medium truncate max-w-xs">
-                                                    ✅ Image sélectionnée
-                                                </span>
-                                            )}
-                                        </div>
-                                        <div className="pt-1">
-                                            <label className="text-[10px] font-bold text-slate-400 uppercase">Ou URL de l'image</label>
+                                            <label className="text-xs font-bold text-slate-500 uppercase">Nom du jeu</label>
                                             <input
                                                 type="text"
+                                                required
+                                                placeholder="Ex: Carcassonne"
+                                                value={bgForm.name}
+                                                onChange={(e) => setBgForm({ ...bgForm, name: e.target.value })}
+                                                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-600 font-light"
+                                            />
+                                        </div>
+
+                                        <div className="space-y-1">
+                                            <label className="text-xs font-bold text-slate-500 uppercase">Catégorie</label>
+                                            <select
+                                                value={bgForm.category}
+                                                onChange={(e) => setBgForm({ ...bgForm, category: e.target.value })}
+                                                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-600 bg-white"
+                                            >
+                                                <option>Stratégie</option>
+                                                <option>Pose de tuiles</option>
+                                                <option>Famille</option>
+                                                <option>Abstrait</option>
+                                                <option>Ambiance</option>
+                                                <option>Ambiance / Réflexion</option>
+                                                <option>Autre</option>
+                                            </select>
+                                        </div>
+
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div className="space-y-1">
+                                                <label className="text-xs font-bold text-slate-500 uppercase">Joueurs Min</label>
+                                                <input
+                                                    type="number"
+                                                    required
+                                                    min="1"
+                                                    value={bgForm.min_players}
+                                                    onChange={(e) => setBgForm({ ...bgForm, min_players: Number(e.target.value) })}
+                                                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-600 font-light"
+                                                />
+                                            </div>
+                                            <div className="space-y-1">
+                                                <label className="text-xs font-bold text-slate-500 uppercase">Joueurs Max</label>
+                                                <input
+                                                    type="number"
+                                                    required
+                                                    min="1"
+                                                    value={bgForm.max_players}
+                                                    onChange={(e) => setBgForm({ ...bgForm, max_players: Number(e.target.value) })}
+                                                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-600 font-light"
+                                                />
+                                            </div>
+                                        </div>
+
+                                        <div className="space-y-1">
+                                            <label className="text-xs font-bold text-slate-500 uppercase">Durée de partie (mins)</label>
+                                            <input
+                                                type="number"
+                                                required
+                                                min="5"
+                                                value={bgForm.play_time}
+                                                onChange={(e) => setBgForm({ ...bgForm, play_time: Number(e.target.value) })}
+                                                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-600 font-light"
+                                            />
+                                        </div>
+
+                                        <div className="space-y-1">
+                                            <label className="text-xs font-bold text-slate-500 uppercase">Description</label>
+                                            <textarea
+                                                rows="3"
+                                                placeholder="Description du jeu, mécanique..."
+                                                value={bgForm.description}
+                                                onChange={(e) => setBgForm({ ...bgForm, description: e.target.value })}
+                                                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-600 font-light"
+                                            ></textarea>
+                                        </div>
+
+                                        <div className="space-y-2">
+                                            <label className="text-xs font-bold text-slate-500 uppercase">Image du jeu (Depuis votre PC)</label>
+                                            <div className="flex flex-wrap gap-3 items-center">
+                                                <input
+                                                    type="file"
+                                                    accept="image/*"
+                                                    onChange={handleImageUpload}
+                                                    className="hidden"
+                                                    id="bg-image-upload"
+                                                />
+                                                <label
+                                                    htmlFor="bg-image-upload"
+                                                    className="cursor-pointer py-2.5 px-4 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 rounded-xl text-xs font-bold transition shadow-sm flex items-center gap-2"
+                                                >
+                                                    <ImageIcon className="w-3.5 h-3.5" /> Choisir une image
+                                                </label>
+                                                {uploadingImage && <span className="text-xs text-slate-500 animate-pulse">Téléversement...</span>}
+                                                {bgForm.image_url && !uploadingImage && (
+                                                    <span className="text-xs text-emerald-600 font-medium truncate max-w-xs">
+                                                        ✅ Image sélectionnée
+                                                    </span>
+                                                )}
+                                            </div>
+                                            <div className="pt-1">
+                                                <label className="text-[10px] font-bold text-slate-400 uppercase">Ou URL de l'image</label>
+                                                <input
+                                                    type="text"
+                                                    placeholder="Ex: https://..."
+                                                    value={bgForm.image_url}
+                                                    onChange={(e) => setBgForm({ ...bgForm, image_url: e.target.value })}
+                                                    className="w-full px-3.5 py-2.5 mt-1 rounded-xl border border-slate-200 text-xs focus:outline-none focus:border-indigo-600 font-light"
+                                                />
+                                            </div>
+                                        </div>
+
+                                        <div className="space-y-1">
+                                            <label className="text-xs font-bold text-slate-500 uppercase">Lien officiel / Règles (optionnel)</label>
+                                            <input
+                                                type="url"
                                                 placeholder="Ex: https://..."
-                                                value={bgForm.image_url}
-                                                onChange={(e) => setBgForm({ ...bgForm, image_url: e.target.value })}
-                                                className="w-full px-3.5 py-2.5 mt-1 rounded-xl border border-slate-200 text-xs focus:outline-none focus:border-indigo-600 font-light"
+                                                value={bgForm.rules_url}
+                                                onChange={(e) => setBgForm({ ...bgForm, rules_url: e.target.value })}
+                                                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-600 font-light"
+                                            />
+                                        </div>
+
+                                        <button
+                                            type="submit"
+                                            disabled={actionLoading}
+                                            className="w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs transition duration-300 shadow-md shadow-indigo-600/10 disabled:opacity-50"
+                                        >
+                                            Ajouter le jeu
+                                        </button>
+                                    </form>
+
+                                    {/* Real-time Preview Box */}
+                                    <div className="bg-[#080711] p-6 md:p-8 rounded-3xl border border-indigo-950/40 shadow-xl space-y-4">
+                                        <h3 className="text-sm font-extrabold text-slate-200 uppercase tracking-wider pb-2 border-b border-indigo-950/40 flex items-center gap-2">
+                                            <Zap className="w-3.5 h-3.5 text-indigo-400" /> Aperçu en temps réel
+                                        </h3>
+                                        <div className="max-w-md mx-auto">
+                                            <BoardGameCard
+                                                game={previewBoardGame}
+                                                isExpanded={expandedPreviewBg}
+                                                onToggleExpand={() => setExpandedPreviewBg(!expandedPreviewBg)}
+                                                onBookClick={() => {}}
+                                                t={t}
+                                                i18n={i18n}
                                             />
                                         </div>
                                     </div>
-
-                                    <div className="space-y-1">
-                                        <label className="text-xs font-bold text-slate-500 uppercase">Lien officiel / Règles (optionnel)</label>
-                                        <input
-                                            type="url"
-                                            placeholder="Ex: https://..."
-                                            value={bgForm.rules_url}
-                                            onChange={(e) => setBgForm({ ...bgForm, rules_url: e.target.value })}
-                                            className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-600 font-light"
-                                        />
-                                    </div>
-
-                                    <button
-                                        type="submit"
-                                        disabled={actionLoading}
-                                        className="w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs transition duration-300 shadow-md shadow-indigo-600/10 disabled:opacity-50"
-                                    >
-                                        Ajouter le jeu
-                                    </button>
-                                </form>
+                                </div>
 
                                 {/* Board Games List */}
                                 <div className="lg:col-span-7 bg-white rounded-3xl border border-slate-100 shadow-xl overflow-hidden">
-                                    <div className="p-6 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-                                        <h2 className="text-lg font-bold text-slate-900">Jeux en boutique ({boardGames.length})</h2>
+                                    <div className="p-6 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-slate-50/50">
+                                        <div className="flex-1 space-y-2">
+                                            <h2 className="text-lg font-bold text-slate-900">Jeux en boutique ({filteredBoardGames.length})</h2>
+                                            <input
+                                                type="text"
+                                                placeholder="Rechercher un jeu..."
+                                                value={bgSearch}
+                                                onChange={(e) => setBgSearch(e.target.value)}
+                                                className="px-3 py-1.5 rounded-xl border border-slate-200 bg-white text-slate-800 text-xs focus:outline-none focus:border-indigo-600 w-full sm:w-64 font-light shadow-sm"
+                                            />
+                                        </div>
                                         <button
                                             type="button"
                                             onClick={handleImportBggHot}
                                             disabled={actionLoading}
-                                            className="inline-flex items-center gap-1.5 py-2 px-3 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white shadow-sm transition disabled:opacity-50"
+                                            className="inline-flex items-center gap-1.5 py-2 px-3 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white shadow-sm transition disabled:opacity-50 shrink-0 self-end sm:self-auto"
                                         >
-                                            {actionLoading && message.text?.includes("BGG") ? 'Importation...' : '⚡ Importer 100 Populaires BGG'}
+                                            <Zap className="w-3.5 h-3.5" /> {actionLoading && message.text?.includes("BGG") ? 'Importation...' : 'Importer 100 Populaires BGG'}
                                         </button>
                                     </div>
 
-                                    <div className="divide-y divide-slate-100">
-                                        {boardGames.map((game) => (
+                                    <div className="divide-y divide-slate-100 max-h-[850px] overflow-y-auto custom-scrollbar">
+                                        {filteredBoardGames.map((game) => (
                                             <div key={game.id} className="p-5 flex justify-between items-center gap-4 hover:bg-slate-50/50 transition">
                                                 <div className="flex items-center gap-4">
                                                     <img 
@@ -1244,7 +1393,7 @@ function DashboardAdmin() {
                                                         </span>
                                                         <h3 className="font-extrabold text-slate-950 mt-1">{game.name}</h3>
                                                         <p className="text-xs text-slate-500 font-light mt-0.5">
-                                                            👥 {game.min_players}-{game.max_players} joueurs | ⏱ {game.play_time} mins
+                                                            {game.min_players}-{game.max_players} joueurs | {game.play_time} mins
                                                         </p>
                                                     </div>
                                                 </div>
@@ -1257,9 +1406,9 @@ function DashboardAdmin() {
                                                 </button>
                                             </div>
                                         ))}
-                                        {boardGames.length === 0 && (
+                                        {filteredBoardGames.length === 0 && (
                                             <div className="p-8 text-center text-slate-400 italic font-light">
-                                                Aucun jeu de société enregistré.
+                                                Aucun jeu de société trouvé.
                                             </div>
                                         )}
                                     </div>
@@ -1276,8 +1425,8 @@ function DashboardAdmin() {
                 return (
                     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/40 backdrop-blur-sm transition-all duration-300">
                         <div className="bg-white rounded-3xl p-6 md:p-8 max-w-md w-full mx-4 shadow-2xl border border-slate-100/50 space-y-6 animate-in zoom-in-95 duration-200">
-                            <div className="flex items-center gap-3 text-red-600">
-                                <span className="text-3xl">⚠️</span>
+                            <div className="flex items-center gap-3 text-red-650">
+                                <AlertTriangle className="w-6 h-6 shrink-0" />
                                 <h3 className="text-xl font-black text-slate-950 tracking-tight">{info.title}</h3>
                             </div>
                             <p className="text-slate-600 text-sm leading-relaxed font-light">

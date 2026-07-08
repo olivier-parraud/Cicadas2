@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { Calendar } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import TournamentCard from '../components/TournamentCard';
 
@@ -163,9 +164,6 @@ function Events() {
                 <div className="absolute bottom-1/4 right-1/10 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl pointer-events-none"></div>
 
                 <div className="max-w-4xl mx-auto space-y-6 relative z-10">
-                    <span className="inline-flex items-center gap-1.5 py-1 px-3 rounded-full text-xs font-semibold bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
-                        📅 {t('events_page.badge')}
-                    </span>
                     <h1 className="text-3xl md:text-5xl font-black tracking-tight bg-clip-text bg-gradient-to-r from-white via-indigo-100 to-indigo-300 leading-tight">
                         {t('events_page.title')}
                     </h1>
@@ -214,7 +212,7 @@ function Events() {
                     </div>
                 ) : filteredEvents.length === 0 ? (
                     <div className="text-center py-20 bg-[#151425]/35 rounded-3xl border border-white/5 max-w-2xl mx-auto p-8 shadow-inner">
-                        <span className="text-4xl block mb-4">📅</span>
+                        <Calendar className="w-12 h-12 text-slate-500 mx-auto mb-4" />
                         <p className="text-slate-400 font-light text-sm">
                             {t('events_page.no_events')}
                         </p>

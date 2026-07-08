@@ -71,9 +71,6 @@ function BoardGames() {
                 <div className="absolute bottom-1/4 right-1/10 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
                 <div className="max-w-4xl mx-auto space-y-6 relative z-10">
-                    <span className="inline-flex items-center gap-1.5 py-1 px-3 rounded-full text-xs font-semibold bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
-                        🎲 {t('boardgames_page.badge')}
-                    </span>
                     <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight bg-clip-text bg-gradient-to-r from-white via-indigo-100 to-indigo-300 leading-tight">
                         {t('boardgames_page.title')}
                     </h1>

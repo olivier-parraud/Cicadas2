@@ -1,5 +1,5 @@
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Orbitron:wght@700;900&family=Outfit:wght@400;500;600;700;800;900&display=swap');
 
 @theme {
   --font-sans: 'Inter', sans-serif;
@@ -80,6 +80,23 @@ body {
   background-attachment: fixed;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+
+.font-brand {
+  font-family: 'Orbitron', sans-serif !important;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  font-weight: 900;
+  background: linear-gradient(135deg, #c7d2fe 0%, #818cf8 50%, #6366f1 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 8px rgba(99, 102, 241, 0.2));
+  transition: all 0.3s ease;
+}
+
+.font-brand:hover {
+  filter: drop-shadow(0 2px 12px rgba(99, 102, 241, 0.5));
 }
 
 /* Clean, modern headings with Outfit and slight letter-spacing reduction */

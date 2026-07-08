@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { Trophy } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import TournamentCard from '../components/TournamentCard';
 import EventCard from '../components/EventCard';
@@ -169,16 +170,13 @@ function Tournaments() {
     // Helper color/emoji functions moved to TournamentCard component
 
     return (
-        <div className="min-h-screen bg-slate-50 text-slate-800 selection:bg-indigo-600 selection:text-white pb-20">
+        <div className="min-h-screen bg-[#080711] text-white selection:bg-indigo-650 selection:text-white pb-20">
             {/* Header Section */}
-            <div className="relative overflow-hidden bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-950 text-white py-20 px-4 border-b border-indigo-900/50 text-center">
+            <div className="relative overflow-hidden bg-gradient-to-br from-[#0c0a1e] via-[#120f2e] to-[#080711] text-white py-20 px-4 border-b border-indigo-950/40 text-center">
                 <div className="absolute top-1/4 left-1/10 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
                 <div className="absolute bottom-1/4 right-1/10 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
                 <div className="max-w-4xl mx-auto space-y-6 relative z-10">
-                    <span className="inline-flex items-center gap-1.5 py-1 px-3 rounded-full text-xs font-semibold bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
-                        🏆 {t('tournaments_page.badge')}
-                    </span>
                     <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight bg-clip-text bg-gradient-to-r from-white via-indigo-100 to-indigo-300 leading-tight">
                         {t('tournaments_page.title')}
                     </h1>
@@ -193,9 +191,9 @@ function Tournaments() {
                 <div className="flex flex-wrap justify-center gap-2">
                     <button
                         onClick={() => setFilter('all')}
-                        className={`py-2.5 px-6 rounded-xl text-sm font-semibold border transition ${filter === 'all'
+                        className={`py-2.5 px-6 rounded-xl text-sm font-semibold border transition duration-300 cursor-pointer ${filter === 'all'
                             ? 'bg-indigo-600 border-indigo-600 text-white shadow-md shadow-indigo-600/10'
-                            : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
+                            : 'bg-[#151425]/45 border-white/5 text-slate-400 hover:text-white hover:bg-[#1a1930]'
                             }`}
                     >
                         {t('tournaments_page.all_tournaments')}
@@ -214,9 +212,9 @@ function Tournaments() {
                         <button
                             key={tcg.id}
                             onClick={() => setFilter(tcg.id)}
-                            className={`py-2.5 px-6 rounded-xl text-sm font-semibold border transition ${filter === tcg.id
+                            className={`py-2.5 px-6 rounded-xl text-sm font-semibold border transition duration-300 cursor-pointer ${filter === tcg.id
                                 ? 'bg-indigo-600 border-indigo-600 text-white shadow-md'
-                                : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
+                                : 'bg-[#151425]/45 border-white/5 text-slate-400 hover:text-white hover:bg-[#1a1930]'
                                 }`}
                         >
                             {tcg.name}
@@ -227,18 +225,18 @@ function Tournaments() {
                 {loading ? (
                     <div className="text-center py-12 space-y-4">
                         <div className="w-10 h-10 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
-                        <p className="text-slate-500 text-sm">{t('tournaments_page.loading')}</p>
+                        <p className="text-slate-400 text-sm">{t('tournaments_page.loading')}</p>
                     </div>
                 ) : filteredTournaments.length === 0 ? (
-                    <div className="bg-white p-12 rounded-3xl border border-slate-200/60 text-center max-w-xl mx-auto space-y-4 shadow-sm">
-                        <span className="text-4xl">🏆</span>
-                        <h3 className="text-lg font-bold text-slate-900">{t('tournaments_page.no_tourneys')}</h3>
-                        <p className="text-slate-500 font-light text-sm">
+                    <div className="bg-[#151425]/35 rounded-3xl border border-white/5 text-center max-w-xl mx-auto p-8 shadow-inner space-y-4">
+                        <Trophy className="w-12 h-12 text-slate-500 mx-auto" />
+                        <h3 className="text-lg font-bold text-white">{t('tournaments_page.no_tourneys')}</h3>
+                        <p className="text-slate-400 font-light text-sm">
                             {t('tournaments_page.no_tourneys_desc')}
                         </p>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
                         {filteredTournaments.map((tourney) => (
                             <TournamentCard
                                 key={tourney.id}
@@ -252,7 +250,7 @@ function Tournaments() {
                                 onLoginRedirect={() => navigate('/login')}
                                 t={t}
                                 i18n={i18n}
-                                theme="light"
+                                theme="dark"
                             />
                         ))}
                     </div>

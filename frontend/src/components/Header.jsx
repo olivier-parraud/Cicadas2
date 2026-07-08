@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Menu, X } from 'lucide-react';
 
 const languages = [
     { code: 'fr', label: 'FR' },
@@ -42,7 +43,7 @@ function Header() {
     return (
         <header className="bg-indigo-900 text-white shadow-lg border-b border-indigo-800 relative z-50">
             <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-                <Link to="/" className="text-3xl font-bold tracking-wider hover:text-indigo-200 transition" onClick={closeMenu}>
+                <Link to="/" className="text-3xl font-brand transition" onClick={closeMenu}>
                     Cicados
                 </Link>
 
@@ -96,13 +97,11 @@ function Header() {
                     className="md:hidden text-white focus:outline-none cursor-pointer"
                     aria-label="Toggle menu"
                 >
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        {isMenuOpen ? (
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                        ) : (
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
-                        )}
-                    </svg>
+                    {isMenuOpen ? (
+                        <X className="w-6 h-6" />
+                    ) : (
+                        <Menu className="w-6 h-6" />
+                    )}
                 </button>
             </div>
 

@@ -765,6 +765,60 @@ Nouveau créneau :                                    |=== 17:00 → 19:00 ===|
 
 ---
 
+#### 💡 Ajout de la validation des horaires antérieurs (Correctif Conception)
+
+**Ce qui manquait initialement :**
+Dans la première phase de conception, aucune validation n'empêchait un utilisateur de réserver une table à des **dates ou heures passées** (par exemple, réserver pour hier ou pour ce matin). L'absence de ce contrôle posait plusieurs problèmes :
+1. **Intégrité temporelle** : L'API backend acceptait la création et la modification de réservations dans le passé sans lever d'erreur.
+2. **Expérience utilisateur (UX)** : Sur le planning interactif, les boutons d'horaires déjà expirés pour le jour même apparaissaient disponibles (en vert) et cliquables.
+
+**Code problématique initial (Sans contrôle temporel) :**
+```javascript
+// backend/src/controllers/reservation.controller.js
+export const createReservation = async (req, res) => {
+    try {
+        const { gameType, date, time, duration, specificGame, playersCount } = req.body;
+        const userId = req.user.id; 
+
+        if (!date || !time || !duration) {
+            return res.status(400).json({ error: 'Remplissez le formulaire en entier' });
+        }
+
+        // ❌ Le serveur ne comparait pas la date/heure demandée avec le temps actuel
+        const reservation = await Reservation.create({
+            user_id: userId,
+            date,
+            time,
+            duration,
+            gameType,
+            specific_game: specificGame,
+            players_count: playersCount
+        });
+
+        res.status(201).json({ message: 'Réservation réussie !', reservation });
+    } catch (error) { ... }
+};
+```
+
+**Solution et implémentation :**
+1. **Sécurité Backend** : Ajout d'un contrôle dans `createReservation` et `updateReservation` (`reservation.controller.js`) comparant le timestamp de début de réservation au timestamp système actuel (`Date.now()`). Si le créneau est antérieur, l'API renvoie un statut `400 Bad Request` avec le message *"Impossible de réserver pour une date ou heure passée."*.
+
+**Code corrigé avec validation stricte :**
+```javascript
+// backend/src/controllers/reservation.controller.js
+if (new Date(`${date} ${time}:00`).getTime() < Date.now()) {
+    // ✅ Bloque instantanément si l'horaire appartient au passé
+    return res.status(400).json({ error: 'Impossible de réserver pour une date ou heure passée.' });
+}
+```
+
+2. **Contrôle et Affichage Frontend** : 
+   - Désactivation et apparence grisée des créneaux horaires passés dans le planning interactif (`Reservations.jsx`) si la date sélectionnée est aujourd'hui.
+   - Initialisation dynamique du premier créneau sélectionné par défaut à la première heure disponible dans le futur (au lieu de 14h00 de manière statique).
+   - Validation stricte avant soumission sur les formulaires de création (`Reservations.jsx`) et d'édition (`MyReservations.jsx`) pour interdire toute soumission d'horaires périmés.
+
+---
+
 ### 5.7 Gestion des tournois
 
 Le modèle `Tournament` gère les inscriptions avec vérification de capacité et contrainte d'unicité :

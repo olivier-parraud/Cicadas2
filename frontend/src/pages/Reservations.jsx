@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { Calendar } from 'lucide-react';
 import Button from '../components/Button';
 
 const TIME_SLOTS = [
@@ -14,10 +15,20 @@ function Reservations() {
 
     const today = new Date().toISOString().split('T')[0];
 
+    const getDefaultTime = () => {
+        const now = new Date();
+        const currentHour = now.getHours();
+        const futureSlot = TIME_SLOTS.find(slot => {
+            const slotHour = parseInt(slot.split(':')[0], 10);
+            return slotHour > currentHour;
+        });
+        return futureSlot || "14:00";
+    };
+
     const [formData, setFormData] = useState({
         gameType: 'MTG',
         date: today,
-        time: '14:00',
+        time: getDefaultTime(),
         duration: '2',
         specificGame: '',
         playersCount: '2'
@@ -96,6 +107,12 @@ function Reservations() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        const selectedDateTime = new Date(`${formData.date} ${formData.time}:00`);
+        if (selectedDateTime.getTime() < Date.now()) {
+            setStatus({ type: 'error', message: t('reservations_page.err_past_time', 'Impossible de réserver pour une date ou heure passée.') });
+            return;
+        }
+
         setStatus({ type: 'info', message: 'Envoi de votre demande de réservation...' });
 
         try {
@@ -151,9 +168,6 @@ function Reservations() {
         <div className="min-h-screen bg-slate-50 py-12 px-4 sm:px-6 lg:px-8 selection:bg-indigo-600 selection:text-white">
             <div className="max-w-6xl mx-auto space-y-12">
                 <div className="text-center space-y-4">
-                    <span className="inline-flex items-center gap-1.5 py-1 px-3 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-100">
-                        {t('reservations_page.badge')}
-                    </span>
                     <h1 className="text-3xl md:text-5xl font-extrabold text-slate-950 tracking-tight">{t('reservations_page.title')}</h1>
                     <p className="text-base text-slate-500 max-w-xl mx-auto font-light">
                         {t('reservations_page.subtitle')}
@@ -164,7 +178,7 @@ function Reservations() {
                     {/* Formulaire de réservation (gauche) */}
                     <div className="lg:col-span-5 bg-white p-6 md:p-8 shadow-xl rounded-3xl border border-slate-100 space-y-6">
                         <h2 className="text-lg font-bold text-slate-900 pb-3 border-b border-slate-100 flex items-center gap-2">
-                            <span>🎲</span> {t('reservations_page.demand_title')}
+                            {t('reservations_page.demand_title')}
                         </h2>
 
                         <form onSubmit={handleSubmit} className="space-y-4">
@@ -335,7 +349,7 @@ function Reservations() {
                     <div className="lg:col-span-7 bg-white p-6 md:p-8 shadow-xl rounded-3xl border border-slate-100 space-y-6">
                         <div>
                             <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-                                <span>📅</span> {t('reservations_page.planning_title')}
+                                <Calendar className="w-5 h-5 text-indigo-650 shrink-0" /> {t('reservations_page.planning_title')}
                             </h2>
                             <p className="text-xs text-slate-400 font-light mt-1">
                                 {t('reservations_page.planning_subtitle')}
@@ -344,7 +358,7 @@ function Reservations() {
 
                         {!formData.date ? (
                             <div className="py-20 text-center bg-slate-50 rounded-3xl border-2 border-dashed border-slate-200 flex flex-col items-center justify-center p-6 space-y-4">
-                                <span className="text-5xl animate-bounce">🗓️</span>
+                                <Calendar className="w-12 h-12 text-slate-300 animate-pulse" />
                                 <h3 className="text-sm font-bold text-slate-700">{t('reservations_page.no_date_selected')}</h3>
                                 <p className="text-xs text-slate-400 font-light max-w-xs">
                                     {t('reservations_page.no_date_selected_desc')}
@@ -366,6 +380,8 @@ function Reservations() {
 
                                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                                     {TIME_SLOTS.map(slot => {
+                                        const slotDateTime = new Date(`${formData.date} ${slot}:00`);
+                                        const inPast = slotDateTime.getTime() < Date.now();
                                         const occupied = getOccupiedTablesCount(slot);
                                         const available = 4 - occupied;
                                         const isSelected = formData.time === slot;
@@ -375,7 +391,12 @@ function Reservations() {
                                         let label = t('reservations_page.tables_free', { count: available });
                                         let disabled = false;
 
-                                        if (available <= 0) {
+                                        if (inPast) {
+                                            bgClass = "bg-slate-100 border-slate-200 text-slate-400 opacity-40 cursor-not-allowed";
+                                            badgeClass = "bg-slate-300 text-slate-500 border border-slate-200";
+                                            label = t('reservations_page.slot_past', 'Indisponible');
+                                            disabled = true;
+                                        } else if (available <= 0) {
                                             bgClass = "bg-rose-50 border-rose-150 text-rose-800 opacity-60 cursor-not-allowed";
                                             badgeClass = "bg-rose-600 text-white";
                                             label = t('reservations_page.full');

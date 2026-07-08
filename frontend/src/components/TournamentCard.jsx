@@ -1,4 +1,5 @@
 import React from 'react';
+import { Calendar, Users, ChevronDown } from 'lucide-react';
 import TranslatedText from './TranslatedText';
 import Button from './Button';
 
@@ -51,7 +52,7 @@ function TournamentCard({
     };
 
     const getGameColorClass = (game) => {
-        const gameLower = game.toLowerCase();
+        const gameLower = game ? game.toLowerCase() : '';
         if (gameLower.includes('magic')) return 'bg-orange-500/10 text-orange-400 border-orange-500/20';
         if (gameLower.includes('pokémon') || gameLower.includes('pokemon')) return 'bg-amber-500/10 text-amber-400 border-amber-500/20';
         if (gameLower.includes('one piece')) return 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20';
@@ -68,26 +69,6 @@ function TournamentCard({
         if (type === 'avant_premiere') return 'bg-amber-500/10 text-amber-400 border-amber-500/20';
         if (type === 'draft') return 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20';
         return 'bg-purple-500/10 text-purple-400 border-purple-500/20';
-    };
-
-    const getGameEmoji = (game) => {
-        const gameLower = game.toLowerCase();
-        if (gameLower.includes('magic')) return '🃏';
-        if (gameLower.includes('pokémon') || gameLower.includes('pokemon')) return '⚡';
-        if (gameLower.includes('one piece')) return '🏴‍☠️';
-        if (gameLower.includes('yu-gi-oh') || gameLower.includes('yugioh')) return '🐉';
-        if (gameLower.includes('star wars')) return '🚀';
-        if (gameLower.includes('lorcana')) return '🏰';
-        if (gameLower.includes('final fantasy')) return '💎';
-        if (gameLower.includes('altered')) return '🔮';
-        if (gameLower.includes('dragon ball')) return '💥';
-        return '🎲';
-    };
-
-    const getTypeEmoji = (type) => {
-        if (type === 'avant_premiere') return '✨';
-        if (type === 'draft') return '🃏';
-        return '🎓';
     };
 
     const getImageForGame = (game) => {
@@ -122,15 +103,18 @@ function TournamentCard({
         return '/images/TCG/Magic.jpg'; // default fallback image
     };
 
-    // Styling configuration (always tournament/light-themed style baseline)
-    const cardBgClass = 'bg-white border-slate-100 hover:border-indigo-150 hover:shadow-xl text-slate-800';
-    const titleClass = 'text-slate-950 group-hover:text-indigo-650';
-    const descClass = 'text-slate-650';
-    const detailTextClass = 'text-slate-600';
-    const listTriggerClass = 'text-slate-500 hover:text-indigo-600';
-    const listContainerClass = 'bg-slate-50 border-slate-200/50';
-    const listItemClass = 'bg-white text-slate-700 border-slate-200/50';
-    const subBorderClass = 'border-slate-100';
+    // Styling configuration (supports light and dark themes)
+    const isDark = theme === 'dark';
+    const cardBgClass = isDark
+        ? 'bg-[#110f24] border-white/5 hover:border-indigo-500/30 hover:shadow-2xl hover:shadow-indigo-500/5 text-slate-350'
+        : 'bg-white border-slate-100 hover:border-indigo-150 hover:shadow-xl text-slate-850';
+    const titleClass = isDark ? 'text-white group-hover:text-indigo-400' : 'text-slate-950 group-hover:text-indigo-650';
+    const descClass = isDark ? 'text-slate-400' : 'text-slate-650';
+    const detailTextClass = isDark ? 'text-slate-400' : 'text-slate-600';
+    const listTriggerClass = isDark ? 'text-slate-400 hover:text-indigo-400' : 'text-slate-500 hover:text-indigo-600';
+    const listContainerClass = isDark ? 'bg-[#161430] border-white/5' : 'bg-slate-50 border-slate-200/50';
+    const listItemClass = isDark ? 'bg-[#1d1b3e] text-slate-300 border-white/5' : 'bg-white text-slate-700 border-slate-200/50';
+    const subBorderClass = isDark ? 'border-white/5' : 'border-slate-100';
 
     // Buttons actions configurations
     const actionUnregisterLabel = isEvent
@@ -164,11 +148,11 @@ function TournamentCard({
                     <div className="flex flex-wrap justify-between items-center gap-2">
                         <div className="flex flex-wrap items-center gap-2">
                             <span className={`inline-flex items-center gap-1.5 py-0.5 px-2.5 rounded-full text-[10px] font-bold border ${getGameColorClass(activity.game)}`}>
-                                {getGameEmoji(activity.game)} {activity.game}
+                                {activity.game}
                             </span>
                             {isEvent && (
                                 <span className={`inline-flex items-center gap-1.5 py-0.5 px-2.5 rounded-full text-[10px] font-bold border ${getTypeColorClass(activity.type)}`}>
-                                    {getTypeEmoji(activity.type)} {typeNames[activity.type]}
+                                    {typeNames[activity.type]}
                                 </span>
                             )}
                         </div>
@@ -187,13 +171,13 @@ function TournamentCard({
                     {/* Date and details */}
                     <div className={`space-y-2 text-xs font-light ${detailTextClass}`}>
                         <div className="flex items-center gap-2.5">
-                            <span>📅</span>
+                            <Calendar className="w-4 h-4 text-indigo-400 shrink-0" />
                             <span className="capitalize">
                                 {formattedDate}{formattedTime ? ` à ${formattedTime}` : ''}
                             </span>
                         </div>
                         <div className="flex items-center gap-2.5">
-                            <span>👥</span>
+                            <Users className="w-4 h-4 text-indigo-400 shrink-0" />
                             <span className={spotsLeft <= 3 && spotsLeft > 0 ? "text-amber-400 font-bold" : isFull ? "text-red-400 font-bold" : ""}>
                                 {isEvent
                                     ? (isFull
@@ -218,10 +202,11 @@ function TournamentCard({
                             onClick={onToggleParticipants}
                             className={`flex items-center justify-between w-full text-left text-xs font-semibold transition cursor-pointer bg-transparent border-none ${listTriggerClass}`}
                         >
-                            <span>👥 {t('tournaments_page.participants', 'Inscrits')} ({activity.registeredCount})</span>
-                            <span className={`transition-transform duration-200 transform ${isOpenParticipants ? 'rotate-180' : ''}`}>
-                                ▼
+                            <span className="flex items-center gap-1.5">
+                                <Users className="w-4 h-4 text-slate-500" />
+                                {t('tournaments_page.participants', 'Inscrits')} ({activity.registeredCount})
                             </span>
+                            <ChevronDown className={`w-4 h-4 text-slate-500 transition-transform duration-200 ${isOpenParticipants ? 'rotate-180' : ''}`} />
                         </button>
 
                         {isOpenParticipants && (
@@ -267,15 +252,15 @@ function TournamentCard({
                     </Button>
                 ) : !isAuthenticated ? (
                     <Button
-                        variant="secondary"
+                        variant={isDark ? "secondary-dark" : "secondary"}
                         onClick={onLoginRedirect}
-                        className="w-full text-indigo-700 bg-indigo-50 border-transparent hover:bg-indigo-100"
+                        className={`w-full ${isDark ? '' : 'text-indigo-700 bg-indigo-50 border-transparent hover:bg-indigo-100'}`}
                     >
                         {t('tournaments_page.login_required')}
                     </Button>
                 ) : isRegistered ? (
                     <Button
-                        variant="danger"
+                        variant={isDark ? "danger-dark" : "danger"}
                         onClick={onAction}
                         loading={actionLoading}
                         className="w-full"
@@ -284,12 +269,12 @@ function TournamentCard({
                     </Button>
                 ) : (
                     <Button
-                        variant={isFull ? 'secondary' : 'primary'}
+                        variant={isFull ? (isDark ? 'secondary-dark' : 'secondary') : 'primary'}
                         onClick={onAction}
                         loading={actionLoading}
                         disabled={isFull}
                         className={`w-full ${isFull
-                            ? 'bg-slate-100 text-slate-400 border border-slate-200/50 hover:bg-slate-100'
+                            ? (isDark ? 'opacity-40 text-slate-500 cursor-not-allowed' : 'bg-slate-100 text-slate-400 border border-slate-200/50 hover:bg-slate-100')
                             : 'border-transparent'
                             }`}
                     >

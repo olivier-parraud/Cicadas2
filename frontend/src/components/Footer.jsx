@@ -1,6 +1,7 @@
 // components/Footer.jsx
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import { MapPin, Mail, Phone, MessageSquare, Camera } from 'lucide-react';
 
 function Footer() {
     const { t } = useTranslation();
@@ -10,19 +11,28 @@ function Footer() {
                 
                 {/* Column 1: Brand Info */}
                 <div className="space-y-4">
-                    <h3 className="text-xl font-bold tracking-wider text-white">
+                    <h3 className="text-xl font-brand">
                         Cicados
                     </h3>
                     <p className="font-light text-slate-400">
                         Votre café-boutique de jeux de société et TCG favori au cœur de Paris. Venez jouer, boire un verre et partager votre passion !
                     </p>
                     <div className="space-y-2 text-xs font-light text-slate-400">
-                        <p>📍 42 Rue du Cyber-Jeu, 75011 Paris</p>
-                        <p>✉️ contact@cicados.fr</p>
-                        <p>📞 +33 1 42 42 42 42</p>
+                        <p className="flex items-center gap-2">
+                            <MapPin className="w-4 h-4 text-indigo-400 shrink-0" />
+                            <span>42 Rue du Cyber-Jeu, 75011 Paris</span>
+                        </p>
+                        <p className="flex items-center gap-2">
+                            <Mail className="w-4 h-4 text-indigo-400 shrink-0" />
+                            <span>contact@cicados.fr</span>
+                        </p>
+                        <p className="flex items-center gap-2">
+                            <Phone className="w-4 h-4 text-indigo-400 shrink-0" />
+                            <span>+33 1 42 42 42 42</span>
+                        </p>
                     </div>
                 </div>
-
+ 
                 {/* Column 2: Navigation Links */}
                 <div className="space-y-4">
                     <h3 className="text-base font-bold uppercase tracking-wider text-indigo-300">
@@ -35,7 +45,7 @@ function Footer() {
                         <Link to="/tournaments" className="hover:text-indigo-300 transition-colors w-fit">Tournois</Link>
                     </nav>
                 </div>
-
+ 
                 {/* Column 3: Hours & Socials */}
                 <div className="space-y-4">
                     <h3 className="text-base font-bold uppercase tracking-wider text-indigo-300">
@@ -49,17 +59,17 @@ function Footer() {
                         <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Rejoignez-nous</h4>
                         <div className="flex gap-4 items-center">
                             <a href="https://discord.gg" target="_blank" rel="noopener noreferrer" className="bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-300 border border-indigo-500/20 py-1.5 px-3.5 rounded-xl font-bold transition text-xs flex items-center gap-1.5 shadow-none">
-                                💬 Discord
+                                <MessageSquare className="w-4 h-4" /> Discord
                             </a>
                             <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-300 border border-indigo-500/20 py-1.5 px-3.5 rounded-xl font-bold transition text-xs flex items-center gap-1.5 shadow-none">
-                                📷 Instagram
+                                <Camera className="w-4 h-4" /> Instagram
                             </a>
                         </div>
                     </div>
                 </div>
-
+ 
             </div>
-
+ 
             {/* Bottom Copyright Bar */}
             <div className="max-w-7xl mx-auto px-4 md:px-8 border-t border-slate-900 mt-10 pt-6 text-center text-xs text-slate-500 font-light">
                 <p>

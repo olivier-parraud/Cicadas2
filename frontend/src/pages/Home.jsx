@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { Calendar, Trophy, Users } from 'lucide-react';
 import Button from '../components/Button';
 import BoardGameCard from '../components/BoardGameCard';
 import TournamentCard from '../components/TournamentCard';
@@ -288,8 +289,8 @@ function Home() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                     {/* Feature 1 */}
                     <div className="bg-white p-8 rounded-2xl border border-slate-100 shadow-sm hover:shadow-xl hover:border-indigo-100 transition-all duration-300 group">
-                        <div className="w-14 h-14 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center mb-6 text-2xl font-semibold shadow-inner group-hover:bg-indigo-600 group-hover:text-white transition-colors duration-300">
-                            📅
+                        <div className="w-14 h-14 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center mb-6 shadow-inner group-hover:bg-indigo-600 group-hover:text-white transition-colors duration-300">
+                            <Calendar className="w-6 h-6" />
                         </div>
                         <h3 className="text-xl font-bold text-slate-900 mb-3 group-hover:text-indigo-600 transition-colors">
                             {t('home_page.features.items.booking.title')}
@@ -301,8 +302,8 @@ function Home() {
 
                     {/* Feature 2 */}
                     <div className="bg-white p-8 rounded-2xl border border-slate-100 shadow-sm hover:shadow-xl hover:border-indigo-100 transition-all duration-300 group">
-                        <div className="w-14 h-14 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center mb-6 text-2xl font-semibold shadow-inner group-hover:bg-indigo-600 group-hover:text-white transition-colors duration-300">
-                            🏆
+                        <div className="w-14 h-14 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center mb-6 shadow-inner group-hover:bg-indigo-600 group-hover:text-white transition-colors duration-300">
+                            <Trophy className="w-6 h-6" />
                         </div>
                         <h3 className="text-xl font-bold text-slate-900 mb-3 group-hover:text-indigo-600 transition-colors">
                             {t('home_page.features.items.tournaments.title')}
@@ -314,8 +315,8 @@ function Home() {
 
                     {/* Feature 3 */}
                     <div className="bg-white p-8 rounded-2xl border border-slate-100 shadow-sm hover:shadow-xl hover:border-indigo-100 transition-all duration-300 group">
-                        <div className="w-14 h-14 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center mb-6 text-2xl font-semibold shadow-inner group-hover:bg-indigo-600 group-hover:text-white transition-colors duration-300">
-                            👥
+                        <div className="w-14 h-14 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center mb-6 shadow-inner group-hover:bg-indigo-600 group-hover:text-white transition-colors duration-300">
+                            <Users className="w-6 h-6" />
                         </div>
                         <h3 className="text-xl font-bold text-slate-900 mb-3 group-hover:text-indigo-600 transition-colors">
                             {t('home_page.features.items.groups.title')}
@@ -390,7 +391,7 @@ function Home() {
                 <div className="max-w-7xl mx-auto py-20 px-4 border-t border-slate-200">
                     <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
                         <span className="inline-flex items-center gap-1.5 py-1 px-3 rounded-full text-xs font-semibold bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
-                            📅 {t('home_page.upcoming_badge', 'Prochains Événements & Tournois')}
+                            <Calendar className="w-3.5 h-3.5" /> {t('home_page.upcoming_badge', 'Prochains Événements & Tournois')}
                         </span>
                         <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-slate-900">
                             {t('home_page.upcoming_title', 'Nos Prochains Rendez-vous')}
@@ -427,15 +428,15 @@ function Home() {
                     <div className="text-center mt-12 flex justify-center gap-6">
                         <Link
                             to="/events"
-                            className="inline-flex items-center gap-2 text-sm font-bold text-indigo-600 hover:text-indigo-700 transition"
+                            className="inline-flex items-center gap-1.5 text-sm font-bold text-indigo-600 hover:text-indigo-700 transition"
                         >
-                            📅 {t('home_page.upcoming_all_events', 'Tous les Événements')}
+                            <Calendar className="w-4 h-4" /> {t('home_page.upcoming_all_events', 'Tous les Événements')}
                         </Link>
                         <Link
                             to="/tournaments"
-                            className="inline-flex items-center gap-2 text-sm font-bold text-indigo-600 hover:text-indigo-700 transition"
+                            className="inline-flex items-center gap-1.5 text-sm font-bold text-indigo-600 hover:text-indigo-700 transition"
                         >
-                            🏆 {t('home_page.upcoming_all_tournaments', 'Tous les Tournois')}
+                            <Trophy className="w-4 h-4" /> {t('home_page.upcoming_all_tournaments', 'Tous les Tournois')}
                         </Link>
                     </div>
                 </div>
