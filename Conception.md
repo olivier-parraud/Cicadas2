@@ -12,6 +12,8 @@
 
 1. [Présentation du projet](#1--présentation-du-projet)
 2. [Architecture technique](#2--architecture-technique)
+   - 2.1 [Technologies utilisées](#technologies-utilisées)
+   - 2.2 [Gestion des variables d'environnement (.env)](#22-gestion-des-variables-denvironnement-env)
 3. [Structure des fichiers](#3--structure-des-fichiers)
 4. [Base de données](#4--base-de-données)
 5. [Backend — API REST Node.js / Express](#5--backend--api-rest-nodejs--express)
@@ -22,7 +24,8 @@
    - 5.5 [Middlewares de protection](#55-middlewares-de-protection)
    - 5.6 [Système de réservation avec détection de conflits](#56-système-de-réservation-avec-détection-de-conflits)
    - 5.7 [Gestion des tournois](#57-gestion-des-tournois)
-   - 5.8 [Importation automatique depuis BoardGameGeek](#58-importation-automatique-depuis-boardgamegeek)
+   - 5.8 [Intégration et API Proxy de BoardGameGeek](#58-intégration-et-api-proxy-de-boardgamegeek)
+   - 5.9 [Liste complète des Endpoints de l'API REST](#59-liste-complète-des-endpoints-de-lapi-rest)
 6. [Frontend — React.js (Vite)](#6--frontend--reactjs-vite)
    - 6.1 [Point d'entrée et routage](#61-point-dentrée-et-routage)
    - 6.2 [Service API centralisé](#62-service-api-centralisé)
@@ -107,6 +110,34 @@ L'application suit une **architecture client-serveur** avec séparation totale d
 | Driver BDD | mysql2 | 3+ | Pool de connexions async |
 | Email | Brevo (Sendinblue) | — | Envoi d'emails transactionnels |
 | Validation | Zod | 4+ | Validation de schémas côté serveur |
+
+
+### 2.2 Gestion des variables d'environnement (`.env`)
+
+Pour sécuriser l'application et séparer la configuration du code source, les informations sensibles (identifiants de base de données, secrets cryptographiques) sont externalisées dans un fichier `.env` à la racine du dossier `backend/`. Ce fichier est exclu du dépôt de code (via `.gitignore`) pour des raisons évidentes de sécurité.
+
+**Exemple de structure de fichier `.env` :**
+```env
+PORT=5050
+DB_HOST=localhost
+DB_PORT=3306
+DB_USER=root
+DB_PASSWORD=root
+DB_NAME=cicados
+JWT_SECRET=super_secret_cle_signature_jwt_987654321
+```
+
+**Chargement et accès en JavaScript :**
+Grâce au package `dotenv` configuré au point d'entrée (`import 'dotenv/config';` dans `server.js`), ces variables sont chargées dans l'objet système global `process.env` au lancement du serveur :
+```javascript
+// Accès aux variables d'environnement
+const dbConfig = {
+    host: process.env.DB_HOST || 'localhost',
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME
+};
+```
 
 ---
 
@@ -523,7 +554,33 @@ export const createReservation = async (req, res) => {
 };
 ```
 
-3. **Modèle** (`reservation.model.js`) : contient la logique SQL et métier pure.
+3. **Modèle** (`reservation.model.js`) : il contient la logique SQL et métier pure de l'application, utilisant des requêtes préparées pour la sécurité :
+
+```javascript
+// models/reservation.model.js
+import { query } from '../config/db.js';
+
+const Reservation = {
+    // Récupérer toutes les réservations d'un utilisateur
+    async findByUserId(userId) {
+        const sql = `
+            SELECT r.*, rm.name as tableName 
+            FROM reservations r
+            JOIN rooms rm ON r.room_id = rm.id
+            WHERE r.user_id = ?
+            ORDER BY r.start_time DESC
+        `;
+        return query(sql, [userId]);
+    },
+
+    // Supprimer (Annuler) une réservation
+    async delete(id, userId) {
+        const sql = `DELETE FROM reservations WHERE id = ? AND user_id = ?`;
+        return query(sql, [id, userId]);
+    }
+};
+export default Reservation;
+```
 
 ---
 
@@ -854,18 +911,95 @@ const Tournament = {
 
 ---
 
-### 5.8 Importation automatique depuis BoardGameGeek
+### 5.8 Intégration et API Proxy de BoardGameGeek
 
-Un script Node.js dédié (`scripts/import-bgg-hot.js`) récupère les jeux de société populaires depuis l'**API publique de BoardGameGeek (BGG)** et traduit automatiquement les descriptions en français via l'API Google Translate :
+Pour enrichir le catalogue de jeux de société de l'application sans saisie manuelle fastidieuse, le projet s'intègre avec l'API publique de **BoardGameGeek (BGG)**. 
 
-**Flux d'importation :**
-1. Appel à l'API XML de BGG (`https://boardgamegeek.com/xmlapi2/hot?type=boardgame`)
-2. Parsing du XML en JSON avec `fast-xml-parser`
-3. Récupération des détails de chaque jeu (nombre de joueurs, temps de jeu, etc.)
-4. Traduction automatique des descriptions de l'anglais vers le français
-5. Insertion/mise à jour dans la table `board_games`
+#### Pourquoi un Proxy Backend pour BGG ?
+Le frontend ne peut pas interroger directement l'API de BGG pour deux raisons fondamentales :
+1. **CORS (Cross-Origin Resource Sharing)** : L'API de BoardGameGeek ne renvoie pas les en-têtes CORS requis, bloquant les requêtes directes depuis le navigateur (`localhost:5173`).
+2. **Format de données** : BGG renvoie les données exclusivement au format **XML**. Faire le parsing XML ➔ JSON côté client alourdirait l'application frontend.
 
-L'exécution est parallélisée (10 requêtes simultanées) pour des performances optimales.
+#### Implémentation du Proxy (`bgg.controller.js`)
+Le contrôleur backend agit comme un relais HTTP. Il interroge l'API XML2 de BGG, convertit le flux XML reçu en objet JSON propre grâce à `fast-xml-parser`, puis renvoie le résultat au client.
+
+```javascript
+// controllers/bgg.controller.js
+import { XMLParser } from 'fast-xml-parser';
+
+const BGG_BASE_URL = 'https://boardgamegeek.com/xmlapi2';
+const parser = new XMLParser({
+    ignoreAttributes: false,
+    attributeNamePrefix: '@_',
+    allowBooleanAttributes: true
+});
+
+async function fetchBgg(endpoint, params = {}) {
+    const queryParams = new URLSearchParams(params).toString();
+    const url = `${BGG_BASE_URL}/${endpoint}?${queryParams}`;
+    
+    // Requête HTTP vers BGG
+    const response = await fetch(url);
+    if (!response.ok) {
+        throw new Error(`BGG API returned status ${response.status}`);
+    }
+    
+    const xmlData = await response.text();
+    return xmlData;
+}
+
+export const searchGames = async (req, res) => {
+    try {
+        const { query } = req.query;
+        const xml = await fetchBgg('search', { query, type: 'boardgame' });
+        
+        // Conversion XML vers JSON à la volée
+        const json = parser.parse(xml);
+        res.json(json);
+    } catch (error) {
+        res.status(500).json({ error: 'Erreur lors de la recherche sur BGG' });
+    }
+};
+```
+
+#### Script d'importation massive (`scripts/import-bgg-hot.js`)
+En plus du proxy, un script d'importation en ligne de commande permet de charger automatiquement les 100 jeux de société les plus populaires du moment en boutique :
+1. Le script interroge `/xmlapi2/hot?type=boardgame`.
+2. Il parse le XML et extrait les identifiants uniques (BGG ID) des jeux.
+3. Pour chaque identifiant, il effectue une requête de détails `/xmlapi2/thing?id=...` pour obtenir les images, les temps de jeux et le nombre de joueurs recommandés.
+4. Les descriptions de jeux (en anglais à l'origine) sont soumises à une API de traduction afin d'alimenter la table `board_games` en français.
+
+
+### 5.9 Liste complète des Endpoints de l'API REST
+
+Voici la liste ordonnée et documentée de tous les points d'accès exposés par le serveur Express du backend :
+
+| Module | Méthode HTTP | URL de l'endpoint | Authentification | Rôle requis | Rôle / Utilité |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Auth** | `POST` | `/api/auth/register` | Aucune | — | Crée un compte utilisateur et retourne un token JWT. |
+| **Auth** | `POST` | `/api/auth/login` | Aucune | — | Authentifie un utilisateur et retourne un token JWT. |
+| **Auth** | `GET` | `/api/auth/me` | JWT | `USER` / `ADMIN` | Retourne les informations de profil de l'utilisateur connecté. |
+| **Reservations** | `GET` | `/api/reservations/user` | JWT | `USER` / `ADMIN` | Récupère la liste des réservations de l'utilisateur connecté. |
+| **Reservations** | `POST` | `/api/reservations` | JWT | `USER` / `ADMIN` | Crée une réservation de table avec allocation automatique. |
+| **Reservations** | `PUT` | `/api/reservations/:id` | JWT | `USER` / `ADMIN` | Modifie une réservation (date, heure, jeu, joueurs). |
+| **Reservations** | `DELETE` | `/api/reservations/:id` | JWT | `USER` / `ADMIN` | Annule définitivement une réservation de table. |
+| **Reservations** | `GET` | `/api/reservations/availability` | Aucune | — | Récupère le taux d'occupation des tables pour une date. |
+| **Tournaments** | `GET` | `/api/tournaments` | Aucune | — | Récupère la liste de tous les tournois à venir. |
+| **Tournaments** | `POST` | `/api/tournaments/:id/register` | JWT | `USER` / `ADMIN` | Inscrit l'utilisateur connecté à un tournoi. |
+| **Tournaments** | `DELETE` | `/api/tournaments/:id/unregister` | JWT | `USER` / `ADMIN` | Désinscrit l'utilisateur connecté d'un tournoi. |
+| **Board Games** | `GET` | `/api/boardgames` | Aucune | — | Liste tous les jeux de société enregistrés en boutique. |
+| **BGG Proxy** | `GET` | `/api/bgg/search` | Aucune | — | Proxy de recherche de jeux de société sur BoardGameGeek. |
+| **BGG Proxy** | `GET` | `/api/bgg/thing` | Aucune | — | Proxy de détails d'un jeu de société BoardGameGeek. |
+| **Admin** | `GET` | `/api/admin/users` | JWT | `ADMIN` | Liste l'ensemble des comptes utilisateurs enregistrés. |
+| **Admin** | `PUT` | `/api/admin/users/:id/role` | JWT | `ADMIN` | Modifie le rôle d'un utilisateur (promeut ou destitue). |
+| **Admin** | `DELETE` | `/api/admin/users/:id` | JWT | `ADMIN` | Supprime définitivement un compte utilisateur. |
+| **Admin** | `GET` | `/api/admin/reservations` | JWT | `ADMIN` | Récupère l'ensemble des réservations système. |
+| **Admin** | `PUT` | `/api/admin/reservations/:id/status` | JWT | `ADMIN` | Modifie le statut d'une réservation (Confirmer / Annuler). |
+| **Admin** | `POST` | `/api/admin/tournaments` | JWT | `ADMIN` | Publie un nouveau tournoi de cartes ou de plateau. |
+| **Admin** | `DELETE` | `/api/admin/tournaments/:id` | JWT | `ADMIN` | Supprime définitivement un tournoi et ses inscriptions. |
+| **Admin** | `POST` | `/api/admin/boardgames` | JWT | `ADMIN` | Ajoute manuellement un nouveau jeu de société au catalogue. |
+| **Admin** | `DELETE` | `/api/admin/boardgames/:id` | JWT | `ADMIN` | Retire un jeu de société de la boutique. |
+| **Admin** | `POST` | `/api/admin/boardgames/import-bgg-hot` | JWT | `ADMIN` | Déclenche l'import des 100 jeux populaires depuis BGG. |
 
 ---
 
@@ -909,18 +1043,28 @@ ReactDOM.createRoot(document.getElementById('root')).render(
 );
 ```
 
-#### Routeur principal (`App.jsx`)
+#### Routeur principal (`App.jsx`) et Architecture de Layout
 
-Le routeur utilise **React Router v6** avec un layout imbriqué (nested routes) :
+L'application est configurée comme une **Single Page Application (SPA)**. Côté client, la navigation est gérée de manière fluide par le routeur déclaratif **React Router v6** :
 
 ```jsx
 // App.jsx
 import { Routes, Route, Navigate } from 'react-router-dom';
 import MainLayout from './layouts/MainLayout.jsx';
+import Home from './pages/Home.jsx';
+import Login from './pages/Login.jsx';
+import Register from './pages/Register.jsx';
+import Reservations from './pages/Reservations.jsx';
+import Tournaments from './pages/Tournaments.jsx';
+import Events from './pages/Events.jsx';
+import DashboardAdmin from './pages/DashboardAdmin.jsx';
+import BoardGames from './pages/BoardGames.jsx';
+import MyReservations from './pages/MyReservations.jsx';
 
 function App() {
   return (
     <Routes>
+      {/* Route de Layout parente */}
       <Route element={<MainLayout />}>
         <Route path="/"               element={<Home />} />
         <Route path="/login"          element={<Login />} />
@@ -929,18 +1073,50 @@ function App() {
         <Route path="/my-reservations" element={<MyReservations />} />
         <Route path="/boardgames"     element={<BoardGames />} />
         <Route path="/tournaments"    element={<Tournaments />} />
+        <Route path="/events"         element={<Events />} />
         <Route path="/admin"          element={<DashboardAdmin />} />
       </Route>
+      {/* Redirection automatique pour les URL inconnues */}
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>
   );
 }
+export default App;
 ```
 
-**Points techniques :**
-- Le **`MainLayout`** englobe toutes les pages avec le Header et le Footer communs.
-- La route `path="*"` est un **catch-all** qui redirige toute URL inconnue vers la page d'accueil.
-- Les pages sont chargées de manière **synchrone** (pas de lazy loading pour simplifier le déploiement).
+#### Imbrication et Gabarit (`MainLayout.jsx`)
+Pour éviter la duplication des éléments structurels récurrents (comme la barre de navigation et le pied de page), l'application implémente le patron des **routes imbriquées** (nested routing). Le composant `MainLayout` sert de gabarit général :
+
+```jsx
+// layouts/MainLayout.jsx
+import { Outlet } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
+import Header from '../components/Header.jsx';
+import Footer from '../components/Footer.jsx';
+
+function MainLayout() {
+    return (
+        <div className="flex flex-col min-h-screen">
+            {/* Notifications toast configurées globalement */}
+            <Toaster position="top-right" reverseOrder={false} />
+            
+            {/* Composants de structure persistants */}
+            <Header />
+            
+            {/* L'Outlet indique à React Router où afficher la page active */}
+            <main className="flex-grow">
+                <Outlet />
+            </main>
+            
+            <Footer />
+        </div>
+    );
+}
+export default MainLayout;
+```
+
+**Rôle de `<Outlet />` :**
+C'est l'élément clé de React Router. Lorsqu'une URL est résolue (par exemple `/reservations`), React Router charge le composant parent `MainLayout`, puis insère de façon dynamique le composant enfant correspondant (`Reservations.jsx`) à l'emplacement exact de la balise `<Outlet />`. Cela permet de préserver l'état de l'en-tête (Header) ou du panier de notifications (Toaster) d'une page à l'autre sans rechargement complet du DOM.
 
 ---
 
