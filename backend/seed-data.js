@@ -129,7 +129,41 @@ async function seed() {
                     );
                     resCount++;
                 }
-                console.log(`✅ ${resCount} réservations de tables insérées.\n`);
+
+                // Reserve 4 board games + 1 BYOG (Total of 5)
+                const extraGames = [
+                    { type: 'BOARD_GAME', name: '7 Wonders', players: 4 },
+                    { type: 'BOARD_GAME', name: 'Azul', players: 3 },
+                    { type: 'BOARD_GAME', name: 'Carcassonne Big Box 6', players: 2 },
+                    { type: 'BOARD_GAME', name: 'Codenames', players: 6 },
+                    { type: 'BYOG', name: "J'apporte mon jeu", players: 4 }
+                ];
+
+                for (let j = 0; j < extraGames.length; j++) {
+                    const game = extraGames[j];
+                    const date = '2026-07-15'; // Day after
+                    const time = `1${4 + (j % 3)}:00`; // 14:00, 15:00, 16:00
+                    const startTime = `${date} ${time}:00`;
+                    
+                    const startObj = new Date(startTime);
+                    startObj.setHours(startObj.getHours() + 2);
+                    const endYear = startObj.getFullYear();
+                    const endMonth = String(startObj.getMonth() + 1).padStart(2, '0');
+                    const endDay = String(startObj.getDate()).padStart(2, '0');
+                    const endHour = String(startObj.getHours()).padStart(2, '0');
+                    const endMin = String(startObj.getMinutes()).padStart(2, '0');
+                    const endTime = `${endYear}-${endMonth}-${endDay} ${endHour}:${endMin}:00`;
+
+                    const roomIdx = (gameTypes.length + j) % rooms.length;
+
+                    await conn.execute(
+                        "INSERT INTO reservations (user_id, room_id, start_time, end_time, game_type, status, specific_game, players_count) VALUES (?, ?, ?, ?, ?, 'CONFIRMED', ?, ?)",
+                        [adminId, rooms[roomIdx].id, startTime, endTime, game.type, game.name, game.players]
+                    );
+                    resCount++;
+                }
+
+                console.log(`✅ ${resCount} réservations de tables insérées (incluant tous les TCG et 5 jeux de société / BYOG).\n`);
             }
         }
 
