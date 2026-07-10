@@ -8,11 +8,12 @@ import {
     deleteUser,
     createTournament,
     deleteTournament,
+    updateTournament,
     createBoardGame,
     deleteBoardGame,
     importBggHotGames
 } from '../controllers/admin.controller.js';
-import { createEvent, deleteEvent } from '../controllers/event.controller.js';
+import { createEvent, deleteEvent, updateEvent } from '../controllers/event.controller.js';
 import authMiddleware from '../middlewares/auth.middleware.js';
 import adminMiddleware from '../middlewares/admin.middleware.js';
 import multer from 'multer';
@@ -65,10 +66,12 @@ router.delete('/users/:id', deleteUser);
 
 // Tournois
 router.post('/tournaments', createTournament);
+router.put('/tournaments/:id', updateTournament);
 router.delete('/tournaments/:id', deleteTournament);
 
 // Événements (avant-premières, drafts, initiations)
 router.post('/events', createEvent);
+router.put('/events/:id', updateEvent);
 router.delete('/events/:id', deleteEvent);
 
 // Jeux de société

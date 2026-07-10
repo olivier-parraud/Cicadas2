@@ -141,6 +141,32 @@ export const deleteTournament = async (req, res) => {
     }
 };
 
+// Modifier un tournoi
+export const updateTournament = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { name, game, date, capacity, price, description } = req.body;
+
+        if (!name || !game || !date || !capacity) {
+            return res.status(400).json({ error: "Nom, jeu, date et capacité requis." });
+        }
+
+        await Tournament.update(id, {
+            name,
+            game,
+            date,
+            capacity,
+            price: price || 0.00,
+            description: description || null
+        });
+
+        res.json({ message: "Tournoi mis à jour avec succès !" });
+    } catch (error) {
+        console.error("Erreur modification tournoi :", error);
+        res.status(500).json({ error: "Erreur de modification du tournoi." });
+    }
+};
+
 // --- GESTION DES JEUX DE SOCIÉTÉ ---
 
 // Créer un nouveau jeu de société

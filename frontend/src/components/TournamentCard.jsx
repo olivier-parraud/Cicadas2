@@ -12,6 +12,7 @@ function TournamentCard({
     onToggleParticipants,
     onAction,
     onLoginRedirect,
+    onEdit = null,
     t,
     i18n,
     theme = 'light', // 'light' or 'dark'
@@ -106,14 +107,14 @@ function TournamentCard({
     // Styling configuration (supports light and dark themes)
     const isDark = theme === 'dark';
     const cardBgClass = isDark
-        ? 'bg-[#110f24] border-white/5 hover:border-indigo-500/30 hover:shadow-2xl hover:shadow-indigo-500/5 text-slate-350'
+        ? 'bg-[#130f25]/45 backdrop-blur-md border-white/5 hover:border-[#F4AF23]/30 hover:shadow-2xl hover:shadow-[#F4AF23]/5 text-slate-300'
         : 'bg-white border-slate-100 hover:border-indigo-150 hover:shadow-xl text-slate-850';
-    const titleClass = isDark ? 'text-white group-hover:text-indigo-400' : 'text-slate-950 group-hover:text-indigo-650';
+    const titleClass = isDark ? 'text-white group-hover:text-[#F4AF23]' : 'text-slate-950 group-hover:text-indigo-650';
     const descClass = isDark ? 'text-slate-400' : 'text-slate-650';
     const detailTextClass = isDark ? 'text-slate-400' : 'text-slate-600';
-    const listTriggerClass = isDark ? 'text-slate-400 hover:text-indigo-400' : 'text-slate-500 hover:text-indigo-600';
-    const listContainerClass = isDark ? 'bg-[#161430] border-white/5' : 'bg-slate-50 border-slate-200/50';
-    const listItemClass = isDark ? 'bg-[#1d1b3e] text-slate-300 border-white/5' : 'bg-white text-slate-700 border-slate-200/50';
+    const listTriggerClass = isDark ? 'text-slate-400 hover:text-[#F4AF23]' : 'text-slate-500 hover:text-[#F4AF23]';
+    const listContainerClass = isDark ? 'bg-[#0a0715] border-white/5' : 'bg-slate-50 border-slate-200/50';
+    const listItemClass = isDark ? 'bg-[#150f29] text-slate-300 border-white/5' : 'bg-white text-slate-700 border-slate-200/50';
     const subBorderClass = isDark ? 'border-white/5' : 'border-slate-100';
 
     // Buttons actions configurations
@@ -156,7 +157,7 @@ function TournamentCard({
                                 </span>
                             )}
                         </div>
-                        <span className="text-xs font-extrabold text-indigo-500 bg-indigo-500/10 py-1 px-2.5 rounded-lg font-mono border border-indigo-500/20">
+                        <span className="text-xs font-extrabold text-[#F4AF23] bg-[#F4AF23]/10 py-1 px-2.5 rounded-lg font-mono border border-[#F4AF23]/20">
                             {activity.price === 0 || activity.price === "0.00"
                                 ? (isEvent ? t('events_page.price_free') : t('tournaments_page.free'))
                                 : `${Number(activity.price).toFixed(2)}€`}
@@ -240,16 +241,27 @@ function TournamentCard({
             </div>
 
             {/* Action button */}
-            <div className={`p-6 md:p-8 pt-0 border-t flex items-center justify-between gap-4 ${subBorderClass}`}>
+            <div className={`p-6 md:p-8 pt-0 border-t flex items-center justify-between gap-3 ${subBorderClass}`}>
                 {isAdmin ? (
-                    <Button
-                        variant="danger"
-                        onClick={onAction}
-                        loading={actionLoading}
-                        className="w-full"
-                    >
-                        Supprimer
-                    </Button>
+                    <div className="flex gap-3 w-full">
+                        {onEdit && (
+                            <Button
+                                variant={isDark ? "secondary-dark" : "secondary"}
+                                onClick={onEdit}
+                                className="flex-1 text-xs"
+                            >
+                                Modifier
+                            </Button>
+                        )}
+                        <Button
+                            variant="danger"
+                            onClick={onAction}
+                            loading={actionLoading}
+                            className="flex-1 text-xs"
+                        >
+                            Supprimer
+                        </Button>
+                    </div>
                 ) : !isAuthenticated ? (
                     <Button
                         variant={isDark ? "secondary-dark" : "secondary"}

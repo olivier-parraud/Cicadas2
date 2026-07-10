@@ -70,19 +70,7 @@ function EventCard({
     const formatRoomName = (roomName, gameType) => {
         if (!roomName) return 'Table Standard';
         const match = roomName.match(/Table\s+\d+/i);
-        const prefix = match ? match[0] : roomName;
-
-        if (gameType === 'BYOG') {
-            return prefix;
-        }
-
-        const isTcg = ['MTG', 'POKEMON', 'ONE_PIECE', 'YUGIOH', 'LORCANA', 'STAR_WARS', 'FINAL_FF', 'ALTERED', 'DBS'].includes(gameType);
-        if (isTcg) {
-            return `${prefix} (TCG)`;
-        } else if (gameType === 'BOARD_GAME') {
-            return `${prefix} (Jeux de société)`;
-        }
-        return roomName;
+        return match ? match[0] : roomName;
     };
 
     const getGameColorClass = (game) => {
@@ -134,7 +122,7 @@ function EventCard({
         const imageUrl = reservation.boardgame_image_url || getGameImage(reservation.game_type, reservation.specific_game);
 
         return (
-            <div className="rounded-3xl border flex flex-col justify-between overflow-hidden transition-all duration-300 group bg-white border-slate-100 hover:border-indigo-150 hover:shadow-xl text-slate-800">
+            <div className="rounded-3xl border flex flex-col justify-between overflow-hidden transition-all duration-300 group bg-[#130f25]/45 backdrop-blur-md border-white/5 hover:border-[#F4AF23]/30 hover:shadow-2xl hover:shadow-[#F4AF23]/5 text-slate-300">
                 <div>
                     {/* Header Image */}
                     <div className="h-44 w-full overflow-hidden bg-slate-950 relative">
@@ -153,13 +141,13 @@ function EventCard({
                             <span className={`inline-flex items-center gap-1.5 py-0.5 px-2.5 rounded-full text-[10px] font-bold border ${getGameColorClass(resGameName)}`}>
                                 {resGameName}
                             </span>
-                            <span className="text-xs font-bold bg-slate-50 border border-slate-150 py-1 px-2.5 rounded-lg flex items-center gap-1.5 text-slate-700">
+                            <span className="text-xs font-bold bg-[#191428] border border-white/5 py-1 px-2.5 rounded-lg flex items-center gap-1.5 text-slate-300">
                                 {formatRoomName(reservation.room_name, reservation.game_type)}
                             </span>
                         </div>
 
                         {/* Title */}
-                        <h3 className="text-xl font-extrabold tracking-tight transition-colors text-slate-950 group-hover:text-indigo-650">
+                        <h3 className="text-xl font-extrabold tracking-tight transition-colors text-white group-hover:text-[#F4AF23]">
                             {reservation.specific_game || resGameName}
                         </h3>
 
@@ -247,7 +235,7 @@ function EventCard({
     const actionFullLabel = t('events_page.btn_full');
 
     return (
-        <div className="rounded-3xl border flex flex-col justify-between overflow-hidden transition-all duration-300 group bg-white border-slate-100 hover:border-indigo-150 hover:shadow-xl text-slate-800">
+        <div className="rounded-3xl border flex flex-col justify-between overflow-hidden transition-all duration-300 group bg-[#130f25]/45 backdrop-blur-md border-white/5 hover:border-[#F4AF23]/30 hover:shadow-2xl hover:shadow-[#F4AF23]/5 text-slate-300">
             <div>
                 {/* Header Image */}
                 <div className="h-44 w-full overflow-hidden bg-slate-950 relative">
@@ -271,7 +259,7 @@ function EventCard({
                                 {currentType.label}
                             </span>
                         </div>
-                        <span className="text-xs font-extrabold text-indigo-500 bg-indigo-500/10 py-1 px-2.5 rounded-lg font-mono border border-indigo-500/20">
+                        <span className="text-xs font-extrabold text-[#F4AF23] bg-[#F4AF23]/10 py-1 px-2.5 rounded-lg font-mono border border-[#F4AF23]/20">
                             {event.price === 0 || event.price === "0.00"
                                 ? t('events_page.price_free')
                                 : `${Number(event.price).toFixed(2)}€`}
@@ -279,12 +267,12 @@ function EventCard({
                     </div>
 
                     {/* Event title */}
-                    <h3 className="text-xl font-extrabold tracking-tight transition-colors text-slate-950 group-hover:text-indigo-650">
+                    <h3 className="text-xl font-extrabold tracking-tight transition-colors text-white group-hover:text-[#F4AF23]">
                         {event.name}
                     </h3>
 
                     {/* Date and spots left */}
-                    <div className="space-y-2 text-xs font-light text-slate-600">
+                    <div className="space-y-2 text-xs font-light text-slate-400">
                         <div className="flex items-center gap-2.5">
                             <Calendar className="w-4 h-4 text-indigo-400 shrink-0" />
                             <span className="capitalize">{formattedDate}</span>

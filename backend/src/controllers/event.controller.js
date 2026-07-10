@@ -150,3 +150,34 @@ export const deleteEvent = async (req, res) => {
         res.status(500).json({ error: "Impossible de supprimer l'événement." });
     }
 };
+
+// Modifier un événement (Admin)
+export const updateEvent = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { name, type, game, date, capacity, price, description } = req.body;
+
+        if (!name || !type || !game || !date || !capacity) {
+            return res.status(400).json({ error: "Veuillez remplir tous les champs obligatoires." });
+        }
+
+        if (!['avant_premiere', 'draft', 'initiation'].includes(type)) {
+            return res.status(400).json({ error: "Type d'événement invalide." });
+        }
+
+        await Event.update(id, {
+            name,
+            type,
+            game,
+            date,
+            capacity: parseInt(capacity, 10),
+            price: parseFloat(price || 0),
+            description
+        });
+
+        res.json({ message: "Événement mis à jour avec succès !" });
+    } catch (error) {
+        console.error("Erreur modification événement :", error);
+        res.status(500).json({ error: "Impossible de modifier l'événement." });
+    }
+};

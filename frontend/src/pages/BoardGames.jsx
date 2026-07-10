@@ -64,14 +64,14 @@ function BoardGames() {
     });
 
     return (
-        <div className="min-h-screen bg-slate-50 text-slate-800 selection:bg-indigo-600 selection:text-white pb-20">
+        <div className="min-h-screen bg-[#05040a] text-white selection:bg-[#F4AF23] selection:text-[#05040a] pb-20">
             {/* Header Section */}
-            <div className="relative overflow-hidden bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-950 text-white py-20 px-4 border-b border-indigo-900/50 text-center">
-                <div className="absolute top-1/4 left-1/10 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
-                <div className="absolute bottom-1/4 right-1/10 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl pointer-events-none"></div>
+            <div className="relative overflow-hidden bg-gradient-to-br from-black via-[#130f25] to-black text-white py-20 px-4 border-b border-white/5 text-center">
+                <div className="absolute top-1/4 left-1/10 w-96 h-96 bg-[#563D82]/10 rounded-full blur-3xl pointer-events-none"></div>
+                <div className="absolute bottom-1/4 right-1/10 w-96 h-96 bg-[#F4AF23]/5 rounded-full blur-3xl pointer-events-none"></div>
 
                 <div className="max-w-4xl mx-auto space-y-6 relative z-10">
-                    <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight bg-clip-text bg-gradient-to-r from-white via-indigo-100 to-indigo-300 leading-tight">
+                    <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight bg-clip-text bg-gradient-to-r from-white via-[#FFE082] to-[#F4AF23] leading-tight">
                         {t('boardgames_page.title')}
                     </h1>
                     <p className="text-lg text-slate-300 max-w-2xl mx-auto leading-relaxed font-light">
@@ -82,13 +82,13 @@ function BoardGames() {
 
             <div className="max-w-7xl mx-auto py-12 px-4 md:px-8 space-y-8">
                 {error && (
-                    <div className="p-4 rounded-xl text-sm font-semibold max-w-2xl mx-auto border bg-rose-50 border-rose-200 text-rose-800">
+                    <div className="p-4 rounded-xl text-sm font-semibold max-w-2xl mx-auto border bg-rose-500/10 border-rose-500/20 text-rose-300">
                         {error}
                     </div>
                 )}
 
                 {/* Filter and Search Bar */}
-                <div className="bg-white p-6 rounded-3xl border border-slate-200/60 shadow-sm flex flex-col md:flex-row gap-4 items-stretch justify-between">
+                <div className="bg-[#130f25]/45 p-6 rounded-3xl border border-white/5 shadow-sm flex flex-col md:flex-row gap-4 items-stretch justify-between">
                     {/* Search Field */}
                     <div className="flex-1 min-w-[250px]">
                         <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">{t('boardgames_page.search_label')}</label>
@@ -97,7 +97,7 @@ function BoardGames() {
                             placeholder={t('boardgames_page.search_placeholder')}
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full py-2.5 px-4 rounded-xl text-sm border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-colors"
+                            className="w-full py-2.5 px-4 rounded-xl text-sm border border-white/5 bg-[#0c0919] text-white focus:outline-none focus:border-[#F4AF23]/50 transition-colors"
                         />
                     </div>
 
@@ -107,7 +107,7 @@ function BoardGames() {
                         <select
                             value={selectedCategory}
                             onChange={(e) => setSelectedCategory(e.target.value)}
-                            className="w-full py-2.5 px-4 rounded-xl text-sm border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-colors bg-white"
+                            className="w-full py-2.5 px-4 rounded-xl text-sm border border-white/5 bg-[#0c0919] text-white focus:outline-none focus:border-[#F4AF23]/50 transition-colors"
                         >
                             {categories.map(cat => (
                                 <option key={cat} value={cat}>
@@ -121,12 +121,11 @@ function BoardGames() {
                     <div className="w-full md:w-48">
                         <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">{t('boardgames_page.players_label')}</label>
                         <input
-                            type="number"
+                            type="text"
                             placeholder={t('boardgames_page.players_placeholder')}
-                            min="1"
                             value={playersFilter}
                             onChange={(e) => setPlayersFilter(e.target.value)}
-                            className="w-full py-2.5 px-4 rounded-xl text-sm border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-colors"
+                            className="w-full py-2.5 px-4 rounded-xl text-sm border border-white/5 bg-[#0c0919] text-white focus:outline-none focus:border-[#F4AF23]/50 transition-colors"
                         />
                     </div>
                 </div>
@@ -134,14 +133,14 @@ function BoardGames() {
                 {/* Loading State */}
                 {loading ? (
                     <div className="text-center py-20 space-y-4">
-                        <div className="w-10 h-10 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
-                        <p className="text-slate-500 text-sm">{t('boardgames_page.loading')}</p>
+                        <div className="w-10 h-10 border-4 border-[#F4AF23] border-t-transparent rounded-full animate-spin mx-auto"></div>
+                        <p className="text-slate-400 text-sm">{t('boardgames_page.loading')}</p>
                     </div>
                 ) : filteredGames.length === 0 ? (
-                    <div className="bg-white p-12 rounded-3xl border border-slate-200/60 text-center max-w-xl mx-auto space-y-4 shadow-sm">
+                    <div className="bg-[#130f25]/45 p-12 rounded-3xl border border-white/5 text-center max-w-xl mx-auto space-y-4 shadow-sm">
                         <span className="text-4xl">🎲</span>
-                        <h3 className="text-lg font-bold text-slate-900">{t('boardgames_page.no_game')}</h3>
-                        <p className="text-slate-500 font-light text-sm">
+                        <h3 className="text-lg font-bold text-white">{t('boardgames_page.no_game')}</h3>
+                        <p className="text-slate-400 font-light text-sm">
                             {t('boardgames_page.no_game_desc')}
                         </p>
                     </div>

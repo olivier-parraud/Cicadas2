@@ -178,19 +178,19 @@ function Home() {
     };
 
     return (
-        <div className="min-h-screen bg-slate-50 text-slate-800 selection:bg-indigo-600 selection:text-white">
+        <div className="min-h-screen bg-[#05040a] text-white selection:bg-[#F4AF23] selection:text-[#05040a]">
             {/* Hero Section */}
-            <div className="relative overflow-hidden bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-950 text-white py-24 md:py-32 px-4 border-b border-indigo-900/50">
+            <div className="relative overflow-hidden bg-gradient-to-br from-black via-[#130f25] to-black text-white py-24 md:py-32 px-4 border-b border-white/5">
                 {/* Decorative glowing circles */}
-                <div className="absolute top-1/4 left-1/10 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
-                <div className="absolute bottom-1/4 right-1/10 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl pointer-events-none"></div>
+                <div className="absolute top-1/4 left-1/10 w-96 h-96 bg-[#563D82]/10 rounded-full blur-3xl pointer-events-none"></div>
+                <div className="absolute bottom-1/4 right-1/10 w-96 h-96 bg-[#F4AF23]/5 rounded-full blur-3xl pointer-events-none"></div>
 
                 <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative z-10">
                     <div className="lg:col-span-7 text-center lg:text-left space-y-6">
-                        <span className="inline-flex items-center gap-1.5 py-1 px-3 rounded-full text-xs font-semibold bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
+                        <span className="inline-flex items-center gap-1.5 py-1 px-3 rounded-full text-xs font-semibold bg-[#F4AF23]/10 text-[#F4AF23] border border-[#F4AF23]/20">
                             ✨ Espace de jeu & Tournois TCG
                         </span>
-                        <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight bg-clip-text bg-gradient-to-r from-white via-indigo-100 to-indigo-300 leading-tight">
+                        <h1 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight bg-clip-text bg-gradient-to-r from-white via-[#FFE082] to-[#F4AF23] leading-tight">
                             {t('home_page.hero.title')}
                         </h1>
                         <p className="text-lg md:text-xl text-slate-300 max-w-2xl mx-auto lg:mx-0 leading-relaxed font-light">
@@ -200,7 +200,7 @@ function Home() {
                             <Button
                                 size="lg"
                                 onClick={() => navigate('/reservations')}
-                                className="font-semibold text-base py-3.5 px-8 shadow-lg shadow-indigo-600/30 hover:scale-[1.02]"
+                                className="font-extrabold text-base py-3.5 px-8 shadow-lg shadow-amber-500/20 hover:scale-[1.02]"
                             >
                                 {t('home_page.hero.cta')}
                             </Button>
@@ -209,10 +209,10 @@ function Home() {
                     <div className="lg:col-span-5 flex justify-center w-full">
                         <div className="relative group w-full max-w-md lg:max-w-none">
                             {/* Neon border background */}
-                            <div className="absolute -inset-1 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl blur opacity-30 group-hover:opacity-50 transition duration-1000"></div>
+                            <div className="absolute -inset-1 bg-gradient-to-r from-[#563D82] to-[#F4AF23] rounded-2xl blur opacity-30 group-hover:opacity-50 transition duration-1000"></div>
 
                             {/* Carousel Container */}
-                            <div className="relative bg-slate-900 rounded-2xl overflow-hidden border border-slate-800 shadow-2xl aspect-[4/3] w-full">
+                            <div className="relative bg-black rounded-2xl overflow-hidden border border-white/5 shadow-2xl aspect-[4/3] w-full">
                                 {slides.map((slide, index) => (
                                     <div
                                         key={index}
@@ -230,7 +230,7 @@ function Home() {
                                         />
 
                                         {/* Info Overlay */}
-                                        <div className="absolute bottom-0 left-0 right-0 bg-slate-950/80 backdrop-blur-md p-4 border-t border-indigo-900/40">
+                                        <div className="absolute bottom-0 left-0 right-0 bg-black/85 backdrop-blur-md p-4 border-t border-white/5">
                                             <h4 className="font-bold text-white text-sm tracking-wide">
                                                 {slide.title}
                                             </h4>
@@ -244,14 +244,14 @@ function Home() {
                                 {/* Arrow Navigation */}
                                 <button
                                     onClick={(e) => { e.preventDefault(); setActiveSlide(prev => (prev - 1 + slides.length) % slides.length); }}
-                                    className="absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-slate-950/70 border border-slate-800 flex items-center justify-center text-white hover:bg-indigo-600 transition z-20"
+                                    className="absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/75 border border-white/10 flex items-center justify-center text-white hover:bg-[#563D82] transition z-20"
                                     aria-label="Slide précédent"
                                 >
                                     ❮
                                 </button>
                                 <button
                                     onClick={(e) => { e.preventDefault(); setActiveSlide(prev => (prev + 1) % slides.length); }}
-                                    className="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-slate-950/70 border border-slate-800 flex items-center justify-center text-white hover:bg-indigo-600 transition z-20"
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/75 border border-white/10 flex items-center justify-center text-white hover:bg-[#563D82] transition z-20"
                                     aria-label="Slide suivant"
                                 >
                                     ❯
@@ -278,50 +278,50 @@ function Home() {
             {/* Features Section */}
             <div className="max-w-7xl mx-auto py-20 px-4">
                 <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
-                    <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">
+                    <h2 className="text-3xl md:text-4xl font-extrabold text-white tracking-tight">
                         {t('home_page.features.title')}
                     </h2>
-                    <p className="text-lg text-slate-600 font-light">
+                    <p className="text-lg text-slate-400 font-light">
                         {t('home_page.features.subtitle')}
                     </p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                     {/* Feature 1 */}
-                    <div className="bg-white p-8 rounded-2xl border border-slate-100 shadow-sm hover:shadow-xl hover:border-indigo-100 transition-all duration-300 group">
-                        <div className="w-14 h-14 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center mb-6 shadow-inner group-hover:bg-indigo-600 group-hover:text-white transition-colors duration-300">
+                    <div className="bg-[#130f25]/45 p-8 rounded-2xl border border-white/5 shadow-sm hover:shadow-xl hover:border-[#F4AF23]/30 transition-all duration-300 group">
+                        <div className="w-14 h-14 bg-[#563D82]/10 text-[#F4AF23] border border-[#563D82]/20 rounded-xl flex items-center justify-center mb-6 shadow-inner group-hover:bg-[#563D82] group-hover:text-white transition-colors duration-300">
                             <Calendar className="w-6 h-6" />
                         </div>
-                        <h3 className="text-xl font-bold text-slate-900 mb-3 group-hover:text-indigo-600 transition-colors">
+                        <h3 className="text-xl font-bold text-white mb-3 group-hover:text-[#F4AF23] transition-colors">
                             {t('home_page.features.items.booking.title')}
                         </h3>
-                        <p className="text-slate-600 leading-relaxed font-light">
+                        <p className="text-slate-400 leading-relaxed font-light">
                             {t('home_page.features.items.booking.description')}
                         </p>
                     </div>
 
                     {/* Feature 2 */}
-                    <div className="bg-white p-8 rounded-2xl border border-slate-100 shadow-sm hover:shadow-xl hover:border-indigo-100 transition-all duration-300 group">
-                        <div className="w-14 h-14 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center mb-6 shadow-inner group-hover:bg-indigo-600 group-hover:text-white transition-colors duration-300">
+                    <div className="bg-[#130f25]/45 p-8 rounded-2xl border border-white/5 shadow-sm hover:shadow-xl hover:border-[#F4AF23]/30 transition-all duration-300 group">
+                        <div className="w-14 h-14 bg-[#563D82]/10 text-[#F4AF23] border border-[#563D82]/20 rounded-xl flex items-center justify-center mb-6 shadow-inner group-hover:bg-[#563D82] group-hover:text-white transition-colors duration-300">
                             <Trophy className="w-6 h-6" />
                         </div>
-                        <h3 className="text-xl font-bold text-slate-900 mb-3 group-hover:text-indigo-600 transition-colors">
+                        <h3 className="text-xl font-bold text-white mb-3 group-hover:text-[#F4AF23] transition-colors">
                             {t('home_page.features.items.tournaments.title')}
                         </h3>
-                        <p className="text-slate-600 leading-relaxed font-light">
+                        <p className="text-slate-400 leading-relaxed font-light">
                             {t('home_page.features.items.tournaments.description')}
                         </p>
                     </div>
 
                     {/* Feature 3 */}
-                    <div className="bg-white p-8 rounded-2xl border border-slate-100 shadow-sm hover:shadow-xl hover:border-indigo-100 transition-all duration-300 group">
-                        <div className="w-14 h-14 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center mb-6 shadow-inner group-hover:bg-indigo-600 group-hover:text-white transition-colors duration-300">
+                    <div className="bg-[#130f25]/45 p-8 rounded-2xl border border-white/5 shadow-sm hover:shadow-xl hover:border-[#F4AF23]/30 transition-all duration-300 group">
+                        <div className="w-14 h-14 bg-[#563D82]/10 text-[#F4AF23] border border-[#563D82]/20 rounded-xl flex items-center justify-center mb-6 shadow-inner group-hover:bg-[#563D82] group-hover:text-white transition-colors duration-300">
                             <Users className="w-6 h-6" />
                         </div>
-                        <h3 className="text-xl font-bold text-slate-900 mb-3 group-hover:text-indigo-600 transition-colors">
+                        <h3 className="text-xl font-bold text-white mb-3 group-hover:text-[#F4AF23] transition-colors">
                             {t('home_page.features.items.groups.title')}
                         </h3>
-                        <p className="text-slate-600 leading-relaxed font-light">
+                        <p className="text-slate-400 leading-relaxed font-light">
                             {t('home_page.features.items.groups.description')}
                         </p>
                     </div>
@@ -329,56 +329,56 @@ function Home() {
             </div>
 
             {/* How It Works Section */}
-            <div className="w-full bg-slate-100 border-y border-slate-200 py-20 px-4">
+            <div className="w-full bg-[#0d0b17] border-y border-white/5 py-20 px-4">
                 <div className="max-w-7xl mx-auto">
                     <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
-                        <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">
+                        <h2 className="text-3xl md:text-4xl font-extrabold text-white tracking-tight">
                             {t('home_page.how_it_works.title')}
                         </h2>
-                        <p className="text-lg text-slate-600 font-light">
+                        <p className="text-lg text-slate-400 font-light">
                             {t('home_page.how_it_works.subtitle')}
                         </p>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-12 relative">
                         {/* Connecting line for larger screens */}
-                        <div className="hidden md:block absolute top-1/4 left-[15%] right-[15%] h-0.5 bg-indigo-200/50 -z-0"></div>
+                        <div className="hidden md:block absolute top-1/4 left-[15%] right-[15%] h-0.5 bg-[#563D82]/30 -z-0"></div>
 
                         {/* Step 1 */}
                         <div className="relative z-10 flex flex-col items-center text-center space-y-4 group">
-                            <div className="w-16 h-16 rounded-full bg-indigo-600 text-white font-bold text-xl flex items-center justify-center shadow-lg shadow-indigo-600/20 group-hover:scale-110 transition-transform">
+                            <div className="w-16 h-16 rounded-full bg-[#563D82] text-white font-bold text-xl flex items-center justify-center shadow-lg shadow-[#563D82]/20 group-hover:scale-110 transition-transform">
                                 1
                             </div>
-                            <h3 className="text-xl font-bold text-slate-900">
+                            <h3 className="text-xl font-bold text-white">
                                 {t('home_page.how_it_works.steps.step_1.title')}
                             </h3>
-                            <p className="text-slate-600 text-sm leading-relaxed max-w-xs font-light">
+                            <p className="text-slate-400 text-sm leading-relaxed max-w-xs font-light">
                                 {t('home_page.how_it_works.steps.step_1.description')}
                             </p>
                         </div>
 
                         {/* Step 2 */}
                         <div className="relative z-10 flex flex-col items-center text-center space-y-4 group">
-                            <div className="w-16 h-16 rounded-full bg-indigo-600 text-white font-bold text-xl flex items-center justify-center shadow-lg shadow-indigo-600/20 group-hover:scale-110 transition-transform">
+                            <div className="w-16 h-16 rounded-full bg-[#563D82] text-white font-bold text-xl flex items-center justify-center shadow-lg shadow-[#563D82]/20 group-hover:scale-110 transition-transform">
                                 2
                             </div>
-                            <h3 className="text-xl font-bold text-slate-900">
+                            <h3 className="text-xl font-bold text-white">
                                 {t('home_page.how_it_works.steps.step_2.title')}
                             </h3>
-                            <p className="text-slate-600 text-sm leading-relaxed max-w-xs font-light">
+                            <p className="text-slate-400 text-sm leading-relaxed max-w-xs font-light">
                                 {t('home_page.how_it_works.steps.step_2.description')}
                             </p>
                         </div>
 
                         {/* Step 3 */}
                         <div className="relative z-10 flex flex-col items-center text-center space-y-4 group">
-                            <div className="w-16 h-16 rounded-full bg-indigo-600 text-white font-bold text-xl flex items-center justify-center shadow-lg shadow-indigo-600/20 group-hover:scale-110 transition-transform">
+                            <div className="w-16 h-16 rounded-full bg-[#563D82] text-white font-bold text-xl flex items-center justify-center shadow-lg shadow-[#563D82]/20 group-hover:scale-110 transition-transform">
                                 3
                             </div>
-                            <h3 className="text-xl font-bold text-slate-900">
+                            <h3 className="text-xl font-bold text-white">
                                 {t('home_page.how_it_works.steps.step_3.title')}
                             </h3>
-                            <p className="text-slate-600 text-sm leading-relaxed max-w-xs font-light">
+                            <p className="text-slate-400 text-sm leading-relaxed max-w-xs font-light">
                                 {t('home_page.how_it_works.steps.step_3.description')}
                             </p>
                         </div>
@@ -388,15 +388,15 @@ function Home() {
 
             {/* Upcoming Activities Section */}
             {upcomingEvents.length > 0 && (
-                <div className="max-w-7xl mx-auto py-20 px-4 border-t border-slate-200">
+                <div className="max-w-7xl mx-auto py-20 px-4 border-t border-white/5">
                     <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
-                        <span className="inline-flex items-center gap-1.5 py-1 px-3 rounded-full text-xs font-semibold bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
+                        <span className="inline-flex items-center gap-1.5 py-1 px-3 rounded-full text-xs font-semibold bg-[#F4AF23]/10 text-[#F4AF23] border border-[#F4AF23]/20">
                             <Calendar className="w-3.5 h-3.5" /> {t('home_page.upcoming_badge', 'Prochains Événements & Tournois')}
                         </span>
-                        <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-slate-900">
+                        <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-white">
                             {t('home_page.upcoming_title', 'Nos Prochains Rendez-vous')}
                         </h2>
-                        <p className="text-lg text-slate-600 font-light">
+                        <p className="text-lg text-slate-400 font-light">
                             {t('home_page.upcoming_subtitle', "Rejoignez-nous pour nos soirées Draft, tournois officiels ou séances d'initiation.")}
                         </p>
                     </div>
@@ -428,13 +428,13 @@ function Home() {
                     <div className="text-center mt-12 flex justify-center gap-6">
                         <Link
                             to="/events"
-                            className="inline-flex items-center gap-1.5 text-sm font-bold text-indigo-600 hover:text-indigo-700 transition"
+                            className="inline-flex items-center gap-1.5 text-sm font-bold text-[#F4AF23] hover:text-[#ffbe3b] transition"
                         >
                             <Calendar className="w-4 h-4" /> {t('home_page.upcoming_all_events', 'Tous les Événements')}
                         </Link>
                         <Link
                             to="/tournaments"
-                            className="inline-flex items-center gap-1.5 text-sm font-bold text-indigo-600 hover:text-indigo-700 transition"
+                            className="inline-flex items-center gap-1.5 text-sm font-bold text-[#F4AF23] hover:text-[#ffbe3b] transition"
                         >
                             <Trophy className="w-4 h-4" /> {t('home_page.upcoming_all_tournaments', 'Tous les Tournois')}
                         </Link>
@@ -444,12 +444,12 @@ function Home() {
 
             {/* Featured Board Games Showcase */}
             {featuredGames.length > 0 && (
-                <div className="max-w-7xl mx-auto py-20 px-4 border-t border-slate-200">
+                <div className="max-w-7xl mx-auto py-20 px-4 border-t border-white/5">
                     <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
-                        <span className="inline-flex items-center gap-1.5 py-1 px-3 rounded-full text-xs font-semibold bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
+                        <span className="inline-flex items-center gap-1.5 py-1 px-3 rounded-full text-xs font-semibold bg-[#F4AF23]/10 text-[#F4AF23] border border-[#F4AF23]/20">
                             {t('home_page.featured.badge')}
                         </span>
-                        <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight">
+                        <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-white">
                             {t('home_page.featured.title')}
                         </h2>
                         <p className="text-lg text-slate-400 font-light">
@@ -474,7 +474,7 @@ function Home() {
                     <div className="text-center mt-12">
                         <Link
                             to="/boardgames"
-                            className="inline-flex items-center gap-2 text-sm font-bold text-indigo-300 hover:text-indigo-400 transition"
+                            className="inline-flex items-center gap-2 text-sm font-bold text-[#F4AF23] hover:text-[#ffbe3b] transition"
                         >
                             {t('home_page.featured.view_all')}
                         </Link>
@@ -485,34 +485,34 @@ function Home() {
             {/* Testimonials Section */}
             <div className="max-w-7xl mx-auto py-20 px-4">
                 <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
-                    <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">
+                    <h2 className="text-3xl md:text-4xl font-extrabold text-white tracking-tight">
                         {t('home_page.testimonials.title')}
                     </h2>
-                    <p className="text-lg text-slate-600 font-light">
+                    <p className="text-lg text-slate-400 font-light">
                         {t('home_page.testimonials.subtitle')}
                     </p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                     {Array.isArray(testimonials) && testimonials.map((t, idx) => (
-                        <div key={idx} className="bg-white p-8 rounded-2xl border border-slate-100 shadow-sm flex flex-col justify-between hover:shadow-md transition">
+                        <div key={idx} className="bg-[#130f25]/45 p-8 rounded-2xl border border-white/5 shadow-sm flex flex-col justify-between hover:shadow-md hover:border-[#563D82]/45 transition duration-300">
                             <div className="space-y-4">
                                 <div className="flex text-amber-400 gap-0.5">
                                     {"★★★★★".split("").map((star, i) => (
                                         <span key={i} className="text-xl">{star}</span>
                                     ))}
                                 </div>
-                                <p className="text-slate-600 italic leading-relaxed font-light">
+                                <p className="text-slate-300 italic leading-relaxed font-light">
                                     "{t.quote}"
                                 </p>
                             </div>
-                            <div className="flex items-center gap-4 mt-6 pt-6 border-t border-slate-100">
-                                <div className="w-11 h-11 bg-gradient-to-tr from-indigo-500 to-purple-600 text-white rounded-full flex items-center justify-center font-bold text-sm shadow">
+                            <div className="flex items-center gap-4 mt-6 pt-6 border-t border-white/5">
+                                <div className="w-11 h-11 bg-gradient-to-tr from-[#563D82] to-[#F4AF23] text-white rounded-full flex items-center justify-center font-bold text-sm shadow">
                                     {t.name ? t.name.charAt(0) : "P"}
                                 </div>
                                 <div>
-                                    <h4 className="font-bold text-slate-900 text-sm">{t.name}</h4>
-                                    <p className="text-xs text-indigo-600">{t.role}</p>
+                                    <h4 className="font-bold text-white text-sm">{t.name}</h4>
+                                    <p className="text-xs text-[#F4AF23] font-bold">{t.role}</p>
                                 </div>
                             </div>
                         </div>
@@ -522,19 +522,19 @@ function Home() {
 
             {/* CTA Section */}
             <div className="max-w-7xl mx-auto px-4 pb-20">
-                <div className="relative rounded-3xl overflow-hidden bg-gradient-to-r from-indigo-900 to-purple-900 py-16 px-8 md:px-16 text-center text-white shadow-2xl">
+                <div className="relative rounded-3xl overflow-hidden bg-gradient-to-r from-[#20163a] to-[#0c0919] py-16 px-8 md:px-16 text-center text-white border border-[#563D82]/25 shadow-2xl">
                     <div className="absolute top-0 right-0 w-96 h-96 bg-white/5 rounded-full blur-3xl pointer-events-none"></div>
-                    <div className="absolute bottom-0 left-0 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
+                    <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#563D82]/10 rounded-full blur-3xl pointer-events-none"></div>
 
                     <div className="max-w-3xl mx-auto space-y-6 relative z-10">
                         <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight">
                             {t('home_page.cta.title')}
                         </h2>
-                        <p className="text-lg text-indigo-100 font-light leading-relaxed max-w-xl mx-auto">
+                        <p className="text-lg text-slate-300 font-light leading-relaxed max-w-xl mx-auto">
                             {t('home_page.cta.description')}
                         </p>
                         <div className="pt-4 flex flex-col sm:flex-row gap-4 justify-center">
-                            <Link to="/reservations" className="bg-white hover:bg-slate-100 text-indigo-900 font-bold py-3.5 px-8 rounded-xl transition duration-300 shadow-md">
+                            <Link to="/reservations" className="bg-[#F4AF23] hover:bg-[#ffbe3b] text-[#05040a] font-extrabold py-3.5 px-8 rounded-xl transition duration-300 shadow-md shadow-amber-500/10">
                                 {t('home_page.cta.buttons.book')}
                             </Link>
                         </div>
@@ -543,12 +543,12 @@ function Home() {
             </div>
 
             {/* FAQ Section */}
-            <div className="max-w-4xl mx-auto py-20 px-4 border-t border-slate-200">
+            <div className="max-w-4xl mx-auto py-20 px-4 border-t border-white/5">
                 <div className="text-center mb-12 space-y-4">
-                    <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight">
+                    <h2 className="text-3xl font-extrabold text-white tracking-tight">
                         {t('home_page.faq.title')}
                     </h2>
-                    <p className="text-slate-600 font-light">
+                    <p className="text-slate-400 font-light">
                         {t('home_page.faq.subtitle')}
                     </p>
                 </div>
@@ -557,23 +557,23 @@ function Home() {
                     {Array.isArray(faqItems) && faqItems.map((item, index) => (
                         <div
                             key={index}
-                            className="bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden transition-all duration-300"
+                            className="bg-[#130f25]/45 rounded-xl border border-white/5 shadow-sm overflow-hidden transition-all duration-300"
                         >
                             <button
                                 onClick={() => toggleFaq(index)}
-                                className="w-full py-5 px-6 flex justify-between items-center text-left hover:bg-slate-50 transition-colors"
+                                className="w-full py-5 px-6 flex justify-between items-center text-left hover:bg-[#1f1a3a]/45 transition-colors"
                             >
-                                <span className="font-bold text-slate-950 text-base md:text-lg">
+                                <span className="font-bold text-white text-base md:text-lg">
                                     {item.question}
                                 </span>
-                                <span className={`w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-indigo-600 transition-transform duration-300 font-mono text-xl ${activeFaq === index ? 'rotate-45' : ''}`}>
+                                <span className={`w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-[#F4AF23] transition-transform duration-300 font-mono text-xl ${activeFaq === index ? 'rotate-45' : ''}`}>
                                     ＋
                                 </span>
                             </button>
                             <div
-                                className={`transition-all duration-300 ease-in-out ${activeFaq === index ? 'max-h-96 border-t border-slate-50' : 'max-h-0'}`}
+                                className={`transition-all duration-300 ease-in-out ${activeFaq === index ? 'max-h-96 border-t border-white/5' : 'max-h-0'}`}
                             >
-                                <div className="p-6 text-slate-600 font-light leading-relaxed">
+                                <div className="p-6 text-slate-400 font-light leading-relaxed">
                                     {item.answer}
                                 </div>
                             </div>

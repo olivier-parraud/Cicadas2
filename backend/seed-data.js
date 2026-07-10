@@ -1,4 +1,4 @@
-// seed-data.js — Seed tournaments, events (drafts), and reservations for all TCG games
+// seed-data.js — Seed tournaments, events (drafts), test users, and reservations for all games
 import mysql from 'mysql2/promise';
 import dotenv from 'dotenv';
 dotenv.config();
@@ -17,7 +17,37 @@ async function seed() {
     try {
         console.log('🔗 Connecté à MySQL. Début du seeding...\n');
 
-        // ─── 1. Tournois pour tous les jeux ───
+        // ─── 1. Supprimer les anciennes données (dans l'ordre des contraintes de clés étrangères) ───
+        await conn.execute('DELETE FROM event_registrations');
+        await conn.execute('DELETE FROM tournament_registrations');
+        await conn.execute('DELETE FROM reservations');
+        await conn.execute('DELETE FROM events');
+        await conn.execute('DELETE FROM tournaments');
+        await conn.execute("DELETE FROM users WHERE email LIKE 'testuser%@cicados.fr'");
+        console.log('🗑️  Anciennes données de test nettoyées.');
+
+        // ─── 2. Création de 5 Utilisateurs de Test ───
+        const bcrypt = await import('bcrypt');
+        const hashedPassword = await bcrypt.default.hash('testpassword', 10);
+        const testUsers = [
+            ['testuser1@cicados.fr', hashedPassword, 'Pierre', 'Martin', 'Pierrot'],
+            ['testuser2@cicados.fr', hashedPassword, 'Sophie', 'Dubois', 'Soph'],
+            ['testuser3@cicados.fr', hashedPassword, 'Thomas', 'Bernard', 'TomTee'],
+            ['testuser4@cicados.fr', hashedPassword, 'Julie', 'Moreau', 'Juju'],
+            ['testuser5@cicados.fr', hashedPassword, 'Nicolas', 'Petit', 'Nico']
+        ];
+        const userIds = [];
+        for (const u of testUsers) {
+            const [res] = await conn.execute(
+                'INSERT INTO users (email, password, firstname, lastname, pseudo) VALUES (?, ?, ?, ?, ?)',
+                u
+            );
+            userIds.push(res.insertId);
+        }
+        console.log(`✅ 5 utilisateurs de test insérés :`);
+        testUsers.forEach((u, i) => console.log(`   - ${u[2]} ${u[3]} (${u[0]})`));
+
+        // ─── 3. Tournois pour tous les jeux ───
         const tournaments = [
             ['Friday Night Magic - Modern',       'Magic: The Gathering',           '2026-07-12 19:30:00', 16, 5.00,  'Rejoignez-nous pour le traditionnel FNM hebdomadaire ! Format Modern, 3 rondes suisses. Boosters promo pour le top 4.'],
             ['Pokémon TCG Cup : Standard',         'Pokémon TCG',                    '2026-07-13 10:00:00', 32, 7.50,  'Tournoi officiel Pokémon League Cup. Format Standard. Pensez à apporter votre Decklist imprimée.'],
@@ -30,20 +60,17 @@ async function seed() {
             ['Dragon Ball Super CG - Regionals Qualifier', 'Dragon Ball Super Card Game', '2026-07-20 10:00:00', 32, 10.00, 'Qualificatif régional Dragon Ball Super Card Game. Format construit. Tapis de jeu exclusif pour le Top 8.'],
         ];
 
-        // Clear existing tournaments (and their registrations via CASCADE)
-        await conn.execute('DELETE FROM tournament_registrations');
-        await conn.execute('DELETE FROM tournaments');
-        console.log('🗑️  Anciens tournois supprimés.');
-
+        const tournamentIds = [];
         for (const t of tournaments) {
-            await conn.execute(
+            const [res] = await conn.execute(
                 'INSERT INTO tournaments (name, game, date, capacity, price, description) VALUES (?, ?, ?, ?, ?, ?)',
                 t
             );
+            tournamentIds.push(res.insertId);
         }
-        console.log(`✅ ${tournaments.length} tournois insérés.\n`);
+        console.log(`✅ ${tournaments.length} tournois insérés.`);
 
-        // ─── 2. Événements (Drafts) pour tous les jeux ───
+        // ─── 4. Événements (Drafts / Initiations) pour tous les jeux ───
         const events = [
             ['Draft MTG : Horizons Modern 3',          'draft', 'Magic: The Gathering',           '2026-07-12 14:00:00', 24, 15.00, 'Draft compétitif Horizons Modern 3. 3 boosters par joueur fournis + dotations.'],
             ['Draft Pokémon : Faille Paradoxe',        'draft', 'Pokémon TCG',                    '2026-07-13 14:30:00', 16, 12.00, 'Soirée Draft Pokémon TCG avec des boosters Faille Paradoxe. Découvrez le format limité !'],
@@ -57,117 +84,131 @@ async function seed() {
             ['Avant-Première MTG : Bloomburrow',       'avant_premiere', 'Magic: The Gathering',  '2026-07-25 12:00:00', 32, 25.00, 'Avant-Première Bloomburrow ! Recevez votre kit de pré-release et découvrez la nouvelle extension en avant-première.'],
         ];
 
-        await conn.execute('DELETE FROM event_registrations');
-        await conn.execute('DELETE FROM events');
-        console.log('🗑️  Anciens événements supprimés.');
-
+        const eventIds = [];
         for (const e of events) {
-            await conn.execute(
+            const [res] = await conn.execute(
                 'INSERT INTO events (name, type, game, date, capacity, price, description) VALUES (?, ?, ?, ?, ?, ?, ?)',
                 e
             );
+            eventIds.push(res.insertId);
         }
-        console.log(`✅ ${events.length} événements insérés.\n`);
+        console.log(`✅ ${events.length} événements insérés.`);
 
-        // ─── 3. Réservations de tables pour tous les jeux TCG ───
-        // Get the admin user ID
-        const [users] = await conn.execute("SELECT id FROM users WHERE email = 'admin@cicados.fr' LIMIT 1");
-        if (users.length === 0) {
-            console.log('⚠️  Utilisateur admin introuvable, réservations ignorées.');
+        // ─── 5. Inscriptions aux Tournois pour les 5 utilisateurs ───
+        const tournamentRegistrations = [
+            // User 1
+            [tournamentIds[0], userIds[0]], // Pierre -> MTG
+            [tournamentIds[1], userIds[0]], // Pierre -> Pokemon
+            [tournamentIds[2], userIds[0]], // Pierre -> One Piece
+            // User 2
+            [tournamentIds[3], userIds[1]], // Sophie -> YuGiOh
+            [tournamentIds[4], userIds[1]], // Sophie -> Lorcana
+            [tournamentIds[5], userIds[1]], // Sophie -> Star Wars
+            // User 3
+            [tournamentIds[6], userIds[2]], // Thomas -> Final Fantasy
+            [tournamentIds[7], userIds[2]], // Thomas -> Altered
+            [tournamentIds[8], userIds[2]], // Thomas -> Dragon Ball
+            // User 4
+            [tournamentIds[0], userIds[3]], // Julie -> MTG
+            [tournamentIds[4], userIds[3]], // Julie -> Lorcana
+            [tournamentIds[7], userIds[3]], // Julie -> Altered
+            // User 5
+            [tournamentIds[1], userIds[4]], // Nicolas -> Pokemon
+            [tournamentIds[5], userIds[4]], // Nicolas -> Star Wars
+            [tournamentIds[8], userIds[4]], // Nicolas -> Dragon Ball
+        ];
+
+        for (const tr of tournamentRegistrations) {
+            await conn.execute(
+                'INSERT INTO tournament_registrations (tournament_id, user_id) VALUES (?, ?)',
+                tr
+            );
+        }
+        console.log(`✅ Inscriptions aux tournois générées.`);
+
+        // ─── 6. Inscriptions aux Événements pour les 5 utilisateurs ───
+        const eventRegistrations = [
+            // User 1
+            [eventIds[0], userIds[0]], // Pierre -> Draft MTG
+            [eventIds[1], userIds[0]], // Pierre -> Draft Pokemon
+            [eventIds[2], userIds[0]], // Pierre -> Draft One Piece
+            // User 2
+            [eventIds[3], userIds[1]], // Sophie -> Draft YuGiOh
+            [eventIds[4], userIds[1]], // Sophie -> Draft Lorcana
+            [eventIds[5], userIds[1]], // Sophie -> Draft Star Wars
+            // User 3
+            [eventIds[6], userIds[2]], // Thomas -> Draft Final Fantasy
+            [eventIds[7], userIds[2]], // Thomas -> Initiation Altered
+            [eventIds[8], userIds[2]], // Thomas -> Draft Dragon Ball
+            // User 4
+            [eventIds[0], userIds[3]], // Julie -> Draft MTG
+            [eventIds[7], userIds[3]], // Julie -> Initiation Altered
+            [eventIds[9], userIds[3]], // Julie -> AP MTG
+            // User 5
+            [eventIds[1], userIds[4]], // Nicolas -> Draft Pokemon
+            [eventIds[8], userIds[4]], // Nicolas -> Draft Dragon Ball
+            [eventIds[9], userIds[4]], // Nicolas -> AP MTG
+        ];
+
+        for (const er of eventRegistrations) {
+            await conn.execute(
+                'INSERT INTO event_registrations (event_id, user_id) VALUES (?, ?)',
+                er
+            );
+        }
+        console.log(`✅ Inscriptions aux événements générées.`);
+
+        // ─── 7. Réservations de Tables pour tous les types de jeux ───
+        const [rooms] = await conn.execute('SELECT id FROM rooms');
+        if (rooms.length < 4) {
+            console.log('⚠️  Pas assez de tables en base (< 4), réservations de tables ignorées.');
         } else {
-            const adminId = users[0].id;
+            const reservationList = [
+                // User 1 (Pierre)
+                { userId: userIds[0], gameType: 'MTG', gameName: 'Magic: The Gathering', date: '2026-07-12', time: '14:00', roomOffset: 0, players: 2 },
+                { userId: userIds[0], gameType: 'POKEMON', gameName: 'Pokémon TCG', date: '2026-07-13', time: '16:00', roomOffset: 1, players: 2 },
+                { userId: userIds[0], gameType: 'BOARD_GAME', gameName: 'Azul', date: '2026-07-14', time: '18:00', roomOffset: 2, players: 3 },
+                // User 2 (Sophie)
+                { userId: userIds[1], gameType: 'ONE_PIECE', gameName: 'One Piece Card Game', date: '2026-07-12', time: '16:00', roomOffset: 1, players: 2 },
+                { userId: userIds[1], gameType: 'YUGIOH', gameName: 'Yu-Gi-Oh!', date: '2026-07-13', time: '18:00', roomOffset: 2, players: 2 },
+                { userId: userIds[1], gameType: 'BYOG', gameName: "J'apporte mon jeu", date: '2026-07-15', time: '14:00', roomOffset: 0, players: 4 },
+                // User 3 (Thomas)
+                { userId: userIds[2], gameType: 'LORCANA', gameName: 'Disney Lorcana', date: '2026-07-13', time: '14:00', roomOffset: 0, players: 2 },
+                { userId: userIds[2], gameType: 'STAR_WARS', gameName: 'Star Wars Unlimited', date: '2026-07-14', time: '16:00', roomOffset: 1, players: 2 },
+                { userId: userIds[2], gameType: 'BOARD_GAME', gameName: 'Codenames', date: '2026-07-16', time: '18:00', roomOffset: 2, players: 6 },
+                // User 4 (Julie)
+                { userId: userIds[3], gameType: 'FINAL_FF', gameName: 'Final Fantasy TCG', date: '2026-07-14', time: '14:00', roomOffset: 0, players: 2 },
+                { userId: userIds[3], gameType: 'ALTERED', gameName: 'Altered TCG', date: '2026-07-15', time: '16:00', roomOffset: 1, players: 2 },
+                { userId: userIds[3], gameType: 'BOARD_GAME', gameName: '7 Wonders', date: '2026-07-17', time: '18:00', roomOffset: 2, players: 4 },
+                // User 5 (Nicolas)
+                { userId: userIds[4], gameType: 'DBS', gameName: 'Dragon Ball Super Card Game', date: '2026-07-15', time: '18:00', roomOffset: 2, players: 2 },
+                { userId: userIds[4], gameType: 'BOARD_GAME', gameName: 'Carcassonne Big Box 6', date: '2026-07-16', time: '14:00', roomOffset: 0, players: 2 },
+                { userId: userIds[4], gameType: 'MTG', gameName: 'Magic: The Gathering', date: '2026-07-17', time: '16:00', roomOffset: 1, players: 2 },
+            ];
 
-            // Make sure rooms exist
-            const [rooms] = await conn.execute('SELECT id FROM rooms');
-            if (rooms.length < 4) {
-                console.log('⚠️  Pas assez de tables en base (< 4), réservations ignorées.');
-            } else {
-                // Clear old reservations
-                await conn.execute('DELETE FROM reservations');
-                console.log('🗑️  Anciennes réservations supprimées.');
+            for (const res of reservationList) {
+                const startTime = `${res.date} ${res.time}:00`;
+                const startObj = new Date(startTime);
+                startObj.setHours(startObj.getHours() + 2);
+                
+                const endYear = startObj.getFullYear();
+                const endMonth = String(startObj.getMonth() + 1).padStart(2, '0');
+                const endDay = String(startObj.getDate()).padStart(2, '0');
+                const endHour = String(startObj.getHours()).padStart(2, '0');
+                const endMin = String(startObj.getMinutes()).padStart(2, '0');
+                const endTime = `${endYear}-${endMonth}-${endDay} ${endHour}:${endMin}:00`;
 
-                const gameTypes = ['MTG', 'POKEMON', 'ONE_PIECE', 'YUGIOH', 'LORCANA', 'STAR_WARS', 'FINAL_FF', 'ALTERED', 'DBS'];
-                const gameNames = [
-                    'Magic: The Gathering',
-                    'Pokémon TCG',
-                    'One Piece Card Game',
-                    'Yu-Gi-Oh!',
-                    'Disney Lorcana',
-                    'Star Wars Unlimited',
-                    'Final Fantasy TCG',
-                    'Altered TCG',
-                    'Dragon Ball Super Card Game'
-                ];
+                const roomId = rooms[res.roomOffset % rooms.length].id;
 
-                // Create reservations spread across multiple days with different time slots
-                const baseDates = [
-                    '2026-07-12', '2026-07-13', '2026-07-14'
-                ];
-                const timeSlots = ['14:00', '16:00', '18:00'];
-
-                let resCount = 0;
-                for (let i = 0; i < gameTypes.length; i++) {
-                    const dateIdx = i % baseDates.length;
-                    const timeIdx = i % timeSlots.length;
-                    const roomIdx = i % rooms.length;
-                    const date = baseDates[dateIdx];
-                    const time = timeSlots[timeIdx];
-                    const startTime = `${date} ${time}:00`;
-                    // 2 hour duration
-                    const startObj = new Date(startTime);
-                    startObj.setHours(startObj.getHours() + 2);
-                    const endYear = startObj.getFullYear();
-                    const endMonth = String(startObj.getMonth() + 1).padStart(2, '0');
-                    const endDay = String(startObj.getDate()).padStart(2, '0');
-                    const endHour = String(startObj.getHours()).padStart(2, '0');
-                    const endMin = String(startObj.getMinutes()).padStart(2, '0');
-                    const endTime = `${endYear}-${endMonth}-${endDay} ${endHour}:${endMin}:00`;
-
-                    await conn.execute(
-                        "INSERT INTO reservations (user_id, room_id, start_time, end_time, game_type, status, specific_game, players_count) VALUES (?, ?, ?, ?, ?, 'CONFIRMED', ?, ?)",
-                        [adminId, rooms[roomIdx].id, startTime, endTime, gameTypes[i], gameNames[i], 2 + (i % 3)]
-                    );
-                    resCount++;
-                }
-
-                // Reserve 4 board games + 1 BYOG (Total of 5)
-                const extraGames = [
-                    { type: 'BOARD_GAME', name: '7 Wonders', players: 4 },
-                    { type: 'BOARD_GAME', name: 'Azul', players: 3 },
-                    { type: 'BOARD_GAME', name: 'Carcassonne Big Box 6', players: 2 },
-                    { type: 'BOARD_GAME', name: 'Codenames', players: 6 },
-                    { type: 'BYOG', name: "J'apporte mon jeu", players: 4 }
-                ];
-
-                for (let j = 0; j < extraGames.length; j++) {
-                    const game = extraGames[j];
-                    const date = '2026-07-15'; // Day after
-                    const time = `1${4 + (j % 3)}:00`; // 14:00, 15:00, 16:00
-                    const startTime = `${date} ${time}:00`;
-                    
-                    const startObj = new Date(startTime);
-                    startObj.setHours(startObj.getHours() + 2);
-                    const endYear = startObj.getFullYear();
-                    const endMonth = String(startObj.getMonth() + 1).padStart(2, '0');
-                    const endDay = String(startObj.getDate()).padStart(2, '0');
-                    const endHour = String(startObj.getHours()).padStart(2, '0');
-                    const endMin = String(startObj.getMinutes()).padStart(2, '0');
-                    const endTime = `${endYear}-${endMonth}-${endDay} ${endHour}:${endMin}:00`;
-
-                    const roomIdx = (gameTypes.length + j) % rooms.length;
-
-                    await conn.execute(
-                        "INSERT INTO reservations (user_id, room_id, start_time, end_time, game_type, status, specific_game, players_count) VALUES (?, ?, ?, ?, ?, 'CONFIRMED', ?, ?)",
-                        [adminId, rooms[roomIdx].id, startTime, endTime, game.type, game.name, game.players]
-                    );
-                    resCount++;
-                }
-
-                console.log(`✅ ${resCount} réservations de tables insérées (incluant tous les TCG et 5 jeux de société / BYOG).\n`);
+                await conn.execute(
+                    "INSERT INTO reservations (user_id, room_id, start_time, end_time, game_type, status, specific_game, players_count) VALUES (?, ?, ?, ?, ?, 'CONFIRMED', ?, ?)",
+                    [res.userId, roomId, startTime, endTime, res.gameType, res.gameName, res.players]
+                );
             }
+            console.log(`✅ ${reservationList.length} réservations de tables créées pour les 5 utilisateurs.`);
         }
 
-        console.log('🎉 Seeding terminé avec succès !');
+        console.log('\n🎉 Seeding de test terminé avec succès !');
     } catch (err) {
         console.error('❌ Erreur lors du seeding :', err);
     } finally {

@@ -94,6 +94,16 @@ const Tournament = {
     async delete(id) {
         const sql = 'DELETE FROM tournaments WHERE id = ?';
         return query(sql, [id]);
+    },
+
+    // Modifier un tournoi (Admin)
+    async update(id, { name, game, date, capacity, price, description }) {
+        const sql = `
+            UPDATE tournaments
+            SET name = ?, game = ?, date = ?, capacity = ?, price = ?, description = ?
+            WHERE id = ?
+        `;
+        return query(sql, [name, game, date, capacity, price, description, id]);
     }
 };
 

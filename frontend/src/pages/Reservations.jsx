@@ -143,19 +143,19 @@ function Reservations() {
 
     if (!isAuthenticated) {
         return (
-            <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4">
-                <div className="bg-white p-8 rounded-3xl shadow-xl border border-slate-100 max-w-md w-full text-center space-y-6">
+            <div className="min-h-screen bg-[#05040a] flex flex-col items-center justify-center p-4">
+                <div className="bg-[#130f25]/45 p-8 rounded-3xl shadow-xl border border-white/5 max-w-md w-full text-center space-y-6">
                     <div className="text-5xl">🔒</div>
-                    <h2 className="text-2xl font-bold text-slate-900">{t('my_reservations_page.need_auth')}</h2>
-                    <p className="text-slate-500 font-light text-sm">
+                    <h2 className="text-2xl font-bold text-white">{t('my_reservations_page.need_auth')}</h2>
+                    <p className="text-slate-400 font-light text-sm">
                         {t('reservations_page.need_auth')}
                     </p>
-                    <Link to="/login" className="bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 px-6 rounded-xl transition shadow-md w-full block text-xs">
+                    <Link to="/login" className="bg-[#F4AF23] hover:bg-[#ffbe3b] text-[#05040a] font-extrabold py-3 px-6 rounded-xl transition shadow-md w-full block text-xs">
                         {t('reservations_page.login_btn')}
                     </Link>
                     <div className="text-xs text-slate-400">
                         {t('reservations_page.no_account')}{' '}
-                        <Link to="/register" className="text-indigo-600 hover:text-indigo-500 font-semibold">
+                        <Link to="/register" className="text-[#F4AF23] hover:text-[#ffbe3b] font-semibold">
                             {t('reservations_page.register_link')}
                         </Link>
                     </div>
@@ -165,27 +165,27 @@ function Reservations() {
     }
 
     return (
-        <div className="min-h-screen bg-slate-50 py-12 px-4 sm:px-6 lg:px-8 selection:bg-indigo-600 selection:text-white">
+        <div className="min-h-screen bg-[#05040a] py-12 px-4 sm:px-6 lg:px-8 selection:bg-[#F4AF23] selection:text-[#05040a]">
             <div className="max-w-6xl mx-auto space-y-12">
                 <div className="text-center space-y-4">
-                    <h1 className="text-3xl md:text-5xl font-extrabold text-slate-950 tracking-tight">{t('reservations_page.title')}</h1>
-                    <p className="text-base text-slate-500 max-w-xl mx-auto font-light">
+                    <h1 className="text-3xl md:text-5xl font-extrabold text-white tracking-tight bg-clip-text bg-gradient-to-r from-white via-slate-100 to-[#F4AF23]">{t('reservations_page.title')}</h1>
+                    <p className="text-base text-slate-400 max-w-xl mx-auto font-light">
                         {t('reservations_page.subtitle')}
                     </p>
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
                     {/* Formulaire de réservation (gauche) */}
-                    <div className="lg:col-span-5 bg-white p-6 md:p-8 shadow-xl rounded-3xl border border-slate-100 space-y-6">
-                        <h2 className="text-lg font-bold text-slate-900 pb-3 border-b border-slate-100 flex items-center gap-2">
+                    <div className="lg:col-span-5 bg-[#130f25]/45 p-6 md:p-8 shadow-xl rounded-3xl border border-white/5 space-y-6">
+                        <h2 className="text-lg font-bold text-white pb-3 border-b border-white/5 flex items-center gap-2">
                             {t('reservations_page.demand_title')}
                         </h2>
 
                         <form onSubmit={handleSubmit} className="space-y-4">
                             {status.message && (
                                 <div className={`p-4 rounded-xl text-xs font-semibold border ${status.type === 'success'
-                                        ? 'bg-emerald-50 border-emerald-250 text-emerald-800'
-                                        : (status.type === 'error' ? 'bg-rose-50 border-rose-200 text-rose-800' : 'bg-indigo-50 border-indigo-100 text-indigo-800')
+                                        ? 'bg-emerald-500/10 border-emerald-500/25 text-emerald-400'
+                                        : (status.type === 'error' ? 'bg-rose-500/10 border-rose-500/20 text-rose-400' : 'bg-[#563D82]/10 border-white/5 text-[#F4AF23]')
                                     }`}>
                                     {status.message}
                                 </div>
@@ -197,7 +197,7 @@ function Reservations() {
                                     name="gameType"
                                     value={formData.gameType}
                                     onChange={handleChange}
-                                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-650 bg-white"
+                                    className="w-full px-3.5 py-2.5 rounded-xl border border-white/5 text-sm focus:outline-none focus:border-[#F4AF23]/50 bg-[#0c0919] text-slate-200"
                                 >
                                     <option value="POKEMON">Pokémon</option>
                                     <option value="MTG">Magic: The Gathering</option>
@@ -220,7 +220,7 @@ function Reservations() {
                                     name="playersCount"
                                     value={formData.playersCount}
                                     onChange={handleChange}
-                                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-650 bg-white"
+                                    className="w-full px-3.5 py-2.5 rounded-xl border border-white/5 text-sm focus:outline-none focus:border-[#F4AF23]/50 bg-[#0c0919] text-slate-200"
                                 >
                                     <option value="1">{t('reservations_page.player')}</option>
                                     <option value="2">{t('reservations_page.players', { count: 2 })}</option>
@@ -246,12 +246,12 @@ function Reservations() {
                                             setIsDropdownOpen(true);
                                         }}
                                         onFocus={() => setIsDropdownOpen(true)}
-                                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-650 font-light"
+                                        className="w-full px-3.5 py-2.5 rounded-xl border border-white/5 text-sm focus:outline-none focus:border-[#F4AF23]/50 font-light bg-[#0c0919] text-slate-200"
                                     />
                                     {isDropdownOpen && (
                                         <>
                                             <div className="fixed inset-0 z-40" onClick={() => setIsDropdownOpen(false)}></div>
-                                            <div className="absolute left-0 right-0 top-full mt-1 max-h-60 overflow-y-auto bg-slate-950 border border-slate-800 rounded-xl shadow-2xl z-50 divide-y divide-slate-900">
+                                            <div className="absolute left-0 right-0 top-full mt-1 max-h-60 overflow-y-auto bg-slate-950 border border-white/5 rounded-xl shadow-2xl z-50 divide-y divide-slate-900">
                                                 {boardGames
                                                     .filter(g => g.name.toLowerCase().includes(formData.specificGame.toLowerCase()))
                                                     .map(game => (
@@ -303,7 +303,7 @@ function Reservations() {
                                         min={today}
                                         value={formData.date}
                                         onChange={handleChange}
-                                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-650 font-light bg-white"
+                                        className="w-full px-3.5 py-2.5 rounded-xl border border-white/5 text-sm focus:outline-none focus:border-[#F4AF23]/50 font-light bg-[#0c0919] text-slate-200"
                                     />
                                 </div>
 
@@ -317,7 +317,7 @@ function Reservations() {
                                         max="23:00"
                                         value={formData.time}
                                         onChange={handleChange}
-                                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-650 font-light bg-white"
+                                        className="w-full px-3.5 py-2.5 rounded-xl border border-white/5 text-sm focus:outline-none focus:border-[#F4AF23]/50 font-light bg-[#0c0919] text-slate-200"
                                     />
                                 </div>
                             </div>
@@ -332,7 +332,7 @@ function Reservations() {
                                     max="10"
                                     value={formData.duration}
                                     onChange={handleChange}
-                                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-650 font-light"
+                                    className="w-full px-3.5 py-2.5 rounded-xl border border-white/5 text-sm focus:outline-none focus:border-[#F4AF23]/50 font-light bg-[#0c0919] text-slate-200"
                                 />
                             </div>
 
@@ -346,10 +346,10 @@ function Reservations() {
                     </div>
 
                     {/* Planning Interactif (droite) */}
-                    <div className="lg:col-span-7 bg-white p-6 md:p-8 shadow-xl rounded-3xl border border-slate-100 space-y-6">
+                    <div className="lg:col-span-7 bg-[#130f25]/45 p-6 md:p-8 shadow-xl rounded-3xl border border-white/5 space-y-6">
                         <div>
-                            <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-                                <Calendar className="w-5 h-5 text-indigo-650 shrink-0" /> {t('reservations_page.planning_title')}
+                            <h2 className="text-lg font-bold text-white flex items-center gap-2">
+                                <Calendar className="w-5 h-5 text-[#F4AF23] shrink-0" /> {t('reservations_page.planning_title')}
                             </h2>
                             <p className="text-xs text-slate-400 font-light mt-1">
                                 {t('reservations_page.planning_subtitle')}
@@ -357,23 +357,23 @@ function Reservations() {
                         </div>
 
                         {!formData.date ? (
-                            <div className="py-20 text-center bg-slate-50 rounded-3xl border-2 border-dashed border-slate-200 flex flex-col items-center justify-center p-6 space-y-4">
-                                <Calendar className="w-12 h-12 text-slate-300 animate-pulse" />
-                                <h3 className="text-sm font-bold text-slate-700">{t('reservations_page.no_date_selected')}</h3>
+                            <div className="py-20 text-center bg-[#0c0919]/40 rounded-3xl border-2 border-dashed border-white/5 flex flex-col items-center justify-center p-6 space-y-4">
+                                <Calendar className="w-12 h-12 text-slate-500 animate-pulse" />
+                                <h3 className="text-sm font-bold text-white">{t('reservations_page.no_date_selected')}</h3>
                                 <p className="text-xs text-slate-400 font-light max-w-xs">
                                     {t('reservations_page.no_date_selected_desc')}
                                 </p>
                             </div>
                         ) : loadingPlanning ? (
                             <div className="py-20 text-center space-y-4">
-                                <div className="w-10 h-10 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
+                                <div className="w-10 h-10 border-4 border-[#F4AF23] border-t-transparent rounded-full animate-spin mx-auto"></div>
                                 <p className="text-xs text-slate-400">{t('reservations_page.loading_planning')}</p>
                             </div>
                         ) : (
                             <div className="space-y-6">
-                                <div className="flex justify-between items-center bg-indigo-50/50 p-4 rounded-2xl border border-indigo-100/50 text-xs">
-                                    <span className="font-bold text-slate-700">{t('reservations_page.date_dispo_title')}</span>
-                                    <span className="font-extrabold text-indigo-300 bg-indigo-950 py-1.5 px-3.5 rounded-full border border-indigo-500/20">
+                                <div className="flex justify-between items-center bg-[#0c0919]/50 p-4 rounded-2xl border border-white/5 text-xs text-white">
+                                    <span className="font-bold text-slate-350">{t('reservations_page.date_dispo_title')}</span>
+                                    <span className="font-extrabold text-[#F4AF23] bg-[#563D82]/30 py-1.5 px-3.5 rounded-full border border-[#563D82]/50">
                                         {new Date(formData.date).toLocaleDateString(i18n.resolvedLanguage || i18n.language || 'fr', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
                                     </span>
                                 </div>
@@ -386,30 +386,30 @@ function Reservations() {
                                         const available = 4 - occupied;
                                         const isSelected = formData.time === slot;
 
-                                        let bgClass = "bg-emerald-50 hover:bg-emerald-100/80 border-emerald-150 text-emerald-800 cursor-pointer";
-                                        let badgeClass = "bg-indigo-950 text-indigo-300 border border-indigo-500/20";
+                                        let bgClass = "bg-[#121c17] hover:bg-[#1a2d24] border-emerald-500/25 text-emerald-400 cursor-pointer";
+                                        let badgeClass = "bg-emerald-500/10 text-emerald-400 border border-emerald-500/25";
                                         let label = t('reservations_page.tables_free', { count: available });
                                         let disabled = false;
 
                                         if (inPast) {
-                                            bgClass = "bg-slate-100 border-slate-200 text-slate-400 opacity-40 cursor-not-allowed";
-                                            badgeClass = "bg-slate-300 text-slate-500 border border-slate-200";
+                                            bgClass = "bg-[#0c0919]/25 border-white/5 text-slate-500 opacity-40 cursor-not-allowed";
+                                            badgeClass = "bg-white/5 text-slate-500 border border-white/5";
                                             label = t('reservations_page.slot_past', 'Indisponible');
                                             disabled = true;
                                         } else if (available <= 0) {
-                                            bgClass = "bg-rose-50 border-rose-150 text-rose-800 opacity-60 cursor-not-allowed";
-                                            badgeClass = "bg-rose-600 text-white";
+                                            bgClass = "bg-[#25111b] border-rose-500/25 text-rose-400 opacity-60 cursor-not-allowed";
+                                            badgeClass = "bg-rose-500/10 text-rose-400 border border-rose-500/25";
                                             label = t('reservations_page.full');
                                             disabled = true;
                                         } else if (available === 1) {
-                                            bgClass = "bg-amber-50 hover:bg-amber-100/80 border-amber-150 text-amber-800 cursor-pointer";
-                                            badgeClass = "bg-indigo-950 text-indigo-300 border border-indigo-500/20";
+                                            bgClass = "bg-[#1d1b15] hover:bg-[#2c281e] border-amber-500/25 text-amber-400 cursor-pointer";
+                                            badgeClass = "bg-amber-500/10 text-amber-400 border border-amber-500/25";
                                             label = t('reservations_page.table_free');
                                         }
 
                                         if (isSelected && !disabled) {
-                                            bgClass = "bg-indigo-600 border-indigo-600 text-white shadow-lg shadow-indigo-600/20 scale-102 cursor-pointer font-bold";
-                                            badgeClass = "bg-indigo-950 text-indigo-300 border border-indigo-500/20";
+                                            bgClass = "bg-[#563D82] border-[#F4AF23] text-white shadow-lg shadow-[#563D82]/30 scale-102 cursor-pointer font-bold";
+                                            badgeClass = "bg-black/40 text-[#F4AF23] border border-[#F4AF23]/30";
                                         }
 
                                         return (
@@ -429,7 +429,7 @@ function Reservations() {
                                     })}
                                 </div>
 
-                                <div className="flex flex-wrap gap-4 pt-4 border-t border-slate-100 text-[10px] text-slate-400 font-bold uppercase tracking-wider">
+                                <div className="flex flex-wrap gap-4 pt-4 border-t border-white/5 text-[10px] text-slate-400 font-bold uppercase tracking-wider">
                                     <span className="flex items-center gap-1.5">
                                         <span className="w-2.5 h-2.5 bg-emerald-500 rounded-full"></span> {t('reservations_page.legend_free')}
                                     </span>
@@ -449,7 +449,7 @@ function Reservations() {
                     {isAuthenticated && (
                         <Link 
                             to="/my-reservations" 
-                            className="inline-flex items-center gap-3 px-12 py-5 bg-slate-100 hover:bg-slate-200 text-slate-800 font-extrabold border border-slate-250 rounded-2xl text-base md:text-lg transition cursor-pointer shadow-lg hover:shadow-indigo-500/10 hover:scale-102 duration-300"
+                            className="inline-flex items-center gap-3 px-12 py-5 bg-[#130f25]/45 hover:bg-[#1f1a3a]/45 text-white font-extrabold border border-white/5 rounded-2xl text-base md:text-lg transition cursor-pointer shadow-lg hover:shadow-[#F4AF23]/5 hover:scale-102 duration-300"
                         >
                             {t('reservations_page.view_my_reservations')}
                         </Link>

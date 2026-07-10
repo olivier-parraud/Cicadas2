@@ -38,48 +38,48 @@ function Login() {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+        <div className="min-h-screen bg-[#05040a] flex flex-col justify-center py-12 sm:px-6 lg:px-8 selection:bg-[#F4AF23] selection:text-[#05040a]">
             <div className="sm:mx-auto sm:w-full sm:max-w-md">
-                <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+                <h2 className="mt-6 text-center text-3xl font-extrabold text-white bg-clip-text bg-gradient-to-r from-white via-slate-100 to-[#F4AF23]">
                     {t('login_page.title')}
                 </h2>
-                <p className="mt-2 text-center text-sm text-gray-600">
+                <p className="mt-2 text-center text-sm text-slate-400">
                     {t('login_page.or')}{' '}
-                    <Link to="/register" className="font-medium text-indigo-600 hover:text-indigo-500">
+                    <Link to="/register" className="font-medium text-[#F4AF23] hover:text-[#ffbe3b]">
                         {t('login_page.create_account')}
                     </Link>
                 </p>
             </div>
 
             <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-                <div className="bg-white py-8 px-4 shadow-sm sm:rounded-lg sm:px-10 border border-gray-100">
+                <div className="bg-[#130f25]/45 py-8 px-4 shadow-sm sm:rounded-2xl sm:px-10 border border-white/5 backdrop-blur-md">
                     <form className="space-y-6" onSubmit={handleSubmit}>
                         {error && (
-                            <div className="bg-red-50 text-red-500 p-3 rounded-md text-sm">
+                            <div className="bg-rose-500/10 border border-rose-500/20 text-rose-300 p-3 rounded-xl text-sm">
                                 {error}
                             </div>
                         )}
                         <div>
-                            <label className="block text-sm font-medium text-gray-700">{t('login_page.email_label')}</label>
+                            <label className="block text-sm font-medium text-slate-350">{t('login_page.email_label')}</label>
                             <div className="mt-1">
                                 <input id="email" type="email" required
-                                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                    className="appearance-none block w-full px-3.5 py-2.5 border border-white/5 bg-[#0c0919] text-white rounded-xl shadow-sm placeholder-gray-500 focus:outline-none focus:border-[#F4AF23]/50 sm:text-sm font-light"
                                     value={email} onChange={(e) => setEmail(e.target.value)} />
                             </div>
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-gray-700">{t('login_page.password_label')}</label>
+                            <label className="block text-sm font-medium text-slate-350">{t('login_page.password_label')}</label>
                             <div className="mt-1">
                                 <input id="password" type="password" required
-                                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                    className="appearance-none block w-full px-3.5 py-2.5 border border-white/5 bg-[#0c0919] text-white rounded-xl shadow-sm placeholder-gray-500 focus:outline-none focus:border-[#F4AF23]/50 sm:text-sm font-light"
                                     value={password} onChange={(e) => setPassword(e.target.value)} />
                             </div>
                         </div>
 
                         <div>
                             <button type="submit"
-                                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-xl shadow-md text-sm font-extrabold text-[#05040a] bg-[#F4AF23] hover:bg-[#ffbe3b] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#F4AF23] transition-colors cursor-pointer">
                                 {t('login_page.submit')}
                             </button>
                         </div>

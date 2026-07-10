@@ -339,33 +339,20 @@ function MyReservations() {
 
     const formatRoomName = (roomName, gameType) => {
         if (!roomName) return 'Table Standard';
-
         const match = roomName.match(/Table\s+\d+/i);
-        const prefix = match ? match[0] : roomName;
-
-        if (gameType === 'BYOG') {
-            return prefix;
-        }
-
-        const isTcg = ['MTG', 'POKEMON', 'ONE_PIECE', 'YUGIOH', 'LORCANA', 'STAR_WARS', 'FINAL_FF', 'ALTERED', 'DBS'].includes(gameType);
-        if (isTcg) {
-            return `${prefix} (TCG)`;
-        } else if (gameType === 'BOARD_GAME') {
-            return `${prefix} (Jeux de société)`;
-        }
-        return roomName;
+        return match ? match[0] : roomName;
     };
 
     if (!isAuthenticated) {
         return (
-            <div className="min-h-screen bg-[#080711] flex flex-col items-center justify-center p-4 selection:bg-indigo-650 selection:text-white">
-                <div className="bg-[#151425]/45 p-8 rounded-3xl shadow-2xl border border-white/5 max-w-md w-full text-center space-y-6 backdrop-blur-md">
+            <div className="min-h-screen bg-[#05040a] flex flex-col items-center justify-center p-4 selection:bg-[#F4AF23] selection:text-[#05040a]">
+                <div className="bg-[#130f25]/45 p-8 rounded-3xl shadow-2xl border border-white/5 max-w-md w-full text-center space-y-6 backdrop-blur-md">
                     <div className="text-5xl">🔒</div>
                     <h2 className="text-2xl font-black text-white">{t('my_reservations_page.need_auth')}</h2>
                     <p className="text-slate-400 font-light text-sm">
                         {t('my_reservations_page.need_auth_desc')}
                     </p>
-                    <Link to="/login" className="bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 px-6 rounded-xl transition shadow-lg w-full block text-xs">
+                    <Link to="/login" className="bg-[#F4AF23] hover:bg-[#ffbe3b] text-[#05040a] font-extrabold py-3 px-6 rounded-xl transition shadow-lg w-full block text-xs">
                         {t('my_reservations_page.login_btn')}
                     </Link>
                 </div>
@@ -374,14 +361,14 @@ function MyReservations() {
     }
 
     return (
-        <div className="min-h-screen bg-[#080711] text-white selection:bg-indigo-650 selection:text-white pb-20">
+        <div className="min-h-screen bg-[#05040a] text-white selection:bg-[#F4AF23] selection:text-[#05040a] pb-20">
             {/* Header Section */}
-            <div className="relative overflow-hidden bg-gradient-to-br from-[#0c0a1e] via-[#120f2e] to-[#080711] text-white py-20 px-4 border-b border-indigo-950/40 text-center">
-                <div className="absolute top-1/4 left-1/10 w-96 h-96 bg-indigo-500/5 rounded-full blur-3xl pointer-events-none"></div>
-                <div className="absolute bottom-1/4 right-1/10 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl pointer-events-none"></div>
+            <div className="relative overflow-hidden bg-gradient-to-br from-black via-[#130f25] to-black text-white py-20 px-4 border-b border-white/5 text-center">
+                <div className="absolute top-1/4 left-1/10 w-96 h-96 bg-[#563D82]/10 rounded-full blur-3xl pointer-events-none"></div>
+                <div className="absolute bottom-1/4 right-1/10 w-96 h-96 bg-[#F4AF23]/5 rounded-full blur-3xl pointer-events-none"></div>
 
                 <div className="max-w-4xl mx-auto space-y-6 relative z-10">
-                    <h1 className="text-3xl md:text-5xl font-black tracking-tight bg-clip-text bg-gradient-to-r from-white via-indigo-100 to-indigo-300 leading-tight">
+                    <h1 className="text-3xl md:text-5xl font-black tracking-tight bg-clip-text bg-gradient-to-r from-white via-[#FFE082] to-[#F4AF23] leading-tight">
                         {t('my_reservations_page.title')}
                     </h1>
                     <p className="text-base md:text-lg text-slate-400 max-w-2xl mx-auto leading-relaxed font-light">
@@ -398,7 +385,7 @@ function MyReservations() {
                         onClick={() => setActiveFilter('all')}
                         className={`py-2.5 px-6 rounded-xl text-sm font-semibold border transition duration-300 cursor-pointer ${
                             activeFilter === 'all'
-                                ? 'bg-indigo-600 border-indigo-600 text-white shadow-md shadow-indigo-600/10'
+                                ? 'bg-[#563D82] border-[#563D82] text-white shadow-md shadow-[#563D82]/20'
                                 : 'bg-[#151425]/45 border-white/5 text-slate-400 hover:text-white hover:bg-[#1a1930]'
                         }`}
                     >
@@ -408,7 +395,7 @@ function MyReservations() {
                         onClick={() => setActiveFilter('tables')}
                         className={`py-2.5 px-6 rounded-xl text-sm font-semibold border transition duration-300 cursor-pointer ${
                             activeFilter === 'tables'
-                                ? 'bg-indigo-600 border-indigo-600 text-white shadow-md shadow-indigo-600/10'
+                                ? 'bg-[#563D82] border-[#563D82] text-white shadow-md shadow-[#563D82]/20'
                                 : 'bg-[#151425]/45 border-white/5 text-slate-400 hover:text-white hover:bg-[#1a1930]'
                         }`}
                     >
@@ -418,7 +405,7 @@ function MyReservations() {
                         onClick={() => setActiveFilter('tournaments')}
                         className={`py-2.5 px-6 rounded-xl text-sm font-semibold border transition duration-300 cursor-pointer ${
                             activeFilter === 'tournaments'
-                                ? 'bg-indigo-600 border-indigo-600 text-white shadow-md shadow-indigo-600/10'
+                                ? 'bg-[#563D82] border-[#563D82] text-white shadow-md shadow-[#563D82]/20'
                                 : 'bg-[#151425]/45 border-white/5 text-slate-400 hover:text-white hover:bg-[#1a1930]'
                         }`}
                     >
@@ -428,7 +415,7 @@ function MyReservations() {
                         onClick={() => setActiveFilter('events')}
                         className={`py-2.5 px-6 rounded-xl text-sm font-semibold border transition duration-300 cursor-pointer ${
                             activeFilter === 'events'
-                                ? 'bg-indigo-600 border-indigo-600 text-white shadow-md shadow-indigo-600/10'
+                                ? 'bg-[#563D82] border-[#563D82] text-white shadow-md shadow-[#563D82]/20'
                                 : 'bg-[#151425]/45 border-white/5 text-slate-400 hover:text-white hover:bg-[#1a1930]'
                         }`}
                     >
@@ -440,7 +427,7 @@ function MyReservations() {
                 {(activeFilter === 'all' || activeFilter === 'tables') && (
                     <div className="space-y-6">
                         <h2 className="text-2xl font-black text-white flex items-center gap-2">
-                            <Calendar className="w-6 h-6 text-indigo-400 shrink-0" /> {t('my_reservations_page.tables_title')}
+                            <Calendar className="w-6 h-6 text-[#F4AF23] shrink-0" /> {t('my_reservations_page.tables_title')}
                         </h2>
 
                         {reservationsError && (
@@ -451,17 +438,17 @@ function MyReservations() {
 
                         {loadingReservations ? (
                             <div className="py-10 text-center space-y-3">
-                                <div className="w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
+                                <div className="w-8 h-8 border-4 border-[#F4AF23] border-t-transparent rounded-full animate-spin mx-auto"></div>
                                 <p className="text-xs text-slate-400">{t('my_reservations_page.loading_tables')}</p>
                             </div>
                         ) : reservations.length === 0 ? (
-                            <div className="py-12 text-center bg-[#151425]/35 rounded-3xl border border-white/5 max-w-md mx-auto p-6 space-y-4 shadow-inner">
+                            <div className="py-12 text-center bg-[#130f25]/45 rounded-3xl border border-white/5 max-w-md mx-auto p-6 space-y-4 shadow-inner">
                                 <Calendar className="w-12 h-12 text-slate-500 mx-auto" />
                                 <h3 className="text-sm font-bold text-white">{t('my_reservations_page.no_tables')}</h3>
                                 <p className="text-xs text-slate-400 font-light leading-relaxed">
                                     {t('my_reservations_page.no_tables_desc')}
                                 </p>
-                                <Link to="/reservations" className="bg-indigo-650 hover:bg-indigo-600 text-white font-bold py-2.5 px-6 rounded-xl transition shadow-md w-full block text-xs">
+                                <Link to="/reservations" className="bg-[#F4AF23] hover:bg-[#ffbe3b] text-[#05040a] font-extrabold py-2.5 px-6 rounded-xl transition shadow-md w-full block text-xs text-center">
                                     {t('my_reservations_page.book_table_btn')}
                                 </Link>
                             </div>
@@ -485,9 +472,9 @@ function MyReservations() {
 
                 {/* Section Inscriptions aux tournois */}
                 {(activeFilter === 'all' || activeFilter === 'tournaments') && (
-                    <div className="space-y-6 pt-6 border-t border-indigo-950/40">
+                    <div className="space-y-6 pt-6 border-t border-white/5">
                         <h2 className="text-2xl font-black text-white flex items-center gap-2">
-                            <Trophy className="w-6 h-6 text-indigo-400 shrink-0" /> {t('my_reservations_page.tournaments_title')}
+                            <Trophy className="w-6 h-6 text-[#F4AF23] shrink-0" /> {t('my_reservations_page.tournaments_title')}
                         </h2>
 
                         {tournamentsError && (
@@ -498,17 +485,17 @@ function MyReservations() {
 
                         {loadingTournaments ? (
                             <div className="py-10 text-center space-y-3">
-                                <div className="w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
+                                <div className="w-8 h-8 border-4 border-[#F4AF23] border-t-transparent rounded-full animate-spin mx-auto"></div>
                                 <p className="text-xs text-slate-400">{t('my_reservations_page.loading_tourneys')}</p>
                             </div>
                         ) : tournaments.length === 0 ? (
-                            <div className="py-12 text-center bg-[#151425]/35 rounded-3xl border border-white/5 max-w-md mx-auto p-6 space-y-4 shadow-inner">
+                            <div className="py-12 text-center bg-[#130f25]/45 rounded-3xl border border-white/5 max-w-md mx-auto p-6 space-y-4 shadow-inner">
                                 <Swords className="w-12 h-12 text-slate-500 mx-auto" />
                                 <h3 className="text-sm font-bold text-white">{t('my_reservations_page.no_tourneys')}</h3>
                                 <p className="text-xs text-slate-400 font-light leading-relaxed">
                                     {t('my_reservations_page.no_tourneys_desc')}
                                 </p>
-                                <Link to="/tournaments" className="bg-indigo-650 hover:bg-indigo-600 text-white font-bold py-2.5 px-6 rounded-xl transition shadow-md w-full block text-xs text-center">
+                                <Link to="/tournaments" className="bg-[#F4AF23] hover:bg-[#ffbe3b] text-[#05040a] font-extrabold py-2.5 px-6 rounded-xl transition shadow-md w-full block text-xs text-center">
                                     {t('my_reservations_page.view_tourneys_btn')}
                                 </Link>
                             </div>
@@ -536,9 +523,9 @@ function MyReservations() {
 
                 {/* Section Inscriptions aux événements */}
                 {(activeFilter === 'all' || activeFilter === 'events') && (
-                    <div className="space-y-6 pt-6 border-t border-indigo-950/40">
+                    <div className="space-y-6 pt-6 border-t border-white/5">
                         <h2 className="text-2xl font-black text-white flex items-center gap-2">
-                            <Calendar className="w-6 h-6 text-indigo-400 shrink-0" /> {t('my_reservations_page.events_title', 'Mes Événements')}
+                            <Calendar className="w-6 h-6 text-[#F4AF23] shrink-0" /> {t('my_reservations_page.events_title', 'Mes Événements')}
                         </h2>
 
                         {eventsError && (
@@ -549,17 +536,17 @@ function MyReservations() {
 
                         {loadingEvents ? (
                             <div className="py-10 text-center space-y-3">
-                                <div className="w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
+                                <div className="w-8 h-8 border-4 border-[#F4AF23] border-t-transparent rounded-full animate-spin mx-auto"></div>
                                 <p className="text-xs text-slate-400">{t('my_reservations_page.loading_events', 'Chargement de vos événements...')}</p>
                             </div>
                         ) : events.length === 0 ? (
-                            <div className="py-12 text-center bg-[#151425]/35 rounded-3xl border border-white/5 max-w-md mx-auto p-6 space-y-4 shadow-inner">
+                            <div className="py-12 text-center bg-[#130f25]/45 rounded-3xl border border-white/5 max-w-md mx-auto p-6 space-y-4 shadow-inner">
                                 <Calendar className="w-12 h-12 text-slate-500 mx-auto" />
                                 <h3 className="text-sm font-bold text-white">{t('my_reservations_page.no_events', 'Aucun événement rejoint')}</h3>
                                 <p className="text-xs text-slate-400 font-light leading-relaxed">
                                     {t('my_reservations_page.no_events_desc', 'Vous n\'êtes inscrit à aucun événement pour le moment.')}
                                 </p>
-                                <Link to="/events" className="bg-indigo-650 hover:bg-indigo-600 text-white font-bold py-2.5 px-6 rounded-xl transition shadow-md w-full block text-xs text-center">
+                                <Link to="/events" className="bg-[#F4AF23] hover:bg-[#ffbe3b] text-[#05040a] font-extrabold py-2.5 px-6 rounded-xl transition shadow-md w-full block text-xs text-center">
                                     {t('my_reservations_page.view_events_btn', 'Voir l\'agenda des événements')}
                                 </Link>
                             </div>
@@ -590,10 +577,10 @@ function MyReservations() {
             {/* Modal d'édition */}
             {editingReservation && (
                 <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
-                    <div className="bg-[#121124] text-white rounded-3xl shadow-2xl max-w-md w-full overflow-hidden border border-white/5 space-y-6 p-6 animate-in fade-in zoom-in duration-200">
-                        <div className="flex justify-between items-center pb-3 border-b border-indigo-950/40">
+                    <div className="bg-[#130f25]/95 backdrop-blur-md text-white rounded-3xl shadow-2xl max-w-md w-full overflow-hidden border border-white/5 space-y-6 p-6 animate-in fade-in zoom-in duration-200">
+                        <div className="flex justify-between items-center pb-3 border-b border-white/5">
                             <h2 className="text-lg font-black text-white flex items-center gap-2">
-                                <Edit className="w-5 h-5 text-indigo-400 shrink-0" /> {t('my_reservations_page.modal_edit_title')}
+                                <Edit className="w-5 h-5 text-[#F4AF23] shrink-0" /> {t('my_reservations_page.modal_edit_title')}
                             </h2>
                             <button
                                 onClick={() => setEditingReservation(null)}
@@ -622,7 +609,7 @@ function MyReservations() {
                                     name="gameType"
                                     value={editFormData.gameType}
                                     onChange={handleEditChange}
-                                    className="w-full px-3.5 py-2.5 rounded-xl border border-[#1e1c3a] text-sm focus:outline-none focus:border-indigo-500 bg-[#191831] text-white"
+                                    className="w-full px-3.5 py-2.5 rounded-xl border border-white/5 text-sm focus:outline-none focus:border-[#F4AF23]/50 bg-[#0c0919] text-white"
                                 >
                                     <option value="POKEMON">Pokémon</option>
                                     <option value="MTG">Magic: The Gathering</option>
@@ -652,12 +639,12 @@ function MyReservations() {
                                             setIsDropdownOpen(true);
                                         }}
                                         onFocus={() => setIsDropdownOpen(true)}
-                                        className="w-full px-3.5 py-2.5 rounded-xl border border-[#1e1c3a] text-sm focus:outline-none focus:border-indigo-500 bg-[#191831] text-white placeholder-slate-500 font-light"
+                                        className="w-full px-3.5 py-2.5 rounded-xl border border-white/5 text-sm focus:outline-none focus:border-[#F4AF23]/50 bg-[#0c0919] text-white placeholder-slate-500 font-light"
                                     />
                                     {isDropdownOpen && (
                                         <>
                                             <div className="fixed inset-0 z-40" onClick={() => setIsDropdownOpen(false)}></div>
-                                            <div className="absolute left-0 right-0 top-full mt-1 max-h-60 overflow-y-auto bg-slate-950 border border-slate-800 rounded-xl shadow-2xl z-50 divide-y divide-slate-900">
+                                            <div className="absolute left-0 right-0 top-full mt-1 max-h-60 overflow-y-auto bg-slate-950 border border-white/5 rounded-xl shadow-2xl z-50 divide-y divide-slate-900">
                                                 {boardGames
                                                     .filter(g => g.name.toLowerCase().includes((editFormData.specificGame || '').toLowerCase()))
                                                     .map(game => (
@@ -672,7 +659,7 @@ function MyReservations() {
                                                                 }));
                                                                 setIsDropdownOpen(false);
                                                             }}
-                                                            className="w-full text-left px-4 py-2.5 text-xs text-slate-350 hover:bg-indigo-900/40 hover:text-white transition flex items-center gap-3 cursor-pointer"
+                                                            className="w-full text-left px-4 py-2.5 text-xs text-slate-350 hover:bg-[#563D82]/40 hover:text-white transition flex items-center gap-3 cursor-pointer"
                                                         >
                                                             {game.image_url && (
                                                                 <img
@@ -705,7 +692,7 @@ function MyReservations() {
                                     name="playersCount"
                                     value={editFormData.playersCount}
                                     onChange={handleEditChange}
-                                    className="w-full px-3.5 py-2.5 rounded-xl border border-[#1e1c3a] text-sm focus:outline-none focus:border-indigo-500 bg-[#191831] text-white"
+                                    className="w-full px-3.5 py-2.5 rounded-xl border border-white/5 text-sm focus:outline-none focus:border-[#F4AF23]/50 bg-[#0c0919] text-white"
                                 >
                                     <option value="1">{t('reservations_page.player')}</option>
                                     <option value="2">{t('reservations_page.players', { count: 2 })}</option>
@@ -728,7 +715,7 @@ function MyReservations() {
                                         min={today}
                                         value={editFormData.date}
                                         onChange={handleEditChange}
-                                        className="w-full px-3.5 py-2.5 rounded-xl border border-[#1e1c3a] text-sm focus:outline-none focus:border-indigo-500 bg-[#191831] text-white font-light"
+                                        className="w-full px-3.5 py-2.5 rounded-xl border border-white/5 text-sm focus:outline-none focus:border-[#F4AF23]/50 bg-[#0c0919] text-white font-light"
                                     />
                                 </div>
 
@@ -742,7 +729,7 @@ function MyReservations() {
                                         max="23:00"
                                         value={editFormData.time}
                                         onChange={handleEditChange}
-                                        className="w-full px-3.5 py-2.5 rounded-xl border border-[#1e1c3a] text-sm focus:outline-none focus:border-indigo-500 bg-[#191831] text-white font-light"
+                                        className="w-full px-3.5 py-2.5 rounded-xl border border-white/5 text-sm focus:outline-none focus:border-[#F4AF23]/50 bg-[#0c0919] text-white font-light"
                                     />
                                 </div>
                             </div>
@@ -757,7 +744,7 @@ function MyReservations() {
                                     max="10"
                                     value={editFormData.duration}
                                     onChange={handleEditChange}
-                                    className="w-full px-3.5 py-2.5 rounded-xl border border-[#1e1c3a] text-sm focus:outline-none focus:border-indigo-500 bg-[#191831] text-white font-light"
+                                    className="w-full px-3.5 py-2.5 rounded-xl border border-white/5 text-sm focus:outline-none focus:border-[#F4AF23]/50 bg-[#0c0919] text-white font-light"
                                 />
                             </div>
 

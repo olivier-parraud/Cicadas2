@@ -41,7 +41,7 @@ function Header() {
     };
 
     return (
-        <header className="bg-indigo-900 text-white shadow-lg border-b border-indigo-800 relative z-50">
+        <header className="bg-black/90 backdrop-blur-md text-white shadow-lg border-b border-white/5 relative z-50">
             <div className="container mx-auto px-4 py-4 flex justify-between items-center">
                 <Link to="/" className="text-3xl font-brand transition" onClick={closeMenu}>
                     Cicados
@@ -49,16 +49,16 @@ function Header() {
 
                 {/* Navigation Desktop */}
                 <nav className="hidden md:flex gap-8 items-center font-medium">
-                    <Link to="/" className="hover:text-indigo-300 transition">{t('nav.home')}</Link>
-                    <Link to="/reservations" className="hover:text-indigo-300 transition">{t('nav.book_table')}</Link>
+                    <Link to="/" className="hover:text-[#F4AF23] transition">{t('nav.home')}</Link>
+                    <Link to="/reservations" className="hover:text-[#F4AF23] transition">{t('nav.book_table')}</Link>
                     {isAuthenticated && (
-                        <Link to="/my-reservations" className="hover:text-indigo-300 transition">{t('nav.my_reservations')}</Link>
+                        <Link to="/my-reservations" className="hover:text-[#F4AF23] transition">{t('nav.my_reservations')}</Link>
                     )}
-                    <Link to="/boardgames" className="hover:text-indigo-300 transition">{t('nav.boardgames')}</Link>
-                    <Link to="/tournaments" className="hover:text-indigo-300 transition">{t('nav.tournaments')}</Link>
-                    <Link to="/events" className="hover:text-indigo-300 transition">{t('nav.events')}</Link>
+                    <Link to="/boardgames" className="hover:text-[#F4AF23] transition">{t('nav.boardgames')}</Link>
+                    <Link to="/tournaments" className="hover:text-[#F4AF23] transition">{t('nav.tournaments')}</Link>
+                    <Link to="/events" className="hover:text-[#F4AF23] transition">{t('nav.events')}</Link>
                     {isAuthenticated && isAdmin && (
-                        <Link to="/admin" className="hover:text-indigo-300 text-indigo-200 font-bold transition">{t('nav.admin')}</Link>
+                        <Link to="/admin" className="text-[#F4AF23]/90 hover:text-[#F4AF23] font-bold transition">{t('nav.admin')}</Link>
                     )}
                 </nav>
 
@@ -67,20 +67,20 @@ function Header() {
                     {isAuthenticated ? (
                         <button 
                             onClick={handleLogout}
-                            className="text-sm font-medium bg-red-500 hover:bg-red-400 px-4 py-2 rounded-full transition shadow-md cursor-pointer"
+                            className="text-sm font-medium bg-red-650 hover:bg-red-500 text-white px-4 py-2 rounded-full transition shadow-md cursor-pointer"
                         >
                             {t('nav.logout')}
                         </button>
                     ) : (
                         <>
-                            <Link to="/login" className="text-sm font-medium hover:text-indigo-200 transition">{t('nav.login')}</Link>
-                            <Link to="/register" className="text-sm font-medium bg-indigo-600 hover:bg-indigo-500 px-4 py-2 rounded-full transition shadow-md">{t('nav.register')}</Link>
+                            <Link to="/login" className="text-sm font-medium hover:text-[#F4AF23] transition">{t('nav.login')}</Link>
+                            <Link to="/register" className="text-sm font-extrabold bg-[#F4AF23] hover:bg-[#ffbe3b] text-[#05040a] px-5 py-2.5 rounded-full transition shadow-md shadow-amber-500/10">{t('nav.register')}</Link>
                         </>
                     )}
                     <select
                         value={currentLanguage}
                         onChange={handleLanguageChange}
-                        className="text-sm bg-indigo-800 hover:bg-indigo-700 px-2 py-1 rounded transition font-mono text-white border border-indigo-600 outline-none focus:ring-2 focus:ring-indigo-400"
+                        className="text-sm bg-white/5 hover:bg-white/10 px-3 py-1.5 rounded-xl transition font-mono text-white border border-white/10 outline-none focus:ring-2 focus:ring-[#F4AF23]"
                         title={t('nav.language')}
                     >
                         {languages.map((language) => (
@@ -107,33 +107,33 @@ function Header() {
 
             {/* Menu Déroulant Mobile */}
             {isMenuOpen && (
-                <div className="md:hidden absolute top-full left-0 w-full bg-indigo-950 border-b border-indigo-800 shadow-2xl backdrop-blur-lg flex flex-col p-6 space-y-4 animate-in slide-in-from-top duration-200">
-                    <Link to="/" className="hover:text-indigo-300 transition py-2 border-b border-indigo-900/50" onClick={closeMenu}>{t('nav.home')}</Link>
-                    <Link to="/reservations" className="hover:text-indigo-300 transition py-2 border-b border-indigo-900/50" onClick={closeMenu}>{t('nav.book_table')}</Link>
+                <div className="md:hidden absolute top-full left-0 w-full bg-black/95 border-b border-white/10 shadow-2xl backdrop-blur-lg flex flex-col p-6 space-y-4 animate-in slide-in-from-top duration-200">
+                    <Link to="/" className="hover:text-[#F4AF23] transition py-2 border-b border-white/5" onClick={closeMenu}>{t('nav.home')}</Link>
+                    <Link to="/reservations" className="hover:text-[#F4AF23] transition py-2 border-b border-white/5" onClick={closeMenu}>{t('nav.book_table')}</Link>
                     {isAuthenticated && (
-                        <Link to="/my-reservations" className="hover:text-indigo-300 transition py-2 border-b border-indigo-900/50" onClick={closeMenu}>{t('nav.my_reservations')}</Link>
+                        <Link to="/my-reservations" className="hover:text-[#F4AF23] transition py-2 border-b border-white/5" onClick={closeMenu}>{t('nav.my_reservations')}</Link>
                     )}
-                    <Link to="/boardgames" className="hover:text-indigo-300 transition py-2 border-b border-indigo-900/50" onClick={closeMenu}>{t('nav.boardgames')}</Link>
-                    <Link to="/tournaments" className="hover:text-indigo-300 transition py-2 border-b border-indigo-900/50" onClick={closeMenu}>{t('nav.tournaments')}</Link>
-                    <Link to="/events" className="hover:text-indigo-300 transition py-2 border-b border-indigo-900/50" onClick={closeMenu}>{t('nav.events')}</Link>
+                    <Link to="/boardgames" className="hover:text-[#F4AF23] transition py-2 border-b border-white/5" onClick={closeMenu}>{t('nav.boardgames')}</Link>
+                    <Link to="/tournaments" className="hover:text-[#F4AF23] transition py-2 border-b border-white/5" onClick={closeMenu}>{t('nav.tournaments')}</Link>
+                    <Link to="/events" className="hover:text-[#F4AF23] transition py-2 border-b border-white/5" onClick={closeMenu}>{t('nav.events')}</Link>
                     {isAuthenticated && isAdmin && (
-                        <Link to="/admin" className="hover:text-indigo-300 text-indigo-200 font-bold transition py-2 border-b border-indigo-900/50" onClick={closeMenu}>{t('nav.admin')}</Link>
+                        <Link to="/admin" className="hover:text-[#F4AF23] text-[#F4AF23]/90 font-bold transition py-2 border-b border-white/5" onClick={closeMenu}>{t('nav.admin')}</Link>
                     )}
 
                     <div className="flex flex-col gap-4 pt-4">
                         {isAuthenticated ? (
                             <button 
                                 onClick={() => { handleLogout(); closeMenu(); }}
-                                className="w-full text-center text-sm font-medium bg-red-500 hover:bg-red-400 px-4 py-3 rounded-xl transition shadow-md cursor-pointer"
+                                className="w-full text-center text-sm font-medium bg-red-650 hover:bg-red-500 text-white px-4 py-3 rounded-xl transition shadow-md cursor-pointer"
                             >
                                 {t('nav.logout')}
                             </button>
                         ) : (
                             <div className="flex gap-4">
-                                <Link to="/login" className="flex-1 text-center py-3 text-sm font-medium border border-indigo-650 hover:bg-indigo-900/40 rounded-xl transition" onClick={closeMenu}>
+                                <Link to="/login" className="flex-1 text-center py-3 text-sm font-medium border border-white/10 hover:bg-white/5 rounded-xl transition" onClick={closeMenu}>
                                     {t('nav.login')}
                                 </Link>
-                                <Link to="/register" className="flex-1 text-center py-3 text-sm font-medium bg-indigo-600 hover:bg-indigo-500 rounded-xl transition shadow-md" onClick={closeMenu}>
+                                <Link to="/register" className="flex-1 text-center py-3 text-sm font-extrabold bg-[#F4AF23] hover:bg-[#ffbe3b] text-[#05040a] rounded-xl transition shadow-md shadow-amber-500/10" onClick={closeMenu}>
                                     {t('nav.register')}
                                 </Link>
                             </div>
@@ -144,7 +144,7 @@ function Header() {
                             <select
                                 value={currentLanguage}
                                 onChange={handleLanguageChange}
-                                className="text-sm bg-indigo-850 hover:bg-indigo-700 px-3 py-1.5 rounded-lg transition font-mono text-white border border-indigo-600 outline-none"
+                                className="text-sm bg-white/5 hover:bg-white/10 px-3 py-1.5 rounded-lg transition font-mono text-white border border-white/10 outline-none"
                             >
                                 {languages.map((language) => (
                                     <option key={language.code} value={language.code} className="text-black">

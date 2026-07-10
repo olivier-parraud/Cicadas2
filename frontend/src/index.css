@@ -1,66 +1,66 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Orbitron:wght@700;900&display=swap');
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Orbitron:wght@700;900&family=Outfit:wght@400;500;600;700;800;900&display=swap');
 
 @theme {
-  --font-sans: 'Inter', sans-serif;
-  --font-display: 'Outfit', sans-serif;
+  --font-sans: 'Poppins', sans-serif;
+  --font-display: 'Poppins', sans-serif;
 
   /* Human-centric Cozy Dark Slate Palette */
-  --color-slate-50: #07060f;
-  --color-slate-100: #0d0c18;
-  --color-slate-200: #1b192e;
-  --color-slate-300: #292645;
-  --color-slate-400: #7a759c;
-  --color-slate-500: #8d88b3;
-  --color-slate-600: #a7a2cc;
-  --color-slate-700: #c2bddf;
-  --color-slate-800: #e2e0f0;
+  --color-slate-50: #05040a;
+  --color-slate-100: #0d0b17;
+  --color-slate-200: #191428;
+  --color-slate-300: #261f3c;
+  --color-slate-400: #8c82ab;
+  --color-slate-500: #a298be;
+  --color-slate-600: #bab2d3;
+  --color-slate-700: #d4cde8;
+  --color-slate-800: #ededfa;
   --color-slate-900: #ffffff;
 
-  --color-gray-50: #07060f;
-  --color-gray-100: #0d0c18;
-  --color-gray-200: #1b192e;
-  --color-gray-300: #292645;
-  --color-gray-400: #7a759c;
-  --color-gray-500: #8d88b3;
-  --color-gray-600: #a7a2cc;
-  --color-gray-700: #c2bddf;
-  --color-gray-800: #e2e0f0;
+  --color-gray-50: #05040a;
+  --color-gray-100: #0d0b17;
+  --color-gray-200: #191428;
+  --color-gray-300: #261f3c;
+  --color-gray-400: #8c82ab;
+  --color-gray-500: #a298be;
+  --color-gray-600: #bab2d3;
+  --color-gray-700: #d4cde8;
+  --color-gray-800: #ededfa;
   --color-gray-900: #ffffff;
 
   /* Translucent base */
   --color-white: #ffffff;
 
-  /* Modern Warm Accents (Indigo & Purple) */
-  --color-indigo-50: #121026;
-  --color-indigo-100: #e0e7ff;
-  --color-indigo-200: #c7d2fe;
-  --color-indigo-300: #a5b4fc;
-  --color-indigo-400: #818cf8;
-  --color-indigo-500: #6366f1; /* Main Indigo */
-  --color-indigo-600: #4f46e5;
-  --color-indigo-700: #4338ca;
-  --color-indigo-800: #0a0918;
-  --color-indigo-900: #05040d;
-  --color-indigo-950: #030208;
+  /* Modern Warm Accents (Indigo remapped to TCG Purple) */
+  --color-indigo-50: #15112c;
+  --color-indigo-100: #e7def7;
+  --color-indigo-200: #cfc2eb;
+  --color-indigo-300: #b19bdd;
+  --color-indigo-400: #9375cf;
+  --color-indigo-500: #563D82; /* TCG Royal Purple */
+  --color-indigo-600: #46306c;
+  --color-indigo-700: #352353;
+  --color-indigo-800: #0d0b1a;
+  --color-indigo-900: #07060f;
+  --color-indigo-950: #040308;
 
-  --color-blue-50: #081126;
-  --color-blue-100: #818cf8;
-  --color-blue-200: #6366f1;
-  --color-blue-700: #4f46e5;
-  --color-blue-800: #4338ca;
+  --color-blue-50: #0a1029;
+  --color-blue-100: #9375cf;
+  --color-blue-200: #563D82;
+  --color-blue-700: #46306c;
+  --color-blue-800: #352353;
 
-  --color-purple-50: #1b0c36;
+  --color-purple-50: #190a31;
   --color-purple-200: #d8b4fe;
   --color-purple-700: #a78bfa;
 
   --color-red-500: #f43f5e;
   --color-red-600: #e11d48;
   
-  --color-green-50: #062419;
+  --color-green-50: #052217;
   --color-green-700: #10b981;
   
-  --color-emerald-50: #062419;
+  --color-emerald-50: #052217;
   --color-emerald-200: #34d399;
   --color-emerald-700: #10b981;
   --color-emerald-800: #059669;
@@ -69,14 +69,14 @@
 /* --- Crafted Modern Aesthetic Styling --- */
 
 body {
-  background-color: #080711;
-  font-family: 'Inter', sans-serif;
+  background-color: #05040a;
+  font-family: 'Poppins', sans-serif;
   color: #cbd5e1;
-  /* Soft, organic radial gradients for visual depth and premium feel */
+  /* Premium radial gradients with deep purple and subtle gold values */
   background-image: 
-    radial-gradient(circle at 10% 15%, rgba(99, 102, 241, 0.07) 0%, transparent 45%),
-    radial-gradient(circle at 90% 75%, rgba(167, 139, 250, 0.06) 0%, transparent 45%),
-    radial-gradient(circle at 50% 50%, rgba(99, 102, 241, 0.02) 0%, transparent 50%);
+    radial-gradient(circle at 10% 15%, rgba(86, 61, 130, 0.16) 0%, transparent 45%),
+    radial-gradient(circle at 90% 75%, rgba(244, 175, 35, 0.05) 0%, transparent 45%),
+    radial-gradient(circle at 50% 50%, rgba(86, 61, 130, 0.04) 0%, transparent 50%);
   background-attachment: fixed;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -88,20 +88,20 @@ body {
   text-transform: uppercase;
   letter-spacing: 0.15em;
   font-weight: 900;
-  background: linear-gradient(135deg, #c7d2fe 0%, #818cf8 50%, #6366f1 100%);
+  background: linear-gradient(135deg, #FFE082 0%, #F4AF23 50%, #FF8F00 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 2px 8px rgba(99, 102, 241, 0.2));
+  filter: drop-shadow(0 2px 8px rgba(244, 175, 35, 0.2));
   transition: all 0.3s ease;
 }
 
 .font-brand:hover {
-  filter: drop-shadow(0 2px 12px rgba(99, 102, 241, 0.5));
+  filter: drop-shadow(0 2px 12px rgba(244, 175, 35, 0.5));
 }
 
-/* Clean, modern headings with Outfit and slight letter-spacing reduction */
+/* Clean headings using Poppins */
 h1, h2, h3, h4, h5, h6 {
-  font-family: 'Outfit', sans-serif !important;
+  font-family: 'Poppins', sans-serif !important;
   letter-spacing: -0.02em;
   font-weight: 800;
   color: #ffffff;
@@ -135,87 +135,89 @@ h1, h2, h3, h4, h5, h6 {
 .text-slate-200, .text-gray-200, .text-zinc-200, .text-neutral-200 {
   color: #e2e8f0 !important;
 }
+.text-indigo-300 {
+  color: #ab95d9 !important;
+}
+.text-indigo-400 {
+  color: #c7bbf1 !important;
+}
 .text-indigo-900, .text-indigo-950 {
-  color: #818cf8 !important;
+  color: #b19bdd !important;
 }
 
-/* Translucent glass card background for high-end feel */
+/* Translucent glass card background with deep purple tones */
 .bg-white {
   backdrop-filter: blur(16px) !important;
   -webkit-backdrop-filter: blur(16px) !important;
-  background-color: rgba(21, 20, 37, 0.45) !important;
+  background-color: rgba(21, 17, 39, 0.45) !important;
   border: 1px solid rgba(255, 255, 255, 0.06) !important;
-  box-shadow: 0 12px 40px -12px rgba(0, 0, 0, 0.5) !important;
+  box-shadow: 0 12px 40px -12px rgba(0, 0, 0, 0.6) !important;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 /* Sub-card/element styling */
 .bg-slate-50 {
-  background-color: rgba(13, 12, 24, 0.5) !important;
+  background-color: rgba(13, 11, 23, 0.5) !important;
   border: 1px solid rgba(255, 255, 255, 0.04) !important;
 }
 
 .bg-slate-100 {
-  background-color: rgba(13, 12, 24, 0.8) !important;
+  background-color: rgba(13, 11, 23, 0.8) !important;
   border: 1px solid rgba(255, 255, 255, 0.05) !important;
 }
 
 /* Styled inputs for a seamless dark-theme look */
 input, select, textarea {
-  background-color: rgba(13, 12, 24, 0.6) !important;
+  background-color: rgba(13, 11, 23, 0.65) !important;
   color: #ffffff !important;
-  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
   border-radius: 12px !important;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15) !important;
   transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
 }
 
 input:focus, select:focus, textarea:focus {
-  border-color: #6366f1 !important;
-  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2) !important;
+  border-color: #F4AF23 !important;
+  box-shadow: 0 0 0 2px rgba(244, 175, 35, 0.2) !important;
   outline: none;
 }
 
-/* Sophisticated, responsive button design (no hard neons) */
+/* Purple buttons styling (remapping bg-indigo-600) */
 .bg-indigo-600 {
-  background-color: #6366f1 !important;
+  background-color: #563D82 !important;
   color: #ffffff !important;
-  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.2) !important;
+  box-shadow: 0 4px 14px rgba(86, 61, 130, 0.25) !important;
   border: 1px solid rgba(255, 255, 255, 0.08) !important;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
 .bg-indigo-600:hover {
-  background-color: #4f46e5 !important;
-  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.35) !important;
+  background-color: #684b9c !important;
+  box-shadow: 0 6px 20px rgba(86, 61, 130, 0.4) !important;
   transform: translateY(-0.5px);
 }
 
 .hover\:bg-indigo-500:hover {
-  background-color: #4f46e5 !important;
+  background-color: #684b9c !important;
 }
 
-/* Translucent pill badges */
+/* Translucent purple badges */
 .bg-indigo-50 {
-  background-color: rgba(99, 102, 241, 0.12) !important;
-  color: #a5b4fc !important;
-  border: 1px solid rgba(99, 102, 241, 0.2) !important;
+  background-color: rgba(86, 61, 130, 0.15) !important;
+  color: #cfc2eb !important;
+  border: 1px solid rgba(86, 61, 130, 0.25) !important;
 }
 
 .bg-indigo-500\/10 {
-  background-color: rgba(99, 102, 241, 0.08) !important;
-  color: #a5b4fc !important;
-  border: 1px solid rgba(99, 102, 241, 0.15) !important;
-}
-
-.text-indigo-300 {
-  color: #a5b4fc !important;
+  background-color: rgba(86, 61, 130, 0.1) !important;
+  color: #cfc2eb !important;
+  border: 1px solid rgba(86, 61, 130, 0.2) !important;
 }
 
 .bg-emerald-50 {
-  background-color: rgba(16, 185, 129, 0.1) !important;
+  background-color: rgba(10, 185, 129, 0.1) !important;
   color: #34d399 !important;
-  border: 1px solid rgba(16, 185, 129, 0.2) !important;
+  border: 1px solid rgba(10, 185, 129, 0.2) !important;
 }
 
 .bg-rose-50 {
@@ -224,13 +226,13 @@ input:focus, select:focus, textarea:focus {
   border: 1px solid rgba(244, 63, 94, 0.2) !important;
 }
 
-/* Ambient nav bar */
+/* Header navbar styling */
 header {
-  background-color: rgba(8, 7, 17, 0.8) !important;
+  background-color: rgba(5, 4, 10, 0.9) !important;
   backdrop-filter: blur(16px) !important;
   -webkit-backdrop-filter: blur(16px) !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.15) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2) !important;
 }
 
 /* Minimalist scrollbar */
@@ -240,16 +242,16 @@ header {
 }
 
 ::-webkit-scrollbar-track {
-  background: #080711;
+  background: #05040a;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #1b192e;
+  background: #191428;
   border-radius: 99px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #6366f1;
+  background: #563D82;
 }
 
 input[type="date"]::-webkit-calendar-picker-indicator,

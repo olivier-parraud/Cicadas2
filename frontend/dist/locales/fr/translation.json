@@ -290,7 +290,11 @@
     "unregister_event_btn": "Se désinscrire de l'événement",
     "confirm_unregister_event": "Êtes-vous sûr de vouloir vous désinscrire de cet événement ?",
     "load_events_error": "Impossible de charger vos inscriptions aux événements.",
-    "err_conn": "Erreur de connexion avec le serveur."
+    "err_conn": "Erreur de connexion avec le serveur.",
+    "filter_all": "Tout afficher",
+    "filter_tables": "Réservations de tables",
+    "filter_tournaments": "Tournois",
+    "filter_events": "Événements"
   },
   "boardgames_page": {
     "badge": "Ludothèque de la Boutique",
@@ -315,7 +319,7 @@
   },
   "tournaments_page": {
     "badge": "Événements Officiels Cicados",
-    "title": "Tournois & Soirées TCG",
+    "title": "Tournois",
     "subtitle": "Rejoignez nos compétitions locales, défiez la communauté et tentez de remporter des boosters promo et des lots exclusifs !",
     "all_tournaments": "Tous les tournois",
     "loading": "Chargement des événements...",

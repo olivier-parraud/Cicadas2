@@ -94,6 +94,16 @@ const Event = {
     async delete(id) {
         const sql = 'DELETE FROM events WHERE id = ?';
         return query(sql, [id]);
+    },
+
+    // Modifier un événement (Admin)
+    async update(id, { name, type, game, date, capacity, price, description }) {
+        const sql = `
+            UPDATE events
+            SET name = ?, type = ?, game = ?, date = ?, capacity = ?, price = ?, description = ?
+            WHERE id = ?
+        `;
+        return query(sql, [name, type, game, date, capacity, price, description, id]);
     }
 };
 

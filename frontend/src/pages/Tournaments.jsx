@@ -170,14 +170,14 @@ function Tournaments() {
     // Helper color/emoji functions moved to TournamentCard component
 
     return (
-        <div className="min-h-screen bg-[#080711] text-white selection:bg-indigo-650 selection:text-white pb-20">
+        <div className="min-h-screen bg-[#05040a] text-white selection:bg-[#F4AF23] selection:text-[#05040a] pb-20">
             {/* Header Section */}
-            <div className="relative overflow-hidden bg-gradient-to-br from-[#0c0a1e] via-[#120f2e] to-[#080711] text-white py-20 px-4 border-b border-indigo-950/40 text-center">
-                <div className="absolute top-1/4 left-1/10 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
-                <div className="absolute bottom-1/4 right-1/10 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl pointer-events-none"></div>
+            <div className="relative overflow-hidden bg-gradient-to-br from-black via-[#130f25] to-black text-white py-20 px-4 border-b border-white/5 text-center">
+                <div className="absolute top-1/4 left-1/10 w-96 h-96 bg-[#563D82]/10 rounded-full blur-3xl pointer-events-none"></div>
+                <div className="absolute bottom-1/4 right-1/10 w-96 h-96 bg-[#F4AF23]/5 rounded-full blur-3xl pointer-events-none"></div>
 
                 <div className="max-w-4xl mx-auto space-y-6 relative z-10">
-                    <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight bg-clip-text bg-gradient-to-r from-white via-indigo-100 to-indigo-300 leading-tight">
+                    <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight bg-clip-text bg-gradient-to-r from-white via-[#FFE082] to-[#F4AF23] leading-tight">
                         {t('tournaments_page.title')}
                     </h1>
                     <p className="text-lg text-slate-300 max-w-2xl mx-auto leading-relaxed font-light">
@@ -192,7 +192,7 @@ function Tournaments() {
                     <button
                         onClick={() => setFilter('all')}
                         className={`py-2.5 px-6 rounded-xl text-sm font-semibold border transition duration-300 cursor-pointer ${filter === 'all'
-                            ? 'bg-indigo-600 border-indigo-600 text-white shadow-md shadow-indigo-600/10'
+                            ? 'bg-[#563D82] border-[#563D82] text-white shadow-md shadow-[#563D82]/20'
                             : 'bg-[#151425]/45 border-white/5 text-slate-400 hover:text-white hover:bg-[#1a1930]'
                             }`}
                     >
@@ -213,7 +213,7 @@ function Tournaments() {
                             key={tcg.id}
                             onClick={() => setFilter(tcg.id)}
                             className={`py-2.5 px-6 rounded-xl text-sm font-semibold border transition duration-300 cursor-pointer ${filter === tcg.id
-                                ? 'bg-indigo-600 border-indigo-600 text-white shadow-md'
+                                ? 'bg-[#563D82] border-[#563D82] text-white shadow-md shadow-[#563D82]/20'
                                 : 'bg-[#151425]/45 border-white/5 text-slate-400 hover:text-white hover:bg-[#1a1930]'
                                 }`}
                         >

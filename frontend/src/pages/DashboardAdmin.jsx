@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Calendar, Trophy, Users, Download, Clock, AlertTriangle, Trash2, Dice6, ImageIcon, Zap, Plus } from 'lucide-react';
+import { Calendar, Trophy, Users, Download, Clock, AlertTriangle, Trash2, Dice6, ImageIcon, Zap, Plus, X } from 'lucide-react';
 import TournamentCard from '../components/TournamentCard';
 import BoardGameCard from '../components/BoardGameCard';
 
@@ -23,6 +23,8 @@ function DashboardAdmin() {
     const [deleteConfirmType, setDeleteConfirmType] = useState(null);
     const [openParticipantsId, setOpenParticipantsId] = useState(null);
     const [expandedPreviewBg, setExpandedPreviewBg] = useState(false);
+    const [editingTourney, setEditingTourney] = useState(null);
+    const [editingEvent, setEditingEvent] = useState(null);
 
     // Search states
     const [tourneySearch, setTourneySearch] = useState('');
@@ -381,6 +383,63 @@ function DashboardAdmin() {
         setDeleteConfirmType('tournament');
     };
 
+    const startEditTourney = (tourney) => {
+        const dt = new Date(tourney.date);
+        const yyyy = dt.getFullYear();
+        const mm = String(dt.getMonth() + 1).padStart(2, '0');
+        const dd = String(dt.getDate()).padStart(2, '0');
+        const hh = String(dt.getHours()).padStart(2, '0');
+        const min = String(dt.getMinutes()).padStart(2, '0');
+        
+        setEditingTourney({
+            id: tourney.id,
+            name: tourney.name,
+            game: tourney.game,
+            date: `${yyyy}-${mm}-${dd}`,
+            time: `${hh}:${min}`,
+            capacity: tourney.capacity,
+            price: tourney.price,
+            description: tourney.description || ''
+        });
+    };
+
+    const handleUpdateTourneySubmit = async (e) => {
+        e.preventDefault();
+        setActionLoading(true);
+        try {
+            const formattedDate = `${editingTourney.date} ${editingTourney.time}:00`;
+            const response = await fetch(`http://localhost:5050/api/admin/tournaments/${editingTourney.id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    name: editingTourney.name,
+                    game: editingTourney.game,
+                    date: formattedDate,
+                    capacity: parseInt(editingTourney.capacity, 10),
+                    price: parseFloat(editingTourney.price || 0),
+                    description: editingTourney.description
+                })
+            });
+
+            if (response.ok) {
+                setMessage({ type: 'success', text: 'Tournoi mis à jour avec succès !' });
+                setEditingTourney(null);
+                fetchAdminData();
+            } else {
+                const data = await response.json();
+                setMessage({ type: 'error', text: data.error || 'Erreur lors de la modification.' });
+            }
+        } catch (err) {
+            console.error(err);
+            setMessage({ type: 'error', text: 'Erreur réseau.' });
+        } finally {
+            setActionLoading(false);
+        }
+    };
+
     // --- EVENT ACTIONS ---
 
     const handleCreateEvent = async (e) => {
@@ -434,6 +493,65 @@ function DashboardAdmin() {
     const handleDeleteEvent = (id) => {
         setDeleteConfirmId(id);
         setDeleteConfirmType('event');
+    };
+
+    const startEditEvent = (event) => {
+        const dt = new Date(event.date);
+        const yyyy = dt.getFullYear();
+        const mm = String(dt.getMonth() + 1).padStart(2, '0');
+        const dd = String(dt.getDate()).padStart(2, '0');
+        const hh = String(dt.getHours()).padStart(2, '0');
+        const min = String(dt.getMinutes()).padStart(2, '0');
+        
+        setEditingEvent({
+            id: event.id,
+            name: event.name,
+            type: event.type,
+            game: event.game,
+            date: `${yyyy}-${mm}-${dd}`,
+            time: `${hh}:${min}`,
+            capacity: event.capacity,
+            price: event.price,
+            description: event.description || ''
+        });
+    };
+
+    const handleUpdateEventSubmit = async (e) => {
+        e.preventDefault();
+        setActionLoading(true);
+        try {
+            const formattedDate = `${editingEvent.date} ${editingEvent.time}:00`;
+            const response = await fetch(`http://localhost:5050/api/admin/events/${editingEvent.id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    name: editingEvent.name,
+                    type: editingEvent.type,
+                    game: editingEvent.game,
+                    date: formattedDate,
+                    capacity: parseInt(editingEvent.capacity, 10),
+                    price: parseFloat(editingEvent.price || 0),
+                    description: editingEvent.description
+                })
+            });
+
+            if (response.ok) {
+                setMessage({ type: 'success', text: 'Événement mis à jour avec succès !' });
+                setEditingEvent(null);
+                fetchAdminData();
+            } else {
+                const data = await response.json();
+                setMessage({ type: 'error', text: data.error || 'Erreur lors de la modification.' });
+            }
+        } catch (err) {
+            console.error(err);
+            setMessage({ type: 'error', text: 'Erreur réseau.' });
+        } finally {
+            setActionLoading(false);
+        }
     };
 
     const handleCreateBoardGame = async (e) => {
@@ -561,11 +679,30 @@ function DashboardAdmin() {
         if (type === 'BOARD_GAME') {
             return 'text-purple-700 bg-purple-50 border-purple-200';
         } else if (type === 'BYOG') {
-            return 'text-emerald-700 bg-emerald-50 border-emerald-200';
-        } else if (['MTG', 'POKEMON', 'ONE_PIECE', 'YUGIOH', 'STAR_WARS', 'LORCANA', 'FINAL_FF', 'ALTERED', 'DBS'].includes(type)) {
-            return 'text-blue-700 bg-blue-50 border-blue-200';
+            return 'text-blue-500 bg-black border-blue-500';
         }
-        return 'text-slate-600 bg-slate-100 border-slate-200';
+        switch (type) {
+            case 'MTG':
+                return 'text-orange-500 bg-black border-orange-500';
+            case 'POKEMON':
+                return 'text-amber-500 bg-black border-amber-500';
+            case 'ONE_PIECE':
+                return 'text-cyan-500 bg-black border-cyan-500';
+            case 'YUGIOH':
+                return 'text-rose-500 bg-black border-rose-500';
+            case 'STAR_WARS':
+                return 'text-blue-500 bg-black border-blue-500';
+            case 'LORCANA':
+                return 'text-purple-500 bg-black border-purple-500';
+            case 'FINAL_FF':
+                return 'text-teal-500 bg-black border-teal-500';
+            case 'ALTERED':
+                return 'text-indigo-300 bg-black border-indigo-400';
+            case 'DBS':
+                return 'text-emerald-500 bg-black border-emerald-500';
+            default:
+                return 'text-slate-600 bg-slate-100 border-slate-200';
+        }
     };
 
     const filteredTournaments = tournaments.filter(t => 
@@ -692,17 +829,7 @@ function DashboardAdmin() {
                                                              {(() => {
                                                                  if (!res.tableName) return 'Table Standard';
                                                                  const match = res.tableName.match(/Table\s+\d+/i);
-                                                                 const prefix = match ? match[0] : res.tableName;
-                                                                 if (res.game_type === 'BYOG') {
-                                                                     return prefix;
-                                                                 }
-                                                                 const isTcg = ['MTG', 'POKEMON', 'ONE_PIECE', 'YUGIOH', 'LORCANA', 'STAR_WARS', 'FINAL_FF', 'ALTERED', 'DBS'].includes(res.game_type);
-                                                                 if (isTcg) {
-                                                                     return `${prefix} (TCG)`;
-                                                                 } else if (res.game_type === 'BOARD_GAME') {
-                                                                     return `${prefix} (Jeux de plateau)`;
-                                                                 }
-                                                                 return res.tableName;
+                                                                 return match ? match[0] : res.tableName;
                                                              })()}
                                                         </td>
                                                         <td className="p-4 text-slate-600">{startStr}</td>
@@ -931,6 +1058,7 @@ function DashboardAdmin() {
                                                         isOpenParticipants={openParticipantsId === tourney.id}
                                                         onToggleParticipants={() => toggleParticipants(tourney.id)}
                                                         onAction={() => handleDeleteTourney(tourney.id)}
+                                                        onEdit={() => startEditTourney(tourney)}
                                                         t={t}
                                                         i18n={i18n}
                                                         theme="dark"
@@ -1117,6 +1245,7 @@ function DashboardAdmin() {
                                                         isOpenParticipants={openParticipantsId === e.id}
                                                         onToggleParticipants={() => toggleParticipants(e.id)}
                                                         onAction={() => handleDeleteEvent(e.id)}
+                                                        onEdit={() => startEditEvent(e)}
                                                         t={t}
                                                         i18n={i18n}
                                                         theme="dark"
@@ -1468,6 +1597,281 @@ function DashboardAdmin() {
                     </div>
                 );
             })()}
+
+            {/* Custom Modal for Tournament Editing */}
+            {editingTourney && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 backdrop-blur-sm transition-all duration-300">
+                    <div className="bg-white rounded-3xl p-6 md:p-8 max-w-xl w-full mx-4 shadow-2xl border border-slate-100/50 space-y-6 animate-in zoom-in-95 duration-200 overflow-y-auto max-h-[90vh]">
+                        <div className="flex justify-between items-center pb-3 border-b border-slate-100">
+                            <h3 className="text-xl font-black text-slate-950 tracking-tight flex items-center gap-2">
+                                <Trophy className="w-5 h-5 text-indigo-650" /> Modifier le tournoi
+                            </h3>
+                            <button
+                                onClick={() => setEditingTourney(null)}
+                                className="text-slate-400 hover:text-slate-650 focus:outline-none transition-colors cursor-pointer"
+                            >
+                                <X className="w-5 h-5" />
+                            </button>
+                        </div>
+
+                        <form onSubmit={handleUpdateTourneySubmit} className="space-y-4">
+                            <div className="space-y-1">
+                                <label className="text-xs font-bold text-slate-500 uppercase">Nom du tournoi</label>
+                                <input
+                                    type="text"
+                                    required
+                                    value={editingTourney.name}
+                                    onChange={(e) => setEditingTourney({ ...editingTourney, name: e.target.value })}
+                                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-650 bg-white text-slate-900"
+                                />
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="space-y-1">
+                                    <label className="text-xs font-bold text-slate-500 uppercase">Jeu</label>
+                                    <select
+                                        value={editingTourney.game}
+                                        onChange={(e) => setEditingTourney({ ...editingTourney, game: e.target.value })}
+                                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-650 bg-white text-slate-900"
+                                    >
+                                        <option>Magic: The Gathering</option>
+                                        <option>Pokémon TCG</option>
+                                        <option>One Piece Card Game</option>
+                                        <option>Yu-Gi-Oh!</option>
+                                        <option>Star Wars Unlimited</option>
+                                        <option>Disney Lorcana</option>
+                                        <option>Final Fantasy TCG</option>
+                                        <option>Altered TCG</option>
+                                        <option>Dragon Ball Super Card Game</option>
+                                    </select>
+                                </div>
+
+                                <div className="space-y-1">
+                                    <label className="text-xs font-bold text-slate-500 uppercase">Capacité max</label>
+                                    <input
+                                        type="number"
+                                        required
+                                        min="4"
+                                        value={editingTourney.capacity}
+                                        onChange={(e) => setEditingTourney({ ...editingTourney, capacity: e.target.value })}
+                                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-650 bg-white text-slate-900"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="space-y-1">
+                                    <label className="text-xs font-bold text-slate-500 uppercase">Date</label>
+                                    <input
+                                        type="date"
+                                        required
+                                        value={editingTourney.date}
+                                        onChange={(e) => setEditingTourney({ ...editingTourney, date: e.target.value })}
+                                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-650 bg-white text-slate-900"
+                                    />
+                                </div>
+
+                                <div className="space-y-1">
+                                    <label className="text-xs font-bold text-slate-500 uppercase">Heure</label>
+                                    <input
+                                        type="time"
+                                        required
+                                        value={editingTourney.time}
+                                        onChange={(e) => setEditingTourney({ ...editingTourney, time: e.target.value })}
+                                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-650 bg-white text-slate-900"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="space-y-1">
+                                <label className="text-xs font-bold text-slate-500 uppercase">Prix de participation (€)</label>
+                                <input
+                                    type="number"
+                                    required
+                                    step="0.01"
+                                    min="0"
+                                    value={editingTourney.price}
+                                    onChange={(e) => setEditingTourney({ ...editingTourney, price: e.target.value })}
+                                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-650 bg-white text-slate-900"
+                                />
+                            </div>
+
+                            <div className="space-y-1">
+                                <label className="text-xs font-bold text-slate-500 uppercase">Description</label>
+                                <textarea
+                                    rows="3"
+                                    placeholder="Format, dotations, détails additionnels..."
+                                    value={editingTourney.description}
+                                    onChange={(e) => setEditingTourney({ ...editingTourney, description: e.target.value })}
+                                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-650 bg-white text-slate-900"
+                                ></textarea>
+                            </div>
+
+                            <div className="flex justify-end gap-3 pt-2">
+                                <button
+                                    type="button"
+                                    onClick={() => setEditingTourney(null)}
+                                    className="py-2.5 px-5 rounded-xl text-sm font-bold text-slate-700 hover:bg-slate-50 border border-slate-200 transition cursor-pointer"
+                                >
+                                    Annuler
+                                </button>
+                                <button
+                                    type="submit"
+                                    disabled={actionLoading}
+                                    className="py-2.5 px-5 rounded-xl text-sm font-bold bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm transition disabled:opacity-50 cursor-pointer"
+                                >
+                                    Enregistrer
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+
+            {/* Custom Modal for Event Editing */}
+            {editingEvent && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 backdrop-blur-sm transition-all duration-300">
+                    <div className="bg-white rounded-3xl p-6 md:p-8 max-w-xl w-full mx-4 shadow-2xl border border-slate-100/50 space-y-6 animate-in zoom-in-95 duration-200 overflow-y-auto max-h-[90vh]">
+                        <div className="flex justify-between items-center pb-3 border-b border-slate-100">
+                            <h3 className="text-xl font-black text-slate-950 tracking-tight flex items-center gap-2">
+                                <Calendar className="w-5 h-5 text-indigo-650" /> Modifier l'événement
+                            </h3>
+                            <button
+                                onClick={() => setEditingEvent(null)}
+                                className="text-slate-400 hover:text-slate-650 focus:outline-none transition-colors cursor-pointer"
+                            >
+                                <X className="w-5 h-5" />
+                            </button>
+                        </div>
+
+                        <form onSubmit={handleUpdateEventSubmit} className="space-y-4">
+                            <div className="space-y-1">
+                                <label className="text-xs font-bold text-slate-500 uppercase">Nom de l'événement</label>
+                                <input
+                                    type="text"
+                                    required
+                                    value={editingEvent.name}
+                                    onChange={(e) => setEditingEvent({ ...editingEvent, name: e.target.value })}
+                                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-650 bg-white text-slate-900"
+                                />
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="space-y-1">
+                                    <label className="text-xs font-bold text-slate-500 uppercase">Type d'événement</label>
+                                    <select
+                                        value={editingEvent.type}
+                                        onChange={(e) => setEditingEvent({ ...editingEvent, type: e.target.value })}
+                                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-650 bg-white text-slate-900"
+                                    >
+                                        <option value="avant_premiere">Avant-Première</option>
+                                        <option value="draft">Draft</option>
+                                        <option value="initiation">Initiation</option>
+                                    </select>
+                                </div>
+
+                                <div className="space-y-1">
+                                    <label className="text-xs font-bold text-slate-500 uppercase">Jeu associé</label>
+                                    <select
+                                        value={editingEvent.game}
+                                        onChange={(e) => setEditingEvent({ ...editingEvent, game: e.target.value })}
+                                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-650 bg-white text-slate-900"
+                                    >
+                                        <option>Pokémon</option>
+                                        <option>Magic: The Gathering</option>
+                                        <option>One Piece Card Game</option>
+                                        <option>Yu-Gi-Oh!</option>
+                                        <option>Star Wars: Unlimited</option>
+                                        <option>Disney Lorcana</option>
+                                        <option>Final Fantasy TCG</option>
+                                        <option>Altered</option>
+                                        <option>Dragon Ball Super Card Game</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="space-y-1">
+                                    <label className="text-xs font-bold text-slate-500 uppercase">Capacité max</label>
+                                    <input
+                                        type="number"
+                                        required
+                                        min="4"
+                                        value={editingEvent.capacity}
+                                        onChange={(e) => setEditingEvent({ ...editingEvent, capacity: e.target.value })}
+                                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-650 bg-white text-slate-900"
+                                    />
+                                </div>
+
+                                <div className="space-y-1">
+                                    <label className="text-xs font-bold text-slate-500 uppercase">Prix de participation (€)</label>
+                                    <input
+                                        type="number"
+                                        required
+                                        step="0.01"
+                                        min="0"
+                                        value={editingEvent.price}
+                                        onChange={(e) => setEditingEvent({ ...editingEvent, price: e.target.value })}
+                                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-650 bg-white text-slate-900"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="space-y-1">
+                                    <label className="text-xs font-bold text-slate-500 uppercase">Date</label>
+                                    <input
+                                        type="date"
+                                        required
+                                        value={editingEvent.date}
+                                        onChange={(e) => setEditingEvent({ ...editingEvent, date: e.target.value })}
+                                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-650 bg-white text-slate-900"
+                                    />
+                                </div>
+
+                                <div className="space-y-1">
+                                    <label className="text-xs font-bold text-slate-500 uppercase">Heure</label>
+                                    <input
+                                        type="time"
+                                        required
+                                        value={editingEvent.time}
+                                        onChange={(e) => setEditingEvent({ ...editingEvent, time: e.target.value })}
+                                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-650 bg-white text-slate-900"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="space-y-1">
+                                <label className="text-xs font-bold text-slate-500 uppercase">Description</label>
+                                <textarea
+                                    rows="3"
+                                    placeholder="Détails sur le format, la dotation..."
+                                    value={editingEvent.description}
+                                    onChange={(e) => setEditingEvent({ ...editingEvent, description: e.target.value })}
+                                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-650 bg-white text-slate-900"
+                                ></textarea>
+                            </div>
+
+                            <div className="flex justify-end gap-3 pt-2">
+                                <button
+                                    type="button"
+                                    onClick={() => setEditingEvent(null)}
+                                    className="py-2.5 px-5 rounded-xl text-sm font-bold text-slate-700 hover:bg-slate-50 border border-slate-200 transition cursor-pointer"
+                                >
+                                    Annuler
+                                </button>
+                                <button
+                                    type="submit"
+                                    disabled={actionLoading}
+                                    className="py-2.5 px-5 rounded-xl text-sm font-bold bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm transition disabled:opacity-50 cursor-pointer"
+                                >
+                                    Enregistrer
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
