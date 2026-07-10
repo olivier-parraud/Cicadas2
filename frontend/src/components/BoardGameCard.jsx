@@ -38,7 +38,7 @@ function BoardGameCard({
                     <img
                         src={game.image_url}
                         alt={game.name}
-                        className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-500"
+                        className="w-full h-full object-contain p-4"
                         onError={(e) => {
                             e.target.onerror = null;
                             e.target.src = 'https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?q=80&w=600';

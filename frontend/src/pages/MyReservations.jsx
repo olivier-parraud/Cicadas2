@@ -41,6 +41,7 @@ function MyReservations() {
     const [boardGames, setBoardGames] = useState([]);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [openParticipantsId, setOpenParticipantsId] = useState(null);
+    const [activeFilter, setActiveFilter] = useState('all');
     const toggleParticipants = (id) => {
         setOpenParticipantsId(openParticipantsId === id ? null : id);
     };
@@ -342,7 +343,11 @@ function MyReservations() {
         const match = roomName.match(/Table\s+\d+/i);
         const prefix = match ? match[0] : roomName;
 
-        const isTcg = ['MTG', 'YUGIOH', 'POKEMON', 'LORCANA'].includes(gameType);
+        if (gameType === 'BYOG') {
+            return prefix;
+        }
+
+        const isTcg = ['MTG', 'POKEMON', 'ONE_PIECE', 'YUGIOH', 'LORCANA', 'STAR_WARS', 'FINAL_FF', 'ALTERED', 'DBS'].includes(gameType);
         if (isTcg) {
             return `${prefix} (TCG)`;
         } else if (gameType === 'BOARD_GAME') {
@@ -387,148 +392,198 @@ function MyReservations() {
 
             <div className="max-w-7xl mx-auto py-12 px-4 md:px-8 space-y-12">
 
-                {/* Section Réservations de table */}
-                <div className="space-y-6">
-                    <h2 className="text-2xl font-black text-white flex items-center gap-2">
-                        <Calendar className="w-6 h-6 text-indigo-400 shrink-0" /> {t('my_reservations_page.tables_title')}
-                    </h2>
-
-                    {reservationsError && (
-                        <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-300 text-sm font-semibold text-center">
-                            {reservationsError}
-                        </div>
-                    )}
-
-                    {loadingReservations ? (
-                        <div className="py-10 text-center space-y-3">
-                            <div className="w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
-                            <p className="text-xs text-slate-400">{t('my_reservations_page.loading_tables')}</p>
-                        </div>
-                    ) : reservations.length === 0 ? (
-                        <div className="py-12 text-center bg-[#151425]/35 rounded-3xl border border-white/5 max-w-md mx-auto p-6 space-y-4 shadow-inner">
-                            <Calendar className="w-12 h-12 text-slate-500 mx-auto" />
-                            <h3 className="text-sm font-bold text-white">{t('my_reservations_page.no_tables')}</h3>
-                            <p className="text-xs text-slate-400 font-light leading-relaxed">
-                                {t('my_reservations_page.no_tables_desc')}
-                            </p>
-                            <Link to="/reservations" className="bg-indigo-650 hover:bg-indigo-600 text-white font-bold py-2.5 px-6 rounded-xl transition shadow-md w-full block text-xs">
-                                {t('my_reservations_page.book_table_btn')}
-                            </Link>
-                        </div>
-                    ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {reservations.map((res) => (
-                                <EventCard
-                                    key={res.id}
-                                    isReservation={true}
-                                    reservation={res}
-                                    onEditReservation={() => openEditModal(res)}
-                                    onCancelReservation={() => handleCancel(res.id)}
-                                    t={t}
-                                    i18n={i18n}
-                                />
-                            ))}
-                        </div>
-                    )}
+                {/* Filter Controls */}
+                <div className="flex flex-wrap justify-center gap-3">
+                    <button
+                        onClick={() => setActiveFilter('all')}
+                        className={`py-2.5 px-6 rounded-xl text-sm font-semibold border transition duration-300 cursor-pointer ${
+                            activeFilter === 'all'
+                                ? 'bg-indigo-600 border-indigo-600 text-white shadow-md shadow-indigo-600/10'
+                                : 'bg-[#151425]/45 border-white/5 text-slate-400 hover:text-white hover:bg-[#1a1930]'
+                        }`}
+                    >
+                        {t('my_reservations_page.filter_all', 'Tout afficher')}
+                    </button>
+                    <button
+                        onClick={() => setActiveFilter('tables')}
+                        className={`py-2.5 px-6 rounded-xl text-sm font-semibold border transition duration-300 cursor-pointer ${
+                            activeFilter === 'tables'
+                                ? 'bg-indigo-600 border-indigo-600 text-white shadow-md shadow-indigo-600/10'
+                                : 'bg-[#151425]/45 border-white/5 text-slate-400 hover:text-white hover:bg-[#1a1930]'
+                        }`}
+                    >
+                        {t('my_reservations_page.filter_tables', 'Réservations de tables')}
+                    </button>
+                    <button
+                        onClick={() => setActiveFilter('tournaments')}
+                        className={`py-2.5 px-6 rounded-xl text-sm font-semibold border transition duration-300 cursor-pointer ${
+                            activeFilter === 'tournaments'
+                                ? 'bg-indigo-600 border-indigo-600 text-white shadow-md shadow-indigo-600/10'
+                                : 'bg-[#151425]/45 border-white/5 text-slate-400 hover:text-white hover:bg-[#1a1930]'
+                        }`}
+                    >
+                        {t('my_reservations_page.filter_tournaments', 'Tournois')}
+                    </button>
+                    <button
+                        onClick={() => setActiveFilter('events')}
+                        className={`py-2.5 px-6 rounded-xl text-sm font-semibold border transition duration-300 cursor-pointer ${
+                            activeFilter === 'events'
+                                ? 'bg-indigo-600 border-indigo-600 text-white shadow-md shadow-indigo-600/10'
+                                : 'bg-[#151425]/45 border-white/5 text-slate-400 hover:text-white hover:bg-[#1a1930]'
+                        }`}
+                    >
+                        {t('my_reservations_page.filter_events', 'Événements')}
+                    </button>
                 </div>
+
+                {/* Section Réservations de table */}
+                {(activeFilter === 'all' || activeFilter === 'tables') && (
+                    <div className="space-y-6">
+                        <h2 className="text-2xl font-black text-white flex items-center gap-2">
+                            <Calendar className="w-6 h-6 text-indigo-400 shrink-0" /> {t('my_reservations_page.tables_title')}
+                        </h2>
+
+                        {reservationsError && (
+                            <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-300 text-sm font-semibold text-center">
+                                {reservationsError}
+                            </div>
+                        )}
+
+                        {loadingReservations ? (
+                            <div className="py-10 text-center space-y-3">
+                                <div className="w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
+                                <p className="text-xs text-slate-400">{t('my_reservations_page.loading_tables')}</p>
+                            </div>
+                        ) : reservations.length === 0 ? (
+                            <div className="py-12 text-center bg-[#151425]/35 rounded-3xl border border-white/5 max-w-md mx-auto p-6 space-y-4 shadow-inner">
+                                <Calendar className="w-12 h-12 text-slate-500 mx-auto" />
+                                <h3 className="text-sm font-bold text-white">{t('my_reservations_page.no_tables')}</h3>
+                                <p className="text-xs text-slate-400 font-light leading-relaxed">
+                                    {t('my_reservations_page.no_tables_desc')}
+                                </p>
+                                <Link to="/reservations" className="bg-indigo-650 hover:bg-indigo-600 text-white font-bold py-2.5 px-6 rounded-xl transition shadow-md w-full block text-xs">
+                                    {t('my_reservations_page.book_table_btn')}
+                                </Link>
+                            </div>
+                        ) : (
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                {reservations.map((res) => (
+                                    <EventCard
+                                        key={res.id}
+                                        isReservation={true}
+                                        reservation={res}
+                                        onEditReservation={() => openEditModal(res)}
+                                        onCancelReservation={() => handleCancel(res.id)}
+                                        t={t}
+                                        i18n={i18n}
+                                    />
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                )}
 
                 {/* Section Inscriptions aux tournois */}
-                <div className="space-y-6 pt-6 border-t border-indigo-950/40">
-                    <h2 className="text-2xl font-black text-white flex items-center gap-2">
-                        <Trophy className="w-6 h-6 text-indigo-400 shrink-0" /> {t('my_reservations_page.tournaments_title')}
-                    </h2>
+                {(activeFilter === 'all' || activeFilter === 'tournaments') && (
+                    <div className="space-y-6 pt-6 border-t border-indigo-950/40">
+                        <h2 className="text-2xl font-black text-white flex items-center gap-2">
+                            <Trophy className="w-6 h-6 text-indigo-400 shrink-0" /> {t('my_reservations_page.tournaments_title')}
+                        </h2>
 
-                    {tournamentsError && (
-                        <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-300 text-sm font-semibold text-center">
-                            {tournamentsError}
-                        </div>
-                    )}
+                        {tournamentsError && (
+                            <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-300 text-sm font-semibold text-center">
+                                {tournamentsError}
+                            </div>
+                        )}
 
-                    {loadingTournaments ? (
-                        <div className="py-10 text-center space-y-3">
-                            <div className="w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
-                            <p className="text-xs text-slate-400">{t('my_reservations_page.loading_tourneys')}</p>
-                        </div>
-                    ) : tournaments.length === 0 ? (
-                        <div className="py-12 text-center bg-[#151425]/35 rounded-3xl border border-white/5 max-w-md mx-auto p-6 space-y-4 shadow-inner">
-                            <Swords className="w-12 h-12 text-slate-500 mx-auto" />
-                            <h3 className="text-sm font-bold text-white">{t('my_reservations_page.no_tourneys')}</h3>
-                            <p className="text-xs text-slate-400 font-light leading-relaxed">
-                                {t('my_reservations_page.no_tourneys_desc')}
-                            </p>
-                            <Link to="/tournaments" className="bg-indigo-650 hover:bg-indigo-600 text-white font-bold py-2.5 px-6 rounded-xl transition shadow-md w-full block text-xs text-center">
-                                {t('my_reservations_page.view_tourneys_btn')}
-                            </Link>
-                        </div>
-                    ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {tournaments.map((tItem) => (
-                                <TournamentCard
-                                    key={tItem.id}
-                                    activity={tItem}
-                                    isAuthenticated={isAuthenticated}
-                                    isRegistered={true}
-                                    actionLoading={false}
-                                    isOpenParticipants={openParticipantsId === tItem.id}
-                                    onToggleParticipants={() => toggleParticipants(tItem.id)}
-                                    onAction={() => handleUnregisterTournament(tItem.id)}
-                                    onLoginRedirect={() => {}}
-                                    t={t}
-                                    i18n={i18n}
-                                />
-                            ))}
-                        </div>
-                    )}
-                </div>
+                        {loadingTournaments ? (
+                            <div className="py-10 text-center space-y-3">
+                                <div className="w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
+                                <p className="text-xs text-slate-400">{t('my_reservations_page.loading_tourneys')}</p>
+                            </div>
+                        ) : tournaments.length === 0 ? (
+                            <div className="py-12 text-center bg-[#151425]/35 rounded-3xl border border-white/5 max-w-md mx-auto p-6 space-y-4 shadow-inner">
+                                <Swords className="w-12 h-12 text-slate-500 mx-auto" />
+                                <h3 className="text-sm font-bold text-white">{t('my_reservations_page.no_tourneys')}</h3>
+                                <p className="text-xs text-slate-400 font-light leading-relaxed">
+                                    {t('my_reservations_page.no_tourneys_desc')}
+                                </p>
+                                <Link to="/tournaments" className="bg-indigo-650 hover:bg-indigo-600 text-white font-bold py-2.5 px-6 rounded-xl transition shadow-md w-full block text-xs text-center">
+                                    {t('my_reservations_page.view_tourneys_btn')}
+                                </Link>
+                            </div>
+                        ) : (
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                {tournaments.map((tItem) => (
+                                    <TournamentCard
+                                        key={tItem.id}
+                                        activity={tItem}
+                                        isAuthenticated={isAuthenticated}
+                                        isRegistered={true}
+                                        actionLoading={false}
+                                        isOpenParticipants={openParticipantsId === tItem.id}
+                                        onToggleParticipants={() => toggleParticipants(tItem.id)}
+                                        onAction={() => handleUnregisterTournament(tItem.id)}
+                                        onLoginRedirect={() => {}}
+                                        t={t}
+                                        i18n={i18n}
+                                    />
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                )}
 
                 {/* Section Inscriptions aux événements */}
-                <div className="space-y-6 pt-6 border-t border-indigo-950/40">
-                    <h2 className="text-2xl font-black text-white flex items-center gap-2">
-                        <Calendar className="w-6 h-6 text-indigo-400 shrink-0" /> {t('my_reservations_page.events_title', 'Mes Événements')}
-                    </h2>
+                {(activeFilter === 'all' || activeFilter === 'events') && (
+                    <div className="space-y-6 pt-6 border-t border-indigo-950/40">
+                        <h2 className="text-2xl font-black text-white flex items-center gap-2">
+                            <Calendar className="w-6 h-6 text-indigo-400 shrink-0" /> {t('my_reservations_page.events_title', 'Mes Événements')}
+                        </h2>
 
-                    {eventsError && (
-                        <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-300 text-sm font-semibold text-center">
-                            {eventsError}
-                        </div>
-                    )}
+                        {eventsError && (
+                            <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-300 text-sm font-semibold text-center">
+                                {eventsError}
+                            </div>
+                        )}
 
-                    {loadingEvents ? (
-                        <div className="py-10 text-center space-y-3">
-                            <div className="w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
-                            <p className="text-xs text-slate-400">{t('my_reservations_page.loading_events', 'Chargement de vos événements...')}</p>
-                        </div>
-                    ) : events.length === 0 ? (
-                        <div className="py-12 text-center bg-[#151425]/35 rounded-3xl border border-white/5 max-w-md mx-auto p-6 space-y-4 shadow-inner">
-                            <Calendar className="w-12 h-12 text-slate-500 mx-auto" />
-                            <h3 className="text-sm font-bold text-white">{t('my_reservations_page.no_events', 'Aucun événement rejoint')}</h3>
-                            <p className="text-xs text-slate-400 font-light leading-relaxed">
-                                {t('my_reservations_page.no_events_desc', 'Vous n\'êtes inscrit à aucun événement pour le moment.')}
-                            </p>
-                            <Link to="/events" className="bg-indigo-650 hover:bg-indigo-600 text-white font-bold py-2.5 px-6 rounded-xl transition shadow-md w-full block text-xs text-center">
-                                {t('my_reservations_page.view_events_btn', 'Voir l\'agenda des événements')}
-                            </Link>
-                        </div>
-                    ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {events.map((eItem) => (
-                                <EventCard
-                                    key={eItem.id}
-                                    event={eItem}
-                                    isAuthenticated={isAuthenticated}
-                                    isRegistered={true}
-                                    actionLoading={false}
-                                    isOpenParticipants={openParticipantsId === eItem.id}
-                                    onToggleParticipants={() => toggleParticipants(eItem.id)}
-                                    onAction={() => handleUnregisterEvent(eItem.id)}
-                                    onLoginRedirect={() => {}}
-                                    t={t}
-                                    i18n={i18n}
-                                />
-                            ))}
-                        </div>
-                    )}
-                </div>
+                        {loadingEvents ? (
+                            <div className="py-10 text-center space-y-3">
+                                <div className="w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
+                                <p className="text-xs text-slate-400">{t('my_reservations_page.loading_events', 'Chargement de vos événements...')}</p>
+                            </div>
+                        ) : events.length === 0 ? (
+                            <div className="py-12 text-center bg-[#151425]/35 rounded-3xl border border-white/5 max-w-md mx-auto p-6 space-y-4 shadow-inner">
+                                <Calendar className="w-12 h-12 text-slate-500 mx-auto" />
+                                <h3 className="text-sm font-bold text-white">{t('my_reservations_page.no_events', 'Aucun événement rejoint')}</h3>
+                                <p className="text-xs text-slate-400 font-light leading-relaxed">
+                                    {t('my_reservations_page.no_events_desc', 'Vous n\'êtes inscrit à aucun événement pour le moment.')}
+                                </p>
+                                <Link to="/events" className="bg-indigo-650 hover:bg-indigo-600 text-white font-bold py-2.5 px-6 rounded-xl transition shadow-md w-full block text-xs text-center">
+                                    {t('my_reservations_page.view_events_btn', 'Voir l\'agenda des événements')}
+                                </Link>
+                            </div>
+                        ) : (
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                {events.map((eItem) => (
+                                    <EventCard
+                                        key={eItem.id}
+                                        event={eItem}
+                                        isAuthenticated={isAuthenticated}
+                                        isRegistered={true}
+                                        actionLoading={false}
+                                        isOpenParticipants={openParticipantsId === eItem.id}
+                                        onToggleParticipants={() => toggleParticipants(eItem.id)}
+                                        onAction={() => handleUnregisterEvent(eItem.id)}
+                                        onLoginRedirect={() => {}}
+                                        t={t}
+                                        i18n={i18n}
+                                    />
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                )}
 
             </div>
 

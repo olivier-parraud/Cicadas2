@@ -290,7 +290,11 @@
     "unregister_event_btn": "Unregister from event",
     "confirm_unregister_event": "Are you sure you want to unregister from this event?",
     "load_events_error": "Unable to load your event registrations.",
-    "err_conn": "Server connection error."
+    "err_conn": "Server connection error.",
+    "filter_all": "All activities",
+    "filter_tables": "Table bookings",
+    "filter_tournaments": "Tournaments",
+    "filter_events": "Events"
   },
   "boardgames_page": {
     "badge": "Shop Game Collection",
@@ -315,7 +319,7 @@
   },
   "tournaments_page": {
     "badge": "Cicados Official Events",
-    "title": "TCG Tournaments & Events",
+    "title": "Tournaments",
     "subtitle": "Join our local competitions, challenge the community and win promo boosters and exclusive prizes!",
     "all_tournaments": "All Tournaments",
     "loading": "Loading events...",

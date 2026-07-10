@@ -688,7 +688,23 @@ function DashboardAdmin() {
                                                             </div>
                                                             <div className="text-xs text-slate-400">{res.email}</div>
                                                         </td>
-                                                        <td className="p-4 font-semibold text-slate-700">{res.tableName}</td>
+                                                        <td className="p-4 font-semibold text-slate-700">
+                                                             {(() => {
+                                                                 if (!res.tableName) return 'Table Standard';
+                                                                 const match = res.tableName.match(/Table\s+\d+/i);
+                                                                 const prefix = match ? match[0] : res.tableName;
+                                                                 if (res.game_type === 'BYOG') {
+                                                                     return prefix;
+                                                                 }
+                                                                 const isTcg = ['MTG', 'POKEMON', 'ONE_PIECE', 'YUGIOH', 'LORCANA', 'STAR_WARS', 'FINAL_FF', 'ALTERED', 'DBS'].includes(res.game_type);
+                                                                 if (isTcg) {
+                                                                     return `${prefix} (TCG)`;
+                                                                 } else if (res.game_type === 'BOARD_GAME') {
+                                                                     return `${prefix} (Jeux de plateau)`;
+                                                                 }
+                                                                 return res.tableName;
+                                                             })()}
+                                                        </td>
                                                         <td className="p-4 text-slate-600">{startStr}</td>
                                                         <td className="p-4 text-slate-600">{endStr}</td>
                                                         <td className="p-4">

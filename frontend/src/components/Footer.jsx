@@ -43,6 +43,7 @@ function Footer() {
                         <Link to="/boardgames" className="hover:text-indigo-300 transition-colors w-fit">Jeux de société</Link>
                         <Link to="/reservations" className="hover:text-indigo-300 transition-colors w-fit">Réserver une table</Link>
                         <Link to="/tournaments" className="hover:text-indigo-300 transition-colors w-fit">Tournois</Link>
+                        <Link to="/events" className="hover:text-indigo-300 transition-colors w-fit">Événements</Link>
                     </nav>
                 </div>
  

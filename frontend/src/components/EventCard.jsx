@@ -72,7 +72,11 @@ function EventCard({
         const match = roomName.match(/Table\s+\d+/i);
         const prefix = match ? match[0] : roomName;
 
-        const isTcg = ['MTG', 'YUGIOH', 'POKEMON', 'LORCANA'].includes(gameType);
+        if (gameType === 'BYOG') {
+            return prefix;
+        }
+
+        const isTcg = ['MTG', 'POKEMON', 'ONE_PIECE', 'YUGIOH', 'LORCANA', 'STAR_WARS', 'FINAL_FF', 'ALTERED', 'DBS'].includes(gameType);
         if (isTcg) {
             return `${prefix} (TCG)`;
         } else if (gameType === 'BOARD_GAME') {
@@ -137,7 +141,7 @@ function EventCard({
                         <img
                             src={imageUrl}
                             alt={reservation.specific_game || reservation.game_type}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                            className="w-full h-full object-cover"
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent"></div>
                     </div>
@@ -250,7 +254,7 @@ function EventCard({
                     <img
                         src={getImageForGameEvent(event.game)}
                         alt={event.name}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        className="w-full h-full object-cover"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent"></div>
                 </div>
