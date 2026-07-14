@@ -25,7 +25,8 @@
    - 5.6 [Système de réservation avec détection de conflits](#56-système-de-réservation-avec-détection-de-conflits)
    - 5.7 [Gestion des tournois](#57-gestion-des-tournois)
    - 5.8 [Intégration et API Proxy de BoardGameGeek](#58-intégration-et-api-proxy-de-boardgamegeek)
-   - 5.9 [Liste complète des Endpoints de l'API REST](#59-liste-complète-des-endpoints-de-lapi-rest)
+   - 5.9 [Tolérance aux pannes et sauvegarde locale du catalogue](#59-tolérance-aux-pannes-et-sauvegarde-locale-du-catalogue)
+   - 5.10 [Liste complète des Endpoints de l'API REST](#510-liste-complète-des-endpoints-de-lapi-rest)
 6. [Frontend — React.js (Vite)](#6--frontend--reactjs-vite)
    - 6.1 [Point d'entrée et routage](#61-point-dentrée-et-routage)
    - 6.2 [Service API centralisé](#62-service-api-centralisé)
@@ -970,7 +971,50 @@ En plus du proxy, un script d'importation en ligne de commande permet de charger
 4. Les descriptions de jeux (en anglais à l'origine) sont soumises à une API de traduction afin d'alimenter la table `board_games` en français.
 
 
-### 5.9 Liste complète des Endpoints de l'API REST
+### 5.9 Tolérance aux pannes et sauvegarde locale du catalogue
+
+Afin d'assurer la haute disponibilité de l'application, un mécanisme de tolérance aux pannes (**fault tolerance**) et de basculement (**failover**) a été mis en œuvre sur l'endpoint du catalogue de jeux de société (`/api/boardgames`).
+
+#### Fonctionnement du mécanisme
+1. **Source principale (Base de données)** : Le contrôleur tente d'abord de récupérer la liste complète des jeux de société stockés dans la base de données relationnelle via la méthode `BoardGame.findAll()`.
+2. **Détection de la panne** : Si une panne survient sur la base de données (ex. : serveur MySQL arrêté, socket inaccessible, timeout), la promesse est rejetée et l'erreur est interceptée par le bloc `catch` du contrôleur.
+3. **Activation de la sauvegarde locale (Relais JSON)** : À l'interception de l'erreur, le serveur bascule automatiquement sur la lecture asynchrone du fichier JSON local `/backend/src/data/boardgame-list.json`.
+4. **Normalisation des données** : Les données du fichier JSON (qui ne contiennent à l'origine que les noms et IDs d'API des jeux) sont automatiquement enrichies et remappées à la volée avec des propriétés par défaut compatibles (nombre de joueurs fictifs, catégories et descriptions de secours) pour éviter tout crash d'affichage sur le catalogue ou le formulaire de réservation côté frontend.
+
+#### Extrait de l'implémentation (`boardgame.controller.js`)
+```javascript
+export const getBoardGames = async (req, res) => {
+    try {
+        const games = await BoardGame.findAll();
+        res.json(games);
+    } catch (error) {
+        console.error("Panne BDD détectée, basculement sur boardgame-list.json :", error);
+        try {
+            const jsonPath = path.join(__dirname, '..', 'data', 'boardgame-list.json');
+            const data = await fs.readFile(jsonPath, 'utf8');
+            const gamesList = JSON.parse(data);
+
+            const fallbackGames = gamesList.map((game, index) => ({
+                id: index + 10000,
+                name: game.name,
+                min_players: 2,
+                max_players: 4,
+                play_time: 45,
+                category: "Famille",
+                description: `Jeu de société : ${game.name}. (Données de secours chargées depuis le fichier local).`,
+                image_url: 'https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?q=80&w=600',
+                rules_url: null
+            }));
+
+            res.json(fallbackGames);
+        } catch (jsonError) {
+            res.status(500).json({ error: "Panne API principale et secours indisponible." });
+        }
+    }
+};
+```
+
+### 5.10 Liste complète des Endpoints de l'API REST
 
 Voici la liste ordonnée et documentée de tous les points d'accès exposés par le serveur Express du backend :
 
