@@ -3,20 +3,22 @@ CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 USE cicados;
 
+-- Table des utilisateurs (users)
 CREATE TABLE IF NOT EXISTS users (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     email VARCHAR(255) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
-    firstname VARCHAR(100),
-    lastname VARCHAR(100),
+    firstname VARCHAR(100) NOT NULL,
+    lastname VARCHAR(100) NOT NULL,
     pseudo VARCHAR(100) DEFAULT NULL,
+    role ENUM('USER', 'ADMIN') NOT NULL DEFAULT 'USER',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     
     INDEX idx_email (email)
 ) ENGINE=InnoDB;
 
--- Table des salles (rooms)
+-- Table des salles (rooms / tables physiques de jeu)
 CREATE TABLE IF NOT EXISTS rooms (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
@@ -35,6 +37,8 @@ CREATE TABLE IF NOT EXISTS reservations (
     end_time DATETIME NOT NULL,
     game_type ENUM('MTG', 'YUGIOH', 'POKEMON', 'LORCANA', 'ONE_PIECE', 'STAR_WARS', 'FINAL_FF', 'ALTERED', 'DBS', 'BOARD_GAME', 'BYOG', 'OTHER') DEFAULT 'OTHER' COMMENT 'Type de jeu: Magic The Gathering, Jeu de société, etc.',
     status ENUM('PENDING', 'CONFIRMED', 'CANCELLED') DEFAULT 'PENDING',
+    specific_game VARCHAR(255) DEFAULT NULL,
+    players_count INT UNSIGNED DEFAULT 2,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     
@@ -43,7 +47,7 @@ CREATE TABLE IF NOT EXISTS reservations (
     INDEX idx_reservation_times (start_time, end_time)
 ) ENGINE=InnoDB;
 
--- Table des tournois
+-- Table des tournois (tournaments)
 CREATE TABLE IF NOT EXISTS tournaments (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
@@ -66,16 +70,17 @@ CREATE TABLE IF NOT EXISTS tournament_registrations (
     UNIQUE KEY idx_tourney_user (tournament_id, user_id)
 ) ENGINE=InnoDB;
 
--- Table des jeux de société
+-- Table des jeux de société (board_games)
 CREATE TABLE IF NOT EXISTS board_games (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    bgg_id INT UNSIGNED DEFAULT NULL UNIQUE,
-    name VARCHAR(255) NOT NULL,
-    image_url VARCHAR(500) DEFAULT NULL,
-    min_players INT UNSIGNED DEFAULT NULL,
-    max_players INT UNSIGNED DEFAULT NULL,
-    playing_time INT UNSIGNED DEFAULT NULL,
+    name VARCHAR(255) NOT NULL UNIQUE,
+    min_players INT UNSIGNED NOT NULL,
+    max_players INT UNSIGNED NOT NULL,
+    play_time INT UNSIGNED NOT NULL,
+    category VARCHAR(100) NOT NULL,
     description TEXT,
+    image_url VARCHAR(500) DEFAULT NULL,
+    rules_url VARCHAR(500) DEFAULT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 
