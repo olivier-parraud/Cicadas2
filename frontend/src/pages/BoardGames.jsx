@@ -97,7 +97,7 @@ function BoardGames() {
                             placeholder={t('boardgames_page.search_placeholder')}
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full py-2.5 px-4 rounded-xl text-sm border border-white/5 bg-[#0c0919] text-white focus:outline-none focus:border-[#F4AF23]/50 transition-colors"
+                            className="w-full py-2.5 px-4 rounded-xl text-sm border border-[#F4AF23]/30 bg-[#0c0919] text-white focus:outline-none focus:border-[#F4AF23] focus:ring-1 focus:ring-[#F4AF23]/50 transition-all duration-300"
                         />
                     </div>
 
@@ -107,7 +107,7 @@ function BoardGames() {
                         <select
                             value={selectedCategory}
                             onChange={(e) => setSelectedCategory(e.target.value)}
-                            className="w-full py-2.5 px-4 rounded-xl text-sm border border-white/5 bg-[#0c0919] text-white focus:outline-none focus:border-[#F4AF23]/50 transition-colors"
+                            className="w-full py-2.5 px-4 rounded-xl text-sm border border-[#F4AF23]/30 bg-[#0c0919] text-white focus:outline-none focus:border-[#F4AF23] focus:ring-1 focus:ring-[#F4AF23]/50 transition-all duration-300"
                         >
                             {categories.map(cat => (
                                 <option key={cat} value={cat}>
@@ -125,7 +125,7 @@ function BoardGames() {
                             placeholder={t('boardgames_page.players_placeholder')}
                             value={playersFilter}
                             onChange={(e) => setPlayersFilter(e.target.value)}
-                            className="w-full py-2.5 px-4 rounded-xl text-sm border border-white/5 bg-[#0c0919] text-white focus:outline-none focus:border-[#F4AF23]/50 transition-colors"
+                            className="w-full py-2.5 px-4 rounded-xl text-sm border border-[#F4AF23]/30 bg-[#0c0919] text-white focus:outline-none focus:border-[#F4AF23] focus:ring-1 focus:ring-[#F4AF23]/50 transition-all duration-300"
                         />
                     </div>
                 </div>

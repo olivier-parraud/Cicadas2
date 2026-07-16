@@ -180,8 +180,8 @@ function Events() {
                         onClick={() => setFilter('all')}
                         className={`py-2.5 px-6 rounded-xl text-sm font-semibold border transition duration-300 cursor-pointer ${
                             filter === 'all' 
-                                ? 'bg-[#563D82] border-[#563D82] text-white shadow-md shadow-[#563D82]/20' 
-                                : 'bg-[#151425]/45 border-white/5 text-slate-400 hover:text-white hover:bg-[#1a1930]'
+                                ? 'bg-[#563D82] border-[#F4AF23] text-white shadow-md shadow-[#F4AF23]/25' 
+                                : 'bg-[#151425]/45 border-[#F4AF23]/30 text-slate-300 hover:text-white hover:bg-[#1a1930] hover:border-[#F4AF23]/60'
                         }`}
                     >
                         {t('events_page.all_events')}
@@ -196,8 +196,8 @@ function Events() {
                             onClick={() => setFilter(type.id)}
                             className={`py-2.5 px-6 rounded-xl text-sm font-semibold border transition duration-300 cursor-pointer ${
                                 filter === type.id 
-                                    ? 'bg-[#563D82] border-[#563D82] text-white shadow-md shadow-[#563D82]/20' 
-                                    : 'bg-[#151425]/45 border-white/5 text-slate-400 hover:text-white hover:bg-[#1a1930]'
+                                    ? 'bg-[#563D82] border-[#F4AF23] text-white shadow-md shadow-[#F4AF23]/25' 
+                                    : 'bg-[#151425]/45 border-[#F4AF23]/30 text-slate-300 hover:text-white hover:bg-[#1a1930] hover:border-[#F4AF23]/60'
                             }`}
                         >
                             {type.name}

@@ -385,8 +385,8 @@ function MyReservations() {
                         onClick={() => setActiveFilter('all')}
                         className={`py-2.5 px-6 rounded-xl text-sm font-semibold border transition duration-300 cursor-pointer ${
                             activeFilter === 'all'
-                                ? 'bg-[#563D82] border-[#563D82] text-white shadow-md shadow-[#563D82]/20'
-                                : 'bg-[#151425]/45 border-white/5 text-slate-400 hover:text-white hover:bg-[#1a1930]'
+                                ? 'bg-[#563D82] border-[#F4AF23] text-white shadow-md shadow-[#F4AF23]/25'
+                                : 'bg-[#151425]/45 border-[#F4AF23]/30 text-slate-300 hover:text-white hover:bg-[#1a1930] hover:border-[#F4AF23]/60'
                         }`}
                     >
                         {t('my_reservations_page.filter_all', 'Tout afficher')}
@@ -395,8 +395,8 @@ function MyReservations() {
                         onClick={() => setActiveFilter('tables')}
                         className={`py-2.5 px-6 rounded-xl text-sm font-semibold border transition duration-300 cursor-pointer ${
                             activeFilter === 'tables'
-                                ? 'bg-[#563D82] border-[#563D82] text-white shadow-md shadow-[#563D82]/20'
-                                : 'bg-[#151425]/45 border-white/5 text-slate-400 hover:text-white hover:bg-[#1a1930]'
+                                ? 'bg-[#563D82] border-[#F4AF23] text-white shadow-md shadow-[#F4AF23]/25'
+                                : 'bg-[#151425]/45 border-[#F4AF23]/30 text-slate-300 hover:text-white hover:bg-[#1a1930] hover:border-[#F4AF23]/60'
                         }`}
                     >
                         {t('my_reservations_page.filter_tables', 'Réservations de tables')}
@@ -405,8 +405,8 @@ function MyReservations() {
                         onClick={() => setActiveFilter('tournaments')}
                         className={`py-2.5 px-6 rounded-xl text-sm font-semibold border transition duration-300 cursor-pointer ${
                             activeFilter === 'tournaments'
-                                ? 'bg-[#563D82] border-[#563D82] text-white shadow-md shadow-[#563D82]/20'
-                                : 'bg-[#151425]/45 border-white/5 text-slate-400 hover:text-white hover:bg-[#1a1930]'
+                                ? 'bg-[#563D82] border-[#F4AF23] text-white shadow-md shadow-[#F4AF23]/25'
+                                : 'bg-[#151425]/45 border-[#F4AF23]/30 text-slate-300 hover:text-white hover:bg-[#1a1930] hover:border-[#F4AF23]/60'
                         }`}
                     >
                         {t('my_reservations_page.filter_tournaments', 'Tournois')}
@@ -415,8 +415,8 @@ function MyReservations() {
                         onClick={() => setActiveFilter('events')}
                         className={`py-2.5 px-6 rounded-xl text-sm font-semibold border transition duration-300 cursor-pointer ${
                             activeFilter === 'events'
-                                ? 'bg-[#563D82] border-[#563D82] text-white shadow-md shadow-[#563D82]/20'
-                                : 'bg-[#151425]/45 border-white/5 text-slate-400 hover:text-white hover:bg-[#1a1930]'
+                                ? 'bg-[#563D82] border-[#F4AF23] text-white shadow-md shadow-[#F4AF23]/25'
+                                : 'bg-[#151425]/45 border-[#F4AF23]/30 text-slate-300 hover:text-white hover:bg-[#1a1930] hover:border-[#F4AF23]/60'
                         }`}
                     >
                         {t('my_reservations_page.filter_events', 'Événements')}

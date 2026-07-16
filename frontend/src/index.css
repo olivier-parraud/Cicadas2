@@ -37,7 +37,8 @@
   --color-indigo-200: #cfc2eb;
   --color-indigo-300: #b19bdd;
   --color-indigo-400: #9375cf;
-  --color-indigo-500: #563D82; /* TCG Royal Purple */
+  --color-indigo-500: #563D82;
+  /* TCG Royal Purple */
   --color-indigo-600: #46306c;
   --color-indigo-700: #352353;
   --color-indigo-800: #0d0b1a;
@@ -56,10 +57,10 @@
 
   --color-red-500: #f43f5e;
   --color-red-600: #e11d48;
-  
+
   --color-green-50: #052217;
   --color-green-700: #10b981;
-  
+
   --color-emerald-50: #052217;
   --color-emerald-200: #34d399;
   --color-emerald-700: #10b981;
@@ -69,18 +70,45 @@
 /* --- Crafted Modern Aesthetic Styling --- */
 
 body {
-  background-color: #05040a;
+  background-color: #090714;
+  /* Darker, deep violet-black base */
   font-family: 'Poppins', sans-serif;
-  color: #cbd5e1;
-  /* Premium radial gradients with deep purple and subtle gold values */
-  background-image: 
-    radial-gradient(circle at 10% 15%, rgba(86, 61, 130, 0.16) 0%, transparent 45%),
-    radial-gradient(circle at 90% 75%, rgba(244, 175, 35, 0.05) 0%, transparent 45%),
-    radial-gradient(circle at 50% 50%, rgba(86, 61, 130, 0.04) 0%, transparent 50%);
+  color: #ededfa;
+  /* Dark background with glowing mesh of purples and balanced gold/yellow accents */
+  background-image:
+    radial-gradient(circle at 5% 15%, rgba(139, 92, 246, 0.22) 0%, transparent 55%),
+    radial-gradient(circle at 95% 85%, rgba(244, 175, 35, 0.15) 0%, transparent 55%),
+    /* Balanced gold glow */
+    radial-gradient(circle at 50% 50%, rgba(139, 92, 246, 0.12) 0%, transparent 60%),
+    radial-gradient(circle at 80% 25%, rgba(244, 175, 35, 0.08) 0%, transparent 45%),
+    /* Balanced second gold accent */
+    radial-gradient(circle at 35% 75%, rgba(139, 92, 246, 0.15) 0%, transparent 50%);
   background-attachment: fixed;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+/* Override utility classes that force solid black backgrounds across the site */
+.bg-\[\#05040a\],
+.bg-\[\#0d0b17\] {
+  background-color: #07050f !important;
+  /* Darker, richer base */
+  background-image:
+    radial-gradient(circle at 10% 15%, rgba(139, 92, 246, 0.24) 0%, transparent 50%),
+    radial-gradient(circle at 90% 85%, rgba(244, 175, 35, 0.16) 0%, transparent 50%),
+    /* Balanced yellow */
+    radial-gradient(circle at 50% 50%, rgba(86, 61, 130, 0.14) 0%, transparent 60%),
+    radial-gradient(circle at 75% 20%, rgba(244, 175, 35, 0.09) 0%, transparent 45%),
+    /* Balanced yellow highlight */
+    radial-gradient(circle at 25% 80%, rgba(139, 92, 246, 0.16) 0%, transparent 45%) !important;
+  background-attachment: fixed !important;
+}
+
+/* Brighten the Hero section gradient to align with this mesh look and reduce dark/pitch-black zones */
+.bg-gradient-to-br.from-black.via-\[\#130f25\].to-black {
+  background-image: linear-gradient(135deg, #07050f 0%, #15112c 50%, #07050f 100%) !important;
+}
+
 
 
 .font-brand {
@@ -99,84 +127,141 @@ body {
   filter: drop-shadow(0 2px 12px rgba(244, 175, 35, 0.5));
 }
 
-/* Clean headings using Poppins */
-h1, h2, h3, h4, h5, h6 {
+/* Clean headings using Poppins with subtle glowing text shadow */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: 'Poppins', sans-serif !important;
   letter-spacing: -0.02em;
   font-weight: 800;
   color: #ffffff;
+  text-shadow: 0 2px 12px rgba(167, 139, 250, 0.12);
 }
 
-/* Map standard text utility classes dynamically to readable dark theme colors */
-.text-slate-950, .text-gray-950, .text-zinc-950, .text-neutral-950, .text-black {
+/* Map standard text utility classes dynamically to readable dark theme colors with a soft violet tint */
+.text-slate-950,
+.text-gray-950,
+.text-zinc-950,
+.text-neutral-950,
+.text-black {
   color: #ffffff !important;
 }
-.text-slate-900, .text-gray-900, .text-zinc-900, .text-neutral-900 {
+
+.text-slate-900,
+.text-gray-900,
+.text-zinc-900,
+.text-neutral-900 {
   color: #f1f5f9 !important;
 }
-.text-slate-800, .text-gray-800, .text-zinc-800, .text-neutral-800 {
-  color: #e2e8f0 !important;
+
+.text-slate-800,
+.text-gray-800,
+.text-zinc-800,
+.text-neutral-800 {
+  color: #ededfa !important;
 }
-.text-slate-700, .text-gray-700, .text-zinc-700, .text-neutral-700 {
-  color: #cbd5e1 !important;
+
+.text-slate-700,
+.text-gray-700,
+.text-zinc-700,
+.text-neutral-700 {
+  color: #d4cde8 !important;
+  /* Soft lavender */
 }
-.text-slate-600, .text-gray-600, .text-zinc-600, .text-neutral-600 {
-  color: #94a3b8 !important;
+
+.text-slate-600,
+.text-gray-600,
+.text-zinc-600,
+.text-neutral-600 {
+  color: #a298be !important;
+  /* Soft violet-gray */
 }
-.text-slate-500, .text-gray-500, .text-zinc-500, .text-neutral-500 {
-  color: #64748b !important;
+
+.text-slate-500,
+.text-gray-500,
+.text-zinc-500,
+.text-neutral-500 {
+  color: #8c82ab !important;
 }
-.text-slate-400, .text-gray-400, .text-zinc-400, .text-neutral-400 {
-  color: #94a3b8 !important;
+
+.text-slate-400,
+.text-gray-400,
+.text-zinc-400,
+.text-neutral-400 {
+  color: #a298be !important;
 }
-.text-slate-300, .text-gray-300, .text-zinc-300, .text-neutral-300 {
-  color: #cbd5e1 !important;
+
+.text-slate-300,
+.text-gray-300,
+.text-zinc-300,
+.text-neutral-300 {
+  color: #d4cde8 !important;
 }
-.text-slate-200, .text-gray-200, .text-zinc-200, .text-neutral-200 {
-  color: #e2e8f0 !important;
+
+.text-slate-200,
+.text-gray-200,
+.text-zinc-200,
+.text-neutral-200 {
+  color: #ededfa !important;
 }
+
 .text-indigo-300 {
   color: #ab95d9 !important;
 }
+
 .text-indigo-400 {
   color: #c7bbf1 !important;
 }
-.text-indigo-900, .text-indigo-950 {
+
+.text-indigo-900,
+.text-indigo-950 {
   color: #b19bdd !important;
 }
 
-/* Translucent glass card background with deep purple tones */
+/* Translucent glass card background with richer purple tones and glowing violet borders */
 .bg-white {
-  backdrop-filter: blur(16px) !important;
-  -webkit-backdrop-filter: blur(16px) !important;
-  background-color: rgba(21, 17, 39, 0.45) !important;
-  border: 1px solid rgba(255, 255, 255, 0.06) !important;
-  box-shadow: 0 12px 40px -12px rgba(0, 0, 0, 0.6) !important;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  background-color: rgba(28, 23, 53, 0.65) !important;
+  /* Slightly lighter/more colorful */
+  border: 1px solid rgba(167, 139, 250, 0.22) !important;
+  /* Brighter border */
+  box-shadow:
+    0 12px 40px -12px rgba(0, 0, 0, 0.65),
+    0 0 25px 2px rgba(139, 92, 246, 0.12) !important;
+  /* Brighter glow */
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
 }
 
-/* Sub-card/element styling */
+/* Sub-card/element styling utilizing rich deep violet */
 .bg-slate-50 {
-  background-color: rgba(13, 11, 23, 0.5) !important;
-  border: 1px solid rgba(255, 255, 255, 0.04) !important;
+  background-color: rgba(28, 23, 53, 0.45) !important;
+  border: 1px solid rgba(167, 139, 250, 0.08) !important;
 }
 
 .bg-slate-100 {
-  background-color: rgba(13, 11, 23, 0.8) !important;
-  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+  background-color: rgba(28, 23, 53, 0.78) !important;
+  border: 1px solid rgba(167, 139, 250, 0.14) !important;
 }
 
-/* Styled inputs for a seamless dark-theme look */
-input, select, textarea {
-  background-color: rgba(13, 11, 23, 0.65) !important;
+/* Styled inputs for a seamless dark-theme look with subtle violet borders */
+input,
+select,
+textarea {
+  background-color: rgba(18, 14, 34, 0.75) !important;
   color: #ffffff !important;
-  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border: 1px solid rgba(167, 139, 250, 0.22) !important;
   border-radius: 12px !important;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15) !important;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease !important;
 }
 
-input:focus, select:focus, textarea:focus {
+input:focus,
+select:focus,
+textarea:focus {
   border-color: #F4AF23 !important;
   box-shadow: 0 0 0 2px rgba(244, 175, 35, 0.2) !important;
   outline: none;
