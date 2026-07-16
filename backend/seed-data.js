@@ -23,8 +23,24 @@ async function seed() {
         await conn.execute('DELETE FROM reservations');
         await conn.execute('DELETE FROM events');
         await conn.execute('DELETE FROM tournaments');
+        await conn.execute('DELETE FROM rooms');
         await conn.execute("DELETE FROM users WHERE email LIKE 'testuser%@cicados.fr'");
         console.log('🗑️  Anciennes données de test nettoyées.');
+
+        // ─── 1.5 Création de 4 Tables de Jeu (Rooms) ───
+        const defaultRooms = [
+            ['Table 1', 4, 'Table standard équipée avec Playmats TCG.'],
+            ['Table 2', 4, 'Table standard équipée avec Playmats TCG.'],
+            ['Table 3', 8, 'Table géante Commander / Drafts / Grands jeux de plateau.'],
+            ['Table 4', 6, 'Espace Lounge confortable en mezzanine.']
+        ];
+        for (const r of defaultRooms) {
+            await conn.execute(
+                'INSERT INTO rooms (name, capacity, description) VALUES (?, ?, ?)',
+                r
+            );
+        }
+        console.log('✅ 4 tables de jeu (salles) insérées.');
 
         // ─── 2. Création de 5 Utilisateurs de Test ───
         const bcrypt = await import('bcrypt');
