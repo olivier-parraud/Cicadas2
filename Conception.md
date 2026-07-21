@@ -288,6 +288,7 @@ erDiagram
         TEXT description
         VARCHAR image_url
         VARCHAR rules_url
+        INT stock
     }
 ```
 
@@ -334,6 +335,21 @@ CREATE TABLE IF NOT EXISTS reservations (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (room_id) REFERENCES rooms(id) ON DELETE CASCADE,
     INDEX idx_reservation_times (start_time, end_time)
+) ENGINE=InnoDB;
+
+-- Table des jeux de société
+CREATE TABLE IF NOT EXISTS board_games (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    min_players INT UNSIGNED NOT NULL DEFAULT 1,
+    max_players INT UNSIGNED NOT NULL DEFAULT 4,
+    play_time INT UNSIGNED NOT NULL DEFAULT 30,
+    category VARCHAR(100) NOT NULL DEFAULT 'Stratégie',
+    description TEXT,
+    image_url VARCHAR(500) DEFAULT NULL,
+    rules_url VARCHAR(500) DEFAULT NULL,
+    stock INT UNSIGNED NOT NULL DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 ```
 
@@ -877,7 +893,44 @@ if (new Date(`${date} ${time}:00`).getTime() < Date.now()) {
 
 ---
 
-### 5.7 Gestion des tournois
+### 5.7 Gestion du Stock Unique des Jeux et Réservation Temporelle en Temps Réel
+
+L'une des évolutions clés du système réside dans la gestion fine du stock de chaque jeu de société physique :
+
+1. **Règle de l'Exemplaire Unique (`stock = 1`)** :
+   Chaque jeu de société présent en boutique est modélisé avec une quantité physique initiale de `1` (`stock INT DEFAULT 1`). Lorsqu'un client sélectionne un jeu spécifique (ex. : *Catan*) pour sa réservation de table, l'exemplaire est réservé pour le créneau choisi (ex. : 14h00 – 16h00).
+
+2. **Désactivation Automatique des Créneaux Occupés (`Indisponible / Hors stock`)** :
+   Sur la grille horaire de la page de réservation (`Reservations.jsx`), le serveur vérifie dynamiquement l'occupation temporelle de l'exemplaire via la condition SQL d'overlap :
+   ```sql
+   SELECT COUNT(*) as count FROM reservations 
+   WHERE LOWER(TRIM(specific_game)) = LOWER(TRIM(?)) 
+     AND start_time < ? AND end_time > ? 
+     AND status != 'CANCELLED'
+   ```
+   Si l'exemplaire est déjà pris sur ce créneau, le bouton d'horaire affiche le badge **`Hors stock`** et devient automatiquement **inactivable** (`disabled`) pour le client.
+
+3. **Restitution Automatique en Stock** :
+   Dès que le créneau horaire est écoulé (`NOW() > end_time`) ou en cas d'annulation de la réservation, le jeu redevient instantanément sélectionnable pour de futures réservations.
+
+4. **Contrôleur de Stock Admin en Direct (`+` / `-`)** :
+   Sur le tableau de bord Administrateur (`DashboardAdmin.jsx`), un contrôleur interactif permet à l'administrateur d'augmenter ou de diminuer le stock en boutique en temps réel. Si le stock est passé à `0` (jeu retiré ou en réparation), la carte du jeu affiche le badge rouge **`INDISPONIBLE`** et bloque toute tentative de réservation.
+
+5. **Consolidation en 6 Grandes Familles de Jeux** :
+   Afin de simplifier la navigation et la recherche, les 53 sous-catégories ont été consolidées dans la BDD et l'interface en 6 grandes familles de référence :
+   - 🎯 **Stratégie**
+   - 👨‍👩‍👧‍👦 **Famille**
+   - 🥳 **Ambiance**
+   - 🤝 **Coopératif**
+   - 🃏 **Cartes & Deckbuilding**
+   - ⚙️ **Gestion**
+
+6. **Règle de l'Image de Couverture Unique de Remplacement (Placeholder Unifié)** :
+   Afin d'assurer une cohérence visuelle parfaite sur l'ensemble de l'application, les jeux disposant de leur couverture officielle BGG l'affichent en haute définition, tandis que tous les jeux dépourvus d'image personnalisée utilisent le même placeholder unifié de haute qualité (`https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?q=80&w=600`). Un gestionnaire d'erreur `onError` sur le frontend garantit qu'aucune image brisée ne s'affiche.
+
+---
+
+### 5.8 Gestion des tournois
 
 Le modèle `Tournament` gère les inscriptions avec vérification de capacité et contrainte d'unicité :
 
@@ -1028,6 +1081,7 @@ Voici la liste ordonnée et documentée de tous les points d'accès exposés par
 | **Reservations** | `PUT` | `/api/reservations/:id` | JWT | `USER` / `ADMIN` | Modifie une réservation (date, heure, jeu, joueurs). |
 | **Reservations** | `DELETE` | `/api/reservations/:id` | JWT | `USER` / `ADMIN` | Annule définitivement une réservation de table. |
 | **Reservations** | `GET` | `/api/reservations/availability` | Aucune | — | Récupère le taux d'occupation des tables pour une date. |
+| **Reservations** | `GET` | `/api/reservations/game-availability` | Aucune | — | Vérifie si un jeu spécifique est réservé sur un créneau donné. |
 | **Tournaments** | `GET` | `/api/tournaments` | Aucune | — | Récupère la liste de tous les tournois à venir. |
 | **Tournaments** | `POST` | `/api/tournaments/:id/register` | JWT | `USER` / `ADMIN` | Inscrit l'utilisateur connecté à un tournoi. |
 | **Tournaments** | `DELETE` | `/api/tournaments/:id/unregister` | JWT | `USER` / `ADMIN` | Désinscrit l'utilisateur connecté d'un tournoi. |
@@ -1042,6 +1096,8 @@ Voici la liste ordonnée et documentée de tous les points d'accès exposés par
 | **Admin** | `POST` | `/api/admin/tournaments` | JWT | `ADMIN` | Publie un nouveau tournoi de cartes ou de plateau. |
 | **Admin** | `DELETE` | `/api/admin/tournaments/:id` | JWT | `ADMIN` | Supprime définitivement un tournoi et ses inscriptions. |
 | **Admin** | `POST` | `/api/admin/boardgames` | JWT | `ADMIN` | Ajoute manuellement un nouveau jeu de société au catalogue. |
+| **Admin** | `PUT` | `/api/admin/boardgames/:id` | JWT | `ADMIN` | Modifie la fiche complète d'un jeu de société. |
+| **Admin** | `PATCH` | `/api/admin/boardgames/:id/stock` | JWT | `ADMIN` | Ajuste rapidement le stock d'un jeu (`+` / `-`). |
 | **Admin** | `DELETE` | `/api/admin/boardgames/:id` | JWT | `ADMIN` | Retire un jeu de société de la boutique. |
 | **Admin** | `POST` | `/api/admin/boardgames/import-bgg-hot` | JWT | `ADMIN` | Déclenche l'import des 100 jeux populaires depuis BGG. |
 
@@ -1455,12 +1511,24 @@ Le `DashboardAdmin.jsx` est l'interface la plus complète. Elle est **protégée
 
 ---
 
-### 6.10 Navigation responsive (Hamburger Menu)
+### 6.10 Navigation responsive et Direction Artistique dynamique (DA Header & Active Route)
 
-Le composant `Header.jsx` gère la navigation avec une **bascule responsive** :
+Le composant `Header.jsx` gère la navigation globale avec une **Direction Artistique harmonisée** et un repérage utilisateur optimisé :
 
-- **Desktop (≥768px)** : Barre de navigation horizontale classique avec tous les liens visibles.
-- **Mobile (<768px)** : Bouton hamburger animé qui déploie un volet vertical glassmorphism.
+- **Repérage dynamique de la page active** : La page en cours de consultation est automatiquement mise en valeur par un texte doré chaud (`#F4AF23`), une pilule de fond violet sombre (`bg-[#563D82]/40`) et un liseré doré délicat (`border border-[#F4AF23]/30`).
+- **Animations au survol (Hover DA)** : Les liens de navigation réagissent au survol avec une transition fluide passant en texte doré sur fond violet translucide (`hover:bg-[#563D82]/25 hover:border-[#F4AF23]/30`).
+- **Badge d'Administration** : Le lien de la console Admin bénéficie d'un style doré exclusif facilitant sa localisation pour les modérateurs.
+- **Desktop (≥768px)** : Navigation horizontale avec pilules interactives.
+- **Mobile (<768px)** : Bouton hamburger animé déployant un volet vertical en glassmorphism.
+
+---
+
+### 6.11 Système de filtres élargis à haute lisibilité
+
+Pour offrir une expérience de gestion optimale aux administrateurs et une recherche fluide aux clients :
+- **Filtres Administrateur grand format** : Sur tous les onglets du tableau de bord Admin (`DashboardAdmin.jsx`), les barres de recherche ont été élargies (`w-80` à `w-96`), dotées d'une police agrandie et lisible (`text-sm font-semibold`), de bordures renforcées et d'un halo visuel au survol/focus.
+- **Recherche multicritère des réservations** : L'onglet Réservations permet de rechercher instantanément par nom de client, email, jeu de société ou statut de réservation.
+- **Barre de recherche catalogue** : Sur la page des jeux de société (`BoardGames.jsx`), la barre de recherche, le filtre par catégorie et le filtre par nombre de joueurs utilisent des bordures dorées sur fond sombre rétroéclairé.
 
 ```jsx
 const [menuOpen, setMenuOpen] = useState(false);

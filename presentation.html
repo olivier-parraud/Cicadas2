@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Présentation Orale Cicados — DWWM</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --primary: #10b981;
+      --accent: #6366f1;
+      --warning: #f59e0b;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --border: #334155;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      overflow: hidden;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .slide-container {
+      flex: 1;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem;
+    }
+
+    .slide {
+      position: absolute;
+      width: 90%;
+      max-width: 1200px;
+      height: 80vh;
+      max-height: 700px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 3rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      opacity: 0;
+      transform: translateX(50px) scale(0.98);
+      pointer-events: none;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    }
+
+    .slide.active {
+      opacity: 1;
+      transform: translateX(0) scale(1);
+      pointer-events: auto;
+    }
+
+    .category {
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: var(--primary);
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    .slide-title {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 2rem;
+    }
+
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      flex: 1;
+      align-content: start;
+    }
+
+    .card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .card h3 {
+      font-size: 1.25rem;
+      color: var(--primary);
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .card h3.warning {
+      color: var(--warning);
+    }
+
+    .card h3.accent {
+      color: var(--accent);
+    }
+
+    .card ul {
+      list-style-type: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .card li {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .card li strong {
+      color: var(--text);
+    }
+
+    .title-slide {
+      text-align: center;
+      justify-content: center;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .title-slide h1 {
+      font-size: 4rem;
+      font-weight: 900;
+      color: var(--primary);
+      letter-spacing: -0.02em;
+    }
+
+    .title-slide h2 {
+      font-size: 1.75rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .title-slide p {
+      font-size: 1.1rem;
+      color: var(--text-muted);
+    }
+
+    /* Controls */
+    .controls {
+      height: 70px;
+      background: rgba(15, 23, 42, 0.9);
+      backdrop-filter: blur(10px);
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 2rem;
+    }
+
+    .btn {
+      background: var(--card-bg);
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 0.6rem 1.2rem;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn:hover {
+      background: var(--primary);
+      color: #000;
+      border-color: var(--primary);
+    }
+
+    .progress {
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="slide-container">
+    <!-- Slide 1 -->
+    <div class="slide title-slide active">
+      <div class="category">Soutenance Orale — Titre DWWM</div>
+      <h1>CICADOS</h1>
+      <h2>Plateforme de Réservation & Gestion pour Bar à Jeux</h2>
+      <p>Présentation du projet de fin d'études — Session 2026</p>
+    </div>
+
+    <!-- Slide 2 -->
+    <div class="slide">
+      <div>
+        <div class="category">01. INTRODUCTION</div>
+        <div class="slide-title">Contexte & Besoin Métier</div>
+      </div>
+      <div class="cards-grid">
+        <div class="card">
+          <h3>📌 Le Contexte</h3>
+          <ul>
+            <li><strong>Activité :</strong> Bar à jeux de société et espace événementiel.</li>
+            <li><strong>Organisation :</strong> Soirées jeux, tournois et réservations de tables.</li>
+            <li><strong>Enjeu :</strong> Offrir une expérience fluide aux joueurs et automatiser la gestion.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 class="warning">🎯 Le Besoin</h3>
+          <ul>
+            <li><strong>Gestion Manuelle :</strong> Risques élevés d'erreurs et de double-réservation.</li>
+            <li><strong>Visibilité Jeux :</strong> Accès difficile au catalogue de jeux à l'avance.</li>
+            <li><strong>Gain de Temps :</strong> Inquiétude sur la charge de gestion sur place.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 3 -->
+    <div class="slide">
+      <div>
+        <div class="category">01. INTRODUCTION</div>
+        <div class="slide-title">La Solution Cicados</div>
+      </div>
+      <div class="cards-grid">
+        <div class="card">
+          <h3 class="accent">⚡ Web App Fullstack</h3>
+          <ul>
+            <li><strong>Frontend :</strong> React (Vite) ultra-réactif.</li>
+            <li><strong>Backend :</strong> API REST Express moderne.</li>
+            <li><strong>BDD :</strong> Base MySQL structurée et sécurisée.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>📅 Réservation Sans Conflit</h3>
+          <ul>
+            <li><strong>Vérification temps réel :</strong> Moteur de contrôle des créneaux.</li>
+            <li><strong>Gestion capacités :</strong> Adaptation selon le nombre de personnes.</li>
+            <li><strong>Confirmation :</strong> Retours d'état immédiats pour le client.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 class="accent">🎲 Catalogue Interactif</h3>
+          <ul>
+            <li><strong>API BGG :</strong> Synchronisation avec BoardGameGeek.</li>
+            <li><strong>Fiches complètes :</strong> Visuels, avis, durées et joueurs.</li>
+            <li><strong>Mode Secours :</strong> Sauvegarde locale JSON anti-panne.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 4 -->
+    <div class="slide">
+      <div>
+        <div class="category">02. LA CONCEPTION</div>
+        <div class="slide-title">Préparation & Choix de Conception</div>
+      </div>
+      <div class="cards-grid">
+        <div class="card">
+          <h3>1. Méthodologie Agile</h3>
+          <ul>
+            <li><strong>User Stories :</strong> Découpage fonctionnel complet.</li>
+            <li><strong>MoSCoW :</strong> Priorisation stricte des fonctionnalités.</li>
+            <li><strong>Sprints :</strong> Développement incrémental orienté MVP.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>2. UX & Wireframes</h3>
+          <ul>
+            <li><strong>Parcours Utilisateur :</strong> Réservation fluide en 3 clics.</li>
+            <li><strong>Design System :</strong> Tailwind CSS v4 réactif.</li>
+            <li><strong>Interface Mobile :</strong> Approche responsive first.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>3. Modélisation BDD</h3>
+          <ul>
+            <li><strong>MCD / MLD :</strong> Conception relationnelle propre.</li>
+            <li><strong>Normalisation :</strong> Absence de redondances.</li>
+            <li><strong>Contraintes SQL :</strong> Clefs étrangères et intégrité.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 5 -->
+    <div class="slide">
+      <div>
+        <div class="category">03. LE DÉVELOPPEMENT</div>
+        <div class="slide-title">Fct 1 : Moteur Anti-Conflit de Réservation</div>
+      </div>
+      <div class="cards-grid">
+        <div class="card">
+          <h3>🎯 Besoin & 💡 Solution</h3>
+          <ul>
+            <li><strong>Besoin :</strong> Garantir l'absence absolue de double-réservation sur une même table.</li>
+            <li><strong>Pourquoi cette solution :</strong> Vérification algorithmique backend lors de chaque tentative.</li>
+            <li><strong>Logique Temporelle :</strong> <code>(Start1 &lt; End2) AND (End1 &gt; Start2)</code>.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 class="warning">⚠️ Difficulté & ✅ Résolution</h3>
+          <ul>
+            <li><strong>Difficulté :</strong> Traitement des chevauchements de créneaux partiels.</li>
+            <li><strong>Résolution :</strong> Requête SQL transactionnelle optimisée avec validation stricte.</li>
+            <li><strong>Résultat :</strong> Zéro sur-réservation possible sur l'ensemble de l'établissement.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 6 -->
+    <div class="slide">
+      <div>
+        <div class="category">03. LE DÉVELOPPEMENT</div>
+        <div class="slide-title">Fct 2 : Catalogue BoardGameGeek (Proxy XML/JSON)</div>
+      </div>
+      <div class="cards-grid">
+        <div class="card">
+          <h3>🎯 Besoin & 💡 Solution</h3>
+          <ul>
+            <li><strong>Besoin :</strong> Enrichir les jeux avec visuels et durées sans saisie manuelle.</li>
+            <li><strong>Pourquoi cette solution :</strong> Proxy backend Node.js interrogeant l'API externe BGG.</li>
+            <li><strong>Parsing :</strong> Conversion du XML natif de BGG en JSON propre pour React.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 class="warning">⚠️ Difficulté & ✅ Résolution</h3>
+          <ul>
+            <li><strong>Difficulté :</strong> Instabilité et latence de l'API externe BGG.</li>
+            <li><strong>Résolution :</strong> Parser XML->JSON avec cache local et mode secours JSON.</li>
+            <li><strong>Résultat :</strong> Service continu même si BGG est indisponible.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 7 -->
+    <div class="slide">
+      <div>
+        <div class="category">03. LE DÉVELOPPEMENT</div>
+        <div class="slide-title">Fct 3 : Authentification & Sécurité (Zod / JWT)</div>
+      </div>
+      <div class="cards-grid">
+        <div class="card">
+          <h3>🎯 Besoin & 💡 Solution</h3>
+          <ul>
+            <li><strong>Besoin :</strong> Proteger les comptes utilisateurs et l'administration.</li>
+            <li><strong>Pourquoi cette solution :</strong> Jetons JWT sécurisés et validation d'entrées Zod.</li>
+            <li><strong>Validation Partagée :</strong> Mêmes schémas Zod en Frontend et Backend.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 class="warning">⚠️ Difficulté & ✅ Résolution</h3>
+          <ul>
+            <li><strong>Difficulté :</strong> Synchronisation de la session utilisateur sur React.</li>
+            <li><strong>Résolution :</strong> Context React d'authentification + Middleware Express centralisé.</li>
+            <li><strong>Résultat :</strong> Connexion sécurisée et étanche.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 8 -->
+    <div class="slide">
+      <div>
+        <div class="category">04. POINTS TECHNIQUES</div>
+        <div class="slide-title">Architecture & Sécurité OWASP</div>
+      </div>
+      <div class="cards-grid">
+        <div class="card">
+          <h3 class="accent">🏗️ Architecture MVC Découplée</h3>
+          <ul>
+            <li><strong>Frontend :</strong> React 19 (Vite), SPA réactive.</li>
+            <li><strong>Backend :</strong> Express 5 (API REST), logique métier centralisée.</li>
+            <li><strong>Database :</strong> MySQL 8 avec intégrité relationnelle.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>🔒 Sécurité (OWASP)</h3>
+          <ul>
+            <li><strong>Bcrypt :</strong> Hachage fort des mots de passe.</li>
+            <li><strong>Injections SQL :</strong> Requêtes préparées indispensables.</li>
+            <li><strong>Variables d'env :</strong> Fichier <code>.env</code> totalement isolé.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 9 -->
+    <div class="slide">
+      <div>
+        <div class="category">04. POINTS TECHNIQUES</div>
+        <div class="slide-title">Performance, Accessibilité & i18n</div>
+      </div>
+      <div class="cards-grid">
+        <div class="card">
+          <h3>⚡ Performance</h3>
+          <ul>
+            <li><strong>Vite :</strong> Bundler ultra-rapide au démarrage.</li>
+            <li><strong>Composants React :</strong> Structure modulaire réutilisable.</li>
+            <li><strong>Zod :</strong> Filtrage immédiat des erreurs côté client.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 class="accent">♿ Accessibilité & i18n</h3>
+          <ul>
+            <li><strong>HTML5 Sémantique :</strong> Structure lisible pour la synthèse vocale.</li>
+            <li><strong>i18n Multilingue :</strong> Support FR / EN via i18next & DeepL.</li>
+            <li><strong>Tailwind CSS v4 :</strong> Design parfaitement responsive.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 10 -->
+    <div class="slide">
+      <div>
+        <div class="category">05. CONCLUSION</div>
+        <div class="slide-title">Bilan, Difficultés & Évolutions</div>
+      </div>
+      <div class="cards-grid">
+        <div class="card">
+          <h3>🎓 Ce que j'ai appris</h3>
+          <ul>
+            <li>Maîtrise complète de la chaîne Fullstack (React/Node/MySQL).</li>
+            <li>Conception d'algorithmes métier complexes (réservation/créneaux).</li>
+            <li>Gestion proactive des pannes d'API tierces.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 class="warning">🧗 Difficultés</h3>
+          <ul>
+            <li>Gestion rigoureuse du temps sur les Sprints.</li>
+            <li>Parsing XML et traitement des flux de données externes.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 class="accent">🔮 Évolutions</h3>
+          <ul>
+            <li>Paiement d'acompte en ligne via Stripe.</li>
+            <li>Notifications SMS / Email de rappel (Brevo).</li>
+            <li>Recommandations intelligentes de jeux par IA.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 11 -->
+    <div class="slide title-slide">
+      <div class="category">CICADOS</div>
+      <h1>MERCI DE VOTRE ATTENTION !</h1>
+      <h2>Place à la démonstration en direct de l'application</h2>
+      <p>Échanges & Questions avec le Jury</p>
+    </div>
+
+  </div>
+
+  <div class="controls">
+    <button class="btn" id="prevBtn">⬅️ Précédent</button>
+    <div class="progress" id="progressText">Diapositive 1 / 11</div>
+    <button class="btn" id="nextBtn">Suivant ➡️</button>
+  </div>
+
+  <script>
+    const slides = document.querySelectorAll('.slide');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const progressText = document.getElementById('progressText');
+    let currentIndex = 0;
+
+    function updateSlides() {
+      slides.forEach((slide, index) => {
+        slide.classList.toggle('active', index === currentIndex);
+      });
+      progressText.textContent = `Diapositive ${currentIndex + 1} / ${slides.length}`;
+    }
+
+    prevBtn.addEventListener('click', () => {
+      if (currentIndex > 0) {
+        currentIndex--;
+        updateSlides();
+      }
+    });
+
+    nextBtn.addEventListener('click', () => {
+      if (currentIndex < slides.length - 1) {
+        currentIndex++;
+        updateSlides();
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === 'Space') {
+        if (currentIndex < slides.length - 1) {
+          currentIndex++;
+          updateSlides();
+        }
+      } else if (e.key === 'ArrowLeft') {
+        if (currentIndex > 0) {
+          currentIndex--;
+          updateSlides();
+        }
+      }
+    });
+  </script>
+</body>
+</html>
