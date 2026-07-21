@@ -51,7 +51,22 @@ const Reservation = {
 
         const roomId = availableRoom.id;
 
-        // 4. Normaliser le type de jeu 
+        // 4. Vérifier le stock unique (1 exemplaire) du jeu de société sélectionné
+        if (specific_game) {
+            const checkGameSql = `
+                SELECT r.id, r.specific_game
+                FROM reservations r
+                WHERE r.start_time < ? AND r.end_time > ?
+                  AND r.status != 'CANCELLED'
+                  AND LOWER(TRIM(r.specific_game)) = LOWER(TRIM(?))
+            `;
+            const existingBookings = await query(checkGameSql, [endTime, startTime, specific_game]);
+            if (existingBookings.length >= 1) {
+                throw new Error(`Le jeu "${specific_game}" n'a que 1 exemplaire en stock et il est DÉJÀ RÉSERVÉ pour ce créneau horaire. Il redeviendra disponible une fois ce créneau terminé.`);
+            }
+        }
+
+        // 5. Normaliser le type de jeu 
         const allowedTypes = ['MTG', 'YUGIOH', 'POKEMON', 'LORCANA', 'ONE_PIECE', 'STAR_WARS', 'FINAL_FF', 'ALTERED', 'DBS', 'BOARD_GAME', 'BYOG', 'OTHER'];
         let safeGameType = allowedTypes.includes(gameType) ? gameType : 'OTHER';
 
@@ -123,7 +138,23 @@ const Reservation = {
         }
         const roomId = availableRoom.id;
 
-        // 3. Normaliser le type de jeu 
+        // 3. Vérifier le stock unique (1 exemplaire) du jeu de société sélectionné
+        if (specificGame) {
+            const checkGameSql = `
+                SELECT r.id, r.specific_game
+                FROM reservations r
+                WHERE r.start_time < ? AND r.end_time > ?
+                  AND r.status != 'CANCELLED'
+                  AND r.id != ?
+                  AND LOWER(TRIM(r.specific_game)) = LOWER(TRIM(?))
+            `;
+            const existingBookings = await query(checkGameSql, [endTime, startTime, id, specificGame]);
+            if (existingBookings.length >= 1) {
+                throw new Error(`Le jeu "${specificGame}" n'a que 1 exemplaire en stock et il est DÉJÀ RÉSERVÉ pour ce créneau horaire. Il redeviendra disponible une fois ce créneau terminé.`);
+            }
+        }
+
+        // 4. Normaliser le type de jeu 
         const allowedTypes = ['MTG', 'YUGIOH', 'POKEMON', 'LORCANA', 'ONE_PIECE', 'STAR_WARS', 'FINAL_FF', 'ALTERED', 'DBS', 'BOARD_GAME', 'BYOG', 'OTHER'];
         let safeGameType = allowedTypes.includes(gameType) ? gameType : 'OTHER';
 
@@ -141,6 +172,33 @@ const Reservation = {
             playersCount ? parseInt(playersCount, 10) : 2,
             id
         ]);
+    },
+
+    // Récupérer les jeux déjà réservés (hors stock) pour un créneau donné
+    async checkGameAvailability(date, time, duration) {
+        if (!date || !time || !duration) return [];
+
+        const startTime = `${date} ${time}:00`;
+        const startObj = new Date(startTime);
+        startObj.setHours(startObj.getHours() + parseInt(duration, 10));
+
+        const endYear = startObj.getFullYear();
+        const endMonth = String(startObj.getMonth() + 1).padStart(2, '0');
+        const endDay = String(startObj.getDate()).padStart(2, '0');
+        const endHour = String(startObj.getHours()).padStart(2, '0');
+        const endMin = String(startObj.getMinutes()).padStart(2, '0');
+        const endTime = `${endYear}-${endMonth}-${endDay} ${endHour}:${endMin}:00`;
+
+        const sql = `
+            SELECT LOWER(TRIM(specific_game)) as game_name
+            FROM reservations
+            WHERE start_time < ? AND end_time > ? 
+              AND status != 'CANCELLED' 
+              AND specific_game IS NOT NULL 
+              AND specific_game != ''
+        `;
+        const results = await query(sql, [endTime, startTime]);
+        return results.map(r => r.game_name);
     },
 
     // Annuler/supprimer définitivement une réservation

@@ -81,6 +81,7 @@ CREATE TABLE IF NOT EXISTS board_games (
     description TEXT,
     image_url VARCHAR(500) DEFAULT NULL,
     rules_url VARCHAR(500) DEFAULT NULL,
+    stock INT UNSIGNED NOT NULL DEFAULT 1,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 

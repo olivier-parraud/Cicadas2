@@ -34,6 +34,11 @@ function BoardGameCard({
                     <span className="absolute top-4 left-4 inline-flex items-center py-1.5 px-3.5 rounded-full text-xs font-extrabold bg-[#563D82]/90 text-[#f0eaff] border-2 border-black shadow-lg backdrop-blur-md">
                         {t('categories.' + game.category, { defaultValue: game.category })}
                     </span>
+                    {(game.stock === 0) && (
+                        <span className="absolute top-4 right-4 inline-flex items-center py-1.5 px-3 rounded-full text-xs font-extrabold bg-rose-600/95 text-white border-2 border-black shadow-lg backdrop-blur-md uppercase tracking-wider">
+                            Indisponible
+                        </span>
+                    )}
                 </div>
 
                 {/* Game details */}
@@ -82,13 +87,23 @@ function BoardGameCard({
                         {t('boardgames_page.rules_link')}
                     </a>
                 )}
-                <Button
-                    variant="primary"
-                    onClick={onBookClick}
-                    className="w-full py-3 shadow-lg shadow-amber-500/10"
-                >
-                    {t('boardgames_page.book_to_play')}
-                </Button>
+                {game.stock === 0 ? (
+                    <button
+                        type="button"
+                        disabled={true}
+                        className="w-full py-3 rounded-full text-xs font-extrabold bg-rose-950/40 text-rose-300 border border-rose-500/30 opacity-70 cursor-not-allowed text-center uppercase tracking-wider"
+                    >
+                        Indisponible (Hors stock)
+                    </button>
+                ) : (
+                    <Button
+                        variant="primary"
+                        onClick={onBookClick}
+                        className="w-full py-3 shadow-lg shadow-amber-500/10"
+                    >
+                        {t('boardgames_page.book_to_play')}
+                    </Button>
+                )}
             </div>
         </div>
     );

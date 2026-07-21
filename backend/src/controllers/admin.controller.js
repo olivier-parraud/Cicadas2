@@ -172,7 +172,7 @@ export const updateTournament = async (req, res) => {
 // Créer un nouveau jeu de société
 export const createBoardGame = async (req, res) => {
     try {
-        const { name, min_players, max_players, play_time, category, description, image_url, rules_url } = req.body;
+        const { name, min_players, max_players, play_time, category, description, image_url, rules_url, stock } = req.body;
 
         if (!name || !min_players || !max_players || !play_time || !category) {
             return res.status(400).json({ error: "Nom, joueurs (min/max), durée et catégorie requis." });
@@ -185,14 +185,62 @@ export const createBoardGame = async (req, res) => {
             play_time: Number(play_time),
             category,
             description: description || null,
-            image_url: image_url || '/images/boardgames/catan.png',
-            rules_url: rules_url || null
+            image_url: image_url || 'https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?q=80&w=600',
+            rules_url: rules_url || null,
+            stock: stock !== undefined ? Number(stock) : 1
         });
 
         res.status(201).json({ message: "Jeu de société ajouté avec succès !", boardGameId: newGame.id });
     } catch (error) {
         console.error("Erreur création jeu de société :", error);
         res.status(500).json({ error: "Erreur lors de l'ajout du jeu de société." });
+    }
+};
+
+// Modifier un jeu de société (y compris son stock)
+export const updateBoardGame = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { name, min_players, max_players, play_time, category, description, image_url, rules_url, stock } = req.body;
+
+        if (!name || !min_players || !max_players || !play_time || !category) {
+            return res.status(400).json({ error: "Nom, joueurs (min/max), durée et catégorie requis." });
+        }
+
+        await BoardGame.update(id, {
+            name,
+            min_players: Number(min_players),
+            max_players: Number(max_players),
+            play_time: Number(play_time),
+            category,
+            description: description || null,
+            image_url: image_url || 'https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?q=80&w=600',
+            rules_url: rules_url || null,
+            stock: stock !== undefined ? Number(stock) : 1
+        });
+
+        res.json({ message: "Jeu de société mis à jour avec succès !" });
+    } catch (error) {
+        console.error("Erreur modification jeu de société :", error);
+        res.status(500).json({ error: "Erreur de modification du jeu de société." });
+    }
+};
+
+// Modifier rapidement le stock d'un jeu de société
+export const updateBoardGameStock = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { stock } = req.body;
+
+        if (stock === undefined || isNaN(Number(stock))) {
+            return res.status(400).json({ error: "Valeur du stock invalide." });
+        }
+
+        await BoardGame.updateStock(id, Math.max(0, Number(stock)));
+        res.json({ message: "Stock mis à jour avec succès !" });
+    } catch (error) {
+        console.error("Erreur mise à jour stock :", error);
+        res.status(500).json({ error: "Erreur lors de la mise à jour du stock." });
     }
 };
 

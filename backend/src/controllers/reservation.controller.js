@@ -49,6 +49,21 @@ export const getReservationsByDate = async (req, res) => {
     }
 };
 
+// Récupérer les jeux indisponibles (déjà réservés/hors stock) pour un créneau
+export const getGameAvailability = async (req, res) => {
+    try {
+        const { date, time, duration } = req.query;
+        if (!date || !time || !duration) {
+            return res.json([]);
+        }
+        const reservedGames = await Reservation.checkGameAvailability(date, time, duration);
+        res.json(reservedGames);
+    } catch (error) {
+        console.error("Erreur vérification stock jeux:", error);
+        res.status(500).json({ error: "Impossible de vérifier le stock des jeux." });
+    }
+};
+
 // Récupérer toutes les réservations de l'utilisateur connecté
 export const getUserReservations = async (req, res) => {
     try {

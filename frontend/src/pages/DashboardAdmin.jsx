@@ -27,6 +27,7 @@ function DashboardAdmin() {
     const [editingEvent, setEditingEvent] = useState(null);
 
     // Search states
+    const [resSearch, setResSearch] = useState('');
     const [tourneySearch, setTourneySearch] = useState('');
     const [eventSearch, setEventSearch] = useState('');
     const [bgSearch, setBgSearch] = useState('');
@@ -68,8 +69,36 @@ function DashboardAdmin() {
         play_time: 45,
         description: '',
         image_url: '',
-        rules_url: ''
+        rules_url: '',
+        stock: 1
     });
+
+    const handleUpdateStock = async (gameId, newStock) => {
+        const validatedStock = Math.max(0, newStock);
+        setActionLoading(true);
+        try {
+            const res = await fetch(`http://localhost:5050/api/admin/boardgames/${gameId}/stock`, {
+                method: 'PATCH',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}` 
+                },
+                body: JSON.stringify({ stock: validatedStock })
+            });
+            if (res.ok) {
+                setBoardGames(prev => prev.map(g => g.id === gameId ? { ...g, stock: validatedStock } : g));
+                setMessage({ type: 'success', text: 'Stock mis à jour avec succès !' });
+            } else {
+                const data = await res.json();
+                setMessage({ type: 'error', text: data.error || 'Erreur mise à jour stock' });
+            }
+        } catch (err) {
+            console.error('Erreur stock:', err);
+            setMessage({ type: 'error', text: 'Erreur réseau.' });
+        } finally {
+            setActionLoading(false);
+        }
+    };
 
     const [uploadingImage, setUploadingImage] = useState(false);
 
@@ -728,6 +757,17 @@ function DashboardAdmin() {
         (u.email || '').toLowerCase().includes(userSearch.toLowerCase())
     );
 
+    const filteredReservations = reservations.filter(r => {
+        const q = resSearch.toLowerCase().trim();
+        if (!q) return true;
+        const name = `${r.firstname || ''} ${r.lastname || ''}`.toLowerCase();
+        const email = (r.email || '').toLowerCase();
+        const game = (r.specific_game || '').toLowerCase();
+        const table = (r.tableName || '').toLowerCase();
+        const status = (r.status || '').toLowerCase();
+        return name.includes(q) || email.includes(q) || game.includes(q) || table.includes(q) || status.includes(q);
+    });
+
     return (
         <div className="min-h-screen bg-slate-50 text-slate-800 pb-20">
             {/* Dark Premium Admin Header */}
@@ -792,11 +832,25 @@ function DashboardAdmin() {
                         {/* TAB 1: RESERVATIONS */}
                         {activeTab === 'reservations' && (
                             <div className="bg-white rounded-3xl border border-slate-100 shadow-xl overflow-hidden">
-                                <div className="p-6 border-b border-slate-100 flex justify-between items-center">
-                                    <h2 className="text-lg font-bold text-slate-900">Toutes les réservations de tables</h2>
-                                    <span className="text-xs bg-slate-100 text-slate-600 font-semibold py-1 px-3 rounded-full">
-                                        Total : {reservations.length}
-                                    </span>
+                                <div className="p-6 border-b border-slate-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-slate-50/60">
+                                    <div>
+                                        <h2 className="text-xl font-extrabold text-slate-900">Toutes les réservations de tables</h2>
+                                        <p className="text-xs text-slate-500 font-light mt-0.5">Filtrer par nom de client, email, jeu ou statut</p>
+                                    </div>
+                                    <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
+                                        <div className="relative w-full sm:w-80 md:w-96">
+                                            <input
+                                                type="text"
+                                                placeholder="🔍 Rechercher un nom, email, jeu..."
+                                                value={resSearch}
+                                                onChange={(e) => setResSearch(e.target.value)}
+                                                className="w-full px-4 py-3 rounded-2xl border-2 border-slate-300 bg-white text-slate-900 text-sm font-semibold focus:outline-none focus:border-indigo-600 focus:ring-4 focus:ring-indigo-500/10 shadow-sm transition-all placeholder:text-slate-400 placeholder:font-normal"
+                                            />
+                                        </div>
+                                        <span className="text-xs bg-indigo-50 text-indigo-700 border border-indigo-200 font-extrabold py-2.5 px-4 rounded-xl shrink-0">
+                                            {filteredReservations.length} / {reservations.length} réservation(s)
+                                        </span>
+                                    </div>
                                 </div>
 
                                 <div className="overflow-x-auto">
@@ -813,7 +867,7 @@ function DashboardAdmin() {
                                             </tr>
                                         </thead>
                                         <tbody className="divide-y divide-slate-100 text-sm">
-                                            {reservations.map((res) => {
+                                            {filteredReservations.map((res) => {
                                                 const startStr = new Date(res.start_time).toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' });
                                                 const endStr = new Date(res.end_time).toLocaleString('fr-FR', { timeStyle: 'short' });
 
@@ -1030,15 +1084,20 @@ function DashboardAdmin() {
 
                                 {/* Tournaments List */}
                                 <div className="lg:col-span-7 bg-slate-950 p-6 rounded-3xl border border-indigo-950/40 shadow-xl space-y-4 text-white">
-                                    <div className="pb-4 border-b border-indigo-950/40 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-                                        <h2 className="text-lg font-bold text-slate-200">Tournois existants ({filteredTournaments.length})</h2>
-                                        <input
-                                            type="text"
-                                            placeholder="Rechercher un tournoi..."
-                                            value={tourneySearch}
-                                            onChange={(e) => setTourneySearch(e.target.value)}
-                                            className="px-3 py-1.5 rounded-xl border border-[#1e1c3a] bg-[#191831] text-white text-xs focus:outline-none focus:border-indigo-500 w-full sm:w-48 font-light"
-                                        />
+                                    <div className="pb-4 border-b border-indigo-950/40 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                                        <div>
+                                            <h2 className="text-xl font-extrabold text-slate-100">Tournois existants ({filteredTournaments.length})</h2>
+                                            <p className="text-xs text-slate-400 font-light mt-0.5">Filtrer par nom de tournoi ou jeu de cartes</p>
+                                        </div>
+                                        <div className="relative w-full sm:w-80 md:w-96">
+                                            <input
+                                                type="text"
+                                                placeholder="🔍 Rechercher un tournoi..."
+                                                value={tourneySearch}
+                                                onChange={(e) => setTourneySearch(e.target.value)}
+                                                className="w-full px-4 py-3 rounded-2xl border-2 border-[#372f63] bg-[#14122b] text-white text-sm font-semibold focus:outline-none focus:border-[#F4AF23] focus:ring-4 focus:ring-[#F4AF23]/10 shadow-md transition-all placeholder:text-slate-400 placeholder:font-normal"
+                                            />
+                                        </div>
                                     </div>
 
                                     <div className="max-h-[850px] overflow-y-auto pr-2 custom-scrollbar">
@@ -1217,15 +1276,20 @@ function DashboardAdmin() {
 
                                 {/* Events List */}
                                 <div className="lg:col-span-7 bg-slate-950 p-6 rounded-3xl border border-indigo-950/40 shadow-xl space-y-4 text-white">
-                                    <div className="pb-4 border-b border-indigo-950/40 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-                                        <h2 className="text-lg font-bold text-slate-200">Événements enregistrés ({filteredEvents.length})</h2>
-                                        <input
-                                            type="text"
-                                            placeholder="Rechercher un événement..."
-                                            value={eventSearch}
-                                            onChange={(e) => setEventSearch(e.target.value)}
-                                            className="px-3 py-1.5 rounded-xl border border-[#1e1c3a] bg-[#191831] text-white text-xs focus:outline-none focus:border-indigo-500 w-full sm:w-48 font-light"
-                                        />
+                                    <div className="pb-4 border-b border-indigo-950/40 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                                        <div>
+                                            <h2 className="text-xl font-extrabold text-slate-100">Événements enregistrés ({filteredEvents.length})</h2>
+                                            <p className="text-xs text-slate-400 font-light mt-0.5">Filtrer par titre ou jeu principal</p>
+                                        </div>
+                                        <div className="relative w-full sm:w-80 md:w-96">
+                                            <input
+                                                type="text"
+                                                placeholder="🔍 Rechercher un événement..."
+                                                value={eventSearch}
+                                                onChange={(e) => setEventSearch(e.target.value)}
+                                                className="w-full px-4 py-3 rounded-2xl border-2 border-[#372f63] bg-[#14122b] text-white text-sm font-semibold focus:outline-none focus:border-[#F4AF23] focus:ring-4 focus:ring-[#F4AF23]/10 shadow-md transition-all placeholder:text-slate-400 placeholder:font-normal"
+                                            />
+                                        </div>
                                     </div>
 
                                     <div className="max-h-[850px] overflow-y-auto pr-2 custom-scrollbar">
@@ -1261,20 +1325,25 @@ function DashboardAdmin() {
                         {/* TAB 3: USERS */}
                         {activeTab === 'users' && (
                             <div className="bg-white rounded-3xl border border-slate-100 shadow-xl overflow-hidden">
-                                <div className="p-6 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-                                    <div className="flex flex-col gap-1 w-full sm:w-auto">
-                                        <h2 className="text-lg font-bold text-slate-900">Utilisateurs inscrits</h2>
-                                        <input
-                                            type="text"
-                                            placeholder="Rechercher un utilisateur..."
-                                            value={userSearch}
-                                            onChange={(e) => setUserSearch(e.target.value)}
-                                            className="px-3 py-1.5 rounded-xl border border-slate-200 bg-white text-slate-800 text-xs focus:outline-none focus:border-indigo-600 w-full sm:w-64 font-light"
-                                        />
+                                <div className="p-6 border-b border-slate-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-slate-50/50">
+                                    <div className="flex flex-col gap-1 w-full md:w-auto">
+                                        <h2 className="text-xl font-extrabold text-slate-900">Utilisateurs inscrits</h2>
+                                        <p className="text-xs text-slate-500 font-light">Rechercher par prénom, nom, pseudo ou email</p>
                                     </div>
-                                    <span className="text-xs bg-slate-100 text-slate-600 font-semibold py-1 px-3 rounded-full shrink-0">
-                                        Total : {filteredUsers.length} / {users.length}
-                                    </span>
+                                    <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
+                                        <div className="relative w-full sm:w-80 md:w-96">
+                                            <input
+                                                type="text"
+                                                placeholder="🔍 Rechercher un membre..."
+                                                value={userSearch}
+                                                onChange={(e) => setUserSearch(e.target.value)}
+                                                className="w-full px-4 py-3 rounded-2xl border-2 border-slate-300 bg-white text-slate-900 text-sm font-semibold focus:outline-none focus:border-indigo-600 focus:ring-4 focus:ring-indigo-500/10 shadow-sm transition-all placeholder:text-slate-400 placeholder:font-normal"
+                                            />
+                                        </div>
+                                        <span className="text-xs bg-indigo-50 text-indigo-700 border border-indigo-200 font-extrabold py-2.5 px-4 rounded-xl shrink-0">
+                                            Total : {filteredUsers.length} / {users.length}
+                                        </span>
+                                    </div>
                                 </div>
 
                                 <div className="overflow-x-auto">
@@ -1400,16 +1469,29 @@ function DashboardAdmin() {
                                             </div>
                                         </div>
 
-                                        <div className="space-y-1">
-                                            <label className="text-xs font-bold text-slate-500 uppercase">Durée de partie (mins)</label>
-                                            <input
-                                                type="number"
-                                                required
-                                                min="5"
-                                                value={bgForm.play_time}
-                                                onChange={(e) => setBgForm({ ...bgForm, play_time: Number(e.target.value) })}
-                                                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-600 font-light"
-                                            />
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div className="space-y-1">
+                                                <label className="text-xs font-bold text-slate-500 uppercase">Durée de partie (mins)</label>
+                                                <input
+                                                    type="number"
+                                                    required
+                                                    min="5"
+                                                    value={bgForm.play_time}
+                                                    onChange={(e) => setBgForm({ ...bgForm, play_time: Number(e.target.value) })}
+                                                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-600 font-light"
+                                                />
+                                            </div>
+                                            <div className="space-y-1">
+                                                <label className="text-xs font-bold text-slate-500 uppercase">Stock (Exemplaires)</label>
+                                                <input
+                                                    type="number"
+                                                    required
+                                                    min="0"
+                                                    value={bgForm.stock !== undefined ? bgForm.stock : 1}
+                                                    onChange={(e) => setBgForm({ ...bgForm, stock: Math.max(0, Number(e.target.value)) })}
+                                                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-600 font-light"
+                                                />
+                                            </div>
                                         </div>
 
                                         <div className="space-y-1">
@@ -1472,7 +1554,7 @@ function DashboardAdmin() {
                                         <button
                                             type="submit"
                                             disabled={actionLoading}
-                                            className="w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs transition duration-300 shadow-md shadow-indigo-600/10 disabled:opacity-50"
+                                            className="w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs transition duration-300 shadow-md shadow-indigo-600/10 disabled:opacity-50 cursor-pointer"
                                         >
                                             Ajouter le jeu
                                         </button>
@@ -1498,30 +1580,35 @@ function DashboardAdmin() {
 
                                 {/* Board Games List */}
                                 <div className="lg:col-span-7 bg-white rounded-3xl border border-slate-100 shadow-xl overflow-hidden">
-                                    <div className="p-6 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-slate-50/50">
-                                        <div className="flex-1 space-y-2">
-                                            <h2 className="text-lg font-bold text-slate-900">Jeux en boutique ({filteredBoardGames.length})</h2>
-                                            <input
-                                                type="text"
-                                                placeholder="Rechercher un jeu..."
-                                                value={bgSearch}
-                                                onChange={(e) => setBgSearch(e.target.value)}
-                                                className="px-3 py-1.5 rounded-xl border border-slate-200 bg-white text-slate-800 text-xs focus:outline-none focus:border-indigo-600 w-full sm:w-64 font-light shadow-sm"
-                                            />
+                                    <div className="p-6 border-b border-slate-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-slate-50/50">
+                                        <div className="flex-1 space-y-1">
+                                            <h2 className="text-xl font-extrabold text-slate-900">Jeux en boutique ({filteredBoardGames.length})</h2>
+                                            <p className="text-xs text-slate-500 font-light">Rechercher par nom de jeu, mécanique ou catégorie</p>
                                         </div>
-                                        <button
-                                            type="button"
-                                            onClick={handleImportBggHot}
-                                            disabled={actionLoading}
-                                            className="inline-flex items-center gap-1.5 py-2 px-3 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white shadow-sm transition disabled:opacity-50 shrink-0 self-end sm:self-auto"
-                                        >
-                                            <Zap className="w-3.5 h-3.5" /> {actionLoading && message.text?.includes("BGG") ? 'Importation...' : 'Importer 100 Populaires BGG'}
-                                        </button>
+                                        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto">
+                                            <div className="relative w-full sm:w-80 md:w-96">
+                                                <input
+                                                    type="text"
+                                                    placeholder="🔍 Rechercher un jeu de société..."
+                                                    value={bgSearch}
+                                                    onChange={(e) => setBgSearch(e.target.value)}
+                                                    className="w-full px-4 py-3 rounded-2xl border-2 border-slate-300 bg-white text-slate-900 text-sm font-semibold focus:outline-none focus:border-indigo-600 focus:ring-4 focus:ring-indigo-500/10 shadow-sm transition-all placeholder:text-slate-400 placeholder:font-normal"
+                                                />
+                                            </div>
+                                            <button
+                                                type="button"
+                                                onClick={handleImportBggHot}
+                                                disabled={actionLoading}
+                                                className="inline-flex items-center justify-center gap-2 py-3 px-5 rounded-2xl text-xs font-extrabold bg-indigo-600 hover:bg-indigo-500 text-white shadow-md transition disabled:opacity-50 shrink-0 cursor-pointer"
+                                            >
+                                                <Zap className="w-4 h-4" /> {actionLoading && message.text?.includes("BGG") ? 'Importation...' : 'Importer 100 Populaires BGG'}
+                                            </button>
+                                        </div>
                                     </div>
 
                                     <div className="divide-y divide-slate-100 max-h-[850px] overflow-y-auto custom-scrollbar">
                                         {filteredBoardGames.map((game) => (
-                                            <div key={game.id} className="p-5 flex justify-between items-center gap-4 hover:bg-slate-50/50 transition">
+                                            <div key={game.id} className="p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 hover:bg-slate-50/50 transition">
                                                 <div className="flex items-center gap-4">
                                                     <img 
                                                         src={game.image_url} 
@@ -1542,13 +1629,45 @@ function DashboardAdmin() {
                                                         </p>
                                                     </div>
                                                 </div>
-                                                <button
-                                                    onClick={() => handleDeleteBoardGame(game.id)}
-                                                    disabled={actionLoading}
-                                                    className="py-1.5 px-3 rounded-lg text-xs font-bold text-red-500 hover:bg-red-50 transition disabled:opacity-50"
-                                                >
-                                                    Supprimer
-                                                </button>
+
+                                                {/* Controleur de stock en direct */}
+                                                <div className="flex items-center gap-3 shrink-0 self-end sm:self-auto">
+                                                    <div className="flex items-center gap-1.5 bg-slate-100 p-1.5 rounded-xl border border-slate-200">
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => handleUpdateStock(game.id, (game.stock !== undefined ? game.stock : 1) - 1)}
+                                                            disabled={actionLoading || (game.stock !== undefined ? game.stock : 1) <= 0}
+                                                            className="w-6 h-6 rounded-lg bg-white hover:bg-slate-200 text-slate-800 font-extrabold text-xs flex items-center justify-center shadow-sm disabled:opacity-30 cursor-pointer"
+                                                            title="Diminuer le stock"
+                                                        >
+                                                            -
+                                                        </button>
+                                                        <span className={`text-xs font-extrabold px-2.5 py-0.5 rounded-lg border ${
+                                                            (game.stock !== undefined ? game.stock : 1) > 0 
+                                                                ? 'bg-emerald-50 text-emerald-700 border-emerald-200' 
+                                                                : 'bg-rose-50 text-rose-700 border-rose-200'
+                                                        }`}>
+                                                            {game.stock !== undefined ? game.stock : 1} en stock
+                                                        </span>
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => handleUpdateStock(game.id, (game.stock !== undefined ? game.stock : 1) + 1)}
+                                                            disabled={actionLoading}
+                                                            className="w-6 h-6 rounded-lg bg-white hover:bg-slate-200 text-slate-800 font-extrabold text-xs flex items-center justify-center shadow-sm cursor-pointer"
+                                                            title="Augmenter le stock"
+                                                        >
+                                                            +
+                                                        </button>
+                                                    </div>
+
+                                                    <button
+                                                        onClick={() => handleDeleteBoardGame(game.id)}
+                                                        disabled={actionLoading}
+                                                        className="py-1.5 px-3 rounded-lg text-xs font-bold text-red-500 hover:bg-red-50 transition disabled:opacity-50 cursor-pointer"
+                                                    >
+                                                        Supprimer
+                                                    </button>
+                                                </div>
                                             </div>
                                         ))}
                                         {filteredBoardGames.length === 0 && (

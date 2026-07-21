@@ -37,6 +37,7 @@ function Reservations() {
     const [existingReservations, setExistingReservations] = useState([]);
     const [loadingPlanning, setLoadingPlanning] = useState(false);
     const [boardGames, setBoardGames] = useState([]);
+    const [reservedGames, setReservedGames] = useState([]);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
     useEffect(() => {
@@ -67,6 +68,23 @@ function Reservations() {
         };
         fetchBoardGames();
     }, []);
+
+    useEffect(() => {
+        const fetchGameAvailability = async () => {
+            if (!formData.date || !formData.time || !formData.duration) return;
+            try {
+                const res = await fetch(`http://localhost:5050/api/reservations/game-availability?date=${formData.date}&time=${formData.time}&duration=${formData.duration}`);
+                if (res.ok) {
+                    const data = await res.json();
+                    setReservedGames(data);
+                }
+            } catch (err) {
+                console.error("Erreur chargement disponibilité jeux:", err);
+            }
+        };
+
+        fetchGameAvailability();
+    }, [formData.date, formData.time, formData.duration]);
 
     const fetchReservationsForDate = async (selectedDate) => {
         if (!selectedDate) return;
@@ -253,38 +271,58 @@ function Reservations() {
                                             <div className="fixed inset-0 z-40" onClick={() => setIsDropdownOpen(false)}></div>
                                             <div className="absolute left-0 right-0 top-full mt-1 max-h-60 overflow-y-auto bg-slate-950 border border-white/5 rounded-xl shadow-2xl z-50 divide-y divide-slate-900">
                                                 {boardGames
-                                                    .filter(g => g.name.toLowerCase().includes(formData.specificGame.toLowerCase()))
-                                                    .map(game => (
-                                                        <button
-                                                            key={game.id}
-                                                            type="button"
-                                                            onClick={() => {
-                                                                setFormData(prev => ({ 
-                                                                    ...prev, 
-                                                                    specificGame: game.name,
-                                                                    playersCount: Math.max(parseInt(prev.playersCount, 10), game.min_players || 1).toString()
-                                                                }));
-                                                                setIsDropdownOpen(false);
-                                                            }}
-                                                            className="w-full text-left px-4 py-2.5 text-xs text-slate-350 hover:bg-indigo-900/40 hover:text-white transition flex items-center gap-3 cursor-pointer"
-                                                        >
-                                                            {game.image_url && (
-                                                                <img 
-                                                                    src={game.image_url} 
-                                                                    alt={game.name} 
-                                                                    className="w-8 h-8 object-contain bg-white/10 rounded-md"
-                                                                    onError={(e) => {
-                                                                        e.target.onerror = null;
-                                                                        e.target.src = 'https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?q=80&w=600';
-                                                                    }}
-                                                                />
-                                                            )}
-                                                            <div className="flex flex-col">
-                                                                <span className="font-bold text-slate-200 text-sm">{game.name}</span>
-                                                                <span className="text-[10px] text-slate-400 font-light">{game.category} • {game.min_players}-{game.max_players} pl.</span>
-                                                            </div>
-                                                        </button>
-                                                    ))
+                                                     .filter(g => g.name.toLowerCase().includes(formData.specificGame.toLowerCase()))
+                                                     .map(game => {
+                                                         const isOutOfStock = game.stock === 0;
+                                                         const isReserved = reservedGames.includes(game.name.toLowerCase().trim()) || isOutOfStock;
+                                                         return (
+                                                             <button
+                                                                 key={game.id}
+                                                                 type="button"
+                                                                 disabled={isReserved}
+                                                                 onClick={() => {
+                                                                     if (isReserved) return;
+                                                                     setFormData(prev => ({ 
+                                                                         ...prev, 
+                                                                         specificGame: game.name,
+                                                                         playersCount: Math.max(parseInt(prev.playersCount, 10), game.min_players || 1).toString()
+                                                                     }));
+                                                                     setIsDropdownOpen(false);
+                                                                 }}
+                                                                 className={`w-full text-left px-4 py-2.5 text-xs transition flex items-center justify-between gap-3 ${
+                                                                     isReserved 
+                                                                         ? 'bg-rose-950/20 text-slate-500 cursor-not-allowed opacity-60' 
+                                                                         : 'text-slate-200 hover:bg-indigo-900/40 hover:text-white cursor-pointer'
+                                                                 }`}
+                                                             >
+                                                                 <div className="flex items-center gap-3">
+                                                                     {game.image_url && (
+                                                                         <img 
+                                                                             src={game.image_url} 
+                                                                             alt={game.name} 
+                                                                             className="w-8 h-8 object-contain bg-white/10 rounded-md"
+                                                                             onError={(e) => {
+                                                                                 e.target.onerror = null;
+                                                                                 e.target.src = 'https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?q=80&w=600';
+                                                                             }}
+                                                                         />
+                                                                     )}
+                                                                     <div className="flex flex-col">
+                                                                         <span className="font-bold text-slate-200 text-sm">{game.name}</span>
+                                                                         <span className="text-[10px] text-slate-400 font-light">{game.category} • {game.min_players}-{game.max_players} pl.</span>
+                                                                     </div>
+                                                                 </div>
+
+                                                                 <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border shrink-0 ${
+                                                                     isReserved 
+                                                                         ? 'bg-rose-500/10 border-rose-500/30 text-rose-400' 
+                                                                         : 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400'
+                                                                 }`}>
+                                                                     {isOutOfStock ? 'Indisponible' : isReserved ? 'Hors stock (Déjà réservé)' : '1 en stock'}
+                                                                 </span>
+                                                             </button>
+                                                         );
+                                                     })
                                                 }
                                                 {boardGames.filter(g => g.name.toLowerCase().includes(formData.specificGame.toLowerCase())).length === 0 && (
                                                     <div className="p-4 text-xs text-slate-500 font-light text-center">
@@ -384,11 +422,26 @@ function Reservations() {
 
                                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                                     {TIME_SLOTS.map(slot => {
-                                        const slotDateTime = new Date(`${formData.date} ${slot}:00`);
-                                        const inPast = slotDateTime.getTime() < Date.now();
+                                        const slotStart = new Date(`${formData.date} ${slot}:00`);
+                                        const inPast = slotStart.getTime() < Date.now();
+                                        const durationHours = parseInt(formData.duration || '2', 10);
+                                        const slotEnd = new Date(slotStart.getTime() + durationHours * 60 * 60 * 1000);
+
                                         const occupied = getOccupiedTablesCount(slot);
                                         const available = 4 - occupied;
                                         const isSelected = formData.time === slot;
+
+                                        // Check if the specific board game is already reserved for this slot
+                                        const isGameReservedForSlot = formData.specificGame && existingReservations.some(res => {
+                                            if (!res.specific_game) return false;
+                                            const isSameGame = res.specific_game.trim().toLowerCase() === formData.specificGame.trim().toLowerCase();
+                                            if (!isSameGame) return false;
+
+                                            const resStart = new Date(res.start_time);
+                                            const resEnd = new Date(res.end_time);
+
+                                            return resStart < slotEnd && resEnd > slotStart;
+                                        });
 
                                         let bgClass = "bg-[#121c17] hover:bg-[#1a2d24] border-emerald-500/25 text-emerald-400 cursor-pointer";
                                         let badgeClass = "bg-emerald-500/10 text-emerald-400 border border-emerald-500/25";
@@ -399,6 +452,11 @@ function Reservations() {
                                             bgClass = "bg-[#0c0919]/25 border-white/5 text-slate-500 opacity-40 cursor-not-allowed";
                                             badgeClass = "bg-white/5 text-slate-500 border border-white/5";
                                             label = t('reservations_page.slot_past', 'Indisponible');
+                                            disabled = true;
+                                        } else if (isGameReservedForSlot) {
+                                            bgClass = "bg-[#2b101d] border-rose-500/40 text-rose-300 opacity-70 cursor-not-allowed";
+                                            badgeClass = "bg-rose-500/20 text-rose-300 border border-rose-500/40";
+                                            label = "Hors stock";
                                             disabled = true;
                                         } else if (available <= 0) {
                                             bgClass = "bg-[#25111b] border-rose-500/25 text-rose-400 opacity-60 cursor-not-allowed";

@@ -88,26 +88,26 @@ function BoardGames() {
                 )}
 
                 {/* Filter and Search Bar */}
-                <div className="bg-[#130f25]/45 p-6 rounded-3xl border border-white/5 shadow-sm flex flex-col md:flex-row gap-4 items-stretch justify-between">
+                <div className="bg-[#130f25]/75 p-6 md:p-8 rounded-3xl border-2 border-white/10 shadow-xl flex flex-col md:flex-row gap-5 items-stretch justify-between backdrop-blur-md">
                     {/* Search Field */}
-                    <div className="flex-1 min-w-[250px]">
-                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">{t('boardgames_page.search_label')}</label>
+                    <div className="flex-1 min-w-[280px]">
+                        <label className="block text-xs font-extrabold text-[#F4AF23] uppercase tracking-wider mb-2">{t('boardgames_page.search_label')}</label>
                         <input
                             type="text"
                             placeholder={t('boardgames_page.search_placeholder')}
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full py-2.5 px-4 rounded-xl text-sm border border-[#F4AF23]/30 bg-[#0c0919] text-white focus:outline-none focus:border-[#F4AF23] focus:ring-1 focus:ring-[#F4AF23]/50 transition-all duration-300"
+                            className="w-full py-3.5 px-4 rounded-2xl text-sm font-semibold border-2 border-[#F4AF23]/40 bg-[#0c0919] text-white focus:outline-none focus:border-[#F4AF23] focus:ring-4 focus:ring-[#F4AF23]/20 shadow-inner transition-all duration-300 placeholder:text-slate-500"
                         />
                     </div>
 
                     {/* Category Filter */}
-                    <div className="w-full md:w-64">
-                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">{t('boardgames_page.category_label')}</label>
+                    <div className="w-full md:w-80">
+                        <label className="block text-xs font-extrabold text-[#F4AF23] uppercase tracking-wider mb-2">{t('boardgames_page.category_label')}</label>
                         <select
                             value={selectedCategory}
                             onChange={(e) => setSelectedCategory(e.target.value)}
-                            className="w-full py-2.5 px-4 rounded-xl text-sm border border-[#F4AF23]/30 bg-[#0c0919] text-white focus:outline-none focus:border-[#F4AF23] focus:ring-1 focus:ring-[#F4AF23]/50 hover:border-[#F4AF23]/60 transition-all duration-300"
+                            className="w-full py-3.5 px-4 rounded-2xl text-sm font-semibold border-2 border-[#F4AF23]/40 bg-[#0c0919] text-white focus:outline-none focus:border-[#F4AF23] focus:ring-4 focus:ring-[#F4AF23]/20 hover:border-[#F4AF23] transition-all duration-300 cursor-pointer"
                         >
                             {categories.map(cat => (
                                 <option key={cat} value={cat}>
@@ -118,14 +118,14 @@ function BoardGames() {
                     </div>
 
                     {/* Players Filter */}
-                    <div className="w-full md:w-48">
-                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">{t('boardgames_page.players_label')}</label>
+                    <div className="w-full md:w-56">
+                        <label className="block text-xs font-extrabold text-[#F4AF23] uppercase tracking-wider mb-2">{t('boardgames_page.players_label')}</label>
                         <input
                             type="text"
                             placeholder={t('boardgames_page.players_placeholder')}
                             value={playersFilter}
                             onChange={(e) => setPlayersFilter(e.target.value)}
-                            className="w-full py-2.5 px-4 rounded-xl text-sm border border-[#F4AF23]/30 bg-[#0c0919] text-white focus:outline-none focus:border-[#F4AF23] focus:ring-1 focus:ring-[#F4AF23]/50 transition-all duration-300"
+                            className="w-full py-3.5 px-4 rounded-2xl text-sm font-semibold border-2 border-[#F4AF23]/40 bg-[#0c0919] text-white focus:outline-none focus:border-[#F4AF23] focus:ring-4 focus:ring-[#F4AF23]/20 shadow-inner transition-all duration-300 placeholder:text-slate-500"
                         />
                     </div>
                 </div>

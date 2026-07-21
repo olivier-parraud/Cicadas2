@@ -10,6 +10,8 @@ import {
     deleteTournament,
     updateTournament,
     createBoardGame,
+    updateBoardGame,
+    updateBoardGameStock,
     deleteBoardGame,
     importBggHotGames
 } from '../controllers/admin.controller.js';
@@ -76,6 +78,8 @@ router.delete('/events/:id', deleteEvent);
 
 // Jeux de société
 router.post('/boardgames', createBoardGame);
+router.put('/boardgames/:id', updateBoardGame);
+router.patch('/boardgames/:id/stock', updateBoardGameStock);
 router.delete('/boardgames/:id', deleteBoardGame);
 router.post('/boardgames/import-hot', importBggHotGames);
 
