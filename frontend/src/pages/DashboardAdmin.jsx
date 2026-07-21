@@ -1026,7 +1026,7 @@ function DashboardAdmin() {
                                                 return (
                                                     <tr key={res.id} className="hover:bg-white/5 transition">
                                                         <td className="p-4">
-                                                            <div className="font-bold text-slate-100">
+                                                            <div className="font-bold text-[#F4AF23]">
                                                                 {res.firstname || res.lastname ? `${res.firstname || ''} ${res.lastname || ''}`.trim() : '—'}
                                                             </div>
                                                             <div className="text-xs text-slate-450">{res.email}</div>
@@ -1639,7 +1639,7 @@ function DashboardAdmin() {
                                         <tbody className="divide-y !divide-white/5 text-sm">
                                             {filteredUsers.map((u) => (
                                                 <tr key={u.id} className="hover:bg-white/5 transition">
-                                                    <td className="p-4 font-bold text-slate-100">
+                                                    <td className="p-4 font-bold text-[#F4AF23]">
                                                         {u.firstname || u.lastname ? `${u.firstname || ''} ${u.lastname || ''}`.trim() : '—'}
                                                     </td>
                                                     <td className="p-4 text-slate-300 font-mono text-xs">{u.email}</td>
