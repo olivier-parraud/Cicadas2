@@ -65,15 +65,15 @@ async function seed() {
 
         // ─── 3. Tournois pour tous les jeux ───
         const tournaments = [
-            ['Friday Night Magic - Modern',       'Magic: The Gathering',           '2026-07-12 19:30:00', 16, 5.00,  'Rejoignez-nous pour le traditionnel FNM hebdomadaire ! Format Modern, 3 rondes suisses. Boosters promo pour le top 4.'],
-            ['Pokémon TCG Cup : Standard',         'Pokémon TCG',                    '2026-07-13 10:00:00', 32, 7.50,  'Tournoi officiel Pokémon League Cup. Format Standard. Pensez à apporter votre Decklist imprimée.'],
-            ['One Piece Card Game - OP Championship', 'One Piece Card Game',         '2026-07-14 14:00:00', 24, 8.00,  'Tournoi construit One Piece Card Game. Format standard OP-09. Dotations officielles Bandai.'],
-            ['Yu-Gi-Oh! Local - Advanced',         'Yu-Gi-Oh!',                      '2026-07-15 18:00:00', 32, 5.00,  'Tournoi local Yu-Gi-Oh format Advanced. 4 rondes suisses + Top 8. OTS Packs en dotation.'],
-            ['Lorcana Challenge : Shimmering Skies', 'Disney Lorcana',              '2026-07-16 19:00:00', 16, 6.00,  'Tournoi construite Lorcana. Promos de participation pour tous les joueurs.'],
-            ['Star Wars Unlimited - Premier',      'Star Wars Unlimited',            '2026-07-17 14:30:00', 16, 7.00,  'Tournoi construit Star Wars Unlimited. Format Premier. Promos Alt-Art pour le Top 4.'],
-            ['Final Fantasy TCG - Crystal Cup',    'Final Fantasy TCG',              '2026-07-18 14:00:00', 16, 6.00,  'Crystal Cup locale Final Fantasy TCG. Format L7, toutes les cartes Opus I à XIV autorisées.'],
-            ['Altered TCG - Tournoi Découverte',   'Altered TCG',                    '2026-07-19 15:00:00', 16, 5.00,  'Premier tournoi Altered TCG au shop ! Venez découvrir le nouveau jeu de cartes physique-digital.'],
-            ['Dragon Ball Super CG - Regionals Qualifier', 'Dragon Ball Super Card Game', '2026-07-20 10:00:00', 32, 10.00, 'Qualificatif régional Dragon Ball Super Card Game. Format construit. Tapis de jeu exclusif pour le Top 8.'],
+            ['Friday Night Magic - Modern',       'Magic: The Gathering',           '2026-07-24 19:30:00', 16, 5.00,  'Rejoignez-nous pour le traditionnel FNM hebdomadaire ! Format Modern, 3 rondes suisses. Boosters promo pour le top 4.'],
+            ['Pokémon TCG Cup : Standard',         'Pokémon TCG',                    '2026-07-25 10:00:00', 32, 7.50,  'Tournoi officiel Pokémon League Cup. Format Standard. Pensez à apporter votre Decklist imprimée.'],
+            ['One Piece Card Game - OP Championship', 'One Piece Card Game',         '2026-07-26 14:00:00', 24, 8.00,  'Tournoi construit One Piece Card Game. Format standard OP-09. Dotations officielles Bandai.'],
+            ['Yu-Gi-Oh! Local - Advanced',         'Yu-Gi-Oh!',                      '2026-07-27 18:00:00', 32, 5.00,  'Tournoi local Yu-Gi-Oh format Advanced. 4 rondes suisses + Top 8. OTS Packs en dotation.'],
+            ['Lorcana Challenge : Shimmering Skies', 'Disney Lorcana',              '2026-07-28 19:00:00', 16, 6.00,  'Tournoi construite Lorcana. Promos de participation pour tous les joueurs.'],
+            ['Star Wars Unlimited - Premier',      'Star Wars Unlimited',            '2026-07-29 14:30:00', 16, 7.00,  'Tournoi construit Star Wars Unlimited. Format Premier. Promos Alt-Art pour le Top 4.'],
+            ['Final Fantasy TCG - Crystal Cup',    'Final Fantasy TCG',              '2026-07-30 14:00:00', 16, 6.00,  'Crystal Cup locale Final Fantasy TCG. Format L7, toutes les cartes Opus I à XIV autorisées.'],
+            ['Altered TCG - Tournoi Découverte',   'Altered TCG',                    '2026-07-31 15:00:00', 16, 5.00,  'Premier tournoi Altered TCG au shop ! Venez découvrir le nouveau jeu de cartes physique-digital.'],
+            ['Dragon Ball Super CG - Regionals Qualifier', 'Dragon Ball Super Card Game', '2026-08-01 10:00:00', 32, 10.00, 'Qualificatif régional Dragon Ball Super Card Game. Format construit. Tapis de jeu exclusif pour le Top 8.'],
         ];
 
         const tournamentIds = [];
@@ -88,16 +88,16 @@ async function seed() {
 
         // ─── 4. Événements (Drafts / Initiations) pour tous les jeux ───
         const events = [
-            ['Draft MTG : Horizons Modern 3',          'draft', 'Magic: The Gathering',           '2026-07-12 14:00:00', 24, 15.00, 'Draft compétitif Horizons Modern 3. 3 boosters par joueur fournis + dotations.'],
-            ['Draft Pokémon : Faille Paradoxe',        'draft', 'Pokémon TCG',                    '2026-07-13 14:30:00', 16, 12.00, 'Soirée Draft Pokémon TCG avec des boosters Faille Paradoxe. Découvrez le format limité !'],
-            ['Draft One Piece : OP-09',                'draft', 'One Piece Card Game',            '2026-07-14 18:00:00', 16, 12.00, 'Draft One Piece Card Game avec 6 boosters OP-09 par joueur. Format sealed.'],
-            ['Draft Yu-Gi-Oh! : Battle Pack 3',        'draft', 'Yu-Gi-Oh!',                      '2026-07-15 14:00:00', 16, 10.00, 'Soirée Draft Yu-Gi-Oh avec Battle Pack 3. Construisez votre deck à partir de boosters !'],
-            ['Draft Lorcana : Ciel Scintillant',       'draft', 'Disney Lorcana',                 '2026-07-16 14:00:00', 12, 15.00, 'Draft Lorcana avec 6 boosters Ciel Scintillant par joueur. Idéal pour les collectionneurs.'],
-            ['Draft Star Wars Unlimited : Ombres',     'draft', 'Star Wars Unlimited',            '2026-07-17 18:30:00', 12, 14.00, 'Draft Star Wars Unlimited extension Ombres de la Galaxie. 6 boosters fournis.'],
-            ['Draft Final Fantasy TCG : Opus XV',      'draft', 'Final Fantasy TCG',              '2026-07-18 18:00:00', 12, 13.00, 'Draft Final Fantasy TCG avec 6 boosters Opus XV par joueur.'],
-            ['Initiation Altered TCG',                 'initiation', 'Altered TCG',               '2026-07-19 11:00:00', 20, 0.00,  'Séance découverte gratuite du jeu Altered TCG. Decks de prêt fournis par le magasin.'],
-            ['Draft Dragon Ball Super CG',             'draft', 'Dragon Ball Super Card Game',    '2026-07-20 14:00:00', 16, 12.00, 'Draft Dragon Ball Super Card Game avec des boosters de la dernière extension.'],
-            ['Avant-Première MTG : Bloomburrow',       'avant_premiere', 'Magic: The Gathering',  '2026-07-25 12:00:00', 32, 25.00, 'Avant-Première Bloomburrow ! Recevez votre kit de pré-release et découvrez la nouvelle extension en avant-première.'],
+            ['Draft MTG : Horizons Modern 3',          'draft', 'Magic: The Gathering',           '2026-07-24 14:00:00', 24, 15.00, 'Draft compétitif Horizons Modern 3. 3 boosters par joueur fournis + dotations.'],
+            ['Draft Pokémon : Faille Paradoxe',        'draft', 'Pokémon TCG',                    '2026-07-25 14:30:00', 16, 12.00, 'Soirée Draft Pokémon TCG avec des boosters Faille Paradoxe. Découvrez le format limité !'],
+            ['Draft One Piece : OP-09',                'draft', 'One Piece Card Game',            '2026-07-26 18:00:00', 16, 12.00, 'Draft One Piece Card Game avec 6 boosters OP-09 par joueur. Format sealed.'],
+            ['Draft Yu-Gi-Oh! : Battle Pack 3',        'draft', 'Yu-Gi-Oh!',                      '2026-07-27 14:00:00', 16, 10.00, 'Soirée Draft Yu-Gi-Oh avec Battle Pack 3. Construisez votre deck à partir de boosters !'],
+            ['Draft Lorcana : Ciel Scintillant',       'draft', 'Disney Lorcana',                 '2026-07-28 14:00:00', 12, 15.00, 'Draft Lorcana avec 6 boosters Ciel Scintillant par joueur. Idéal pour les collectionneurs.'],
+            ['Draft Star Wars Unlimited : Ombres',     'draft', 'Star Wars Unlimited',            '2026-07-29 18:30:00', 12, 14.00, 'Draft Star Wars Unlimited extension Ombres de la Galaxie. 6 boosters fournis.'],
+            ['Draft Final Fantasy TCG : Opus XV',      'draft', 'Final Fantasy TCG',              '2026-07-30 18:00:00', 12, 13.00, 'Draft Final Fantasy TCG avec 6 boosters Opus XV par joueur.'],
+            ['Initiation Altered TCG',                 'initiation', 'Altered TCG',               '2026-07-31 11:00:00', 20, 0.00,  'Séance découverte gratuite du jeu Altered TCG. Decks de prêt fournis par le magasin.'],
+            ['Draft Dragon Ball Super CG',             'draft', 'Dragon Ball Super Card Game',    '2026-08-01 14:00:00', 16, 12.00, 'Draft Dragon Ball Super Card Game avec des boosters de la dernière extension.'],
+            ['Avant-Première MTG : Bloomburrow',       'avant_premiere', 'Magic: The Gathering',  '2026-08-05 12:00:00', 32, 25.00, 'Avant-Première Bloomburrow ! Recevez votre kit de pré-release et découvrez la nouvelle extension en avant-première.'],
         ];
 
         const eventIds = [];
@@ -181,25 +181,25 @@ async function seed() {
         } else {
             const reservationList = [
                 // User 1 (Pierre)
-                { userId: userIds[0], gameType: 'MTG', gameName: 'Magic: The Gathering', date: '2026-07-12', time: '14:00', roomOffset: 0, players: 2 },
-                { userId: userIds[0], gameType: 'POKEMON', gameName: 'Pokémon TCG', date: '2026-07-13', time: '16:00', roomOffset: 1, players: 2 },
-                { userId: userIds[0], gameType: 'BOARD_GAME', gameName: 'Azul', date: '2026-07-14', time: '18:00', roomOffset: 2, players: 3 },
+                { userId: userIds[0], gameType: 'MTG', gameName: 'Magic: The Gathering', date: '2026-07-24', time: '14:00', roomOffset: 0, players: 2 },
+                { userId: userIds[0], gameType: 'POKEMON', gameName: 'Pokémon TCG', date: '2026-07-25', time: '16:00', roomOffset: 1, players: 2 },
+                { userId: userIds[0], gameType: 'BOARD_GAME', gameName: 'Azul', date: '2026-07-26', time: '18:00', roomOffset: 2, players: 3 },
                 // User 2 (Sophie)
-                { userId: userIds[1], gameType: 'ONE_PIECE', gameName: 'One Piece Card Game', date: '2026-07-12', time: '16:00', roomOffset: 1, players: 2 },
-                { userId: userIds[1], gameType: 'YUGIOH', gameName: 'Yu-Gi-Oh!', date: '2026-07-13', time: '18:00', roomOffset: 2, players: 2 },
-                { userId: userIds[1], gameType: 'BYOG', gameName: "J'apporte mon jeu", date: '2026-07-15', time: '14:00', roomOffset: 0, players: 4 },
+                { userId: userIds[1], gameType: 'ONE_PIECE', gameName: 'One Piece Card Game', date: '2026-07-24', time: '16:00', roomOffset: 1, players: 2 },
+                { userId: userIds[1], gameType: 'YUGIOH', gameName: 'Yu-Gi-Oh!', date: '2026-07-25', time: '18:00', roomOffset: 2, players: 2 },
+                { userId: userIds[1], gameType: 'BYOG', gameName: "J'apporte mon jeu", date: '2026-07-27', time: '14:00', roomOffset: 0, players: 4 },
                 // User 3 (Thomas)
-                { userId: userIds[2], gameType: 'LORCANA', gameName: 'Disney Lorcana', date: '2026-07-13', time: '14:00', roomOffset: 0, players: 2 },
-                { userId: userIds[2], gameType: 'STAR_WARS', gameName: 'Star Wars Unlimited', date: '2026-07-14', time: '16:00', roomOffset: 1, players: 2 },
-                { userId: userIds[2], gameType: 'BOARD_GAME', gameName: 'Codenames', date: '2026-07-16', time: '18:00', roomOffset: 2, players: 6 },
+                { userId: userIds[2], gameType: 'LORCANA', gameName: 'Disney Lorcana', date: '2026-07-25', time: '14:00', roomOffset: 0, players: 2 },
+                { userId: userIds[2], gameType: 'STAR_WARS', gameName: 'Star Wars Unlimited', date: '2026-07-26', time: '16:00', roomOffset: 1, players: 2 },
+                { userId: userIds[2], gameType: 'BOARD_GAME', gameName: 'Codenames', date: '2026-07-28', time: '18:00', roomOffset: 2, players: 6 },
                 // User 4 (Julie)
-                { userId: userIds[3], gameType: 'FINAL_FF', gameName: 'Final Fantasy TCG', date: '2026-07-14', time: '14:00', roomOffset: 0, players: 2 },
-                { userId: userIds[3], gameType: 'ALTERED', gameName: 'Altered TCG', date: '2026-07-15', time: '16:00', roomOffset: 1, players: 2 },
-                { userId: userIds[3], gameType: 'BOARD_GAME', gameName: '7 Wonders', date: '2026-07-17', time: '18:00', roomOffset: 2, players: 4 },
+                { userId: userIds[3], gameType: 'FINAL_FF', gameName: 'Final Fantasy TCG', date: '2026-07-26', time: '14:00', roomOffset: 0, players: 2 },
+                { userId: userIds[3], gameType: 'ALTERED', gameName: 'Altered TCG', date: '2026-07-27', time: '16:00', roomOffset: 1, players: 2 },
+                { userId: userIds[3], gameType: 'BOARD_GAME', gameName: '7 Wonders', date: '2026-07-29', time: '18:00', roomOffset: 2, players: 4 },
                 // User 5 (Nicolas)
-                { userId: userIds[4], gameType: 'DBS', gameName: 'Dragon Ball Super Card Game', date: '2026-07-15', time: '18:00', roomOffset: 2, players: 2 },
-                { userId: userIds[4], gameType: 'BOARD_GAME', gameName: 'Carcassonne Big Box 6', date: '2026-07-16', time: '14:00', roomOffset: 0, players: 2 },
-                { userId: userIds[4], gameType: 'MTG', gameName: 'Magic: The Gathering', date: '2026-07-17', time: '16:00', roomOffset: 1, players: 2 },
+                { userId: userIds[4], gameType: 'DBS', gameName: 'Dragon Ball Super Card Game', date: '2026-07-27', time: '18:00', roomOffset: 2, players: 2 },
+                { userId: userIds[4], gameType: 'BOARD_GAME', gameName: 'Carcassonne Big Box 6', date: '2026-07-28', time: '14:00', roomOffset: 0, players: 2 },
+                { userId: userIds[4], gameType: 'MTG', gameName: 'Magic: The Gathering', date: '2026-07-29', time: '16:00', roomOffset: 1, players: 2 },
             ];
 
             for (const res of reservationList) {

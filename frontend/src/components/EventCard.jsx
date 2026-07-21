@@ -43,12 +43,6 @@ function EventCard({
     const getGameImage = (type, specificGame) => {
         const gameLower = (specificGame || '').toLowerCase();
         if (type === 'BOARD_GAME') {
-            if (gameLower.includes('catan')) {
-                return 'https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?q=80&w=600';
-            }
-            if (gameLower.includes('azul')) {
-                return 'https://images.unsplash.com/photo-1596464716127-f2a82984de30?q=80&w=600';
-            }
             return 'https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?q=80&w=600';
         }
 

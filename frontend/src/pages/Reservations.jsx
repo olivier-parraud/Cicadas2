@@ -273,6 +273,10 @@ function Reservations() {
                                                                     src={game.image_url} 
                                                                     alt={game.name} 
                                                                     className="w-8 h-8 object-contain bg-white/10 rounded-md"
+                                                                    onError={(e) => {
+                                                                        e.target.onerror = null;
+                                                                        e.target.src = 'https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?q=80&w=600';
+                                                                    }}
                                                                 />
                                                             )}
                                                             <div className="flex flex-col">

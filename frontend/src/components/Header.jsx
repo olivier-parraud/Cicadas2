@@ -40,6 +40,11 @@ function Header() {
         setIsMenuOpen(false);
     };
 
+    const isActive = (path) => {
+        if (path === '/') return location.pathname === '/';
+        return location.pathname.startsWith(path);
+    };
+
     return (
         <header className="bg-black/90 backdrop-blur-md text-white shadow-lg border-b border-white/5 relative z-50">
             <div className="container mx-auto px-4 py-4 flex justify-between items-center">
@@ -48,17 +53,17 @@ function Header() {
                 </Link>
 
                 {/* Navigation Desktop */}
-                <nav className="hidden md:flex gap-8 items-center font-medium">
-                    <Link to="/" className="hover:text-[#F4AF23] transition">{t('nav.home')}</Link>
-                    <Link to="/reservations" className="hover:text-[#F4AF23] transition">{t('nav.book_table')}</Link>
+                <nav className="hidden md:flex gap-2 items-center font-medium">
+                    <Link to="/" className={`px-3.5 py-1.5 rounded-xl text-sm transition-all duration-300 ${isActive('/') ? 'text-[#F4AF23] bg-[#563D82]/40 border border-[#F4AF23]/40 shadow-sm shadow-[#F4AF23]/20 font-extrabold' : 'text-slate-200 border border-transparent hover:text-[#F4AF23] hover:bg-[#563D82]/25 hover:border-[#F4AF23]/30 font-medium'}`}>{t('nav.home')}</Link>
+                    <Link to="/reservations" className={`px-3.5 py-1.5 rounded-xl text-sm transition-all duration-300 ${isActive('/reservations') ? 'text-[#F4AF23] bg-[#563D82]/40 border border-[#F4AF23]/40 shadow-sm shadow-[#F4AF23]/20 font-extrabold' : 'text-slate-200 border border-transparent hover:text-[#F4AF23] hover:bg-[#563D82]/25 hover:border-[#F4AF23]/30 font-medium'}`}>{t('nav.book_table')}</Link>
                     {isAuthenticated && (
-                        <Link to="/my-reservations" className="hover:text-[#F4AF23] transition">{t('nav.my_reservations')}</Link>
+                        <Link to="/my-reservations" className={`px-3.5 py-1.5 rounded-xl text-sm transition-all duration-300 ${isActive('/my-reservations') ? 'text-[#F4AF23] bg-[#563D82]/40 border border-[#F4AF23]/40 shadow-sm shadow-[#F4AF23]/20 font-extrabold' : 'text-slate-200 border border-transparent hover:text-[#F4AF23] hover:bg-[#563D82]/25 hover:border-[#F4AF23]/30 font-medium'}`}>{t('nav.my_reservations')}</Link>
                     )}
-                    <Link to="/boardgames" className="hover:text-[#F4AF23] transition">{t('nav.boardgames')}</Link>
-                    <Link to="/tournaments" className="hover:text-[#F4AF23] transition">{t('nav.tournaments')}</Link>
-                    <Link to="/events" className="hover:text-[#F4AF23] transition">{t('nav.events')}</Link>
+                    <Link to="/boardgames" className={`px-3.5 py-1.5 rounded-xl text-sm transition-all duration-300 ${isActive('/boardgames') ? 'text-[#F4AF23] bg-[#563D82]/40 border border-[#F4AF23]/40 shadow-sm shadow-[#F4AF23]/20 font-extrabold' : 'text-slate-200 border border-transparent hover:text-[#F4AF23] hover:bg-[#563D82]/25 hover:border-[#F4AF23]/30 font-medium'}`}>{t('nav.boardgames')}</Link>
+                    <Link to="/tournaments" className={`px-3.5 py-1.5 rounded-xl text-sm transition-all duration-300 ${isActive('/tournaments') ? 'text-[#F4AF23] bg-[#563D82]/40 border border-[#F4AF23]/40 shadow-sm shadow-[#F4AF23]/20 font-extrabold' : 'text-slate-200 border border-transparent hover:text-[#F4AF23] hover:bg-[#563D82]/25 hover:border-[#F4AF23]/30 font-medium'}`}>{t('nav.tournaments')}</Link>
+                    <Link to="/events" className={`px-3.5 py-1.5 rounded-xl text-sm transition-all duration-300 ${isActive('/events') ? 'text-[#F4AF23] bg-[#563D82]/40 border border-[#F4AF23]/40 shadow-sm shadow-[#F4AF23]/20 font-extrabold' : 'text-slate-200 border border-transparent hover:text-[#F4AF23] hover:bg-[#563D82]/25 hover:border-[#F4AF23]/30 font-medium'}`}>{t('nav.events')}</Link>
                     {isAuthenticated && isAdmin && (
-                        <Link to="/admin" className="text-[#F4AF23]/90 hover:text-[#F4AF23] font-bold transition">{t('nav.admin')}</Link>
+                        <Link to="/admin" className={`px-3.5 py-1.5 rounded-xl text-sm transition-all duration-300 ${isActive('/admin') ? 'text-[#F4AF23] bg-[#563D82]/40 border border-[#F4AF23]/40 shadow-sm shadow-[#F4AF23]/20 font-extrabold' : 'text-slate-200 border border-transparent hover:text-[#F4AF23] hover:bg-[#563D82]/25 hover:border-[#F4AF23]/30 font-medium'}`}>{t('nav.admin')}</Link>
                     )}
                 </nav>
 
@@ -107,17 +112,17 @@ function Header() {
 
             {/* Menu Déroulant Mobile */}
             {isMenuOpen && (
-                <div className="md:hidden absolute top-full left-0 w-full bg-black/95 border-b border-white/10 shadow-2xl backdrop-blur-lg flex flex-col p-6 space-y-4 animate-in slide-in-from-top duration-200">
-                    <Link to="/" className="hover:text-[#F4AF23] transition py-2 border-b border-white/5" onClick={closeMenu}>{t('nav.home')}</Link>
-                    <Link to="/reservations" className="hover:text-[#F4AF23] transition py-2 border-b border-white/5" onClick={closeMenu}>{t('nav.book_table')}</Link>
+                <div className="md:hidden absolute top-full left-0 w-full bg-black/95 border-b border-white/10 shadow-2xl backdrop-blur-lg flex flex-col p-6 space-y-3 animate-in slide-in-from-top duration-200">
+                    <Link to="/" className={`px-4 py-2.5 rounded-xl text-sm transition-all duration-300 ${isActive('/') ? 'text-[#F4AF23] bg-[#563D82]/40 border border-[#F4AF23]/40 font-extrabold' : 'text-slate-200 hover:text-[#F4AF23] hover:bg-[#563D82]/25 font-medium'}`} onClick={closeMenu}>{t('nav.home')}</Link>
+                    <Link to="/reservations" className={`px-4 py-2.5 rounded-xl text-sm transition-all duration-300 ${isActive('/reservations') ? 'text-[#F4AF23] bg-[#563D82]/40 border border-[#F4AF23]/40 font-extrabold' : 'text-slate-200 hover:text-[#F4AF23] hover:bg-[#563D82]/25 font-medium'}`} onClick={closeMenu}>{t('nav.book_table')}</Link>
                     {isAuthenticated && (
-                        <Link to="/my-reservations" className="hover:text-[#F4AF23] transition py-2 border-b border-white/5" onClick={closeMenu}>{t('nav.my_reservations')}</Link>
+                        <Link to="/my-reservations" className={`px-4 py-2.5 rounded-xl text-sm transition-all duration-300 ${isActive('/my-reservations') ? 'text-[#F4AF23] bg-[#563D82]/40 border border-[#F4AF23]/40 font-extrabold' : 'text-slate-200 hover:text-[#F4AF23] hover:bg-[#563D82]/25 font-medium'}`} onClick={closeMenu}>{t('nav.my_reservations')}</Link>
                     )}
-                    <Link to="/boardgames" className="hover:text-[#F4AF23] transition py-2 border-b border-white/5" onClick={closeMenu}>{t('nav.boardgames')}</Link>
-                    <Link to="/tournaments" className="hover:text-[#F4AF23] transition py-2 border-b border-white/5" onClick={closeMenu}>{t('nav.tournaments')}</Link>
-                    <Link to="/events" className="hover:text-[#F4AF23] transition py-2 border-b border-white/5" onClick={closeMenu}>{t('nav.events')}</Link>
+                    <Link to="/boardgames" className={`px-4 py-2.5 rounded-xl text-sm transition-all duration-300 ${isActive('/boardgames') ? 'text-[#F4AF23] bg-[#563D82]/40 border border-[#F4AF23]/40 font-extrabold' : 'text-slate-200 hover:text-[#F4AF23] hover:bg-[#563D82]/25 font-medium'}`} onClick={closeMenu}>{t('nav.boardgames')}</Link>
+                    <Link to="/tournaments" className={`px-4 py-2.5 rounded-xl text-sm transition-all duration-300 ${isActive('/tournaments') ? 'text-[#F4AF23] bg-[#563D82]/40 border border-[#F4AF23]/40 font-extrabold' : 'text-slate-200 hover:text-[#F4AF23] hover:bg-[#563D82]/25 font-medium'}`} onClick={closeMenu}>{t('nav.tournaments')}</Link>
+                    <Link to="/events" className={`px-4 py-2.5 rounded-xl text-sm transition-all duration-300 ${isActive('/events') ? 'text-[#F4AF23] bg-[#563D82]/40 border border-[#F4AF23]/40 font-extrabold' : 'text-slate-200 hover:text-[#F4AF23] hover:bg-[#563D82]/25 font-medium'}`} onClick={closeMenu}>{t('nav.events')}</Link>
                     {isAuthenticated && isAdmin && (
-                        <Link to="/admin" className="hover:text-[#F4AF23] text-[#F4AF23]/90 font-bold transition py-2 border-b border-white/5" onClick={closeMenu}>{t('nav.admin')}</Link>
+                        <Link to="/admin" className={`px-4 py-2.5 rounded-xl text-sm transition-all duration-300 ${isActive('/admin') ? 'text-[#F4AF23] bg-[#563D82]/40 border border-[#F4AF23]/40 font-extrabold' : 'text-slate-200 hover:text-[#F4AF23] hover:bg-[#563D82]/25 font-medium'}`} onClick={closeMenu}>{t('nav.admin')}</Link>
                     )}
 
                     <div className="flex flex-col gap-4 pt-4">
