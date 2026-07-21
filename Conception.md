@@ -1405,8 +1405,9 @@ La page de réservation (`Reservations.jsx`) affiche un **formulaire** à gauche
 
 **Fonctionnalités clés :**
 
-1. **Pré-remplissage automatique** : La date du jour est sélectionnée par défaut.
-2. **Planning horaire interactif** : Dès qu'une date est sélectionnée, une grille heure par heure (10h–21h) est chargée depuis l'API. Chaque créneau affiche un code couleur :
+1. **Calendrier interactif sur mesure** : Remplacement du sélecteur de date natif par un calendrier dynamique en ligne intégré directement au formulaire. Il permet une navigation fluide de mois en mois, grise automatiquement les jours passés pour éviter les réservations invalides, et met en valeur la date sélectionnée avec une bordure dorée et un fond violet.
+2. **Pré-remplissage automatique** : La date du jour est sélectionnée par défaut dans le calendrier.
+3. **Planning horaire interactif** : Dès qu'une date est sélectionnée, une grille heure par heure (10h–21h) est chargée depuis l'API. Chaque créneau affiche un code couleur :
    - 🟢 **Vert** : au moins 2 tables libres
    - 🟠 **Orange** : 1 seule table restante
    - 🔴 **Rouge** : complet (créneau désactivé)
@@ -1523,11 +1524,12 @@ Le composant `Header.jsx` gère la navigation globale avec une **Direction Artis
 
 ---
 
-### 6.11 Système de filtres élargis à haute lisibilité
+### 6.11 Système de filtres élargis à haute lisibilité et tris interactifs
 
 Pour offrir une expérience de gestion optimale aux administrateurs et une recherche fluide aux clients :
 - **Filtres Administrateur grand format** : Sur tous les onglets du tableau de bord Admin (`DashboardAdmin.jsx`), les barres de recherche ont été élargies (`w-80` à `w-96`), dotées d'une police agrandie et lisible (`text-sm font-semibold`), de bordures renforcées et d'un halo visuel au survol/focus.
 - **Recherche multicritère des réservations** : L'onglet Réservations permet de rechercher instantanément par nom de client, email, jeu de société ou statut de réservation.
+- **Tri interactif et bidirectionnel des réservations** : Ajout de boutons de tri interactifs en en-tête des colonnes du tableau de bord. L'administrateur peut d'un clic ordonner de façon croissante ou décroissante (avec indicateurs directionnels colorés `▲` / `▼`) les utilisateurs (A à Z), les tables, les dates et heures de début, les heures de fin et les jeux par groupe, ainsi que les statuts de réservation.
 - **Barre de recherche catalogue** : Sur la page des jeux de société (`BoardGames.jsx`), la barre de recherche, le filtre par catégorie et le filtre par nombre de joueurs utilisent des bordures dorées sur fond sombre rétroéclairé.
 
 ```jsx

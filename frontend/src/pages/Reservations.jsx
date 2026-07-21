@@ -40,6 +40,68 @@ function Reservations() {
     const [reservedGames, setReservedGames] = useState([]);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
+    // Custom calendar navigation state
+    const [currentCalDate, setCurrentCalDate] = useState(new Date(formData.date || new Date()));
+
+    // Keep calendar view in sync when date is set via URL query parameters or default date
+    useEffect(() => {
+        if (formData.date) {
+            setCurrentCalDate(new Date(formData.date));
+        }
+    }, [formData.date]);
+
+    const getDaysInMonth = (year, month) => {
+        const date = new Date(year, month, 1);
+        const days = [];
+        
+        let firstDayIndex = date.getDay() - 1;
+        if (firstDayIndex === -1) firstDayIndex = 6; // Sunday is index 6
+        
+        for (let i = 0; i < firstDayIndex; i++) {
+            days.push(null);
+        }
+        
+        while (date.getMonth() === month) {
+            days.push(new Date(date));
+            date.setDate(date.getDate() + 1);
+        }
+        
+        return days;
+    };
+
+    const handlePrevMonth = () => {
+        setCurrentCalDate(prev => new Date(prev.getFullYear(), prev.getMonth() - 1, 1));
+    };
+
+    const handleNextMonth = () => {
+        setCurrentCalDate(prev => new Date(prev.getFullYear(), prev.getMonth() + 1, 1));
+    };
+
+    const selectCalendarDay = (day) => {
+        if (!day) return;
+        const yyyy = day.getFullYear();
+        const mm = String(day.getMonth() + 1).padStart(2, '0');
+        const dd = String(day.getDate()).padStart(2, '0');
+        const formattedDate = `${yyyy}-${mm}-${dd}`;
+        setFormData(prev => ({ ...prev, date: formattedDate }));
+    };
+
+    const isDayPast = (day) => {
+        if (!day) return true;
+        const startOfToday = new Date();
+        startOfToday.setHours(0, 0, 0, 0);
+        return day < startOfToday;
+    };
+
+    const isDaySelected = (day) => {
+        if (!day) return false;
+        const yyyy = day.getFullYear();
+        const mm = String(day.getMonth() + 1).padStart(2, '0');
+        const dd = String(day.getDate()).padStart(2, '0');
+        const formattedDate = `${yyyy}-${mm}-${dd}`;
+        return formData.date === formattedDate;
+    };
+
     useEffect(() => {
         const queryParams = new URLSearchParams(location.search);
         const game = queryParams.get('game');
@@ -335,20 +397,73 @@ function Reservations() {
                                 </div>
                             )}
 
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="space-y-1">
-                                    <label className="text-xs font-bold text-slate-500 uppercase">{t('reservations_page.date_label')}</label>
-                                    <input
-                                        type="date"
-                                        name="date"
-                                        required
-                                        min={today}
-                                        value={formData.date}
-                                        onChange={handleChange}
-                                        className="w-full px-3.5 py-2.5 rounded-xl border border-white/5 text-sm focus:outline-none focus:border-[#F4AF23]/50 font-light bg-[#0c0919] text-slate-200"
-                                    />
-                                </div>
+                            {/* Custom Interactive Calendar */}
+                            <div className="space-y-1.5">
+                                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-1">
+                                    {t('reservations_page.date_label')}
+                                </label>
+                                
+                                <div className="bg-[#0b0917]/95 border border-white/5 rounded-2xl p-4.5 space-y-3.5 shadow-xl">
+                                    <div className="flex justify-between items-center px-1">
+                                        <button
+                                            type="button"
+                                            onClick={handlePrevMonth}
+                                            className="w-8 h-8 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white transition flex items-center justify-center cursor-pointer font-bold border border-white/5"
+                                        >
+                                            ◀
+                                        </button>
+                                        <span className="text-xs font-extrabold text-[#F4AF23] uppercase tracking-wider">
+                                            {currentCalDate.toLocaleDateString(i18n.resolvedLanguage || i18n.language || 'fr', { month: 'long', year: 'numeric' })}
+                                        </span>
+                                        <button
+                                            type="button"
+                                            onClick={handleNextMonth}
+                                            className="w-8 h-8 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white transition flex items-center justify-center cursor-pointer font-bold border border-white/5"
+                                        >
+                                            ▶
+                                        </button>
+                                    </div>
 
+                                    {/* Days of the week */}
+                                    <div className="grid grid-cols-7 text-center text-[10px] font-extrabold text-slate-400 uppercase tracking-wider pb-1.5 border-b border-white/5">
+                                        {['L', 'M', 'M', 'J', 'V', 'S', 'D'].map((d, i) => (
+                                            <span key={i}>{d}</span>
+                                        ))}
+                                    </div>
+
+                                    {/* Days of the month grid */}
+                                    <div className="grid grid-cols-7 gap-1 text-center">
+                                        {getDaysInMonth(currentCalDate.getFullYear(), currentCalDate.getMonth()).map((day, idx) => {
+                                            if (!day) {
+                                                return <div key={`empty-${idx}`} className="aspect-square"></div>;
+                                            }
+                                            const past = isDayPast(day);
+                                            const selected = isDaySelected(day);
+
+                                            let dayClass = "text-slate-300 hover:bg-[#563D82]/20 hover:text-[#F4AF23] cursor-pointer";
+                                            if (past) {
+                                                dayClass = "text-slate-700 opacity-20 cursor-not-allowed";
+                                            } else if (selected) {
+                                                dayClass = "bg-[#563D82] text-white border border-[#F4AF23] font-extrabold shadow-lg shadow-[#563D82]/40";
+                                            }
+
+                                            return (
+                                                <button
+                                                    key={day.getTime()}
+                                                    type="button"
+                                                    disabled={past}
+                                                    onClick={() => selectCalendarDay(day)}
+                                                    className={`aspect-square rounded-xl flex items-center justify-center text-xs transition duration-200 ${dayClass}`}
+                                                >
+                                                    {day.getDate()}
+                                                </button>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-1">
                                     <label className="text-xs font-bold text-slate-500 uppercase">{t('reservations_page.time_label')}</label>
                                     <input
@@ -362,20 +477,20 @@ function Reservations() {
                                         className="w-full px-3.5 py-2.5 rounded-xl border border-white/5 text-sm focus:outline-none focus:border-[#F4AF23]/50 font-light bg-[#0c0919] text-slate-200"
                                     />
                                 </div>
-                            </div>
 
-                            <div className="space-y-1">
-                                <label className="text-xs font-bold text-slate-500 uppercase">{t('reservations_page.duration_label')}</label>
-                                <input
-                                    type="number"
-                                    name="duration"
-                                    required
-                                    min="1"
-                                    max="10"
-                                    value={formData.duration}
-                                    onChange={handleChange}
-                                    className="w-full px-3.5 py-2.5 rounded-xl border border-white/5 text-sm focus:outline-none focus:border-[#F4AF23]/50 font-light bg-[#0c0919] text-slate-200"
-                                />
+                                <div className="space-y-1">
+                                    <label className="text-xs font-bold text-slate-500 uppercase">{t('reservations_page.duration_label')}</label>
+                                    <input
+                                        type="number"
+                                        name="duration"
+                                        required
+                                        min="1"
+                                        max="10"
+                                        value={formData.duration}
+                                        onChange={handleChange}
+                                        className="w-full px-3.5 py-2.5 rounded-xl border border-white/5 text-sm focus:outline-none focus:border-[#F4AF23]/50 font-light bg-[#0c0919] text-slate-200"
+                                    />
+                                </div>
                             </div>
 
                             <Button

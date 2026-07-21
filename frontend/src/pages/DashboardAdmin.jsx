@@ -28,6 +28,18 @@ function DashboardAdmin() {
 
     // Search states
     const [resSearch, setResSearch] = useState('');
+    const [resSortKey, setResSortKey] = useState(null);
+    const [resSortOrder, setResSortOrder] = useState('asc');
+
+    const handleSort = (key) => {
+        if (resSortKey === key) {
+            setResSortOrder(prev => prev === 'asc' ? 'desc' : 'asc');
+        } else {
+            setResSortKey(key);
+            setResSortOrder('asc');
+        }
+    };
+
     const [tourneySearch, setTourneySearch] = useState('');
     const [eventSearch, setEventSearch] = useState('');
     const [bgSearch, setBgSearch] = useState('');
@@ -73,15 +85,57 @@ function DashboardAdmin() {
         stock: 1
     });
 
+    // Custom calendar navigation states for Admin creation forms
+    const [tourneyCalDate, setTourneyCalDate] = useState(new Date());
+    const [eventCalDate, setEventCalDate] = useState(new Date());
+
+    const getDaysInMonth = (year, month) => {
+        const date = new Date(year, month, 1);
+        const days = [];
+        let firstDayIndex = date.getDay() - 1;
+        if (firstDayIndex === -1) firstDayIndex = 6;
+        for (let i = 0; i < firstDayIndex; i++) {
+            days.push(null);
+        }
+        while (date.getMonth() === month) {
+            days.push(new Date(date));
+            date.setDate(date.getDate() + 1);
+        }
+        return days;
+    };
+
+    const isDayPast = (day) => {
+        if (!day) return true;
+        const startOfToday = new Date();
+        startOfToday.setHours(0, 0, 0, 0);
+        return day < startOfToday;
+    };
+
+    const selectTourneyDay = (day) => {
+        if (!day) return;
+        const yyyy = day.getFullYear();
+        const mm = String(day.getMonth() + 1).padStart(2, '0');
+        const dd = String(day.getDate()).padStart(2, '0');
+        setTourneyForm(prev => ({ ...prev, date: `${yyyy}-${mm}-${dd}` }));
+    };
+
+    const selectEventDay = (day) => {
+        if (!day) return;
+        const yyyy = day.getFullYear();
+        const mm = String(day.getMonth() + 1).padStart(2, '0');
+        const dd = String(day.getDate()).padStart(2, '0');
+        setEventForm(prev => ({ ...prev, date: `${yyyy}-${mm}-${dd}` }));
+    };
+
     const handleUpdateStock = async (gameId, newStock) => {
         const validatedStock = Math.max(0, newStock);
         setActionLoading(true);
         try {
             const res = await fetch(`http://localhost:5050/api/admin/boardgames/${gameId}/stock`, {
                 method: 'PATCH',
-                headers: { 
+                headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}` 
+                    'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify({ stock: validatedStock })
             });
@@ -222,9 +276,9 @@ function DashboardAdmin() {
         try {
             const res = await fetch(`http://localhost:5050/api/admin/reservations/${id}`, {
                 method: 'PATCH',
-                headers: { 
+                headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}` 
+                    'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify({ status: newStatus })
             });
@@ -251,14 +305,14 @@ function DashboardAdmin() {
         if (!deleteConfirmId || !deleteConfirmType) return;
         const id = deleteConfirmId;
         const type = deleteConfirmType;
-        
+
         setDeleteConfirmId(null);
         setDeleteConfirmType(null);
         setActionLoading(true);
         try {
             let url = '';
             let successMsg = '';
-            
+
             if (type === 'reservation') {
                 url = `http://localhost:5050/api/admin/reservations/${id}`;
                 successMsg = 'Réservation supprimée.';
@@ -275,7 +329,7 @@ function DashboardAdmin() {
                 url = `http://localhost:5050/api/admin/events/${id}`;
                 successMsg = 'Événement supprimé.';
             }
-            
+
             const res = await fetch(url, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${token}` }
@@ -334,9 +388,9 @@ function DashboardAdmin() {
         try {
             const res = await fetch(`http://localhost:5050/api/admin/users/${userId}`, {
                 method: 'PATCH',
-                headers: { 
+                headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}` 
+                    'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify({ role: newRole })
             });
@@ -370,9 +424,9 @@ function DashboardAdmin() {
             const formattedDate = `${tourneyForm.date} ${tourneyForm.time}:00`;
             const res = await fetch('http://localhost:5050/api/admin/tournaments', {
                 method: 'POST',
-                headers: { 
+                headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}` 
+                    'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify({
                     name: tourneyForm.name,
@@ -419,7 +473,7 @@ function DashboardAdmin() {
         const dd = String(dt.getDate()).padStart(2, '0');
         const hh = String(dt.getHours()).padStart(2, '0');
         const min = String(dt.getMinutes()).padStart(2, '0');
-        
+
         setEditingTourney({
             id: tourney.id,
             name: tourney.name,
@@ -480,9 +534,9 @@ function DashboardAdmin() {
             const formattedDate = `${eventForm.date} ${eventForm.time}:00`;
             const res = await fetch('http://localhost:5050/api/admin/events', {
                 method: 'POST',
-                headers: { 
+                headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}` 
+                    'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify({
                     name: eventForm.name,
@@ -531,7 +585,7 @@ function DashboardAdmin() {
         const dd = String(dt.getDate()).padStart(2, '0');
         const hh = String(dt.getHours()).padStart(2, '0');
         const min = String(dt.getMinutes()).padStart(2, '0');
-        
+
         setEditingEvent({
             id: event.id,
             name: event.name,
@@ -591,9 +645,9 @@ function DashboardAdmin() {
         try {
             const res = await fetch('http://localhost:5050/api/admin/boardgames', {
                 method: 'POST',
-                headers: { 
+                headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}` 
+                    'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify(bgForm)
             });
@@ -734,26 +788,26 @@ function DashboardAdmin() {
         }
     };
 
-    const filteredTournaments = tournaments.filter(t => 
-        (t.name || '').toLowerCase().includes(tourneySearch.toLowerCase()) || 
+    const filteredTournaments = tournaments.filter(t =>
+        (t.name || '').toLowerCase().includes(tourneySearch.toLowerCase()) ||
         (t.game || '').toLowerCase().includes(tourneySearch.toLowerCase())
     );
 
-    const filteredEvents = events.filter(e => 
-        (e.name || '').toLowerCase().includes(eventSearch.toLowerCase()) || 
-        (e.game || '').toLowerCase().includes(eventSearch.toLowerCase()) || 
+    const filteredEvents = events.filter(e =>
+        (e.name || '').toLowerCase().includes(eventSearch.toLowerCase()) ||
+        (e.game || '').toLowerCase().includes(eventSearch.toLowerCase()) ||
         (e.type || '').toLowerCase().includes(eventSearch.toLowerCase())
     );
 
-    const filteredBoardGames = boardGames.filter(g => 
-        (g.name || '').toLowerCase().includes(bgSearch.toLowerCase()) || 
+    const filteredBoardGames = boardGames.filter(g =>
+        (g.name || '').toLowerCase().includes(bgSearch.toLowerCase()) ||
         (g.category || '').toLowerCase().includes(bgSearch.toLowerCase())
     );
 
-    const filteredUsers = users.filter(u => 
-        (u.firstname || '').toLowerCase().includes(userSearch.toLowerCase()) || 
-        (u.lastname || '').toLowerCase().includes(userSearch.toLowerCase()) || 
-        (u.pseudo || '').toLowerCase().includes(userSearch.toLowerCase()) || 
+    const filteredUsers = users.filter(u =>
+        (u.firstname || '').toLowerCase().includes(userSearch.toLowerCase()) ||
+        (u.lastname || '').toLowerCase().includes(userSearch.toLowerCase()) ||
+        (u.pseudo || '').toLowerCase().includes(userSearch.toLowerCase()) ||
         (u.email || '').toLowerCase().includes(userSearch.toLowerCase())
     );
 
@@ -768,8 +822,39 @@ function DashboardAdmin() {
         return name.includes(q) || email.includes(q) || game.includes(q) || table.includes(q) || status.includes(q);
     });
 
+    const sortedReservations = [...filteredReservations].sort((a, b) => {
+        if (!resSortKey) return 0;
+
+        let valA = '';
+        let valB = '';
+
+        if (resSortKey === 'user') {
+            valA = `${a.firstname || ''} ${a.lastname || ''}`.toLowerCase().trim();
+            valB = `${b.firstname || ''} ${b.lastname || ''}`.toLowerCase().trim();
+        } else if (resSortKey === 'table') {
+            valA = (a.tableName || '').toLowerCase().trim();
+            valB = (b.tableName || '').toLowerCase().trim();
+        } else if (resSortKey === 'start_time') {
+            valA = new Date(a.start_time).getTime();
+            valB = new Date(b.start_time).getTime();
+        } else if (resSortKey === 'end_time') {
+            valA = new Date(a.end_time).getTime();
+            valB = new Date(b.end_time).getTime();
+        } else if (resSortKey === 'game') {
+            valA = (a.specific_game || '').toLowerCase().trim();
+            valB = (b.specific_game || '').toLowerCase().trim();
+        } else if (resSortKey === 'status') {
+            valA = (a.status || '').toLowerCase().trim();
+            valB = (b.status || '').toLowerCase().trim();
+        }
+
+        if (valA < valB) return resSortOrder === 'asc' ? -1 : 1;
+        if (valA > valB) return resSortOrder === 'asc' ? 1 : -1;
+        return 0;
+    });
+
     return (
-        <div className="min-h-screen bg-slate-50 text-slate-800 pb-20">
+        <div className="min-h-screen text-slate-200 pb-20">
             {/* Dark Premium Admin Header */}
             <div className="bg-slate-950 text-white py-12 px-4 md:px-8 border-b border-indigo-950">
                 <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -778,34 +863,54 @@ function DashboardAdmin() {
                         <h1 className="text-3xl font-extrabold tracking-tight mt-1">Dashboard Admin</h1>
                     </div>
                     {/* Navigation tabs */}
-                    <div className="flex gap-1.5 bg-slate-900 p-1.5 rounded-xl border border-slate-800">
+                    <div className="flex flex-wrap md:flex-nowrap gap-2.5 bg-slate-900/95 p-2 rounded-2xl border border-slate-800/85 w-full md:w-auto shadow-inner">
                         <button
                             onClick={() => { setActiveTab('reservations'); setMessage({ type: '', text: '' }); }}
-                            className={`py-2 px-4 rounded-lg text-xs font-bold transition ${activeTab === 'reservations' ? 'bg-indigo-600 text-white shadow' : 'text-slate-400 hover:text-white'}`}
+                            className={`py-3 px-6 md:px-8 rounded-xl text-sm font-extrabold text-center flex-1 md:flex-none tracking-wide transition duration-200 cursor-pointer ${
+                                activeTab === 'reservations' 
+                                ? 'bg-[#563D82] text-[#F4AF23] border border-[#F4AF23]/30 shadow-lg shadow-[#563D82]/40' 
+                                : 'text-slate-400 hover:text-[#F4AF23] hover:bg-slate-800/30'
+                            }`}
                         >
                             Réservations
                         </button>
                         <button
                             onClick={() => { setActiveTab('tournaments'); setMessage({ type: '', text: '' }); }}
-                            className={`py-2 px-4 rounded-lg text-xs font-bold transition ${activeTab === 'tournaments' ? 'bg-indigo-600 text-white shadow' : 'text-slate-400 hover:text-white'}`}
+                            className={`py-3 px-6 md:px-8 rounded-xl text-sm font-extrabold text-center flex-1 md:flex-none tracking-wide transition duration-200 cursor-pointer ${
+                                activeTab === 'tournaments' 
+                                ? 'bg-[#563D82] text-[#F4AF23] border border-[#F4AF23]/30 shadow-lg shadow-[#563D82]/40' 
+                                : 'text-slate-400 hover:text-[#F4AF23] hover:bg-slate-800/30'
+                            }`}
                         >
                             Tournois
                         </button>
                         <button
                             onClick={() => { setActiveTab('events'); setMessage({ type: '', text: '' }); }}
-                            className={`py-2 px-4 rounded-lg text-xs font-bold transition ${activeTab === 'events' ? 'bg-indigo-600 text-white shadow' : 'text-slate-400 hover:text-white'}`}
+                            className={`py-3 px-6 md:px-8 rounded-xl text-sm font-extrabold text-center flex-1 md:flex-none tracking-wide transition duration-200 cursor-pointer ${
+                                activeTab === 'events' 
+                                ? 'bg-[#563D82] text-[#F4AF23] border border-[#F4AF23]/30 shadow-lg shadow-[#563D82]/40' 
+                                : 'text-slate-400 hover:text-[#F4AF23] hover:bg-slate-800/30'
+                            }`}
                         >
                             Événements
                         </button>
                         <button
                             onClick={() => { setActiveTab('boardgames'); setMessage({ type: '', text: '' }); }}
-                            className={`py-2 px-4 rounded-lg text-xs font-bold transition ${activeTab === 'boardgames' ? 'bg-indigo-600 text-white shadow' : 'text-slate-400 hover:text-white'}`}
+                            className={`py-3 px-6 md:px-8 rounded-xl text-sm font-extrabold text-center flex-1 md:flex-none tracking-wide transition duration-200 cursor-pointer ${
+                                activeTab === 'boardgames' 
+                                ? 'bg-[#563D82] text-[#F4AF23] border border-[#F4AF23]/30 shadow-lg shadow-[#563D82]/40' 
+                                : 'text-slate-400 hover:text-[#F4AF23] hover:bg-slate-800/30'
+                            }`}
                         >
                             Jeux de société
                         </button>
                         <button
                             onClick={() => { setActiveTab('users'); setMessage({ type: '', text: '' }); }}
-                            className={`py-2 px-4 rounded-lg text-xs font-bold transition ${activeTab === 'users' ? 'bg-indigo-600 text-white shadow' : 'text-slate-400 hover:text-white'}`}
+                            className={`py-3 px-6 md:px-8 rounded-xl text-sm font-extrabold text-center flex-1 md:flex-none tracking-wide transition duration-200 cursor-pointer ${
+                                activeTab === 'users' 
+                                ? 'bg-[#563D82] text-[#F4AF23] border border-[#F4AF23]/30 shadow-lg shadow-[#563D82]/40' 
+                                : 'text-slate-400 hover:text-[#F4AF23] hover:bg-slate-800/30'
+                            }`}
                         >
                             Utilisateurs
                         </button>
@@ -815,9 +920,8 @@ function DashboardAdmin() {
 
             <div className="max-w-7xl mx-auto py-8 px-4 md:px-8 space-y-6">
                 {message.text && (
-                    <div className={`p-4 rounded-xl text-sm font-semibold max-w-2xl border transition-all ${
-                        message.type === 'success' ? 'bg-emerald-50 border-emerald-200 text-emerald-800' : 'bg-rose-50 border-rose-200 text-rose-800'
-                    }`}>
+                    <div className={`p-4 rounded-xl text-sm font-semibold max-w-2xl border transition-all ${message.type === 'success' ? 'bg-emerald-50 border-emerald-200 text-emerald-800' : 'bg-rose-50 border-rose-200 text-rose-800'
+                        }`}>
                         {message.text}
                     </div>
                 )}
@@ -831,23 +935,23 @@ function DashboardAdmin() {
                     <>
                         {/* TAB 1: RESERVATIONS */}
                         {activeTab === 'reservations' && (
-                            <div className="bg-white rounded-3xl border border-slate-100 shadow-xl overflow-hidden">
-                                <div className="p-6 border-b border-slate-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-slate-50/60">
+                            <div className="bg-[#130f25]/75 rounded-3xl border border-white/5 shadow-xl overflow-hidden">
+                                <div className="p-6 border-b border-white/5 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-[#0c0919]/65">
                                     <div>
-                                        <h2 className="text-xl font-extrabold text-slate-900">Toutes les réservations de tables</h2>
-                                        <p className="text-xs text-slate-500 font-light mt-0.5">Filtrer par nom de client, email, jeu ou statut</p>
+                                        <h2 className="text-xl font-extrabold text-white">Toutes les réservations de tables</h2>
+                                        <p className="text-xs text-slate-400 font-light mt-0.5">Filtrer par nom de client, email, jeu ou statut</p>
                                     </div>
                                     <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
                                         <div className="relative w-full sm:w-80 md:w-96">
                                             <input
                                                 type="text"
-                                                placeholder="🔍 Rechercher un nom, email, jeu..."
+                                                placeholder="Rechercher un nom, email, jeu..."
                                                 value={resSearch}
                                                 onChange={(e) => setResSearch(e.target.value)}
-                                                className="w-full px-4 py-3 rounded-2xl border-2 border-slate-300 bg-white text-slate-900 text-sm font-semibold focus:outline-none focus:border-indigo-600 focus:ring-4 focus:ring-indigo-500/10 shadow-sm transition-all placeholder:text-slate-400 placeholder:font-normal"
+                                                className="w-full px-4 py-3 rounded-2xl border-2 !border-[#F4AF23]/40 !bg-[#0c0919] !text-white text-sm font-semibold focus:outline-none focus:!border-[#F4AF23] focus:ring-4 focus:ring-[#F4AF23]/20 shadow-sm transition-all !placeholder-slate-500 placeholder:font-normal"
                                             />
                                         </div>
-                                        <span className="text-xs bg-indigo-50 text-indigo-700 border border-indigo-200 font-extrabold py-2.5 px-4 rounded-xl shrink-0">
+                                        <span className="text-xs bg-indigo-50 text-indigo-300 border border-indigo-950 font-extrabold py-2.5 px-4 rounded-xl shrink-0">
                                             {filteredReservations.length} / {reservations.length} réservation(s)
                                         </span>
                                     </div>
@@ -856,38 +960,86 @@ function DashboardAdmin() {
                                 <div className="overflow-x-auto">
                                     <table className="w-full text-left border-collapse">
                                         <thead>
-                                            <tr className="bg-slate-50 text-slate-500 text-xs uppercase font-bold border-b border-slate-100">
-                                                <th className="p-4">Utilisateur</th>
-                                                <th className="p-4">Table</th>
-                                                <th className="p-4">Début</th>
-                                                <th className="p-4">Fin</th>
-                                                <th className="p-4">Jeu</th>
-                                                <th className="p-4">Statut</th>
+                                            <tr className="!bg-[#0c0919]/60 !text-slate-350 text-xs uppercase font-bold border-b !border-white/5 select-none">
+                                                <th
+                                                    onClick={() => handleSort('user')}
+                                                    className="p-4 cursor-pointer hover:!bg-white/5 transition duration-150"
+                                                >
+                                                    <div className="flex items-center gap-1">
+                                                        Utilisateur
+                                                        {resSortKey === 'user' ? (resSortOrder === 'asc' ? <span className="text-[#F4AF23] text-sm">▲</span> : <span className="text-[#F4AF23] text-sm">▼</span>) : <span className="text-slate-400 opacity-40">↕</span>}
+                                                    </div>
+                                                </th>
+                                                <th
+                                                    onClick={() => handleSort('table')}
+                                                    className="p-4 cursor-pointer hover:!bg-white/5 transition duration-150"
+                                                >
+                                                    <div className="flex items-center gap-1">
+                                                        Table
+                                                        {resSortKey === 'table' ? (resSortOrder === 'asc' ? <span className="text-[#F4AF23] text-sm">▲</span> : <span className="text-[#F4AF23] text-sm">▼</span>) : <span className="text-slate-400 opacity-40">↕</span>}
+                                                    </div>
+                                                </th>
+                                                <th
+                                                    onClick={() => handleSort('start_time')}
+                                                    className="p-4 cursor-pointer hover:!bg-white/5 transition duration-150"
+                                                >
+                                                    <div className="flex items-center gap-1">
+                                                        Début
+                                                        {resSortKey === 'start_time' ? (resSortOrder === 'asc' ? <span className="text-[#F4AF23] text-sm">▲</span> : <span className="text-[#F4AF23] text-sm">▼</span>) : <span className="text-slate-400 opacity-40">↕</span>}
+                                                    </div>
+                                                </th>
+                                                <th
+                                                    onClick={() => handleSort('end_time')}
+                                                    className="p-4 cursor-pointer hover:!bg-white/5 transition duration-150"
+                                                >
+                                                    <div className="flex items-center gap-1">
+                                                        Fin
+                                                        {resSortKey === 'end_time' ? (resSortOrder === 'asc' ? <span className="text-[#F4AF23] text-sm">▲</span> : <span className="text-[#F4AF23] text-sm">▼</span>) : <span className="text-slate-400 opacity-40">↕</span>}
+                                                    </div>
+                                                </th>
+                                                <th
+                                                    onClick={() => handleSort('game')}
+                                                    className="p-4 cursor-pointer hover:!bg-white/5 transition duration-150"
+                                                >
+                                                    <div className="flex items-center gap-1">
+                                                        Jeu
+                                                        {resSortKey === 'game' ? (resSortOrder === 'asc' ? <span className="text-[#F4AF23] text-sm">▲</span> : <span className="text-[#F4AF23] text-sm">▼</span>) : <span className="text-slate-400 opacity-40">↕</span>}
+                                                    </div>
+                                                </th>
+                                                <th
+                                                    onClick={() => handleSort('status')}
+                                                    className="p-4 cursor-pointer hover:!bg-white/5 transition duration-150"
+                                                >
+                                                    <div className="flex items-center gap-1">
+                                                        Statut
+                                                        {resSortKey === 'status' ? (resSortOrder === 'asc' ? <span className="text-[#F4AF23] text-sm">▲</span> : <span className="text-[#F4AF23] text-sm">▼</span>) : <span className="text-slate-400 opacity-40">↕</span>}
+                                                    </div>
+                                                </th>
                                                 <th className="p-4 text-right">Actions</th>
                                             </tr>
                                         </thead>
-                                        <tbody className="divide-y divide-slate-100 text-sm">
-                                            {filteredReservations.map((res) => {
+                                        <tbody className="divide-y !divide-white/5 text-sm">
+                                            {sortedReservations.map((res) => {
                                                 const startStr = new Date(res.start_time).toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' });
                                                 const endStr = new Date(res.end_time).toLocaleString('fr-FR', { timeStyle: 'short' });
 
                                                 return (
-                                                    <tr key={res.id} className="hover:bg-slate-50/50 transition">
+                                                    <tr key={res.id} className="hover:bg-white/5 transition">
                                                         <td className="p-4">
-                                                            <div className="font-bold text-slate-900">
+                                                            <div className="font-bold text-slate-100">
                                                                 {res.firstname || res.lastname ? `${res.firstname || ''} ${res.lastname || ''}`.trim() : '—'}
                                                             </div>
-                                                            <div className="text-xs text-slate-400">{res.email}</div>
+                                                            <div className="text-xs text-slate-450">{res.email}</div>
                                                         </td>
-                                                        <td className="p-4 font-semibold text-slate-700">
-                                                             {(() => {
-                                                                 if (!res.tableName) return 'Table Standard';
-                                                                 const match = res.tableName.match(/Table\s+\d+/i);
-                                                                 return match ? match[0] : res.tableName;
-                                                             })()}
+                                                        <td className="p-4 font-semibold text-slate-300">
+                                                            {(() => {
+                                                                if (!res.tableName) return 'Table Standard';
+                                                                const match = res.tableName.match(/Table\s+\d+/i);
+                                                                return match ? match[0] : res.tableName;
+                                                            })()}
                                                         </td>
-                                                        <td className="p-4 text-slate-600">{startStr}</td>
-                                                        <td className="p-4 text-slate-600">{endStr}</td>
+                                                        <td className="p-4 text-slate-400">{startStr}</td>
+                                                        <td className="p-4 text-slate-400">{endStr}</td>
                                                         <td className="p-4">
                                                             <div className="flex flex-col gap-0.5">
                                                                 <span className={`text-[10px] font-bold border px-2 py-0.5 rounded-full inline-block w-fit uppercase ${getGameBadgeStyles(res.game_type)}`}>
@@ -901,11 +1053,10 @@ function DashboardAdmin() {
                                                             </div>
                                                         </td>
                                                         <td className="p-4">
-                                                            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
-                                                                res.status === 'CONFIRMED' ? 'bg-emerald-50 border-emerald-200 text-emerald-700' :
-                                                                res.status === 'PENDING' ? 'bg-amber-50 border-amber-200 text-amber-700' :
-                                                                'bg-slate-100 border-slate-200 text-slate-600'
-                                                            }`}>
+                                                            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${res.status === 'CONFIRMED' ? 'bg-emerald-50 border-emerald-200 text-emerald-700' :
+                                                                    res.status === 'PENDING' ? 'bg-amber-50 border-amber-200 text-amber-700' :
+                                                                        'bg-slate-100 border-slate-200 text-slate-600'
+                                                                }`}>
                                                                 {res.status}
                                                             </span>
                                                         </td>
@@ -958,13 +1109,13 @@ function DashboardAdmin() {
                             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
                                 <div className="lg:col-span-5 space-y-6">
                                     {/* Create Tournament Form */}
-                                    <form onSubmit={handleCreateTourney} className="bg-white p-6 md:p-8 rounded-3xl border border-slate-100 shadow-xl space-y-4">
-                                        <h2 className="text-lg font-bold text-slate-900 pb-3 border-b border-slate-100 flex items-center gap-2">
-                                            <Plus className="w-5 h-5 text-indigo-650" /> Créer un tournoi
+                                    <form onSubmit={handleCreateTourney} className="bg-[#130f25]/75 p-6 md:p-8 rounded-3xl border border-white/5 shadow-xl space-y-4 text-white">
+                                        <h2 className="text-lg font-bold text-white pb-3 border-b border-white/5 flex items-center gap-2">
+                                            <Plus className="w-5 h-5 text-white" /> Créer un tournoi
                                         </h2>
 
                                         <div className="space-y-1">
-                                            <label className="text-xs font-bold text-slate-500 uppercase">Nom de l'événement</label>
+                                            <label className="text-xs font-bold text-slate-400 uppercase">Nom de l'événement</label>
                                             <input
                                                 type="text"
                                                 required
@@ -994,17 +1145,71 @@ function DashboardAdmin() {
                                             </select>
                                         </div>
 
-                                        <div className="grid grid-cols-2 gap-4">
-                                            <div className="space-y-1">
-                                                <label className="text-xs font-bold text-slate-500 uppercase">Date</label>
-                                                <input
-                                                    type="date"
-                                                    required
-                                                    value={tourneyForm.date}
-                                                    onChange={(e) => setTourneyForm({ ...tourneyForm, date: e.target.value })}
-                                                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-600 font-light"
-                                                />
+                                        {/* Custom Interactive Calendar for Tournaments */}
+                                        <div className="space-y-1.5">
+                                            <label className="text-xs font-bold text-slate-400 uppercase tracking-wider block">Date du tournoi</label>
+
+                                            <div className="bg-[#0b0917]/95 border border-white/5 rounded-2xl p-4.5 space-y-3.5 shadow-xl">
+                                                <div className="flex justify-between items-center px-1">
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setTourneyCalDate(prev => new Date(prev.getFullYear(), prev.getMonth() - 1, 1))}
+                                                        className="w-8 h-8 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white transition flex items-center justify-center cursor-pointer font-bold border border-white/5"
+                                                    >
+                                                        ◀
+                                                    </button>
+                                                    <span className="text-xs font-extrabold text-[#F4AF23] uppercase tracking-wider">
+                                                        {tourneyCalDate.toLocaleDateString(i18n.resolvedLanguage || i18n.language || 'fr', { month: 'long', year: 'numeric' })}
+                                                    </span>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setTourneyCalDate(prev => new Date(prev.getFullYear(), prev.getMonth() + 1, 1))}
+                                                        className="w-8 h-8 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white transition flex items-center justify-center cursor-pointer font-bold border border-white/5"
+                                                    >
+                                                        ▶
+                                                    </button>
+                                                </div>
+
+                                                {/* Weekdays */}
+                                                <div className="grid grid-cols-7 text-center text-[10px] font-extrabold text-slate-400 uppercase tracking-wider pb-1.5 border-b border-white/5">
+                                                    {['L', 'M', 'M', 'J', 'V', 'S', 'D'].map((d, i) => (
+                                                        <span key={i}>{d}</span>
+                                                    ))}
+                                                </div>
+
+                                                {/* Days of the month grid */}
+                                                <div className="grid grid-cols-7 gap-1 text-center">
+                                                    {getDaysInMonth(tourneyCalDate.getFullYear(), tourneyCalDate.getMonth()).map((day, idx) => {
+                                                        if (!day) {
+                                                            return <div key={`empty-${idx}`} className="aspect-square"></div>;
+                                                        }
+                                                        const past = isDayPast(day);
+                                                        const selected = tourneyForm.date === `${day.getFullYear()}-${String(day.getMonth() + 1).padStart(2, '0')}-${String(day.getDate()).padStart(2, '0')}`;
+
+                                                        let dayClass = "text-slate-300 hover:bg-[#563D82]/20 hover:text-[#F4AF23] cursor-pointer";
+                                                        if (past) {
+                                                            dayClass = "text-slate-700 opacity-20 cursor-not-allowed";
+                                                        } else if (selected) {
+                                                            dayClass = "bg-[#563D82] text-white border border-[#F4AF23] font-extrabold shadow-lg shadow-[#563D82]/40";
+                                                        }
+
+                                                        return (
+                                                            <button
+                                                                key={day.getTime()}
+                                                                type="button"
+                                                                disabled={past}
+                                                                onClick={() => selectTourneyDay(day)}
+                                                                className={`aspect-square rounded-xl flex items-center justify-center text-xs transition duration-200 ${dayClass}`}
+                                                            >
+                                                                {day.getDate()}
+                                                            </button>
+                                                        );
+                                                    })}
+                                                </div>
                                             </div>
+                                        </div>
+
+                                        <div className="grid grid-cols-2 gap-4">
                                             <div className="space-y-1">
                                                 <label className="text-xs font-bold text-slate-500 uppercase">Heure</label>
                                                 <input
@@ -1012,7 +1217,17 @@ function DashboardAdmin() {
                                                     required
                                                     value={tourneyForm.time}
                                                     onChange={(e) => setTourneyForm({ ...tourneyForm, time: e.target.value })}
-                                                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-600 font-light"
+                                                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-650 bg-[#0c0919] text-slate-200 font-light"
+                                                />
+                                            </div>
+                                            <div className="space-y-1">
+                                                <label className="text-xs font-bold text-slate-500 uppercase">Date choisie</label>
+                                                <input
+                                                    type="text"
+                                                    readOnly
+                                                    placeholder="Choisissez ci-dessus"
+                                                    value={tourneyForm.date}
+                                                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm bg-slate-800/50 text-slate-300 font-bold"
                                                 />
                                             </div>
                                         </div>
@@ -1076,7 +1291,7 @@ function DashboardAdmin() {
                                                 t={t}
                                                 i18n={i18n}
                                                 theme="dark"
-                                                onAction={() => {}}
+                                                onAction={() => { }}
                                             />
                                         </div>
                                     </div>
@@ -1092,10 +1307,10 @@ function DashboardAdmin() {
                                         <div className="relative w-full sm:w-80 md:w-96">
                                             <input
                                                 type="text"
-                                                placeholder="🔍 Rechercher un tournoi..."
+                                                placeholder="Rechercher un tournoi..."
                                                 value={tourneySearch}
                                                 onChange={(e) => setTourneySearch(e.target.value)}
-                                                className="w-full px-4 py-3 rounded-2xl border-2 border-[#372f63] bg-[#14122b] text-white text-sm font-semibold focus:outline-none focus:border-[#F4AF23] focus:ring-4 focus:ring-[#F4AF23]/10 shadow-md transition-all placeholder:text-slate-400 placeholder:font-normal"
+                                                className="w-full px-4 py-3 rounded-2xl border-2 !border-[#F4AF23]/40 !bg-[#0c0919] !text-white text-sm font-semibold focus:outline-none focus:!border-[#F4AF23] focus:ring-4 focus:ring-[#F4AF23]/20 shadow-md transition-all !placeholder-slate-500 placeholder:font-normal"
                                             />
                                         </div>
                                     </div>
@@ -1135,13 +1350,13 @@ function DashboardAdmin() {
                             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
                                 {/* Create Event Form & Live Preview */}
                                 <div className="lg:col-span-5 space-y-6">
-                                    <form onSubmit={handleCreateEvent} className="bg-white p-6 md:p-8 rounded-3xl border border-slate-100 shadow-xl space-y-4">
-                                        <h2 className="text-lg font-bold text-slate-900 pb-3 border-b border-slate-100 flex items-center gap-2">
-                                            <Plus className="w-5 h-5 text-indigo-600" /> Créer un événement
+                                    <form onSubmit={handleCreateEvent} className="bg-[#130f25]/75 p-6 md:p-8 rounded-3xl border border-white/5 shadow-xl space-y-4 text-white">
+                                        <h2 className="text-lg font-bold text-white pb-3 border-b border-white/5 flex items-center gap-2">
+                                            <Plus className="w-5 h-5 text-white" /> Créer un événement
                                         </h2>
 
                                         <div className="space-y-1">
-                                            <label className="text-xs font-bold text-slate-500 uppercase">Nom de l'événement</label>
+                                            <label className="text-xs font-bold text-slate-400 uppercase">Nom de l'événement</label>
                                             <input
                                                 type="text"
                                                 required
@@ -1186,17 +1401,71 @@ function DashboardAdmin() {
                                             </div>
                                         </div>
 
-                                        <div className="grid grid-cols-2 gap-4">
-                                            <div className="space-y-1">
-                                                <label className="text-xs font-bold text-slate-500 uppercase">Date</label>
-                                                <input
-                                                    type="date"
-                                                    required
-                                                    value={eventForm.date}
-                                                    onChange={(e) => setEventForm({ ...eventForm, date: e.target.value })}
-                                                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-650 bg-white"
-                                                />
+                                        {/* Custom Interactive Calendar for Events */}
+                                        <div className="space-y-1.5">
+                                            <label className="text-xs font-bold text-slate-400 uppercase tracking-wider block">Date de l'événement</label>
+
+                                            <div className="bg-[#0b0917]/95 border border-white/5 rounded-2xl p-4.5 space-y-3.5 shadow-xl">
+                                                <div className="flex justify-between items-center px-1">
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setEventCalDate(prev => new Date(prev.getFullYear(), prev.getMonth() - 1, 1))}
+                                                        className="w-8 h-8 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white transition flex items-center justify-center cursor-pointer font-bold border border-white/5"
+                                                    >
+                                                        ◀
+                                                    </button>
+                                                    <span className="text-xs font-extrabold text-[#F4AF23] uppercase tracking-wider">
+                                                        {eventCalDate.toLocaleDateString(i18n.resolvedLanguage || i18n.language || 'fr', { month: 'long', year: 'numeric' })}
+                                                    </span>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setEventCalDate(prev => new Date(prev.getFullYear(), prev.getMonth() + 1, 1))}
+                                                        className="w-8 h-8 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white transition flex items-center justify-center cursor-pointer font-bold border border-white/5"
+                                                    >
+                                                        ▶
+                                                    </button>
+                                                </div>
+
+                                                {/* Weekdays */}
+                                                <div className="grid grid-cols-7 text-center text-[10px] font-extrabold text-slate-400 uppercase tracking-wider pb-1.5 border-b border-white/5">
+                                                    {['L', 'M', 'M', 'J', 'V', 'S', 'D'].map((d, i) => (
+                                                        <span key={i}>{d}</span>
+                                                    ))}
+                                                </div>
+
+                                                {/* Days of the month grid */}
+                                                <div className="grid grid-cols-7 gap-1 text-center">
+                                                    {getDaysInMonth(eventCalDate.getFullYear(), eventCalDate.getMonth()).map((day, idx) => {
+                                                        if (!day) {
+                                                            return <div key={`empty-${idx}`} className="aspect-square"></div>;
+                                                        }
+                                                        const past = isDayPast(day);
+                                                        const selected = eventForm.date === `${day.getFullYear()}-${String(day.getMonth() + 1).padStart(2, '0')}-${String(day.getDate()).padStart(2, '0')}`;
+
+                                                        let dayClass = "text-slate-300 hover:bg-[#563D82]/20 hover:text-[#F4AF23] cursor-pointer";
+                                                        if (past) {
+                                                            dayClass = "text-slate-700 opacity-20 cursor-not-allowed";
+                                                        } else if (selected) {
+                                                            dayClass = "bg-[#563D82] text-white border border-[#F4AF23] font-extrabold shadow-lg shadow-[#563D82]/40";
+                                                        }
+
+                                                        return (
+                                                            <button
+                                                                key={day.getTime()}
+                                                                type="button"
+                                                                disabled={past}
+                                                                onClick={() => selectEventDay(day)}
+                                                                className={`aspect-square rounded-xl flex items-center justify-center text-xs transition duration-200 ${dayClass}`}
+                                                            >
+                                                                {day.getDate()}
+                                                            </button>
+                                                        );
+                                                    })}
+                                                </div>
                                             </div>
+                                        </div>
+
+                                        <div className="grid grid-cols-2 gap-4">
                                             <div className="space-y-1">
                                                 <label className="text-xs font-bold text-slate-500 uppercase">Heure</label>
                                                 <input
@@ -1204,7 +1473,17 @@ function DashboardAdmin() {
                                                     required
                                                     value={eventForm.time}
                                                     onChange={(e) => setEventForm({ ...eventForm, time: e.target.value })}
-                                                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-650 bg-white"
+                                                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-indigo-650 bg-[#0c0919] text-slate-200 font-light"
+                                                />
+                                            </div>
+                                            <div className="space-y-1">
+                                                <label className="text-xs font-bold text-slate-500 uppercase">Date choisie</label>
+                                                <input
+                                                    type="text"
+                                                    readOnly
+                                                    placeholder="Choisissez ci-dessus"
+                                                    value={eventForm.date}
+                                                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm bg-slate-800/50 text-slate-300 font-bold"
                                                 />
                                             </div>
                                         </div>
@@ -1268,7 +1547,7 @@ function DashboardAdmin() {
                                                 t={t}
                                                 i18n={i18n}
                                                 theme="dark"
-                                                onAction={() => {}}
+                                                onAction={() => { }}
                                             />
                                         </div>
                                     </div>
@@ -1284,10 +1563,10 @@ function DashboardAdmin() {
                                         <div className="relative w-full sm:w-80 md:w-96">
                                             <input
                                                 type="text"
-                                                placeholder="🔍 Rechercher un événement..."
+                                                placeholder="Rechercher un événement..."
                                                 value={eventSearch}
                                                 onChange={(e) => setEventSearch(e.target.value)}
-                                                className="w-full px-4 py-3 rounded-2xl border-2 border-[#372f63] bg-[#14122b] text-white text-sm font-semibold focus:outline-none focus:border-[#F4AF23] focus:ring-4 focus:ring-[#F4AF23]/10 shadow-md transition-all placeholder:text-slate-400 placeholder:font-normal"
+                                                className="w-full px-4 py-3 rounded-2xl border-2 !border-[#F4AF23]/40 !bg-[#0c0919] !text-white text-sm font-semibold focus:outline-none focus:!border-[#F4AF23] focus:ring-4 focus:ring-[#F4AF23]/20 shadow-md transition-all !placeholder-slate-500 placeholder:font-normal"
                                             />
                                         </div>
                                     </div>
@@ -1324,23 +1603,23 @@ function DashboardAdmin() {
 
                         {/* TAB 3: USERS */}
                         {activeTab === 'users' && (
-                            <div className="bg-white rounded-3xl border border-slate-100 shadow-xl overflow-hidden">
-                                <div className="p-6 border-b border-slate-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-slate-50/50">
+                            <div className="bg-[#130f25]/75 rounded-3xl border border-white/5 shadow-xl overflow-hidden">
+                                <div className="p-6 border-b border-white/5 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-[#0c0919]/65">
                                     <div className="flex flex-col gap-1 w-full md:w-auto">
-                                        <h2 className="text-xl font-extrabold text-slate-900">Utilisateurs inscrits</h2>
-                                        <p className="text-xs text-slate-500 font-light">Rechercher par prénom, nom, pseudo ou email</p>
+                                        <h2 className="text-xl font-extrabold text-white">Utilisateurs inscrits</h2>
+                                        <p className="text-xs text-slate-400 font-light">Rechercher par prénom, nom, pseudo ou email</p>
                                     </div>
                                     <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
                                         <div className="relative w-full sm:w-80 md:w-96">
                                             <input
                                                 type="text"
-                                                placeholder="🔍 Rechercher un membre..."
+                                                placeholder="Rechercher un membre..."
                                                 value={userSearch}
                                                 onChange={(e) => setUserSearch(e.target.value)}
-                                                className="w-full px-4 py-3 rounded-2xl border-2 border-slate-300 bg-white text-slate-900 text-sm font-semibold focus:outline-none focus:border-indigo-600 focus:ring-4 focus:ring-indigo-500/10 shadow-sm transition-all placeholder:text-slate-400 placeholder:font-normal"
+                                                className="w-full px-4 py-3 rounded-2xl border-2 !border-[#F4AF23]/40 !bg-[#0c0919] !text-white text-sm font-semibold focus:outline-none focus:!border-[#F4AF23] focus:ring-4 focus:ring-[#F4AF23]/20 shadow-sm transition-all !placeholder-slate-500 placeholder:font-normal"
                                             />
                                         </div>
-                                        <span className="text-xs bg-indigo-50 text-indigo-700 border border-indigo-200 font-extrabold py-2.5 px-4 rounded-xl shrink-0">
+                                        <span className="text-xs bg-[#563D82]/30 text-indigo-200 border border-[#563D82]/40 font-extrabold py-2.5 px-4 rounded-xl shrink-0">
                                             Total : {filteredUsers.length} / {users.length}
                                         </span>
                                     </div>
@@ -1349,7 +1628,7 @@ function DashboardAdmin() {
                                 <div className="overflow-x-auto">
                                     <table className="w-full text-left border-collapse">
                                         <thead>
-                                            <tr className="bg-slate-50 text-slate-500 text-xs uppercase font-bold border-b border-slate-100">
+                                            <tr className="!bg-[#0c0919]/60 !text-slate-350 text-xs uppercase font-bold border-b !border-white/5">
                                                 <th className="p-4">Prénom & Nom</th>
                                                 <th className="p-4">Email</th>
                                                 <th className="p-4">Date d'inscription</th>
@@ -1357,20 +1636,19 @@ function DashboardAdmin() {
                                                 <th className="p-4 text-right">Actions</th>
                                             </tr>
                                         </thead>
-                                        <tbody className="divide-y divide-slate-100 text-sm">
+                                        <tbody className="divide-y !divide-white/5 text-sm">
                                             {filteredUsers.map((u) => (
-                                                <tr key={u.id} className="hover:bg-slate-50/50 transition">
-                                                    <td className="p-4 font-bold text-slate-900">
+                                                <tr key={u.id} className="hover:bg-white/5 transition">
+                                                    <td className="p-4 font-bold text-slate-100">
                                                         {u.firstname || u.lastname ? `${u.firstname || ''} ${u.lastname || ''}`.trim() : '—'}
                                                     </td>
-                                                    <td className="p-4 text-slate-600 font-mono text-xs">{u.email}</td>
-                                                    <td className="p-4 text-slate-500">
+                                                    <td className="p-4 text-slate-300 font-mono text-xs">{u.email}</td>
+                                                    <td className="p-4 text-slate-400">
                                                         {new Date(u.created_at).toLocaleDateString('fr-FR', { dateStyle: 'long' })}
                                                     </td>
                                                     <td className="p-4">
-                                                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
-                                                            u.role === 'ADMIN' ? 'bg-indigo-50 border-indigo-200 text-indigo-700' : 'bg-slate-50 border-slate-200 text-slate-600'
-                                                        }`}>
+                                                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${u.role === 'ADMIN' ? 'bg-[#563D82]/30 border-[#563D82]/50 text-[#F4AF23]' : 'bg-slate-800/40 border-white/5 text-slate-300'
+                                                            }`}>
                                                             {u.role}
                                                         </span>
                                                     </td>
@@ -1378,7 +1656,7 @@ function DashboardAdmin() {
                                                         <button
                                                             onClick={() => handleToggleRole(u.id, u.role)}
                                                             disabled={actionLoading}
-                                                            className="py-1 px-2.5 rounded-lg text-xs font-semibold border border-slate-200 hover:border-slate-300 text-slate-700 transition disabled:opacity-50"
+                                                            className="py-1 px-2.5 rounded-lg text-xs font-semibold border border-white/10 hover:bg-white/5 hover:text-white text-slate-300 transition disabled:opacity-50 cursor-pointer"
                                                         >
                                                             {u.role === 'ADMIN' ? 'Retirer admin' : 'Rendre admin'}
                                                         </button>
@@ -1410,13 +1688,13 @@ function DashboardAdmin() {
                             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
                                 <div className="lg:col-span-5 space-y-6">
                                     {/* Create Board Game Form */}
-                                    <form onSubmit={handleCreateBoardGame} className="bg-white p-6 md:p-8 rounded-3xl border border-slate-100 shadow-xl space-y-4">
-                                        <h2 className="text-lg font-bold text-slate-900 pb-3 border-b border-slate-100 flex items-center gap-2">
-                                            <Dice6 className="w-5 h-5 text-indigo-600" /> Ajouter un jeu de société
+                                    <form onSubmit={handleCreateBoardGame} className="bg-[#130f25]/75 p-6 md:p-8 rounded-3xl border border-white/5 shadow-xl space-y-4 text-white">
+                                        <h2 className="text-lg font-bold text-white pb-3 border-b border-white/5 flex items-center gap-2">
+                                            Ajouter un jeu de société
                                         </h2>
 
                                         <div className="space-y-1">
-                                            <label className="text-xs font-bold text-slate-500 uppercase">Nom du jeu</label>
+                                            <label className="text-xs font-bold text-slate-400 uppercase">Nom du jeu</label>
                                             <input
                                                 type="text"
                                                 required
@@ -1570,7 +1848,7 @@ function DashboardAdmin() {
                                                 game={previewBoardGame}
                                                 isExpanded={expandedPreviewBg}
                                                 onToggleExpand={() => setExpandedPreviewBg(!expandedPreviewBg)}
-                                                onBookClick={() => {}}
+                                                onBookClick={() => { }}
                                                 t={t}
                                                 i18n={i18n}
                                             />
@@ -1579,52 +1857,44 @@ function DashboardAdmin() {
                                 </div>
 
                                 {/* Board Games List */}
-                                <div className="lg:col-span-7 bg-white rounded-3xl border border-slate-100 shadow-xl overflow-hidden">
-                                    <div className="p-6 border-b border-slate-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-slate-50/50">
-                                        <div className="flex-1 space-y-1">
-                                            <h2 className="text-xl font-extrabold text-slate-900">Jeux en boutique ({filteredBoardGames.length})</h2>
-                                            <p className="text-xs text-slate-500 font-light">Rechercher par nom de jeu, mécanique ou catégorie</p>
+                                <div className="lg:col-span-7 bg-[#130f25]/75 rounded-3xl border border-white/5 shadow-xl overflow-hidden">
+                                    <div className="p-6 border-b border-white/5 flex flex-col gap-4 bg-[#0c0919]/65">
+                                        <div className="space-y-1">
+                                            <h2 className="text-xl font-extrabold text-white">Jeux en boutique ({filteredBoardGames.length})</h2>
+                                            <p className="text-xs text-slate-400 font-light">Rechercher par nom de jeu, mécanique ou catégorie</p>
                                         </div>
-                                        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto">
-                                            <div className="relative w-full sm:w-80 md:w-96">
+                                        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full">
+                                            <div className="relative flex-1">
                                                 <input
                                                     type="text"
-                                                    placeholder="🔍 Rechercher un jeu de société..."
+                                                    placeholder="Rechercher un jeu de société..."
                                                     value={bgSearch}
                                                     onChange={(e) => setBgSearch(e.target.value)}
-                                                    className="w-full px-4 py-3 rounded-2xl border-2 border-slate-300 bg-white text-slate-900 text-sm font-semibold focus:outline-none focus:border-indigo-600 focus:ring-4 focus:ring-indigo-500/10 shadow-sm transition-all placeholder:text-slate-400 placeholder:font-normal"
+                                                    className="w-full px-4 py-3 rounded-2xl border-2 !border-[#F4AF23]/40 !bg-[#0c0919] !text-white text-sm font-semibold focus:outline-none focus:!border-[#F4AF23] focus:ring-4 focus:ring-[#F4AF23]/20 shadow-sm transition-all !placeholder-slate-500 placeholder:font-normal"
                                                 />
                                             </div>
-                                            <button
-                                                type="button"
-                                                onClick={handleImportBggHot}
-                                                disabled={actionLoading}
-                                                className="inline-flex items-center justify-center gap-2 py-3 px-5 rounded-2xl text-xs font-extrabold bg-indigo-600 hover:bg-indigo-500 text-white shadow-md transition disabled:opacity-50 shrink-0 cursor-pointer"
-                                            >
-                                                <Zap className="w-4 h-4" /> {actionLoading && message.text?.includes("BGG") ? 'Importation...' : 'Importer 100 Populaires BGG'}
-                                            </button>
                                         </div>
                                     </div>
 
-                                    <div className="divide-y divide-slate-100 max-h-[850px] overflow-y-auto custom-scrollbar">
+                                    <div className="divide-y !divide-white/5 max-h-[850px] overflow-y-auto custom-scrollbar">
                                         {filteredBoardGames.map((game) => (
-                                            <div key={game.id} className="p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 hover:bg-slate-50/50 transition">
+                                            <div key={game.id} className="p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 hover:bg-white/5 transition">
                                                 <div className="flex items-center gap-4">
-                                                    <img 
-                                                        src={game.image_url} 
-                                                        alt={game.name} 
-                                                        className="w-12 h-12 rounded-lg object-contain p-0.5 bg-white border border-slate-100"
+                                                    <img
+                                                        src={game.image_url}
+                                                        alt={game.name}
+                                                        className="w-12 h-12 rounded-lg object-contain p-0.5 !bg-[#0c0919]/60 !border-white/5"
                                                         onError={(e) => {
                                                             e.target.onerror = null;
                                                             e.target.src = 'https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?q=80&w=100';
                                                         }}
                                                     />
                                                     <div>
-                                                        <span className="text-[10px] uppercase font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-100">
+                                                        <span className="text-[10px] uppercase font-bold text-indigo-300 bg-[#563D82]/35 px-2 py-0.5 rounded border border-indigo-950/40">
                                                             {game.category}
                                                         </span>
-                                                        <h3 className="font-extrabold text-slate-950 mt-1">{game.name}</h3>
-                                                        <p className="text-xs text-slate-500 font-light mt-0.5">
+                                                        <h3 className="font-extrabold text-slate-100 mt-1">{game.name}</h3>
+                                                        <p className="text-xs text-slate-450 font-light mt-0.5">
                                                             {game.min_players}-{game.max_players} joueurs | {game.play_time} mins
                                                         </p>
                                                     </div>
@@ -1632,28 +1902,27 @@ function DashboardAdmin() {
 
                                                 {/* Controleur de stock en direct */}
                                                 <div className="flex items-center gap-3 shrink-0 self-end sm:self-auto">
-                                                    <div className="flex items-center gap-1.5 bg-slate-100 p-1.5 rounded-xl border border-slate-200">
+                                                    <div className="flex items-center gap-1.5 bg-[#0c0919]/60 p-1.5 rounded-xl border border-white/5">
                                                         <button
                                                             type="button"
                                                             onClick={() => handleUpdateStock(game.id, (game.stock !== undefined ? game.stock : 1) - 1)}
                                                             disabled={actionLoading || (game.stock !== undefined ? game.stock : 1) <= 0}
-                                                            className="w-6 h-6 rounded-lg bg-white hover:bg-slate-200 text-slate-800 font-extrabold text-xs flex items-center justify-center shadow-sm disabled:opacity-30 cursor-pointer"
+                                                            className="w-6 h-6 rounded-lg !bg-[#563D82] hover:!bg-[#684b9c] text-white font-extrabold text-xs flex items-center justify-center shadow-sm disabled:opacity-30 cursor-pointer border border-white/5"
                                                             title="Diminuer le stock"
                                                         >
                                                             -
                                                         </button>
-                                                        <span className={`text-xs font-extrabold px-2.5 py-0.5 rounded-lg border ${
-                                                            (game.stock !== undefined ? game.stock : 1) > 0 
-                                                                ? 'bg-emerald-50 text-emerald-700 border-emerald-200' 
-                                                                : 'bg-rose-50 text-rose-700 border-rose-200'
-                                                        }`}>
+                                                        <span className={`text-xs font-extrabold px-2.5 py-0.5 rounded-lg border ${(game.stock !== undefined ? game.stock : 1) > 0
+                                                                ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+                                                                : 'bg-rose-500/10 text-rose-400 border-rose-500/20'
+                                                            }`}>
                                                             {game.stock !== undefined ? game.stock : 1} en stock
                                                         </span>
                                                         <button
                                                             type="button"
                                                             onClick={() => handleUpdateStock(game.id, (game.stock !== undefined ? game.stock : 1) + 1)}
                                                             disabled={actionLoading}
-                                                            className="w-6 h-6 rounded-lg bg-white hover:bg-slate-200 text-slate-800 font-extrabold text-xs flex items-center justify-center shadow-sm cursor-pointer"
+                                                            className="w-6 h-6 rounded-lg !bg-[#563D82] hover:!bg-[#684b9c] text-white font-extrabold text-xs flex items-center justify-center shadow-sm cursor-pointer border border-white/5"
                                                             title="Augmenter le stock"
                                                         >
                                                             +
@@ -1663,7 +1932,7 @@ function DashboardAdmin() {
                                                     <button
                                                         onClick={() => handleDeleteBoardGame(game.id)}
                                                         disabled={actionLoading}
-                                                        className="py-1.5 px-3 rounded-lg text-xs font-bold text-red-500 hover:bg-red-50 transition disabled:opacity-50 cursor-pointer"
+                                                        className="py-1.5 px-3 rounded-lg text-xs font-bold text-red-400 hover:bg-red-500/10 transition disabled:opacity-50 cursor-pointer"
                                                     >
                                                         Supprimer
                                                     </button>
