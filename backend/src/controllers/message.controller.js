@@ -59,6 +59,48 @@ export const markUserRead = async (req, res) => {
     }
 };
 
+// POST /api/messages/:id/user-reply
+export const userReplyMessage = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { reply } = req.body;
+        const userId = req.user.id;
+
+        if (!reply || !reply.trim()) {
+            return res.status(400).json({ error: "Le contenu de la réponse est requis." });
+        }
+
+        const msg = await Message.findById(id);
+        if (!msg) {
+            return res.status(404).json({ error: "Message non trouvé." });
+        }
+
+        if (msg.user_id !== userId) {
+            return res.status(403).json({ error: "Vous n'avez pas l'autorisation de répondre à ce message." });
+        }
+
+        const oldReplyDate = msg.replied_at ? new Date(msg.replied_at).toLocaleString('fr-FR', {
+            day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit'
+        }) : '';
+        const nowStr = new Date().toLocaleString('fr-FR', {
+            day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit'
+        });
+
+        let updatedContent = msg.content;
+        if (msg.admin_reply) {
+            updatedContent += `\n\n--- Réponse de l'Administrateur (${oldReplyDate}) ---\n${msg.admin_reply}`;
+        }
+        updatedContent += `\n\n--- Message du membre (${nowStr}) ---\n${reply.trim()}`;
+
+        await Message.userReply(id, userId, updatedContent);
+
+        res.json({ message: "Votre réponse a bien été transmise aux administrateurs." });
+    } catch (error) {
+        console.error("Erreur relance utilisateur :", error);
+        res.status(500).json({ error: "Une erreur est survenue lors de l'envoi de votre réponse." });
+    }
+};
+
 // POST /api/messages/admin/:id/reply
 export const replyMessage = async (req, res) => {
     try {

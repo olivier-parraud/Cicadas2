@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Calendar, Trophy, Users, Download, Clock, AlertTriangle, Trash2, Dice6, ImageIcon, Zap, Plus, X } from 'lucide-react';
+import { Calendar, Trophy, Users, Download, Clock, AlertTriangle, Trash2, Dice6, ImageIcon, Zap, Plus, X, MessageSquare } from 'lucide-react';
 import TournamentCard from '../components/TournamentCard';
 import BoardGameCard from '../components/BoardGameCard';
 

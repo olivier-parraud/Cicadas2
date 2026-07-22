@@ -49,6 +49,19 @@ const Message = {
         return query(sql, [id]);
     },
 
+    // Trouver un message par son ID
+    async findById(id) {
+        const sql = 'SELECT * FROM messages WHERE id = ?';
+        const res = await query(sql, [id]);
+        return res[0] || null;
+    },
+
+    // Répondre à une conversation en tant qu'utilisateur (Membre)
+    async userReply(id, userId, updatedContent) {
+        const sql = 'UPDATE messages SET content = ?, admin_reply = NULL, replied_at = NULL, is_read = 0, user_read = 1 WHERE id = ? AND user_id = ?';
+        return query(sql, [updatedContent, id, userId]);
+    },
+
     // Supprimer un message
     async delete(id) {
         const sql = 'DELETE FROM messages WHERE id = ?';

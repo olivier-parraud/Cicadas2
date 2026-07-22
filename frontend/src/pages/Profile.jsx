@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { User, Mail, Lock, Shield, Calendar, AlertCircle, CheckCircle, MessageSquare } from 'lucide-react';
+import { User, Mail, Lock, Shield, Calendar, AlertCircle, CheckCircle, MessageSquare, X, Send } from 'lucide-react';
 
 function Profile() {
     const { t } = useTranslation();
@@ -12,6 +12,9 @@ function Profile() {
     const [loading, setLoading] = useState(true);
     const [actionLoading, setActionLoading] = useState(false);
     const [myMessages, setMyMessages] = useState([]);
+    const [replyingMessageId, setReplyingMessageId] = useState(null);
+    const [userReplyText, setUserReplyText] = useState('');
+    const [userReplyLoading, setUserReplyLoading] = useState(false);
     
     // Form fields
     const [pseudo, setPseudo] = useState('');
@@ -57,23 +60,23 @@ function Profile() {
             }
         };
 
-        const fetchMyMessages = async () => {
-            try {
-                const res = await fetch('http://localhost:5050/api/messages/my-messages', {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                if (res.ok) {
-                    const data = await res.json();
-                    setMyMessages(data.messages || []);
-                }
-            } catch (err) {
-                console.error("Erreur chargement messages :", err);
-            }
-        };
-
         fetchProfile();
         fetchMyMessages();
     }, [token, navigate, t]);
+
+    const fetchMyMessages = async () => {
+        try {
+            const res = await fetch('http://localhost:5050/api/messages/my-messages', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (res.ok) {
+                const data = await res.json();
+                setMyMessages(data.messages || []);
+            }
+        } catch (err) {
+            console.error("Erreur chargement messages :", err);
+        }
+    };
 
     const handleMarkReplyRead = async (msgId) => {
         try {
@@ -85,6 +88,36 @@ function Profile() {
             window.dispatchEvent(new Event('messages_updated'));
         } catch (err) {
             console.error("Erreur marquage lu :", err);
+        }
+    };
+
+    const handleUserReply = async (msgId) => {
+        if (!userReplyText.trim()) return;
+        setUserReplyLoading(true);
+        try {
+            const res = await fetch(`http://localhost:5050/api/messages/${msgId}/user-reply`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ reply: userReplyText })
+            });
+            const data = await res.json();
+            if (res.ok) {
+                setMessage({ type: 'success', text: "Votre réponse a été transmise aux administrateurs !" });
+                setReplyingMessageId(null);
+                setUserReplyText('');
+                fetchMyMessages();
+                window.dispatchEvent(new Event('messages_updated'));
+            } else {
+                setMessage({ type: 'error', text: data.error || "Erreur lors de l'envoi de votre réponse." });
+            }
+        } catch (err) {
+            console.error("Erreur relance utilisateur :", err);
+            setMessage({ type: 'error', text: "Erreur réseau." });
+        } finally {
+            setUserReplyLoading(false);
         }
     };
 
@@ -189,7 +222,7 @@ function Profile() {
         : '—';
 
     return (
-        <div className="min-h-[85vh] py-12 px-4 sm:px-6 lg:px-8 flex items-center justify-center">
+        <div className="min-h-[85vh] py-12 px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-center space-y-8">
             <div className="max-w-2xl w-full bg-[#130f25]/80 border border-white/5 rounded-3xl p-8 md:p-10 shadow-2xl space-y-8 backdrop-blur-md relative overflow-hidden">
                 {/* Decorative glows */}
                 <div className="absolute -top-24 -left-24 w-48 h-48 bg-[#563D82]/20 rounded-full blur-3xl"></div>
@@ -308,7 +341,7 @@ function Profile() {
 
                     {/* Change password section */}
                     <div className="space-y-4">
-                        <h3 className="text-sm font-extrabold text-white uppercase tracking-wider flex items-center gap-2">
+                        <h3 className="text-sm font-extrabold text-[#F4AF23] uppercase tracking-wider flex items-center gap-2">
                             <Lock className="w-4 h-4 text-[#F4AF23]" /> Modifier le mot de passe (optionnel)
                         </h3>
                         
@@ -355,7 +388,7 @@ function Profile() {
                 </form>
             </div>
 
-            {/* Mes Messages & Réponses des Administrateurs */}
+            {/* Mes Messages & Réponses des Administrateurs (Centré en dessous) */}
             <div className="max-w-2xl w-full bg-[#130f25]/80 border border-white/5 rounded-3xl p-8 md:p-10 shadow-2xl space-y-6 backdrop-blur-md relative overflow-hidden">
                 <div className="flex items-center justify-between border-b border-white/5 pb-4">
                     <h2 className="text-xl font-extrabold text-white flex items-center gap-2">
@@ -389,7 +422,7 @@ function Profile() {
                                     }`}
                                 >
                                     <div className="flex items-center justify-between gap-2 pb-2">
-                                        <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                                        <h3 className="text-sm font-bold text-[#F4AF23] flex items-center gap-2">
                                             {msg.subject}
                                             {isUnreadReply && (
                                                 <span className="px-2 py-0.5 rounded-full text-[9px] font-black bg-rose-500 text-white uppercase tracking-wider animate-pulse">
@@ -401,23 +434,87 @@ function Profile() {
                                             {new Date(msg.created_at).toLocaleDateString('fr-FR')}
                                         </span>
                                     </div>
-                                    <p className="text-xs text-slate-300 font-light whitespace-pre-wrap">{msg.content}</p>
+                                    <p className="text-xs text-white font-light whitespace-pre-wrap">{msg.content}</p>
 
                                     {msg.admin_reply ? (
-                                        <div className="mt-3 p-4 rounded-xl bg-[#563D82]/30 border border-[#F4AF23]/30 text-xs space-y-1">
+                                        <div className="mt-3 p-4 rounded-xl bg-[#563D82]/30 border border-[#F4AF23]/30 text-xs space-y-1.5">
                                             <div className="font-extrabold text-[#F4AF23] flex items-center justify-between">
                                                 <span>Réponse de l'Administrateur :</span>
                                                 <span className="text-[10px] text-slate-400 font-mono font-normal">
                                                     {msg.replied_at ? new Date(msg.replied_at).toLocaleString('fr-FR') : ''}
                                                 </span>
                                             </div>
-                                            <p className="text-slate-100 font-medium whitespace-pre-wrap leading-relaxed">
+                                            <p className="text-white font-light whitespace-pre-wrap leading-relaxed">
                                                 {msg.admin_reply}
                                             </p>
                                         </div>
                                     ) : (
                                         <div className="mt-2 text-[11px] text-slate-500 italic">
                                             En attente de réponse de l'équipe...
+                                        </div>
+                                    )}
+
+                                    {/* Action button to reply */}
+                                    <div className="mt-4 flex items-center justify-between gap-2 pt-2 border-t border-white/5">
+                                        <div className="text-[11px] text-slate-400 font-light">
+                                            {msg.admin_reply ? 'Réponse reçue de l\'administrateur' : 'Message transmis à l\'équipe'}
+                                        </div>
+                                        <button
+                                            type="button"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                if (replyingMessageId === msg.id) {
+                                                    setReplyingMessageId(null);
+                                                } else {
+                                                    setReplyingMessageId(msg.id);
+                                                    setUserReplyText('');
+                                                }
+                                            }}
+                                            className="px-3 py-1.5 text-xs font-extrabold bg-[#563D82]/60 hover:bg-[#563D82] text-white border border-[#F4AF23]/30 rounded-xl transition cursor-pointer flex items-center gap-1.5 shadow-sm"
+                                        >
+                                            <MessageSquare className="w-3.5 h-3.5 text-[#F4AF23]" /> Répondre
+                                        </button>
+                                    </div>
+
+                                    {/* Inline reply form */}
+                                    {replyingMessageId === msg.id && (
+                                        <div className="mt-4 p-4 rounded-2xl bg-[#0c0919] border border-[#F4AF23]/40 space-y-3" onClick={(e) => e.stopPropagation()}>
+                                            <div className="text-xs font-bold text-white flex items-center justify-between">
+                                                <span className="text-[#F4AF23] flex items-center gap-1.5">
+                                                    <Send className="w-3.5 h-3.5" /> Répondre aux administrateurs
+                                                </span>
+                                                <button 
+                                                    type="button"
+                                                    onClick={() => setReplyingMessageId(null)}
+                                                    className="text-slate-400 hover:text-white cursor-pointer"
+                                                >
+                                                    <X className="w-4 h-4" />
+                                                </button>
+                                            </div>
+                                            <textarea
+                                                value={userReplyText}
+                                                onChange={(e) => setUserReplyText(e.target.value)}
+                                                rows="3"
+                                                placeholder="Rédigez votre réponse ou précision..."
+                                                className="w-full bg-[#130f25] border border-white/10 text-white text-xs p-3 rounded-xl outline-none focus:border-[#F4AF23] transition resize-none"
+                                            ></textarea>
+                                            <div className="flex justify-end gap-2">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setReplyingMessageId(null)}
+                                                    className="px-3 py-1.5 text-xs font-bold text-slate-400 hover:text-white rounded-lg border border-white/5 cursor-pointer"
+                                                >
+                                                    Annuler
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    disabled={userReplyLoading}
+                                                    onClick={() => handleUserReply(msg.id)}
+                                                    className="px-4 py-1.5 text-xs font-bold bg-[#F4AF23] hover:bg-[#ffbe3b] text-[#05040a] rounded-lg transition shadow-sm cursor-pointer disabled:opacity-50 flex items-center gap-1.5"
+                                                >
+                                                    {userReplyLoading ? 'Envoi...' : 'Envoyer la réponse'}
+                                                </button>
+                                            </div>
                                         </div>
                                     )}
                                 </div>

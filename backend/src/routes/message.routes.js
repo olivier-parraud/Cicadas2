@@ -4,6 +4,7 @@ import {
     getMyMessages, 
     getUnreadCount, 
     markUserRead, 
+    userReplyMessage,
     getMessages, 
     markRead, 
     deleteMessage,
@@ -19,6 +20,7 @@ router.post('/', authMiddleware, sendMessage);
 router.get('/my-messages', authMiddleware, getMyMessages);
 router.get('/unread-count', authMiddleware, getUnreadCount);
 router.put('/:id/user-read', authMiddleware, markUserRead);
+router.post('/:id/user-reply', authMiddleware, userReplyMessage);
 
 // Routes admin : gérer et répondre aux messages (il faut être connecté ET admin)
 router.get('/admin', authMiddleware, adminMiddleware, getMessages);
