@@ -9,6 +9,7 @@ function DashboardAdmin() {
     const { t, i18n } = useTranslation();
     const navigate = useNavigate();
     const token = localStorage.getItem('token');
+    const [isAdmin, setIsAdmin] = useState(null);
 
     const [activeTab, setActiveTab] = useState('reservations');
     const [reservations, setReservations] = useState([]);
@@ -193,7 +194,8 @@ function DashboardAdmin() {
     useEffect(() => {
         const verifyAdmin = async () => {
             if (!token) {
-                navigate('/login');
+                setIsAdmin(false);
+                setLoading(false);
                 return;
             }
             try {
@@ -203,17 +205,21 @@ function DashboardAdmin() {
                 if (res.ok) {
                     const data = await res.json();
                     if (data.user.role !== 'ADMIN') {
-                        navigate('/'); // Non-admin redirected to home
+                        setIsAdmin(false);
+                        setLoading(false);
                     } else {
+                        setIsAdmin(true);
                         // User is admin, fetch data
                         fetchAdminData();
                     }
                 } else {
-                    navigate('/login');
+                    setIsAdmin(false);
+                    setLoading(false);
                 }
             } catch (error) {
                 console.error("Erreur de vérification admin :", error);
-                navigate('/login');
+                setIsAdmin(false);
+                setLoading(false);
             }
         };
 
@@ -852,6 +858,48 @@ function DashboardAdmin() {
         if (valA > valB) return resSortOrder === 'asc' ? 1 : -1;
         return 0;
     });
+
+    if (isAdmin === null) {
+        return (
+            <div className="min-h-[80vh] flex flex-col items-center justify-center space-y-4">
+                <div className="w-10 h-10 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
+                <p className="text-slate-400 text-xs font-semibold">Vérification des droits d'accès...</p>
+            </div>
+        );
+    }
+
+    if (isAdmin === false) {
+        return (
+            <div className="min-h-[70vh] flex items-center justify-center px-4 py-16">
+                <div className="max-w-md w-full bg-[#130f25]/85 border-2 border-red-500/30 rounded-3xl p-8 md:p-10 shadow-2xl text-center space-y-6 backdrop-blur-md relative overflow-hidden">
+                    {/* Glowing decorative indicator */}
+                    <div className="absolute -top-10 -left-10 w-32 h-32 bg-red-500/10 rounded-full blur-2xl"></div>
+                    <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-[#F4AF23]/10 rounded-full blur-2xl"></div>
+
+                    <div className="w-16 h-16 bg-red-500/10 border border-red-500/25 rounded-2xl flex items-center justify-center mx-auto text-red-500 shadow-lg shadow-red-500/5">
+                        <AlertTriangle className="w-8 h-8" />
+                    </div>
+
+                    <div className="space-y-2">
+                        <h2 className="text-2xl font-black tracking-tight text-white uppercase">Accès Non Autorisé</h2>
+                        <div className="h-0.5 w-12 bg-red-500/40 mx-auto rounded-full"></div>
+                    </div>
+
+                    <p className="text-slate-300 text-sm leading-relaxed">
+                        Désolé, cette zone est réservée exclusivement aux administrateurs de <strong>Cicadas</strong>.
+                        Vous ne possédez pas les autorisations nécessaires pour consulter ce tableau de bord.
+                    </p>
+
+                    <button
+                        onClick={() => navigate('/')}
+                        className="w-full py-3 px-6 rounded-2xl text-sm font-extrabold tracking-wide bg-[#563D82] text-[#F4AF23] border border-[#F4AF23]/30 shadow-lg shadow-[#563D82]/40 hover:bg-[#684b9c] transition-all duration-300 cursor-pointer"
+                    >
+                        Retourner à l'accueil
+                    </button>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen text-slate-200 pb-20">
