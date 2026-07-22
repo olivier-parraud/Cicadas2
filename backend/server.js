@@ -11,6 +11,7 @@ import adminRoutes from './src/routes/admin.routes.js';
 import boardgameRoutes from './src/routes/boardgame.routes.js';
 import bggRoutes from './src/routes/bgg.routes.js';
 import eventRoutes from './src/routes/event.routes.js';
+import messageRoutes from './src/routes/message.routes.js';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -48,6 +49,7 @@ app.use('/api/events', eventRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/boardgames', boardgameRoutes);
 app.use('/api/bgg', bggRoutes);
+app.use('/api/messages', messageRoutes);
 // 404
 app.use((req, res) => res.status(404).json({ error: 'Route non trouvée' }));
 // Démarrage

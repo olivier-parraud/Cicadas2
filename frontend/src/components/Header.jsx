@@ -1,8 +1,8 @@
 // components/Header.jsx
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, User } from 'lucide-react';
 
 const languages = [
     { code: 'fr', label: 'FR' },
@@ -15,10 +15,66 @@ function Header() {
     const location = useLocation(); // Actualise le Header as une nouvelle route
     
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [userProfile, setUserProfile] = useState(null);
+
+    const [unreadMessagesCount, setUnreadMessagesCount] = useState(0);
 
     // On vérifie si l'utilisateur est connecté (présence du token)
     const isAuthenticated = !!localStorage.getItem('token');
     const isAdmin = localStorage.getItem('user_role') === 'ADMIN';
+
+    useEffect(() => {
+        if (!isAuthenticated) {
+            setUserProfile(null);
+            setUnreadMessagesCount(0);
+            return;
+        }
+
+        const fetchProfile = async () => {
+            try {
+                const token = localStorage.getItem('token');
+                const res = await fetch('http://localhost:5050/api/auth/me', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    setUserProfile(data.user);
+                }
+            } catch (err) {
+                console.error("Erreur Header profil fetch :", err);
+            }
+        };
+
+        const fetchUnreadCount = async () => {
+            try {
+                const token = localStorage.getItem('token');
+                const res = await fetch('http://localhost:5050/api/messages/unread-count', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    setUnreadMessagesCount(data.unreadCount || 0);
+                }
+            } catch (err) {
+                console.error("Erreur unread messages count :", err);
+            }
+        };
+
+        fetchProfile();
+        fetchUnreadCount();
+
+        const handleStorageChange = () => {
+            fetchProfile();
+            fetchUnreadCount();
+        };
+
+        window.addEventListener('storage', handleStorageChange);
+        window.addEventListener('messages_updated', fetchUnreadCount);
+        return () => {
+            window.removeEventListener('storage', handleStorageChange);
+            window.removeEventListener('messages_updated', fetchUnreadCount);
+        };
+    }, [isAuthenticated, location.pathname]);
 
     const currentLanguage = (i18n.resolvedLanguage || i18n.language || 'fr').slice(0, 2);
     const handleLanguageChange = (event) => {
@@ -70,12 +126,37 @@ function Header() {
                 {/* Actions Desktop */}
                 <div className="hidden md:flex gap-4 items-center">
                     {isAuthenticated ? (
-                        <button 
-                            onClick={handleLogout}
-                            className="text-sm font-medium bg-red-650 hover:bg-red-500 text-white px-4 py-2 rounded-full transition shadow-md cursor-pointer"
-                        >
-                            {t('nav.logout')}
-                        </button>
+                        <div className="flex items-center gap-3">
+                            <Link 
+                                to="/profile" 
+                                className="relative w-10 h-10 rounded-full border border-white/10 hover:border-[#F4AF23]/50 hover:scale-105 transition-all flex items-center justify-center bg-[#0c0919]/60 shrink-0"
+                                title={t('nav.profile')}
+                            >
+                                <div className="w-full h-full rounded-full overflow-hidden flex items-center justify-center">
+                                    {userProfile?.avatar_url ? (
+                                        <img 
+                                            src={userProfile.avatar_url} 
+                                            alt="Avatar" 
+                                            className="w-full h-full object-cover" 
+                                        />
+                                    ) : (
+                                        <User className="w-5 h-5 text-slate-300" />
+                                    )}
+                                </div>
+
+                                {unreadMessagesCount > 0 && (
+                                    <span className="absolute -top-1 -right-1 w-5 h-5 bg-rose-500 text-white font-black text-[10px] rounded-full flex items-center justify-center border-2 border-black shadow-md animate-bounce z-10">
+                                        {unreadMessagesCount}
+                                    </span>
+                                )}
+                            </Link>
+                            <button 
+                                onClick={handleLogout}
+                                className="text-sm font-medium bg-red-650 hover:bg-red-500 text-white px-4 py-2 rounded-full transition shadow-md cursor-pointer"
+                            >
+                                {t('nav.logout')}
+                            </button>
+                        </div>
                     ) : (
                         <>
                             <Link to="/login" className="text-sm font-medium hover:text-[#F4AF23] transition">{t('nav.login')}</Link>
@@ -127,12 +208,36 @@ function Header() {
 
                     <div className="flex flex-col gap-4 pt-4">
                         {isAuthenticated ? (
-                            <button 
-                                onClick={() => { handleLogout(); closeMenu(); }}
-                                className="w-full text-center text-sm font-medium bg-red-650 hover:bg-red-500 text-white px-4 py-3 rounded-xl transition shadow-md cursor-pointer"
-                            >
-                                {t('nav.logout')}
-                            </button>
+                            <div className="flex items-center gap-3 pt-4">
+                                <Link 
+                                    to="/profile" 
+                                    className="relative w-11 h-11 rounded-full border border-white/10 hover:border-[#F4AF23]/50 transition flex items-center justify-center bg-[#0c0919]/60 shrink-0"
+                                    onClick={closeMenu}
+                                >
+                                    <div className="w-full h-full rounded-full overflow-hidden flex items-center justify-center">
+                                        {userProfile?.avatar_url ? (
+                                            <img 
+                                                src={userProfile.avatar_url} 
+                                                alt="Avatar" 
+                                                className="w-full h-full object-cover" 
+                                            />
+                                        ) : (
+                                            <User className="w-5 h-5 text-slate-300" />
+                                        )}
+                                    </div>
+                                    {unreadMessagesCount > 0 && (
+                                        <span className="absolute -top-1 -right-1 w-5 h-5 bg-rose-500 text-white font-black text-[10px] rounded-full flex items-center justify-center border-2 border-black shadow-md animate-bounce z-10">
+                                            {unreadMessagesCount}
+                                        </span>
+                                    )}
+                                </Link>
+                                <button 
+                                    onClick={() => { handleLogout(); closeMenu(); }}
+                                    className="flex-1 text-center text-sm font-medium bg-red-650 hover:bg-red-500 text-white py-3 rounded-xl transition shadow-md cursor-pointer"
+                                >
+                                    {t('nav.logout')}
+                                </button>
+                            </div>
                         ) : (
                             <div className="flex gap-4">
                                 <Link to="/login" className="flex-1 text-center py-3 text-sm font-medium border border-white/10 hover:bg-white/5 rounded-xl transition" onClick={closeMenu}>

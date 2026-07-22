@@ -1,5 +1,5 @@
 import React from 'react';
-import { Calendar, Users, Clock, ChevronDown } from 'lucide-react';
+import { Calendar, Users, Clock, ChevronDown, User } from 'lucide-react';
 import TranslatedText from './TranslatedText';
 import Button from './Button';
 
@@ -274,11 +274,7 @@ function EventCard({
                         <div className="flex items-center gap-2.5">
                             <Users className="w-4 h-4 text-indigo-400 shrink-0" />
                             <span className={spotsLeft <= 3 && spotsLeft > 0 ? "text-amber-400 font-bold" : isFull ? "text-red-400 font-bold" : ""}>
-                                {isFull
-                                    ? t('events_page.btn_full')
-                                    : spotsLeft === 1
-                                        ? t('events_page.spots_left', { count: spotsLeft })
-                                        : t('events_page.spots_left_plural', { count: spotsLeft })}
+                                {t('tournaments_page.capacity', { registered: event.registeredCount, capacity: event.capacity })}
                             </span>
                         </div>
                     </div>
@@ -303,15 +299,20 @@ function EventCard({
                         </button>
 
                         {isOpenParticipants && (
-                            <div className="mt-2 p-3 rounded-xl border max-h-36 overflow-y-auto bg-slate-50 border-slate-200/50">
+                            <div className="mt-2 p-3 rounded-xl border max-h-36 overflow-y-auto bg-[#0c0919]/60 border-white/5">
                                 {event.participants && event.participants.length > 0 ? (
-                                    <div className="flex flex-wrap gap-1">
-                                        {event.participants.map((p, idx) => (
-                                            <span key={idx} className="inline-block text-[10px] px-2 py-0.5 rounded-lg border bg-white text-slate-700 border-slate-200/50">
-                                                {p}
-                                            </span>
-                                        ))}
-                                    </div>
+                                    event.participants.map((p, index) => (
+                                        <div key={index} className="text-xs flex items-center gap-2 mb-2 last:mb-0">
+                                            {p.avatar_url ? (
+                                                <img src={p.avatar_url} alt="" className="w-5 h-5 rounded-full object-cover border border-white/10 shrink-0" />
+                                            ) : (
+                                                <div className="w-5 h-5 rounded-full bg-slate-200/10 border border-white/10 flex items-center justify-center shrink-0">
+                                                    <User className="w-3 h-3 text-slate-450" />
+                                                </div>
+                                            )}
+                                            <span className="font-medium text-slate-300">{p.name}</span>
+                                        </div>
+                                    ))
                                 ) : (
                                     <div className="text-xs italic text-slate-400">
                                         {t('events_page.no_registered', 'Aucun inscrit pour le moment.')}

@@ -10,7 +10,7 @@ const User = {
     },
     // Trouver par ID (sans le password)
     async findById(id) {
-        const sql = 'SELECT id, email, firstname, lastname, pseudo, role, created_at FROM users WHERE id = ?';
+        const sql = 'SELECT id, email, firstname, lastname, pseudo, role, avatar_url, created_at FROM users WHERE id = ?';
         const results = await query(sql, [id]);
         return results[0] || null;
     },
@@ -43,6 +43,22 @@ VALUES (?, ?, ?, ?, ?)
     async updateRole(id, role) {
         const sql = 'UPDATE users SET role = ? WHERE id = ?';
         return query(sql, [role, id]);
+    },
+    // Mettre à jour le profil d'un utilisateur
+    async updateProfile(id, { email, firstname, lastname, pseudo, password, avatar_url }) {
+        let sql = 'UPDATE users SET email = ?, firstname = ?, lastname = ?, pseudo = ?, avatar_url = ?';
+        const params = [email.toLowerCase(), firstname, lastname, pseudo, avatar_url];
+        
+        if (password) {
+            const hashedPassword = await bcrypt.hash(password, 10);
+            sql += ', password = ?';
+            params.push(hashedPassword);
+        }
+        
+        sql += ' WHERE id = ?';
+        params.push(id);
+        
+        return query(sql, params);
     },
     // Supprimer un utilisateur
     async delete(id) {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Calendar, Users, ChevronDown } from 'lucide-react';
+import { Calendar, Users, ChevronDown, User } from 'lucide-react';
 import TranslatedText from './TranslatedText';
 import Button from './Button';
 
@@ -24,27 +24,17 @@ function TournamentCard({
     const dateObj = new Date(activity.date);
 
     // Dynamic formatting based on locale and type of activity
-    const formattedDate = isEvent
-        ? dateObj.toLocaleString(i18n.resolvedLanguage || i18n.language || 'fr', {
-            weekday: 'long',
-            day: 'numeric',
-            month: 'long',
-            hour: '2-digit',
-            minute: '2-digit'
-        })
-        : dateObj.toLocaleDateString(i18n.resolvedLanguage || i18n.language || 'fr', {
-            weekday: 'long',
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-        });
+    const formattedDate = dateObj.toLocaleDateString(i18n.resolvedLanguage || i18n.language || 'fr', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
 
-    const formattedTime = !isEvent
-        ? dateObj.toLocaleTimeString(i18n.resolvedLanguage || i18n.language || 'fr', {
-            hour: '2-digit',
-            minute: '2-digit'
-        })
-        : '';
+    const formattedTime = dateObj.toLocaleTimeString(i18n.resolvedLanguage || i18n.language || 'fr', {
+        hour: '2-digit',
+        minute: '2-digit'
+    });
 
     const typeNames = {
         avant_premiere: t('events_page.prerelease'),
@@ -118,17 +108,9 @@ function TournamentCard({
     const subBorderClass = isDark ? 'border-white/5' : 'border-slate-100';
 
     // Buttons actions configurations
-    const actionUnregisterLabel = isEvent
-        ? t('events_page.btn_registered') + ' (Se désinscrire)'
-        : t('tournaments_page.unregister');
-
-    const actionRegisterLabel = isEvent
-        ? t('events_page.btn_register')
-        : t('tournaments_page.register');
-
-    const actionFullLabel = isEvent
-        ? t('events_page.btn_full')
-        : t('tournaments_page.full');
+    const actionUnregisterLabel = t('tournaments_page.unregister');
+    const actionRegisterLabel = t('tournaments_page.register');
+    const actionFullLabel = t('tournaments_page.full');
 
     return (
         <div className={`rounded-3xl border flex flex-col justify-between overflow-hidden transition-all duration-300 group ${cardBgClass}`}>
@@ -151,11 +133,6 @@ function TournamentCard({
                             <span className={`inline-flex items-center gap-1.5 py-0.5 px-2.5 rounded-full text-[10px] font-bold border ${getGameColorClass(activity.game)}`}>
                                 {activity.game}
                             </span>
-                            {isEvent && (
-                                <span className={`inline-flex items-center gap-1.5 py-0.5 px-2.5 rounded-full text-[10px] font-bold border ${getTypeColorClass(activity.type)}`}>
-                                    {typeNames[activity.type]}
-                                </span>
-                            )}
                         </div>
                         <span className="text-xs font-extrabold text-[#F4AF23] bg-[#F4AF23]/10 py-1 px-2.5 rounded-lg font-mono border border-[#F4AF23]/20">
                             {activity.price === 0 || activity.price === "0.00"
@@ -180,14 +157,7 @@ function TournamentCard({
                         <div className="flex items-center gap-2.5">
                             <Users className="w-4 h-4 text-indigo-400 shrink-0" />
                             <span className={spotsLeft <= 3 && spotsLeft > 0 ? "text-amber-400 font-bold" : isFull ? "text-red-400 font-bold" : ""}>
-                                {isEvent
-                                    ? (isFull
-                                        ? t('events_page.btn_full')
-                                        : spotsLeft === 1
-                                            ? t('events_page.spots_left', { count: spotsLeft })
-                                            : t('events_page.spots_left_plural', { count: spotsLeft }))
-                                    : t('tournaments_page.capacity', { registered: activity.registeredCount, capacity: activity.capacity })
-                                }
+                                {t('tournaments_page.capacity', { registered: activity.registeredCount, capacity: activity.capacity })}
                             </span>
                         </div>
                     </div>
@@ -213,25 +183,21 @@ function TournamentCard({
                         {isOpenParticipants && (
                             <div className={`mt-2 p-3 rounded-xl border max-h-36 overflow-y-auto ${listContainerClass}`}>
                                 {activity.participants && activity.participants.length > 0 ? (
-                                    isEvent ? (
-                                        <div className="flex flex-wrap gap-1">
-                                            {activity.participants.map((p, idx) => (
-                                                <span key={idx} className={`inline-block text-[10px] px-2 py-0.5 rounded-lg border ${listItemClass}`}>
-                                                    {p}
-                                                </span>
-                                            ))}
+                                    activity.participants.map((p, index) => (
+                                        <div key={index} className="text-xs flex items-center gap-2 mb-2 last:mb-0">
+                                            {p.avatar_url ? (
+                                                <img src={p.avatar_url} alt="" className="w-5 h-5 rounded-full object-cover border border-white/10 shrink-0" />
+                                            ) : (
+                                                <div className="w-5 h-5 rounded-full bg-slate-200/10 border border-white/10 flex items-center justify-center shrink-0">
+                                                    <User className="w-3 h-3 text-slate-450" />
+                                                </div>
+                                            )}
+                                            <span className="font-medium text-slate-300">{p.name}</span>
                                         </div>
-                                    ) : (
-                                        activity.participants.map((pName, index) => (
-                                            <div key={index} className="text-xs flex items-center gap-2 mb-1 last:mb-0">
-                                                <span className="w-1.5 h-1.5 bg-indigo-500 rounded-full"></span>
-                                                <span>{pName}</span>
-                                            </div>
-                                        ))
-                                    )
+                                    ))
                                 ) : (
                                     <div className="text-xs italic text-slate-400">
-                                        {isEvent ? "Aucun inscrit pour le moment." : t('tournaments_page.no_registered')}
+                                        {t('tournaments_page.no_registered')}
                                     </div>
                                 )}
                             </div>

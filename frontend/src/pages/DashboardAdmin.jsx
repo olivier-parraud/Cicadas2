@@ -17,6 +17,7 @@ function DashboardAdmin() {
     const [tournaments, setTournaments] = useState([]);
     const [boardGames, setBoardGames] = useState([]);
     const [events, setEvents] = useState([]);
+    const [messages, setMessages] = useState([]);
     const [loading, setLoading] = useState(true);
     const [actionLoading, setActionLoading] = useState(false);
     const [message, setMessage] = useState({ type: '', text: '' });
@@ -31,6 +32,9 @@ function DashboardAdmin() {
     const [resSearch, setResSearch] = useState('');
     const [resSortKey, setResSortKey] = useState(null);
     const [resSortOrder, setResSortOrder] = useState('asc');
+    const [messageSearch, setMessageSearch] = useState('');
+    const [replyingMessageId, setReplyingMessageId] = useState(null);
+    const [replyText, setReplyText] = useState('');
 
     const handleSort = (key) => {
         if (resSortKey === key) {
@@ -267,11 +271,84 @@ function DashboardAdmin() {
                 const data = await resEvents.json();
                 setEvents(data);
             }
+
+            // Fetch messages
+            const resMessages = await fetch('http://localhost:5050/api/messages/admin', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (resMessages.ok) {
+                const data = await resMessages.json();
+                setMessages(data);
+            }
         } catch (error) {
             console.error("Erreur chargement données admin :", error);
             setMessage({ type: 'error', text: 'Erreur lors du chargement des données.' });
         } finally {
             setLoading(false);
+        }
+    };
+
+    // --- MESSAGE ACTIONS ---
+    const handleMarkMessageAsRead = async (id) => {
+        try {
+            const res = await fetch(`http://localhost:5050/api/messages/admin/${id}/read`, {
+                method: 'PUT',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (res.ok) {
+                setMessages(prev => prev.map(m => m.id === id ? { ...m, is_read: 1 } : m));
+            }
+        } catch (error) {
+            console.error("Erreur marquage message lu :", error);
+        }
+    };
+
+    const handleSendReply = async (id) => {
+        if (!replyText.trim()) return;
+        setActionLoading(true);
+        try {
+            const res = await fetch(`http://localhost:5050/api/messages/admin/${id}/reply`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ reply: replyText })
+            });
+            if (res.ok) {
+                setMessages(prev => prev.map(m => m.id === id ? { ...m, admin_reply: replyText, replied_at: new Date().toISOString(), is_read: 1 } : m));
+                setMessage({ type: 'success', text: "Réponse envoyée au membre avec succès !" });
+                setReplyingMessageId(null);
+                setReplyText('');
+            } else {
+                setMessage({ type: 'error', text: "Erreur lors de l'envoi de la réponse." });
+            }
+        } catch (error) {
+            console.error("Erreur envoi réponse :", error);
+            setMessage({ type: 'error', text: "Erreur réseau lors de l'envoi." });
+        } finally {
+            setActionLoading(false);
+        }
+    };
+
+    const handleDeleteMessage = async (id) => {
+        setActionLoading(true);
+        try {
+            const res = await fetch(`http://localhost:5050/api/messages/admin/${id}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (res.ok) {
+                setMessages(prev => prev.filter(m => m.id !== id));
+                setMessage({ type: 'success', text: "Message supprimé avec succès." });
+            } else {
+                setMessage({ type: 'error', text: "Erreur lors de la suppression." });
+            }
+        } catch (error) {
+            console.error("Erreur suppression message :", error);
+            setMessage({ type: 'error', text: "Erreur réseau." });
+        } finally {
+            setActionLoading(false);
         }
     };
 
@@ -817,6 +894,15 @@ function DashboardAdmin() {
         (u.email || '').toLowerCase().includes(userSearch.toLowerCase())
     );
 
+    const unreadMessagesCount = messages.filter(m => !m.is_read).length;
+    const filteredMessages = messages.filter(m => {
+        const query = messageSearch.toLowerCase();
+        const sender = `${m.firstname || ''} ${m.lastname || ''} ${m.pseudo || ''} ${m.email || ''}`.toLowerCase();
+        const subject = (m.subject || '').toLowerCase();
+        const content = (m.content || '').toLowerCase();
+        return sender.includes(query) || subject.includes(query) || content.includes(query);
+    });
+
     const filteredReservations = reservations.filter(r => {
         const q = resSearch.toLowerCase().trim();
         if (!q) return true;
@@ -961,6 +1047,21 @@ function DashboardAdmin() {
                             }`}
                         >
                             Utilisateurs
+                        </button>
+                        <button
+                            onClick={() => { setActiveTab('messages'); setMessage({ type: '', text: '' }); }}
+                            className={`py-3 px-6 md:px-8 rounded-xl text-sm font-extrabold text-center flex-1 md:flex-none tracking-wide transition duration-200 cursor-pointer relative ${
+                                activeTab === 'messages' 
+                                ? 'bg-[#563D82] text-[#F4AF23] border border-[#F4AF23]/30 shadow-lg shadow-[#563D82]/40' 
+                                : 'text-slate-400 hover:text-[#F4AF23] hover:bg-slate-800/30'
+                            }`}
+                        >
+                            Messages
+                            {unreadMessagesCount > 0 && (
+                                <span className="absolute -top-1.5 -right-1.5 bg-rose-500 text-white text-[10px] font-extrabold w-5 h-5 rounded-full flex items-center justify-center border border-slate-900 shadow-md">
+                                    {unreadMessagesCount}
+                                </span>
+                            )}
                         </button>
                     </div>
                 </div>
@@ -1645,6 +1746,175 @@ function DashboardAdmin() {
                                             </div>
                                         )}
                                     </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* TAB 6: MESSAGES */}
+                        {activeTab === 'messages' && (
+                            <div className="bg-[#130f25]/75 rounded-3xl border border-white/5 shadow-xl overflow-hidden">
+                                <div className="p-6 border-b border-white/5 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-[#0c0919]/65">
+                                    <div className="flex flex-col gap-1 w-full md:w-auto">
+                                        <h2 className="text-xl font-extrabold text-white">Messages reçus</h2>
+                                        <p className="text-xs text-slate-400 font-light">
+                                            Total : {filteredMessages.length} / {messages.length} | {unreadMessagesCount} non lu(s)
+                                        </p>
+                                    </div>
+                                    <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
+                                        <div className="relative w-full sm:w-80 md:w-96">
+                                            <input
+                                                type="text"
+                                                placeholder="Rechercher un message, sujet ou membre..."
+                                                value={messageSearch}
+                                                onChange={(e) => setMessageSearch(e.target.value)}
+                                                className="w-full px-4 py-3 rounded-2xl border-2 !border-[#F4AF23]/40 !bg-[#0c0919] !text-white text-sm font-semibold focus:outline-none focus:!border-[#F4AF23] focus:ring-4 focus:ring-[#F4AF23]/20 shadow-sm transition-all !placeholder-slate-500 placeholder:font-normal"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="p-6 md:p-8">
+                                    {filteredMessages.length === 0 ? (
+                                        <div className="text-center py-16 text-slate-400 font-light">
+                                            Aucun message pour le moment.
+                                        </div>
+                                    ) : (
+                                        <div className="space-y-4">
+                                            {filteredMessages.map((msg) => {
+                                                const senderName = msg.pseudo || `${msg.firstname || ''} ${msg.lastname || ''}`.trim() || msg.email.split('@')[0];
+                                                const msgDate = new Date(msg.created_at).toLocaleString('fr-FR', {
+                                                    day: 'numeric',
+                                                    month: 'long',
+                                                    year: 'numeric',
+                                                    hour: '2-digit',
+                                                    minute: '2-digit'
+                                                });
+                                                return (
+                                                    <div 
+                                                        key={msg.id} 
+                                                        onClick={() => {
+                                                            if (!msg.is_read) {
+                                                                handleMarkMessageAsRead(msg.id);
+                                                            }
+                                                        }}
+                                                        className={`p-5 rounded-2xl border transition-all duration-300 ${
+                                                            !msg.is_read 
+                                                            ? 'bg-[#181232]/80 border-[#F4AF23]/30 shadow-md shadow-[#F4AF23]/5' 
+                                                            : 'bg-[#0c0919]/60 border-white/5 hover:border-white/10'
+                                                        }`}
+                                                    >
+                                                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-white/5">
+                                                            <div className="flex items-center gap-3">
+                                                                {/* Sender Avatar */}
+                                                                <div className="w-9 h-9 rounded-full border border-white/10 overflow-hidden flex items-center justify-center bg-[#0c0919]/60 shrink-0">
+                                                                    {msg.avatar_url ? (
+                                                                        <img src={msg.avatar_url} alt="" className="w-full h-full object-cover" />
+                                                                    ) : (
+                                                                        <Users className="w-4 h-4 text-slate-400" />
+                                                                    )}
+                                                                </div>
+                                                                <div>
+                                                                    <div className="text-sm font-bold text-white flex items-center gap-2">
+                                                                        {senderName}
+                                                                        {!msg.is_read && (
+                                                                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-black bg-[#F4AF23] text-[#05040a] uppercase tracking-wider">
+                                                                                Nouveau
+                                                                            </span>
+                                                                        )}
+                                                                    </div>
+                                                                    <div className="text-[10px] text-slate-400 font-light">{msg.email}</div>
+                                                                </div>
+                                                            </div>
+                                                            <div className="text-right flex items-center sm:flex-col sm:items-end justify-between sm:justify-start gap-2">
+                                                                <div className="text-[10px] text-slate-400 font-mono">{msgDate}</div>
+                                                                <div className="flex items-center gap-1">
+                                                                    <button
+                                                                        onClick={(e) => {
+                                                                            e.stopPropagation();
+                                                                            if (replyingMessageId === msg.id) {
+                                                                                setReplyingMessageId(null);
+                                                                            } else {
+                                                                                setReplyingMessageId(msg.id);
+                                                                                setReplyText(msg.admin_reply || '');
+                                                                            }
+                                                                        }}
+                                                                        className="px-2.5 py-1 text-xs font-bold bg-[#563D82]/60 hover:bg-[#563D82] text-white border border-[#F4AF23]/30 rounded-xl transition cursor-pointer flex items-center gap-1"
+                                                                        title="Répondre"
+                                                                    >
+                                                                        <MessageSquare className="w-3.5 h-3.5 text-[#F4AF23]" /> Répondre
+                                                                    </button>
+                                                                    <button
+                                                                        onClick={(e) => {
+                                                                            e.stopPropagation();
+                                                                            handleDeleteMessage(msg.id);
+                                                                        }}
+                                                                        className="p-1.5 text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 rounded-xl transition cursor-pointer"
+                                                                        title="Supprimer"
+                                                                    >
+                                                                        <Trash2 className="w-4 h-4" />
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div className="pt-3 space-y-2">
+                                                            <div className="text-xs font-bold text-[#F4AF23] uppercase tracking-wide">
+                                                                Sujet : {msg.subject}
+                                                            </div>
+                                                            <p className="text-sm text-slate-300 font-light whitespace-pre-wrap leading-relaxed">
+                                                                {msg.content}
+                                                            </p>
+
+                                                            {msg.admin_reply && (
+                                                                <div className="mt-3 p-4 rounded-xl bg-[#563D82]/20 border border-[#563D82]/40 text-xs space-y-1.5">
+                                                                    <div className="font-bold text-[#F4AF23] flex items-center gap-1.5">
+                                                                        <MessageSquare className="w-3.5 h-3.5" /> Votre réponse ({msg.replied_at ? new Date(msg.replied_at).toLocaleString('fr-FR') : ''}) :
+                                                                    </div>
+                                                                    <p className="text-slate-200 whitespace-pre-wrap">{msg.admin_reply}</p>
+                                                                </div>
+                                                            )}
+
+                                                            {replyingMessageId === msg.id && (
+                                                                <div className="mt-4 p-4 rounded-2xl bg-[#0c0919] border border-[#F4AF23]/30 space-y-3" onClick={(e) => e.stopPropagation()}>
+                                                                    <div className="text-xs font-bold text-white flex items-center justify-between">
+                                                                        <span>Répondre à {senderName}</span>
+                                                                        <button 
+                                                                            onClick={() => setReplyingMessageId(null)}
+                                                                            className="text-slate-400 hover:text-white"
+                                                                        >
+                                                                            <X className="w-4 h-4" />
+                                                                        </button>
+                                                                    </div>
+                                                                    <textarea
+                                                                        value={replyText}
+                                                                        onChange={(e) => setReplyText(e.target.value)}
+                                                                        rows="3"
+                                                                        placeholder="Rédigez votre réponse ici..."
+                                                                        className="w-full bg-[#130f25] border border-white/10 text-white text-xs p-3 rounded-xl outline-none focus:border-[#F4AF23] transition resize-none"
+                                                                    ></textarea>
+                                                                    <div className="flex justify-end gap-2">
+                                                                        <button
+                                                                            type="button"
+                                                                            onClick={() => setReplyingMessageId(null)}
+                                                                            className="px-3 py-1.5 text-xs font-bold text-slate-400 hover:text-white rounded-lg border border-white/5"
+                                                                        >
+                                                                            Annuler
+                                                                        </button>
+                                                                        <button
+                                                                            type="button"
+                                                                            onClick={() => handleSendReply(msg.id)}
+                                                                            className="px-4 py-1.5 text-xs font-bold bg-[#F4AF23] hover:bg-[#ffbe3b] text-[#05040a] rounded-lg transition shadow-sm"
+                                                                        >
+                                                                            Envoyer la réponse
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         )}

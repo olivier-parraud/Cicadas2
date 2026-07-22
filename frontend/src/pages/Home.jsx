@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Calendar, Trophy, Users } from 'lucide-react';
+import { Calendar, Trophy, Users, MessageSquare, Mail, X, Lock } from 'lucide-react';
 import Button from '../components/Button';
 import BoardGameCard from '../components/BoardGameCard';
 import TournamentCard from '../components/TournamentCard';
@@ -20,6 +21,57 @@ function Home() {
     const [openParticipantsId, setOpenParticipantsId] = useState(null);
     const [myTourneyRegistrations, setMyTourneyRegistrations] = useState([]);
     const [myEventRegistrations, setMyEventRegistrations] = useState([]);
+
+    // Contact modal states
+    const [isContactModalOpen, setIsContactModalOpen] = useState(false);
+    const [contactSubject, setContactSubject] = useState('');
+    const [contactMessage, setContactMessage] = useState('');
+    const [sendingMessage, setSendingMessage] = useState(false);
+
+    const handleContactSubmit = async (e) => {
+        e.preventDefault();
+        if (!isAuthenticated) {
+            toast.error("Vous devez être connecté pour envoyer un message.");
+            navigate('/login');
+            return;
+        }
+
+        if (!contactMessage.trim()) {
+            toast.error("Veuillez saisir un message.");
+            return;
+        }
+
+        setSendingMessage(true);
+        try {
+            const token = localStorage.getItem('token');
+            const res = await fetch('http://localhost:5050/api/messages', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    subject: contactSubject,
+                    content: contactMessage
+                })
+            });
+
+            const data = await res.json();
+            if (res.ok) {
+                toast.success("Votre message a été envoyé aux administrateurs !");
+                setContactSubject('');
+                setContactMessage('');
+                setIsContactModalOpen(false);
+            } else {
+                toast.error(data.error || "Une erreur est survenue lors de l'envoi.");
+            }
+        } catch (err) {
+            console.error("Erreur envoi message :", err);
+            toast.error("Erreur réseau lors de l'envoi.");
+        } finally {
+            setSendingMessage(false);
+        }
+    };
 
     const toggleParticipants = (id) => {
         setOpenParticipantsId(openParticipantsId === id ? null : id);
@@ -404,18 +456,19 @@ function Home() {
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         {upcomingEvents.map((activity) => {
                             const isEvent = !!activity.type;
+                            const uniqueKey = `${isEvent ? 'event' : 'tourney'}-${activity.id}`;
                             const isReg = isEvent 
                                 ? myEventRegistrations.includes(activity.id) 
                                 : myTourneyRegistrations.includes(activity.id);
                             return (
                                 <TournamentCard
-                                    key={activity.id}
+                                    key={uniqueKey}
                                     activity={activity}
                                     isAuthenticated={isAuthenticated}
                                     isRegistered={isReg}
                                     actionLoading={actionLoadingId === activity.id}
-                                    isOpenParticipants={openParticipantsId === activity.id}
-                                    onToggleParticipants={toggleParticipants}
+                                    isOpenParticipants={openParticipantsId === uniqueKey}
+                                    onToggleParticipants={() => toggleParticipants(uniqueKey)}
                                     onAction={() => handleRegisterToggle(activity, isReg)}
                                     onLoginRedirect={() => navigate('/login')}
                                     t={t}
@@ -542,6 +595,34 @@ function Home() {
                 </div>
             </div>
 
+            {/* Contact Section */}
+            <div className="max-w-4xl mx-auto py-12 px-4 text-center">
+                <div className="bg-[#130f25]/60 border border-[#563D82]/20 rounded-3xl p-8 backdrop-blur-md space-y-6 relative overflow-hidden">
+                    <div className="absolute -top-12 -left-12 w-24 h-24 bg-[#F4AF23]/10 rounded-full blur-2xl pointer-events-none"></div>
+                    <div className="absolute -bottom-12 -right-12 w-24 h-24 bg-[#563D82]/10 rounded-full blur-2xl pointer-events-none"></div>
+                    
+                    <div className="max-w-2xl mx-auto space-y-3 relative z-10 flex flex-col items-center">
+                        <MessageSquare className="w-10 h-10 text-[#F4AF23]" />
+                        <h2 className="text-2xl font-extrabold text-white tracking-tight">
+                            Une question ou besoin d'aide ?
+                        </h2>
+                        <p className="text-sm text-slate-400 font-light max-w-lg mx-auto">
+                            Envoyez un message direct à nos administrateurs. Nous vous répondrons dans les plus brefs délais !
+                        </p>
+                        <div className="pt-2">
+                            <button
+                                onClick={() => {
+                                    setIsContactModalOpen(true);
+                                }}
+                                className="bg-[#563D82] hover:bg-[#6c4fa1] text-white border border-[#F4AF23]/35 hover:border-[#F4AF23]/60 font-extrabold py-3 px-8 rounded-xl transition duration-300 shadow-md shadow-purple-500/5 cursor-pointer text-sm"
+                            >
+                                Contacter l'équipe
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             {/* FAQ Section */}
             <div className="max-w-4xl mx-auto py-20 px-4 border-t border-white/5">
                 <div className="text-center mb-12 space-y-4">
@@ -581,6 +662,106 @@ function Home() {
                     ))}
                 </div>
             </div>
+
+            {isContactModalOpen && createPortal(
+                <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-[9999] flex items-center justify-center p-4">
+                    <div className="bg-[#130f25] backdrop-blur-md text-white rounded-3xl shadow-2xl max-w-lg w-full overflow-hidden border border-white/10 space-y-6 p-6 md:p-8 animate-in fade-in zoom-in duration-200 relative">
+                        {/* Decorative glow */}
+                        <div className="absolute -top-16 -left-16 w-32 h-32 bg-[#F4AF23]/10 rounded-full blur-3xl pointer-events-none"></div>
+                        <div className="absolute -bottom-16 -right-16 w-32 h-32 bg-[#563D82]/15 rounded-full blur-3xl pointer-events-none"></div>
+
+                        <div className="flex justify-between items-center pb-4 border-b border-white/5 relative z-10">
+                            <div className="flex items-center gap-2">
+                                <Mail className="w-5 h-5 text-[#F4AF23]" />
+                                <h3 className="text-xl font-extrabold text-white tracking-tight">Nouveau Message</h3>
+                            </div>
+                            <button 
+                                onClick={() => setIsContactModalOpen(false)}
+                                className="text-white/60 hover:text-white transition cursor-pointer"
+                            >
+                                <X className="w-5 h-5" />
+                            </button>
+                        </div>
+
+                        {!isAuthenticated ? (
+                            <div className="space-y-6 text-center py-4 relative z-10">
+                                <div className="w-16 h-16 rounded-full bg-rose-500/10 border border-rose-500/20 flex items-center justify-center mx-auto text-rose-400">
+                                    <Lock className="w-8 h-8" />
+                                </div>
+                                <div className="space-y-2">
+                                    <h4 className="text-lg font-bold text-white">Connexion Requise</h4>
+                                    <p className="text-sm text-white/60 font-light leading-relaxed max-w-sm mx-auto">
+                                        Vous devez être connecté à votre compte Cicados pour pouvoir envoyer un message à nos administrateurs.
+                                    </p>
+                                </div>
+                                <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
+                                    <button
+                                        type="button"
+                                        onClick={() => setIsContactModalOpen(false)}
+                                        className="text-xs font-bold text-white/70 hover:text-white px-5 py-3 rounded-xl border border-white/5 hover:bg-white/5 transition cursor-pointer"
+                                    >
+                                        Annuler
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            setIsContactModalOpen(false);
+                                            navigate('/login');
+                                        }}
+                                        className="text-xs font-extrabold bg-[#F4AF23] hover:bg-[#ffbe3b] text-[#05040a] px-6 py-3 rounded-xl transition cursor-pointer shadow-md shadow-amber-500/10"
+                                    >
+                                        Se connecter
+                                    </button>
+                                </div>
+                            </div>
+                        ) : (
+                            <form onSubmit={handleContactSubmit} className="space-y-4 relative z-10">
+                                <div className="space-y-1">
+                                    <label className="text-xs font-bold text-white/50 uppercase tracking-wider">Objet</label>
+                                    <input 
+                                        type="text"
+                                        value={contactSubject}
+                                        onChange={(e) => setContactSubject(e.target.value)}
+                                        placeholder="Ex: Question sur un tournoi, Suggestion..."
+                                        className="w-full bg-[#0c0919] border border-white/10 focus:border-[#F4AF23] text-white text-sm px-4 py-3 rounded-xl outline-none transition"
+                                    />
+                                </div>
+
+                                <div className="space-y-1">
+                                    <label className="text-xs font-bold text-white/50 uppercase tracking-wider">Votre Message <span className="text-rose-500">*</span></label>
+                                    <textarea
+                                        value={contactMessage}
+                                        onChange={(e) => setContactMessage(e.target.value)}
+                                        placeholder="Écrivez votre message ici..."
+                                        required
+                                        rows="5"
+                                        className="w-full bg-[#0c0919] border border-white/10 focus:border-[#F4AF23] text-white text-sm px-4 py-3 rounded-xl outline-none transition resize-none"
+                                    ></textarea>
+                                </div>
+
+                                <div className="flex justify-end gap-3 pt-4 border-t border-white/5">
+                                    <button
+                                        type="button"
+                                        onClick={() => setIsContactModalOpen(false)}
+                                        className="text-xs font-bold text-white/70 hover:text-white px-4 py-2.5 rounded-xl border border-white/5 hover:bg-white/5 transition cursor-pointer"
+                                    >
+                                        Annuler
+                                    </button>
+                                    <button
+                                        type="submit"
+                                        disabled={sendingMessage}
+                                        className="text-xs font-bold bg-[#F4AF23] hover:bg-[#ffbe3b] disabled:bg-slate-700 text-[#05040a] px-6 py-2.5 rounded-xl transition cursor-pointer flex items-center gap-1.5 shadow-md shadow-amber-500/10"
+                                    >
+                                        {sendingMessage && <div className="w-3.5 h-3.5 border-2 border-[#05040a] border-t-transparent rounded-full animate-spin"></div>}
+                                        Envoyer
+                                    </button>
+                                </div>
+                            </form>
+                        )}
+                    </div>
+                </div>,
+                document.body
+            )}
         </div>
     );
 }

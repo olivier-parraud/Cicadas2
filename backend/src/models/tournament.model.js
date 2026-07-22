@@ -17,7 +17,7 @@ const Tournament = {
     // Récupérer tous les participants de tous les tournois
     async findParticipants() {
         const sql = `
-            SELECT tr.tournament_id, u.firstname, u.lastname, u.email, u.pseudo
+            SELECT tr.tournament_id, u.firstname, u.lastname, u.email, u.pseudo, u.avatar_url
             FROM tournament_registrations tr
             JOIN users u ON tr.user_id = u.id
         `;

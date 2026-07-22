@@ -11,11 +11,11 @@ export const getEvents = async (req, res) => {
             const list = participants
                 .filter(p => p.event_id === e.id)
                 .map(p => {
-                    if (p.pseudo) {
-                        return p.pseudo;
-                    }
-                    const fullName = `${p.firstname || ''} ${p.lastname || ''}`.trim();
-                    return fullName || p.email.split('@')[0];
+                    const name = p.pseudo || `${p.firstname || ''} ${p.lastname || ''}`.trim() || p.email.split('@')[0];
+                    return {
+                        name,
+                        avatar_url: p.avatar_url
+                    };
                 });
             return {
                 ...e,

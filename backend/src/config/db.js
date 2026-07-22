@@ -43,6 +43,13 @@ export async function testConnection() {
             console.log("Colonne 'pseudo' ajoutée à la table users");
         }
 
+        // Vérifier si la colonne 'avatar_url' existe sur 'users'
+        const [avatarCols] = await connection.execute("SHOW COLUMNS FROM users LIKE 'avatar_url'");
+        if (avatarCols.length === 0) {
+            await connection.execute("ALTER TABLE users ADD COLUMN avatar_url VARCHAR(500) DEFAULT NULL");
+            console.log("Colonne 'avatar_url' ajoutée à la table users");
+        }
+
         // Créer l'administrateur par défaut s'il n'existe pas
         const [adminRows] = await connection.execute("SELECT * FROM users WHERE email = 'admin@cicados.fr'");
         if (adminRows.length === 0) {
@@ -109,6 +116,43 @@ export async function testConnection() {
                 UNIQUE KEY idx_event_user (event_id, user_id)
             ) ENGINE=InnoDB;
         `);
+
+        // Créer la table des messages si inexistante
+        await connection.execute(`
+            CREATE TABLE IF NOT EXISTS messages (
+                id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                user_id INT UNSIGNED NOT NULL,
+                subject VARCHAR(255) NOT NULL,
+                content TEXT NOT NULL,
+                is_read TINYINT(1) DEFAULT 0,
+                admin_reply TEXT DEFAULT NULL,
+                replied_at DATETIME DEFAULT NULL,
+                user_read TINYINT(1) DEFAULT 0,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+            ) ENGINE=InnoDB;
+        `);
+
+        // Vérifier si la colonne 'admin_reply' existe sur 'messages'
+        const [adminReplyCols] = await connection.execute("SHOW COLUMNS FROM messages LIKE 'admin_reply'");
+        if (adminReplyCols.length === 0) {
+            await connection.execute("ALTER TABLE messages ADD COLUMN admin_reply TEXT DEFAULT NULL");
+            console.log("Colonne 'admin_reply' ajoutée à la table messages");
+        }
+
+        // Vérifier si la colonne 'replied_at' existe sur 'messages'
+        const [repliedAtCols] = await connection.execute("SHOW COLUMNS FROM messages LIKE 'replied_at'");
+        if (repliedAtCols.length === 0) {
+            await connection.execute("ALTER TABLE messages ADD COLUMN replied_at DATETIME DEFAULT NULL");
+            console.log("Colonne 'replied_at' ajoutée à la table messages");
+        }
+
+        // Vérifier si la colonne 'user_read' existe sur 'messages'
+        const [userReadCols] = await connection.execute("SHOW COLUMNS FROM messages LIKE 'user_read'");
+        if (userReadCols.length === 0) {
+            await connection.execute("ALTER TABLE messages ADD COLUMN user_read TINYINT(1) DEFAULT 0");
+            console.log("Colonne 'user_read' ajoutée à la table messages");
+        }
 
         // Vérifier si la colonne 'specific_game' existe sur 'reservations'
         const [specificGameCols] = await connection.execute("SHOW COLUMNS FROM reservations LIKE 'specific_game'");

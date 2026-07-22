@@ -38,7 +38,7 @@ export const login = async (req, res) => {
         }
         const token = generateToken(user);
         res.json({
-            user: { id: user.id, email: user.email, firstname: user.firstname, lastname: user.lastname, pseudo: user.pseudo, role: user.role },
+            user: { id: user.id, email: user.email, firstname: user.firstname, lastname: user.lastname, pseudo: user.pseudo, role: user.role, avatar_url: user.avatar_url },
             token
         });
     } catch (error) {
@@ -48,4 +48,45 @@ export const login = async (req, res) => {
 // GET /api/auth/me
 export const getProfile = async (req, res) => {
     res.json({ user: req.user });
+};
+
+// PUT /api/auth/profile
+export const updateProfile = async (req, res) => {
+    try {
+        const { email, firstname, lastname, pseudo, password, avatar_url } = req.body;
+        if (!email) {
+            return res.status(400).json({ error: 'Email requis' });
+        }
+        
+        // Si l'email change, vérifier s'il est déjà pris par un autre utilisateur
+        if (email.toLowerCase() !== req.user.email.toLowerCase()) {
+            const existingUser = await User.findByEmail(email);
+            if (existingUser) {
+                return res.status(409).json({ error: 'Email déjà utilisé par un autre utilisateur' });
+            }
+        }
+        
+        await User.updateProfile(req.user.id, { email, firstname, lastname, pseudo, password, avatar_url });
+        
+        // Récupérer l'utilisateur mis à jour
+        const updatedUser = await User.findById(req.user.id);
+        const token = generateToken(updatedUser);
+        
+        res.json({ 
+            message: 'Profil mis à jour avec succès', 
+            user: { 
+                id: updatedUser.id, 
+                email: updatedUser.email, 
+                firstname: updatedUser.firstname, 
+                lastname: updatedUser.lastname, 
+                pseudo: updatedUser.pseudo, 
+                role: updatedUser.role,
+                avatar_url: updatedUser.avatar_url
+            }, 
+            token 
+        });
+    } catch (error) {
+        console.error("Erreur mise à jour profil :", error);
+        res.status(500).json({ error: 'Erreur serveur lors de la mise à jour du profil' });
+    }
 };

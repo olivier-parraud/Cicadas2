@@ -17,7 +17,7 @@ const Event = {
     // Récupérer tous les participants de tous les événements
     async findParticipants() {
         const sql = `
-            SELECT er.event_id, u.firstname, u.lastname, u.email, u.pseudo
+            SELECT er.event_id, u.firstname, u.lastname, u.email, u.pseudo, u.avatar_url
             FROM event_registrations er
             JOIN users u ON er.user_id = u.id
         `;
