@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Calendar, Trophy, Users, MessageSquare, Mail, X, Lock } from 'lucide-react';
+import { Calendar, Trophy, Users, MessageSquare, Mail, X, Lock, MapPin, Clock } from 'lucide-react';
 import Button from '../components/Button';
 import BoardGameCard from '../components/BoardGameCard';
 import TournamentCard from '../components/TournamentCard';
@@ -93,24 +93,29 @@ function Home() {
 
     const slides = [
         {
-            image: "/assets/img/hero_magic.png",
-            title: t('home_page.slides.slide_1.title'),
-            desc: t('home_page.slides.slide_1.desc')
+            image: "/images/place/storefront.png",
+            title: "Devant la boutique Cicados",
+            desc: "La devanture chaleureuse au 42 Rue du Cyber-Jeu, Paris 11ème"
         },
         {
-            image: "/images/place/ground_floor.png",
-            title: t('home_page.slides.slide_2.title'),
-            desc: t('home_page.slides.slide_2.desc')
+            image: "/images/place/main_hall.png",
+            title: "Espace principal de jeu",
+            desc: "Grandes tables équipées et étagères remplies de jeux en libre accès"
+        },
+        {
+            image: "/images/place/tcg_tournament.png",
+            title: "Zone Tournois TCG",
+            desc: "Duels et compétitions officielles hebdomadaires sur tapis de jeu"
         },
         {
             image: "/images/place/bar_zone.png",
-            title: t('home_page.slides.slide_3.title'),
-            desc: t('home_page.slides.slide_3.desc')
+            title: "Comptoir Café & Boutique",
+            desc: "Boissons chaudes ou fraîches et snacks pour accompagner vos parties"
         },
         {
             image: "/images/place/upstairs_chill.png",
-            title: t('home_page.slides.slide_4.title'),
-            desc: t('home_page.slides.slide_4.desc')
+            title: "La Mezzanine Gaming Lounge",
+            desc: "Espace détente à l'étage pour vos soirées jeux en groupe"
         }
     ];
 
@@ -320,6 +325,39 @@ function Home() {
                                             aria-label={`Aller au slide ${index + 1}`}
                                         />
                                     ))}
+                                </div>
+                            </div>
+
+                            {/* Carte Adresse & Horaires sous le carrousel */}
+                            <div className="mt-4 w-full bg-[#130f25]/90 backdrop-blur-md border border-[#F4AF23]/30 rounded-2xl p-4 shadow-xl text-xs space-y-3">
+                                <div className="flex items-center justify-between border-b border-white/10 pb-2.5">
+                                    <div className="flex items-center gap-2 text-white font-bold text-xs sm:text-sm">
+                                        <MapPin className="w-4 h-4 text-[#F4AF23] shrink-0" />
+                                        <span>42 Rue du Cyber-Jeu, 75011 Paris</span>
+                                    </div>
+                                    <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold uppercase tracking-wider shrink-0">
+                                        Ouvert
+                                    </span>
+                                </div>
+
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-slate-300 font-light">
+                                    <div className="bg-black/50 p-2.5 rounded-xl border border-white/5 space-y-0.5">
+                                        <div className="text-[11px] font-bold text-slate-200 flex items-center gap-1.5">
+                                            <Clock className="w-3.5 h-3.5 text-[#F4AF23]" /> Lun. - Ven.
+                                        </div>
+                                        <div className="text-[#F4AF23] font-mono font-bold text-xs">
+                                            14:00 – 23:00
+                                        </div>
+                                    </div>
+
+                                    <div className="bg-black/50 p-2.5 rounded-xl border border-white/5 space-y-0.5">
+                                        <div className="text-[11px] font-bold text-slate-200 flex items-center gap-1.5">
+                                            <Clock className="w-3.5 h-3.5 text-[#F4AF23]" /> Sam. - Dim.
+                                        </div>
+                                        <div className="text-[#F4AF23] font-mono font-bold text-xs">
+                                            10:00 – 00:00
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>

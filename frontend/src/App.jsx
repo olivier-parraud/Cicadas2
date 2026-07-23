@@ -11,12 +11,14 @@ import DashboardAdmin from './pages/DashboardAdmin.jsx';
 import BoardGames from './pages/BoardGames.jsx';
 import MyReservations from './pages/MyReservations.jsx';
 import Profile from './pages/Profile.jsx';
+import About from './pages/About.jsx';
 
 function App() {
   return (
     <Routes>
       <Route element={<MainLayout />}>
         <Route path="/" element={<Home />} />
+        <Route path="/about" element={<About />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/reservations" element={<Reservations />} />

@@ -40,6 +40,7 @@ function Footer() {
                     </h3>
                     <nav className="flex flex-col gap-2.5 font-light">
                         <Link to="/" className="hover:text-[#F4AF23] transition-colors w-fit">Accueil</Link>
+                        <Link to="/about" className="hover:text-[#F4AF23] transition-colors w-fit">À propos</Link>
                         <Link to="/boardgames" className="hover:text-[#F4AF23] transition-colors w-fit">Jeux de société</Link>
                         <Link to="/reservations" className="hover:text-[#F4AF23] transition-colors w-fit">Réserver une table</Link>
                         <Link to="/tournaments" className="hover:text-[#F4AF23] transition-colors w-fit">Tournois</Link>
