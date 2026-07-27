@@ -154,7 +154,22 @@ function Events() {
         return e.type === filter;
     });
 
-    // Helper color/emoji functions moved to EventCard component
+    // Sort and group events by month
+    const groupedEvents = (() => {
+        const sorted = [...filteredEvents].sort((a, b) => new Date(a.date) - new Date(b.date));
+        const groups = {};
+        sorted.forEach(evt => {
+            const d = new Date(evt.date);
+            const locale = i18n.resolvedLanguage || i18n.language || 'fr';
+            const monthYear = d.toLocaleDateString(locale, { month: 'long', year: 'numeric' });
+            const monthLabel = monthYear.charAt(0).toUpperCase() + monthYear.slice(1);
+            if (!groups[monthLabel]) {
+                groups[monthLabel] = [];
+            }
+            groups[monthLabel].push(evt);
+        });
+        return groups;
+    })();
 
     return (
         <div className="min-h-screen bg-[#05040a] text-white selection:bg-[#F4AF23] selection:text-[#05040a] pb-20">
@@ -218,22 +233,41 @@ function Events() {
                         </p>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {filteredEvents.map((e) => (
-                            <TournamentCard
-                                key={e.id}
-                                activity={e}
-                                isAuthenticated={isAuthenticated}
-                                isRegistered={myRegistrations.includes(e.id)}
-                                actionLoading={actionLoadingId === e.id}
-                                isOpenParticipants={openParticipantsId === e.id}
-                                onToggleParticipants={() => toggleParticipants(e.id)}
-                                onAction={() => handleAction(e.id, myRegistrations.includes(e.id))}
-                                onLoginRedirect={() => navigate('/login')}
-                                t={t}
-                                i18n={i18n}
-                                theme="dark"
-                            />
+                    <div className="space-y-12">
+                        {Object.entries(groupedEvents).map(([monthLabel, eventsInMonth]) => (
+                            <div key={monthLabel} className="space-y-6">
+                                {/* Month Header */}
+                                <div className="flex items-center gap-3 border-b border-[#F4AF23]/30 pb-3">
+                                    <div className="w-3 h-3 rounded-full bg-[#F4AF23] shadow-md shadow-[#F4AF23]/50"></div>
+                                    <h2 className="text-xl md:text-2xl font-extrabold tracking-wide text-white flex items-center gap-2">
+                                        <Calendar className="w-5 h-5 text-[#F4AF23]" />
+                                        <span>{monthLabel}</span>
+                                    </h2>
+                                    <span className="text-xs px-3 py-1 rounded-full bg-[#563D82]/40 text-[#FFE082] border border-[#F4AF23]/30 font-bold ml-auto">
+                                        {eventsInMonth.length} {eventsInMonth.length > 1 ? 'événements' : 'événement'}
+                                    </span>
+                                </div>
+
+                                {/* Cards Grid for this month */}
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
+                                    {eventsInMonth.map((e) => (
+                                        <TournamentCard
+                                            key={e.id}
+                                            activity={e}
+                                            isAuthenticated={isAuthenticated}
+                                            isRegistered={myRegistrations.includes(e.id)}
+                                            actionLoading={actionLoadingId === e.id}
+                                            isOpenParticipants={openParticipantsId === e.id}
+                                            onToggleParticipants={() => toggleParticipants(e.id)}
+                                            onAction={() => handleAction(e.id, myRegistrations.includes(e.id))}
+                                            onLoginRedirect={() => navigate('/login')}
+                                            t={t}
+                                            i18n={i18n}
+                                            theme="dark"
+                                        />
+                                    ))}
+                                </div>
+                            </div>
                         ))}
                     </div>
                 )}

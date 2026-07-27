@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Calendar, Trophy, Users, MessageSquare, Mail, X, Lock, MapPin, Clock } from 'lucide-react';
+import { Calendar, Trophy, Users, MessageSquare, Mail, X, Lock, MapPin, Clock, ArrowRight } from 'lucide-react';
 import Button from '../components/Button';
 import BoardGameCard from '../components/BoardGameCard';
 import TournamentCard from '../components/TournamentCard';
@@ -572,6 +572,41 @@ function Home() {
                     </div>
                 </div>
             )}
+
+            {/* Boutique Sales Banner Section */}
+            <div className="max-w-7xl mx-auto py-16 px-4">
+                <div className="relative overflow-hidden bg-gradient-to-r from-[#1b1435] via-[#241a45] to-[#1b1435] border border-[#F4AF23]/35 rounded-3xl p-8 md:p-12 shadow-2xl">
+                    <div className="absolute top-0 right-0 -mt-10 -mr-10 w-72 h-72 bg-[#F4AF23]/10 rounded-full blur-3xl pointer-events-none"></div>
+                    <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                        <div className="lg:col-span-8 space-y-4 text-center lg:text-left">
+                            <span className="inline-flex items-center gap-1.5 py-1.5 px-4 rounded-full text-xs font-extrabold bg-[#F4AF23]/15 text-[#F4AF23] border border-[#F4AF23]/30 tracking-wide uppercase">
+                                🛍️ Boutique Officielle en Magasin
+                            </span>
+                            <h2 className="text-2xl md:text-4xl font-extrabold text-white tracking-tight leading-snug">
+                                Vente de Boosters TCG & Jeux de Société en Boutique
+                            </h2>
+                            <p className="text-slate-300 text-base md:text-lg font-light leading-relaxed max-w-2xl">
+                                Retrouvez directement en magasin notre large sélection de <strong className="text-white font-semibold">boosters scellés, displays officiels</strong> (Magic, Pokémon, Lorcana, One Piece, Yu-Gi-Oh!, Riftbound...) ainsi que nos <strong className="text-white font-semibold">jeux de société disponibles à l'achat immédiat</strong> !
+                            </p>
+                            <div className="flex flex-wrap gap-2 justify-center lg:justify-start pt-1">
+                                <span className="px-3 py-1 bg-black/40 border border-white/10 rounded-lg text-xs text-slate-300">✨ Displays & Boosters Scellés</span>
+                                <span className="px-3 py-1 bg-black/40 border border-white/10 rounded-lg text-xs text-slate-300">🎲 Vente de Jeux de Société</span>
+                                <span className="px-3 py-1 bg-black/40 border border-white/10 rounded-lg text-xs text-slate-300">🏆 Partenaire Officiel Éditeurs</span>
+                            </div>
+                        </div>
+                        <div className="lg:col-span-4 flex justify-center lg:justify-end">
+                            <Button
+                                size="lg"
+                                onClick={() => navigate('/about')}
+                                className="font-extrabold text-base py-4 px-8 shadow-xl shadow-amber-500/20 hover:scale-[1.03] transition-all flex items-center gap-2"
+                            >
+                                <span>En savoir plus</span>
+                                <ArrowRight className="w-5 h-5" />
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             {/* Testimonials Section */}
             <div className="max-w-7xl mx-auto py-20 px-4">

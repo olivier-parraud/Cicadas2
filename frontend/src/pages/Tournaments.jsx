@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Trophy } from 'lucide-react';
+import { Trophy, Calendar } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import TournamentCard from '../components/TournamentCard';
 import EventCard from '../components/EventCard';
@@ -165,7 +165,22 @@ function Tournaments() {
         return false;
     });
 
-    // Helper color/emoji functions moved to TournamentCard component
+    // Sort and group tournaments by month
+    const groupedTournaments = (() => {
+        const sorted = [...filteredTournaments].sort((a, b) => new Date(a.date) - new Date(b.date));
+        const groups = {};
+        sorted.forEach(tourney => {
+            const d = new Date(tourney.date);
+            const locale = i18n.resolvedLanguage || i18n.language || 'fr';
+            const monthYear = d.toLocaleDateString(locale, { month: 'long', year: 'numeric' });
+            const monthLabel = monthYear.charAt(0).toUpperCase() + monthYear.slice(1);
+            if (!groups[monthLabel]) {
+                groups[monthLabel] = [];
+            }
+            groups[monthLabel].push(tourney);
+        });
+        return groups;
+    })();
 
     return (
         <div className="min-h-screen bg-[#05040a] text-white selection:bg-[#F4AF23] selection:text-[#05040a] pb-20">
@@ -232,22 +247,41 @@ function Tournaments() {
                         </p>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
-                        {filteredTournaments.map((tourney) => (
-                            <TournamentCard
-                                key={tourney.id}
-                                activity={tourney}
-                                isAuthenticated={isAuthenticated}
-                                isRegistered={myRegistrations.includes(tourney.id)}
-                                actionLoading={actionLoadingId === tourney.id}
-                                isOpenParticipants={openParticipantsId === tourney.id}
-                                onToggleParticipants={() => toggleParticipants(tourney.id)}
-                                onAction={() => handleAction(tourney.id, myRegistrations.includes(tourney.id))}
-                                onLoginRedirect={() => navigate('/login')}
-                                t={t}
-                                i18n={i18n}
-                                theme="dark"
-                            />
+                    <div className="space-y-12">
+                        {Object.entries(groupedTournaments).map(([monthLabel, tourneysInMonth]) => (
+                            <div key={monthLabel} className="space-y-6">
+                                {/* Month Header */}
+                                <div className="flex items-center gap-3 border-b border-[#F4AF23]/30 pb-3">
+                                    <div className="w-3 h-3 rounded-full bg-[#F4AF23] shadow-md shadow-[#F4AF23]/50"></div>
+                                    <h2 className="text-xl md:text-2xl font-extrabold tracking-wide text-white flex items-center gap-2">
+                                        <Calendar className="w-5 h-5 text-[#F4AF23]" />
+                                        <span>{monthLabel}</span>
+                                    </h2>
+                                    <span className="text-xs px-3 py-1 rounded-full bg-[#563D82]/40 text-[#FFE082] border border-[#F4AF23]/30 font-bold ml-auto">
+                                        {tourneysInMonth.length} {tourneysInMonth.length > 1 ? 'tournois' : 'tournoi'}
+                                    </span>
+                                </div>
+
+                                {/* Cards Grid for this month */}
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
+                                    {tourneysInMonth.map((tourney) => (
+                                        <TournamentCard
+                                            key={tourney.id}
+                                            activity={tourney}
+                                            isAuthenticated={isAuthenticated}
+                                            isRegistered={myRegistrations.includes(tourney.id)}
+                                            actionLoading={actionLoadingId === tourney.id}
+                                            isOpenParticipants={openParticipantsId === tourney.id}
+                                            onToggleParticipants={() => toggleParticipants(tourney.id)}
+                                            onAction={() => handleAction(tourney.id, myRegistrations.includes(tourney.id))}
+                                            onLoginRedirect={() => navigate('/login')}
+                                            t={t}
+                                            i18n={i18n}
+                                            theme="dark"
+                                        />
+                                    ))}
+                                </div>
+                            </div>
                         ))}
                     </div>
                 )}
