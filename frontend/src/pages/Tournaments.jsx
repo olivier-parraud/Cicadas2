@@ -161,7 +161,6 @@ function Tournaments() {
         if (filter === 'yugioh') return gameLower.includes('yu-gi-oh') || gameLower.includes('yugioh');
         if (filter === 'lorcana') return gameLower.includes('lorcana');
         if (filter === 'riftbound') return gameLower.includes('riftbound');
-        if (filter === 'dbs') return gameLower.includes('dragon ball');
         return false;
     });
 
@@ -217,8 +216,7 @@ function Tournaments() {
                         { id: 'one_piece', name: 'One Piece' },
                         { id: 'yugioh', name: 'Yu-Gi-Oh!' },
                         { id: 'lorcana', name: 'Lorcana' },
-                        { id: 'riftbound', name: 'Riftbound' },
-                        { id: 'dbs', name: 'Dragon Ball' }
+                        { id: 'riftbound', name: 'Riftbound' }
                     ].map(tcg => (
                         <button
                             key={tcg.id}

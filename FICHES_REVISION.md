@@ -20,7 +20,7 @@
 ## FICHE 1 : Vue d'Ensemble & Architecture Globale
 
 ### 💡 Concept de l'application Cicados
-* **Nature du projet** : Application web complète (Fullstack) pour un café-boutique hybride à Paris (jeux de société & cartes à collectionner TCG : Magic, Pokémon, Lorcana, Yu-Gi-Oh!).
+* **Nature du projet** : Application web complète (Fullstack) pour un café-boutique hybride à Paris (jeux de société & cartes à collectionner TCG : Magic, Pokémon, One Piece, Yu-Gi-Oh!, Lorcana, Riftbound TCG).
 * **Besoins y répondant** :
   1. Réservation en ligne de tables de jeu avec algorithme anti-surbooking.
   2. Inscription/désinscription réactive aux tournois et événements.

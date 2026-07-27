@@ -255,7 +255,7 @@ erDiagram
         INT room_id FK
         DATETIME start_time
         DATETIME end_time
-        ENUM game_type "MTG | YUGIOH | POKEMON | LORCANA | BOARD_GAME | BYOG | OTHER"
+        ENUM game_type "MTG | POKEMON | ONE_PIECE | YUGIOH | LORCANA | RIFTBOUND | BOARD_GAME | BYOG | OTHER"
         VARCHAR specific_game
         INT players_count
         ENUM status "PENDING | CONFIRMED | CANCELLED"
@@ -328,7 +328,7 @@ CREATE TABLE IF NOT EXISTS reservations (
     room_id INT UNSIGNED NOT NULL,
     start_time DATETIME NOT NULL,
     end_time DATETIME NOT NULL,
-    game_type ENUM('MTG','YUGIOH','POKEMON','LORCANA','BOARD_GAME','BYOG','OTHER'),
+    game_type VARCHAR(50) DEFAULT 'OTHER',
     specific_game VARCHAR(255) DEFAULT NULL,
     players_count INT UNSIGNED DEFAULT 2,
     status ENUM('PENDING','CONFIRMED','CANCELLED') DEFAULT 'PENDING',
@@ -1487,14 +1487,14 @@ La page `BoardGames.jsx` affiche le catalogue complet des jeux de société avec
 
 ---
 
-### 6.8 Page des tournois
+### 6.8 Page des tournois et événements
 
-La page `Tournaments.jsx` affiche les tournois à venir avec :
-- **Filtres par jeu** (tous, MTG, Pokémon, Yu-Gi-Oh!, Lorcana)
-- **Jauge de capacité** visuelle (barre de progression)
-- **Bouton d'inscription/désinscription** conditionnel
-- **Code couleur** par type de jeu (orange pour MTG, bleu pour Pokémon, etc.)
-- **Affichage du prix** et de la description du tournoi
+La page `Tournaments.jsx` et `Events.jsx` affiche les tournois et événements à venir avec :
+- **Tri chronologique par mois** (badges d'en-tête mensuels)
+- **Filtres par jeu TCG** (Tous, Pokémon, Magic, One Piece, Yu-Gi-Oh!, Lorcana, Riftbound TCG)
+- **Jauge de capacité** visuelle (barre de progression interactive)
+- **Bouton d'inscription/désinscription** conditionnel en 1 clic
+- **Illustrations HD & Code couleur** dédiés par jeu TCG
 
 ---
 

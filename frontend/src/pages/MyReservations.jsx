@@ -290,7 +290,6 @@ function MyReservations() {
             case 'YUGIOH': return 'Yu-Gi-Oh!';
             case 'LORCANA': return 'Disney Lorcana';
             case 'RIFTBOUND': return 'Riftbound TCG';
-            case 'DBS': return 'Dragon Ball Super Card Game';
             case 'BOARD_GAME': return t('my_reservations_page.board_game_type');
             case 'BYOG': return t('my_reservations_page.byog_type');
             default: return t('my_reservations_page.other_type');
@@ -322,8 +321,6 @@ function MyReservations() {
                 return '/images/TCG/Lorcana.webp';
             case 'RIFTBOUND':
                 return '/images/TCG/Riftbound 2.webp';
-            case 'DBS':
-                return '/images/TCG/Dragon-ball.jpeg';
             case 'BYOG':
                 return 'https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?q=80&w=600';
             default:
@@ -611,7 +608,6 @@ function MyReservations() {
                                     <option value="YUGIOH">Yu-Gi-Oh!</option>
                                     <option value="LORCANA">Disney Lorcana</option>
                                     <option value="RIFTBOUND">Riftbound TCG</option>
-                                    <option value="DBS">Dragon Ball Super Card Game</option>
                                     <option value="BOARD_GAME">{t('my_reservations_page.board_game_type')}</option>
                                     <option value="BYOG">{t('reservations_page.byog_label')}</option>
                                     <option value="OTHER">{t('reservations_page.other_label')}</option>

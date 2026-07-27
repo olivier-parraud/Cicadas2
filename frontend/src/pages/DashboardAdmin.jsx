@@ -832,7 +832,6 @@ function DashboardAdmin() {
             case 'YUGIOH': return 'TCG (Yu-Gi-Oh!)';
             case 'LORCANA': return 'TCG (Lorcana)';
             case 'RIFTBOUND': return 'TCG (Riftbound)';
-            case 'DBS': return 'TCG (Dragon Ball)';
             case 'BOARD_GAME': return 'Jeu de société';
             case 'BYOG': return "J'apporte mon jeu";
             default: return 'Autre';
@@ -854,16 +853,10 @@ function DashboardAdmin() {
                 return 'text-cyan-500 bg-black border-cyan-500';
             case 'YUGIOH':
                 return 'text-rose-500 bg-black border-rose-500';
-            case 'STAR_WARS':
-                return 'text-blue-500 bg-black border-blue-500';
             case 'LORCANA':
                 return 'text-purple-500 bg-black border-purple-500';
-            case 'FINAL_FF':
-                return 'text-teal-500 bg-black border-teal-500';
-            case 'ALTERED':
-                return 'text-indigo-300 bg-black border-indigo-400';
-            case 'DBS':
-                return 'text-emerald-500 bg-black border-emerald-500';
+            case 'RIFTBOUND':
+                return 'text-sky-500 bg-black border-sky-500';
             default:
                 return 'text-slate-600 bg-slate-100 border-slate-200';
         }
@@ -986,13 +979,18 @@ function DashboardAdmin() {
     }
 
     return (
-        <div className="min-h-screen text-slate-200 pb-20">
+        <div className="min-h-screen text-slate-200 pb-20 selection:bg-[#F4AF23] selection:text-[#05040a]">
             {/* Dark Premium Admin Header */}
-            <div className="bg-slate-950 text-white py-12 px-4 md:px-8 border-b border-indigo-950">
-                <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="relative overflow-hidden bg-gradient-to-br from-black via-[#130f25] to-black text-white py-16 px-4 border-b border-white/5 mb-8">
+                <div className="absolute top-1/4 left-1/10 w-96 h-96 bg-[#563D82]/10 rounded-full blur-3xl pointer-events-none"></div>
+                <div className="absolute bottom-1/4 right-1/10 w-96 h-96 bg-[#F4AF23]/5 rounded-full blur-3xl pointer-events-none"></div>
+
+                <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
                     <div>
-                        <span className="text-indigo-400 font-bold text-xs uppercase tracking-wider">Console d'administration</span>
-                        <h1 className="text-3xl font-extrabold tracking-tight mt-1">Dashboard Admin</h1>
+                        <span className="text-[#F4AF23] font-bold text-xs uppercase tracking-wider">Console d'administration</span>
+                        <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight bg-clip-text bg-gradient-to-r from-white via-[#FFE082] to-[#F4AF23] leading-tight mt-1">
+                            Dashboard Admin
+                        </h1>
                     </div>
                     {/* Navigation tabs */}
                     <div className="flex flex-wrap md:flex-nowrap gap-2.5 bg-slate-900/95 p-2 rounded-2xl border border-slate-800/85 w-full md:w-auto shadow-inner">
@@ -1286,7 +1284,6 @@ function DashboardAdmin() {
                                                 <option>Yu-Gi-Oh!</option>
                                                 <option>Disney Lorcana</option>
                                                 <option>Riftbound TCG</option>
-                                                <option>Dragon Ball Super Card Game</option>
                                             </select>
                                         </div>
 
@@ -1539,7 +1536,6 @@ function DashboardAdmin() {
                                                     <option>Yu-Gi-Oh!</option>
                                                     <option>Disney Lorcana</option>
                                                     <option>Riftbound TCG</option>
-                                                    <option>Dragon Ball Super Card Game</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -2340,7 +2336,6 @@ function DashboardAdmin() {
                                         <option>Yu-Gi-Oh!</option>
                                         <option>Disney Lorcana</option>
                                         <option>Riftbound TCG</option>
-                                        <option>Dragon Ball Super Card Game</option>
                                     </select>
                                 </div>
 
@@ -2481,7 +2476,6 @@ function DashboardAdmin() {
                                         <option>Yu-Gi-Oh!</option>
                                         <option>Disney Lorcana</option>
                                         <option>Riftbound TCG</option>
-                                        <option>Dragon Ball Super Card Game</option>
                                     </select>
                                 </div>
                             </div>

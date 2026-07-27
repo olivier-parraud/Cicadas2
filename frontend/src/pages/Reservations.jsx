@@ -250,14 +250,23 @@ function Reservations() {
     }
 
     return (
-        <div className="min-h-screen bg-[#05040a] py-12 px-4 sm:px-6 lg:px-8 selection:bg-[#F4AF23] selection:text-[#05040a]">
-            <div className="max-w-6xl mx-auto space-y-12">
-                <div className="text-center space-y-4">
-                    <h1 className="text-3xl md:text-5xl font-extrabold text-white tracking-tight bg-clip-text bg-gradient-to-r from-white via-slate-100 to-[#F4AF23]">{t('reservations_page.title')}</h1>
-                    <p className="text-base text-slate-400 max-w-xl mx-auto font-light">
+        <div className="min-h-screen bg-[#05040a] text-white selection:bg-[#F4AF23] selection:text-[#05040a] pb-20">
+            {/* Header Section */}
+            <div className="relative overflow-hidden bg-gradient-to-br from-black via-[#130f25] to-black text-white py-20 px-4 border-b border-white/5 text-center mb-12">
+                <div className="absolute top-1/4 left-1/10 w-96 h-96 bg-[#563D82]/10 rounded-full blur-3xl pointer-events-none"></div>
+                <div className="absolute bottom-1/4 right-1/10 w-96 h-96 bg-[#F4AF23]/5 rounded-full blur-3xl pointer-events-none"></div>
+
+                <div className="max-w-4xl mx-auto space-y-6 relative z-10">
+                    <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight bg-clip-text bg-gradient-to-r from-white via-[#FFE082] to-[#F4AF23] leading-tight">
+                        {t('reservations_page.title')}
+                    </h1>
+                    <p className="text-lg text-slate-300 max-w-2xl mx-auto leading-relaxed font-light">
                         {t('reservations_page.subtitle')}
                     </p>
                 </div>
+            </div>
+
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
 
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
                     {/* Formulaire de réservation (gauche) */}
@@ -290,7 +299,6 @@ function Reservations() {
                                     <option value="YUGIOH">Yu-Gi-Oh!</option>
                                     <option value="LORCANA">Disney Lorcana</option>
                                     <option value="RIFTBOUND">Riftbound TCG</option>
-                                    <option value="DBS">Dragon Ball Super Card Game</option>
                                     <option value="BOARD_GAME">{t('my_reservations_page.board_game_type')}</option>
                                     <option value="BYOG">{t('reservations_page.byog_label')}</option>
                                     <option value="OTHER">{t('reservations_page.other_label')}</option>

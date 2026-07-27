@@ -66,7 +66,7 @@ const Reservation = {
             }
         }
 
-        const allowedTypes = ['MTG', 'YUGIOH', 'POKEMON', 'LORCANA', 'ONE_PIECE', 'RIFTBOUND', 'DBS', 'BOARD_GAME', 'BYOG', 'OTHER'];
+        const allowedTypes = ['MTG', 'YUGIOH', 'POKEMON', 'LORCANA', 'ONE_PIECE', 'RIFTBOUND', 'BOARD_GAME', 'BYOG', 'OTHER'];
         let safeGameType = allowedTypes.includes(gameType) ? gameType : 'OTHER';
 
         const sql = `
@@ -153,7 +153,7 @@ const Reservation = {
             }
         }
 
-        const allowedTypes = ['MTG', 'YUGIOH', 'POKEMON', 'LORCANA', 'ONE_PIECE', 'RIFTBOUND', 'DBS', 'BOARD_GAME', 'BYOG', 'OTHER'];
+        const allowedTypes = ['MTG', 'YUGIOH', 'POKEMON', 'LORCANA', 'ONE_PIECE', 'RIFTBOUND', 'BOARD_GAME', 'BYOG', 'OTHER'];
         let safeGameType = allowedTypes.includes(gameType) ? gameType : 'OTHER';
 
         const updateSql = `

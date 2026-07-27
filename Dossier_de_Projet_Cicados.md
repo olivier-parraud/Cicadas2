@@ -71,7 +71,7 @@ La formation s'est découpée en trois phases majeures :
 ## 2 — CAHIER DES CHARGES DU PROJET (MIS À JOUR)
 
 ### 2.1 Genèse et évolution du projet Cicados
-Le concept de **Cicados** est né d'une passion personnelle pour les univers ludiques, en particulier les **jeux de cartes à collectionner (TCG)** comme *Magic: The Gathering*, *Yu-Gi-Oh!, Pokémon, Lorcana*, ainsi que les **jeux de société modernes**. Les établissements hybrides, mêlant boutique, café et espace de jeu, connaissent un essor remarquable. Cependant, ces structures se heurtent fréquemment à des difficultés d'organisation logistique et de communication client.
+Le concept de **Cicados** est né d'une passion personnelle pour les univers ludiques, en particulier les **jeux de cartes à collectionner (TCG)** comme *Magic: The Gathering*, *Pokémon TCG*, *One Piece Card Game*, *Yu-Gi-Oh!*, *Disney Lorcana*, *Riftbound TCG*, ainsi que les **jeux de société modernes**. Les établissements hybrides, mêlant boutique, café et espace de jeu, connaissent un essor remarquable. Cependant, ces structures se heurtent fréquemment à des difficultés d'organisation logistique et de communication client.
 
 Initialement pensé comme un outil de réservation de tables et d'inscriptions aux tournois, **Cicados s'est enrichi de fonctionnalités majeures** pour couvrir l'ensemble du besoin opérationnel d'un café-boutique moderne :
 1. **Un système de messagerie et support client bidirectionnel** permettant aux membres d'interagir directement avec les administrateurs et d'entretenir un fil de discussion multi-tours.

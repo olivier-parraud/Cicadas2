@@ -222,18 +222,24 @@ function Profile() {
         : '—';
 
     return (
-        <div className="min-h-[85vh] py-12 px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-center space-y-8">
-            <div className="max-w-2xl w-full bg-[#130f25]/80 border border-white/5 rounded-3xl p-8 md:p-10 shadow-2xl space-y-8 backdrop-blur-md relative overflow-hidden">
-                {/* Decorative glows */}
-                <div className="absolute -top-24 -left-24 w-48 h-48 bg-[#563D82]/20 rounded-full blur-3xl"></div>
-                <div className="absolute -bottom-24 -right-24 w-48 h-48 bg-[#F4AF23]/15 rounded-full blur-3xl"></div>
+        <div className="min-h-screen bg-[#05040a] text-white selection:bg-[#F4AF23] selection:text-[#05040a] pb-20">
+            {/* Header Section */}
+            <div className="relative overflow-hidden bg-gradient-to-br from-black via-[#130f25] to-black text-white py-16 px-4 border-b border-white/5 text-center mb-10">
+                <div className="absolute top-1/4 left-1/10 w-96 h-96 bg-[#563D82]/10 rounded-full blur-3xl pointer-events-none"></div>
+                <div className="absolute bottom-1/4 right-1/10 w-96 h-96 bg-[#F4AF23]/5 rounded-full blur-3xl pointer-events-none"></div>
 
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-white/5">
-                    <div>
-                        <h1 className="text-3xl font-black text-white tracking-tight">Mon Profil</h1>
-                        <p className="text-xs text-slate-400 font-light mt-1">Gérez vos informations personnelles et identifiants</p>
-                    </div>
+                <div className="max-w-4xl mx-auto space-y-4 relative z-10">
+                    <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight bg-clip-text bg-gradient-to-r from-white via-[#FFE082] to-[#F4AF23] leading-tight">
+                        Mon Profil
+                    </h1>
+                    <p className="text-base text-slate-300 max-w-xl mx-auto leading-relaxed font-light">
+                        Gérez vos informations personnelles, identifiants et messages
+                    </p>
                 </div>
+            </div>
+
+            <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="bg-[#130f25]/80 border border-white/5 rounded-3xl p-8 md:p-10 shadow-2xl space-y-8 backdrop-blur-md relative overflow-hidden">
 
                 {message.text && (
                     <div className={`p-4 rounded-2xl text-sm font-semibold border flex items-center gap-3 transition-all ${
@@ -524,7 +530,8 @@ function Profile() {
                 )}
             </div>
         </div>
-    );
+    </div>
+);
 }
 
 export default Profile;

@@ -31,7 +31,6 @@ function EventCard({
             case 'YUGIOH': return 'Yu-Gi-Oh!';
             case 'LORCANA': return 'Disney Lorcana';
             case 'RIFTBOUND': return 'Riftbound TCG';
-            case 'DBS': return 'Dragon Ball Super Card Game';
             case 'BOARD_GAME': return t('my_reservations_page.board_game_type', 'Jeux de société');
             case 'BYOG': return t('my_reservations_page.byog_type', 'BYOG');
             default: return t('my_reservations_page.other_type', 'Autre');
@@ -51,7 +50,6 @@ function EventCard({
             case 'YUGIOH': return '/images/TCG/Yugioh.png';
             case 'LORCANA': return '/images/TCG/Lorcana.webp';
             case 'RIFTBOUND': return '/images/TCG/Riftbound 2.webp';
-            case 'DBS': return '/images/TCG/Dragon-ball.jpeg';
             case 'BYOG': return 'https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?q=80&w=600';
             default: return '/images/TCG/Magic.jpg';
         }
