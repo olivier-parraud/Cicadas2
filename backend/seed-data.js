@@ -1,4 +1,4 @@
-// seed-data.js — Seed tournaments, events (drafts), test users, and reservations for all games
+// seed-data.js — Seed tournaments, events (drafts/initiations/avant-premières), 8 test users, and table reservations for all TCGs
 import mysql from 'mysql2/promise';
 import dotenv from 'dotenv';
 dotenv.config();
@@ -15,9 +15,12 @@ const pool = mysql.createPool({
 async function seed() {
     const conn = await pool.getConnection();
     try {
-        console.log('🔗 Connecté à MySQL. Début du seeding...\n');
+        console.log('🔗 Connecté à MySQL. Génération complète des tournois et événements TCG...\n');
+        try {
+            await conn.execute("ALTER TABLE reservations MODIFY COLUMN game_type VARCHAR(50) DEFAULT 'OTHER'");
+        } catch (e) {}
 
-        // ─── 1. Supprimer les anciennes données (dans l'ordre des contraintes de clés étrangères) ───
+        // ─── 1. Supprimer les anciennes données ───
         await conn.execute('DELETE FROM event_registrations');
         await conn.execute('DELETE FROM tournament_registrations');
         await conn.execute('DELETE FROM reservations');
@@ -25,24 +28,21 @@ async function seed() {
         await conn.execute('DELETE FROM tournaments');
         await conn.execute('DELETE FROM rooms');
         await conn.execute("DELETE FROM users WHERE email LIKE 'testuser%@cicados.fr'");
-        console.log('🗑️  Anciennes données de test nettoyées.');
+        console.log('🗑️  Anciennes données nettoyées.');
 
         // ─── 1.5 Création de 4 Tables de Jeu (Rooms) ───
         const defaultRooms = [
-            ['Table 1', 4, 'Table standard équipée avec Playmats TCG.'],
-            ['Table 2', 4, 'Table standard équipée avec Playmats TCG.'],
-            ['Table 3', 8, 'Table géante Commander / Drafts / Grands jeux de plateau.'],
-            ['Table 4', 6, 'Espace Lounge confortable en mezzanine.']
+            ['Table 1 (Magic / Riftbound / TCG)', 4, 'Table standard équipée avec Playmats TCG.'],
+            ['Table 2 (Yu-Gi-Oh / Lorcana)', 4, 'Table dédiée aux duels de cartes'],
+            ['Table 3 (Jeux de Société)', 8, 'Grande table ronde idéale pour les jeux de plateau'],
+            ['Table 4 (Jeux de Société)', 6, 'Grande table rectangulaire idéale pour les jeux de plateau']
         ];
         for (const r of defaultRooms) {
-            await conn.execute(
-                'INSERT INTO rooms (name, capacity, description) VALUES (?, ?, ?)',
-                r
-            );
+            await conn.execute('INSERT INTO rooms (name, capacity, description) VALUES (?, ?, ?)', r);
         }
-        console.log('✅ 4 tables de jeu (salles) insérées.');
+        console.log('✅ 4 tables de jeu insérées.');
 
-        // ─── 2. Création de 5 Utilisateurs de Test ───
+        // ─── 2. Création de 8 Utilisateurs de Test ───
         const bcrypt = await import('bcrypt');
         const hashedPassword = await bcrypt.default.hash('testpassword', 10);
         const testUsers = [
@@ -50,7 +50,10 @@ async function seed() {
             ['testuser2@cicados.fr', hashedPassword, 'Sophie', 'Dubois', 'Soph'],
             ['testuser3@cicados.fr', hashedPassword, 'Thomas', 'Bernard', 'TomTee'],
             ['testuser4@cicados.fr', hashedPassword, 'Julie', 'Moreau', 'Juju'],
-            ['testuser5@cicados.fr', hashedPassword, 'Nicolas', 'Petit', 'Nico']
+            ['testuser5@cicados.fr', hashedPassword, 'Nicolas', 'Petit', 'Nico'],
+            ['testuser6@cicados.fr', hashedPassword, 'Alexandre', 'Roux', 'AlexR'],
+            ['testuser7@cicados.fr', hashedPassword, 'Camille', 'Mercier', 'Cami'],
+            ['testuser8@cicados.fr', hashedPassword, 'Lucas', 'Lefebvre', 'Luki']
         ];
         const userIds = [];
         for (const u of testUsers) {
@@ -60,20 +63,37 @@ async function seed() {
             );
             userIds.push(res.insertId);
         }
-        console.log(`✅ 5 utilisateurs de test insérés :`);
-        testUsers.forEach((u, i) => console.log(`   - ${u[2]} ${u[3]} (${u[0]})`));
+        console.log(`✅ 8 utilisateurs de test créés.`);
 
-        // ─── 3. Tournois pour tous les jeux ───
+        // ─── 3. Tournois pour TOUS les TCG (2 tournois par TCG = 14 tournois) ───
         const tournaments = [
-            ['Friday Night Magic - Modern',       'Magic: The Gathering',           '2026-07-24 19:30:00', 16, 5.00,  'Rejoignez-nous pour le traditionnel FNM hebdomadaire ! Format Modern, 3 rondes suisses. Boosters promo pour le top 4.'],
-            ['Pokémon TCG Cup : Standard',         'Pokémon TCG',                    '2026-07-25 10:00:00', 32, 7.50,  'Tournoi officiel Pokémon League Cup. Format Standard. Pensez à apporter votre Decklist imprimée.'],
-            ['One Piece Card Game - OP Championship', 'One Piece Card Game',         '2026-07-26 14:00:00', 24, 8.00,  'Tournoi construit One Piece Card Game. Format standard OP-09. Dotations officielles Bandai.'],
-            ['Yu-Gi-Oh! Local - Advanced',         'Yu-Gi-Oh!',                      '2026-07-27 18:00:00', 32, 5.00,  'Tournoi local Yu-Gi-Oh format Advanced. 4 rondes suisses + Top 8. OTS Packs en dotation.'],
-            ['Lorcana Challenge : Shimmering Skies', 'Disney Lorcana',              '2026-07-28 19:00:00', 16, 6.00,  'Tournoi construite Lorcana. Promos de participation pour tous les joueurs.'],
-            ['Star Wars Unlimited - Premier',      'Star Wars Unlimited',            '2026-07-29 14:30:00', 16, 7.00,  'Tournoi construit Star Wars Unlimited. Format Premier. Promos Alt-Art pour le Top 4.'],
-            ['Final Fantasy TCG - Crystal Cup',    'Final Fantasy TCG',              '2026-07-30 14:00:00', 16, 6.00,  'Crystal Cup locale Final Fantasy TCG. Format L7, toutes les cartes Opus I à XIV autorisées.'],
-            ['Altered TCG - Tournoi Découverte',   'Altered TCG',                    '2026-07-31 15:00:00', 16, 5.00,  'Premier tournoi Altered TCG au shop ! Venez découvrir le nouveau jeu de cartes physique-digital.'],
+            // Magic: The Gathering
+            ['Friday Night Magic - Modern',           'Magic: The Gathering',           '2026-07-24 19:30:00', 16, 5.00,  'Rejoignez-nous pour le traditionnel FNM hebdomadaire ! Format Modern, 3 rondes suisses. Boosters promo pour le top 4.'],
+            ['MTG Commander Showdown',                 'Magic: The Gathering',           '2026-08-04 18:30:00', 20, 4.00,  'Soirée Commander EDH à 4 joueurs par table. Cartes promos et ambiance festive.'],
+            
+            // Pokémon TCG
+            ['Pokémon TCG Cup : Standard',             'Pokémon TCG',                    '2026-07-25 10:00:00', 32, 7.50,  'Tournoi officiel Pokémon League Cup. Format Standard. Decklist obligatoire.'],
+            ['Pokémon League Challenge : Stellar Crown', 'Pokémon TCG',                '2026-08-06 14:00:00', 24, 6.00,  'Tournoi officiel de classement League Challenge avec dotations en boosters Couronne Étincelante.'],
+            
+            // One Piece Card Game
+            ['One Piece Card Game - OP Championship',     'One Piece Card Game',         '2026-07-26 14:00:00', 24, 8.00,  'Tournoi construit One Piece Card Game. Format standard OP-09. Dotations officielles Bandai.'],
+            ['One Piece Store Tournament - OP-09',        'One Piece Card Game',         '2026-08-07 19:00:00', 16, 7.00,  'Tournoi local One Piece. Tapis de jeu promo et cartes alternatives pour le Top 3.'],
+            
+            // Yu-Gi-Oh!
+            ['Yu-Gi-Oh! Local - Advanced',             'Yu-Gi-Oh!',                      '2026-07-27 18:00:00', 32, 5.00,  'Tournoi local Yu-Gi-Oh format Advanced. 4 rondes suisses + Top 8. OTS Packs en dotation.'],
+            ['Yu-Gi-Oh! Remote Duel Tournament',        'Yu-Gi-Oh!',                      '2026-08-08 17:00:00', 16, 5.00,  'Tournoi officiel Yu-Gi-Oh en boutique. Packs promo OTS et tapis de duelliste à remporter.'],
+            
+            // Disney Lorcana
+            ['Lorcana Challenge : Shimmering Skies',   'Disney Lorcana',              '2026-07-28 19:00:00', 16, 6.00,  'Tournoi construit Lorcana. Promos de participation pour tous les joueurs.'],
+            ['Lorcana Inklands Cup',                   'Disney Lorcana',              '2026-08-09 15:00:00', 24, 8.00,  'Coupe officielle Lorcana. Cartes promos brillantes exclusives pour le Top 8.'],
+            
+            // Riftbound TCG
+            ['Riftbound TCG - Championship Cup',       'Riftbound TCG',                  '2026-07-31 15:00:00', 24, 8.00,  'Grand tournoi officiel Riftbound TCG au shop ! Venez vous affronter sur le nouveau jeu sensation.'],
+            ['Riftbound TCG - Night Showdown',         'Riftbound TCG',                  '2026-08-03 20:00:00', 16, 6.00,  'Tournoi nocturne Riftbound TCG avec boosters promos exclusifs pour le classement.'],
+            
+            // Dragon Ball Super CG
             ['Dragon Ball Super CG - Regionals Qualifier', 'Dragon Ball Super Card Game', '2026-08-01 10:00:00', 32, 10.00, 'Qualificatif régional Dragon Ball Super Card Game. Format construit. Tapis de jeu exclusif pour le Top 8.'],
+            ['Dragon Ball Super CG - Local Cup',         'Dragon Ball Super Card Game', '2026-08-10 18:00:00', 16, 6.00,  'Tournoi local convivial Dragon Ball Super. Boosters promo et cartes holographiques.']
         ];
 
         const tournamentIds = [];
@@ -84,20 +104,37 @@ async function seed() {
             );
             tournamentIds.push(res.insertId);
         }
-        console.log(`✅ ${tournaments.length} tournois insérés.`);
+        console.log(`✅ ${tournaments.length} tournois insérés (2 par TCG).`);
 
-        // ─── 4. Événements (Drafts / Initiations) pour tous les jeux ───
+        // ─── 4. Événements pour TOUS les TCG (2 événements par TCG = 14 événements) ───
         const events = [
+            // Magic: The Gathering
             ['Draft MTG : Horizons Modern 3',          'draft', 'Magic: The Gathering',           '2026-07-24 14:00:00', 24, 15.00, 'Draft compétitif Horizons Modern 3. 3 boosters par joueur fournis + dotations.'],
+            ['Avant-Première MTG : Bloomburrow',       'avant_premiere', 'Magic: The Gathering',  '2026-08-05 12:00:00', 32, 25.00, 'Avant-Première Bloomburrow ! Recevez votre kit de pré-release et découvrez la nouvelle extension.'],
+            
+            // Pokémon TCG
             ['Draft Pokémon : Faille Paradoxe',        'draft', 'Pokémon TCG',                    '2026-07-25 14:30:00', 16, 12.00, 'Soirée Draft Pokémon TCG avec des boosters Faille Paradoxe. Découvrez le format limité !'],
+            ['Initiation Pokémon TCG Académie',        'initiation', 'Pokémon TCG',               '2026-08-06 11:00:00', 16, 0.00,  'Atelier d\'initiation gratuit pour apprendre les règles de Pokémon TCG avec nos professeurs.'],
+            
+            // One Piece Card Game
             ['Draft One Piece : OP-09',                'draft', 'One Piece Card Game',            '2026-07-26 18:00:00', 16, 12.00, 'Draft One Piece Card Game avec 6 boosters OP-09 par joueur. Format sealed.'],
+            ['Initiation One Piece Card Game',         'initiation', 'One Piece Card Game',       '2026-08-07 14:00:00', 16, 0.00,  'Découvrez le jeu de cartes One Piece ! Decks d\'initiation offerts aux participants.'],
+            
+            // Yu-Gi-Oh!
             ['Draft Yu-Gi-Oh! : Battle Pack 3',        'draft', 'Yu-Gi-Oh!',                      '2026-07-27 14:00:00', 16, 10.00, 'Soirée Draft Yu-Gi-Oh avec Battle Pack 3. Construisez votre deck à partir de boosters !'],
+            ['Initiation Yu-Gi-Oh! Duelist Academy',   'initiation', 'Yu-Gi-Oh!',                 '2026-08-08 11:00:00', 16, 0.00,  'Apprenez les invocations synchro, xyz et link lors de notre atelier gratuit.'],
+            
+            // Disney Lorcana
             ['Draft Lorcana : Ciel Scintillant',       'draft', 'Disney Lorcana',                 '2026-07-28 14:00:00', 12, 15.00, 'Draft Lorcana avec 6 boosters Ciel Scintillant par joueur. Idéal pour les collectionneurs.'],
-            ['Draft Star Wars Unlimited : Ombres',     'draft', 'Star Wars Unlimited',            '2026-07-29 18:30:00', 12, 14.00, 'Draft Star Wars Unlimited extension Ombres de la Galaxie. 6 boosters fournis.'],
-            ['Draft Final Fantasy TCG : Opus XV',      'draft', 'Final Fantasy TCG',              '2026-07-30 18:00:00', 12, 13.00, 'Draft Final Fantasy TCG avec 6 boosters Opus XV par joueur.'],
-            ['Initiation Altered TCG',                 'initiation', 'Altered TCG',               '2026-07-31 11:00:00', 20, 0.00,  'Séance découverte gratuite du jeu Altered TCG. Decks de prêt fournis par le magasin.'],
+            ['Initiation Disney Lorcana',              'initiation', 'Disney Lorcana',            '2026-08-09 11:00:00', 16, 0.00,  'Atelier découverte Lorcana ouvert à tous. Decks de prêt fournis par la boutique.'],
+            
+            // Riftbound TCG
+            ['Initiation Riftbound TCG',               'initiation', 'Riftbound TCG',             '2026-07-31 11:00:00', 20, 0.00,  'Séance découverte gratuite du jeu Riftbound TCG. Decks de prêt fournis par le magasin.'],
+            ['Draft Riftbound TCG : Extension Premier', 'draft', 'Riftbound TCG',                '2026-08-02 14:00:00', 16, 14.00, 'Draft officiel Riftbound TCG. 4 boosters par duelliste et boosters promos d\'extension.'],
+            
+            // Dragon Ball Super CG
             ['Draft Dragon Ball Super CG',             'draft', 'Dragon Ball Super Card Game',    '2026-08-01 14:00:00', 16, 12.00, 'Draft Dragon Ball Super Card Game avec des boosters de la dernière extension.'],
-            ['Avant-Première MTG : Bloomburrow',       'avant_premiere', 'Magic: The Gathering',  '2026-08-05 12:00:00', 32, 25.00, 'Avant-Première Bloomburrow ! Recevez votre kit de pré-release et découvrez la nouvelle extension en avant-première.'],
+            ['Initiation Dragon Ball Super CG',        'initiation', 'Dragon Ball Super Card Game','2026-08-10 11:00:00', 16, 0.00,  'Atelier d\'initiation gratuit au jeu de cartes Dragon Ball Super avec nos animateurs.']
         ];
 
         const eventIds = [];
@@ -108,98 +145,54 @@ async function seed() {
             );
             eventIds.push(res.insertId);
         }
-        console.log(`✅ ${events.length} événements insérés.`);
+        console.log(`✅ ${events.length} événements insérés (2 par TCG).`);
 
-        // ─── 5. Inscriptions aux Tournois pour les 5 utilisateurs ───
+        // ─── 5. Inscriptions aux Tournois (Réparties sur les 8 profils) ───
         const tournamentRegistrations = [
-            // User 1
-            [tournamentIds[0], userIds[0]], // Pierre -> MTG
-            [tournamentIds[1], userIds[0]], // Pierre -> Pokemon
-            [tournamentIds[2], userIds[0]], // Pierre -> One Piece
-            // User 2
-            [tournamentIds[3], userIds[1]], // Sophie -> YuGiOh
-            [tournamentIds[4], userIds[1]], // Sophie -> Lorcana
-            [tournamentIds[5], userIds[1]], // Sophie -> Star Wars
-            // User 3
-            [tournamentIds[6], userIds[2]], // Thomas -> Final Fantasy
-            [tournamentIds[7], userIds[2]], // Thomas -> Altered
-            [tournamentIds[8], userIds[2]], // Thomas -> Dragon Ball
-            // User 4
-            [tournamentIds[0], userIds[3]], // Julie -> MTG
-            [tournamentIds[4], userIds[3]], // Julie -> Lorcana
-            [tournamentIds[7], userIds[3]], // Julie -> Altered
-            // User 5
-            [tournamentIds[1], userIds[4]], // Nicolas -> Pokemon
-            [tournamentIds[5], userIds[4]], // Nicolas -> Star Wars
-            [tournamentIds[8], userIds[4]], // Nicolas -> Dragon Ball
+            [tournamentIds[0], userIds[0]], [tournamentIds[1], userIds[0]], [tournamentIds[10], userIds[0]],
+            [tournamentIds[2], userIds[1]], [tournamentIds[3], userIds[1]], [tournamentIds[11], userIds[1]],
+            [tournamentIds[4], userIds[2]], [tournamentIds[5], userIds[2]], [tournamentIds[12], userIds[2]],
+            [tournamentIds[6], userIds[3]], [tournamentIds[7], userIds[3]], [tournamentIds[10], userIds[3]],
+            [tournamentIds[8], userIds[4]], [tournamentIds[9], userIds[4]], [tournamentIds[13], userIds[4]],
+            [tournamentIds[10], userIds[5]], [tournamentIds[11], userIds[5]], [tournamentIds[0], userIds[5]],
+            [tournamentIds[2], userIds[6]], [tournamentIds[8], userIds[6]], [tournamentIds[10], userIds[6]],
+            [tournamentIds[4], userIds[7]], [tournamentIds[6], userIds[7]], [tournamentIds[10], userIds[7]],
         ];
-
         for (const tr of tournamentRegistrations) {
-            await conn.execute(
-                'INSERT INTO tournament_registrations (tournament_id, user_id) VALUES (?, ?)',
-                tr
-            );
+            await conn.execute('INSERT INTO tournament_registrations (tournament_id, user_id) VALUES (?, ?)', tr);
         }
-        console.log(`✅ Inscriptions aux tournois générées.`);
+        console.log(`✅ ${tournamentRegistrations.length} inscriptions aux tournois générées.`);
 
-        // ─── 6. Inscriptions aux Événements pour les 5 utilisateurs ───
+        // ─── 6. Inscriptions aux Événements (Réparties sur les 8 profils) ───
         const eventRegistrations = [
-            // User 1
-            [eventIds[0], userIds[0]], // Pierre -> Draft MTG
-            [eventIds[1], userIds[0]], // Pierre -> Draft Pokemon
-            [eventIds[2], userIds[0]], // Pierre -> Draft One Piece
-            // User 2
-            [eventIds[3], userIds[1]], // Sophie -> Draft YuGiOh
-            [eventIds[4], userIds[1]], // Sophie -> Draft Lorcana
-            [eventIds[5], userIds[1]], // Sophie -> Draft Star Wars
-            // User 3
-            [eventIds[6], userIds[2]], // Thomas -> Draft Final Fantasy
-            [eventIds[7], userIds[2]], // Thomas -> Initiation Altered
-            [eventIds[8], userIds[2]], // Thomas -> Draft Dragon Ball
-            // User 4
-            [eventIds[0], userIds[3]], // Julie -> Draft MTG
-            [eventIds[7], userIds[3]], // Julie -> Initiation Altered
-            [eventIds[9], userIds[3]], // Julie -> AP MTG
-            // User 5
-            [eventIds[1], userIds[4]], // Nicolas -> Draft Pokemon
-            [eventIds[8], userIds[4]], // Nicolas -> Draft Dragon Ball
-            [eventIds[9], userIds[4]], // Nicolas -> AP MTG
+            [eventIds[0], userIds[0]], [eventIds[1], userIds[0]], [eventIds[10], userIds[0]],
+            [eventIds[2], userIds[1]], [eventIds[3], userIds[1]], [eventIds[11], userIds[1]],
+            [eventIds[4], userIds[2]], [eventIds[5], userIds[2]], [eventIds[12], userIds[2]],
+            [eventIds[6], userIds[3]], [eventIds[7], userIds[3]], [eventIds[10], userIds[3]],
+            [eventIds[8], userIds[4]], [eventIds[9], userIds[4]], [eventIds[13], userIds[4]],
+            [eventIds[10], userIds[5]], [eventIds[11], userIds[5]], [eventIds[0], userIds[5]],
+            [eventIds[2], userIds[6]], [eventIds[8], userIds[6]], [eventIds[10], userIds[6]],
+            [eventIds[4], userIds[7]], [eventIds[6], userIds[7]], [eventIds[11], userIds[7]],
         ];
-
         for (const er of eventRegistrations) {
-            await conn.execute(
-                'INSERT INTO event_registrations (event_id, user_id) VALUES (?, ?)',
-                er
-            );
+            await conn.execute('INSERT INTO event_registrations (event_id, user_id) VALUES (?, ?)', er);
         }
-        console.log(`✅ Inscriptions aux événements générées.`);
+        console.log(`✅ ${eventRegistrations.length} inscriptions aux événements générées.`);
 
-        // ─── 7. Réservations de Tables pour tous les types de jeux ───
+        // ─── 7. Réservations de Tables pour tous les TCGs ───
         const [rooms] = await conn.execute('SELECT id FROM rooms');
-        if (rooms.length < 4) {
-            console.log('⚠️  Pas assez de tables en base (< 4), réservations de tables ignorées.');
-        } else {
+        if (rooms.length >= 4) {
             const reservationList = [
-                // User 1 (Pierre)
                 { userId: userIds[0], gameType: 'MTG', gameName: 'Magic: The Gathering', date: '2026-07-24', time: '14:00', roomOffset: 0, players: 2 },
                 { userId: userIds[0], gameType: 'POKEMON', gameName: 'Pokémon TCG', date: '2026-07-25', time: '16:00', roomOffset: 1, players: 2 },
-                { userId: userIds[0], gameType: 'BOARD_GAME', gameName: 'Azul', date: '2026-07-26', time: '18:00', roomOffset: 2, players: 3 },
-                // User 2 (Sophie)
                 { userId: userIds[1], gameType: 'ONE_PIECE', gameName: 'One Piece Card Game', date: '2026-07-24', time: '16:00', roomOffset: 1, players: 2 },
                 { userId: userIds[1], gameType: 'YUGIOH', gameName: 'Yu-Gi-Oh!', date: '2026-07-25', time: '18:00', roomOffset: 2, players: 2 },
-                { userId: userIds[1], gameType: 'BYOG', gameName: "J'apporte mon jeu", date: '2026-07-27', time: '14:00', roomOffset: 0, players: 4 },
-                // User 3 (Thomas)
                 { userId: userIds[2], gameType: 'LORCANA', gameName: 'Disney Lorcana', date: '2026-07-25', time: '14:00', roomOffset: 0, players: 2 },
-                { userId: userIds[2], gameType: 'STAR_WARS', gameName: 'Star Wars Unlimited', date: '2026-07-26', time: '16:00', roomOffset: 1, players: 2 },
-                { userId: userIds[2], gameType: 'BOARD_GAME', gameName: 'Codenames', date: '2026-07-28', time: '18:00', roomOffset: 2, players: 6 },
-                // User 4 (Julie)
-                { userId: userIds[3], gameType: 'FINAL_FF', gameName: 'Final Fantasy TCG', date: '2026-07-26', time: '14:00', roomOffset: 0, players: 2 },
-                { userId: userIds[3], gameType: 'ALTERED', gameName: 'Altered TCG', date: '2026-07-27', time: '16:00', roomOffset: 1, players: 2 },
-                { userId: userIds[3], gameType: 'BOARD_GAME', gameName: '7 Wonders', date: '2026-07-29', time: '18:00', roomOffset: 2, players: 4 },
-                // User 5 (Nicolas)
+                { userId: userIds[3], gameType: 'RIFTBOUND', gameName: 'Riftbound TCG', date: '2026-07-27', time: '16:00', roomOffset: 1, players: 2 },
                 { userId: userIds[4], gameType: 'DBS', gameName: 'Dragon Ball Super Card Game', date: '2026-07-27', time: '18:00', roomOffset: 2, players: 2 },
-                { userId: userIds[4], gameType: 'BOARD_GAME', gameName: 'Carcassonne Big Box 6', date: '2026-07-28', time: '14:00', roomOffset: 0, players: 2 },
-                { userId: userIds[4], gameType: 'MTG', gameName: 'Magic: The Gathering', date: '2026-07-29', time: '16:00', roomOffset: 1, players: 2 },
+                { userId: userIds[5], gameType: 'RIFTBOUND', gameName: 'Riftbound TCG', date: '2026-07-30', time: '14:00', roomOffset: 0, players: 2 },
+                { userId: userIds[6], gameType: 'LORCANA', gameName: 'Disney Lorcana', date: '2026-07-30', time: '18:00', roomOffset: 2, players: 4 },
+                { userId: userIds[7], gameType: 'RIFTBOUND', gameName: 'Riftbound TCG', date: '2026-08-01', time: '16:00', roomOffset: 1, players: 2 },
             ];
 
             for (const res of reservationList) {
@@ -221,10 +214,10 @@ async function seed() {
                     [res.userId, roomId, startTime, endTime, res.gameType, res.gameName, res.players]
                 );
             }
-            console.log(`✅ ${reservationList.length} réservations de tables créées pour les 5 utilisateurs.`);
+            console.log(`✅ ${reservationList.length} réservations de tables créées.`);
         }
 
-        console.log('\n🎉 Seeding de test terminé avec succès !');
+        console.log('\n🎉 Seeding complet des tournois et événements pour TOUS les TCGs terminé avec succès !');
     } catch (err) {
         console.error('❌ Erreur lors du seeding :', err);
     } finally {

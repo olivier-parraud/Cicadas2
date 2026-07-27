@@ -1,9 +1,9 @@
 # 📘 DOSSIER DE PROJET PROFESSIONNEL — CICADOS
 
 **Titre professionnel visé :** Développeur Web et Web Mobile (DWWM)  
-**Projet :** Cicados — Plateforme de réservation de tables de jeux, gestion d'événements, boutique et messagerie support  
-**Candidat :** [Votre Nom Complet]  
-**Organisme de formation :** École O'Clock  
+**Projet :** Cicados — Plateforme de réservation de tables de jeux, gestion d'événements et boutique  
+**Candidat :** [PARRAUD Olivier]  
+**Organisme de formation :** La Plateforme  
 **Stack technique :** React 18 (Vite 7) + Node.js (Express) + MySQL (MAMP) + Tailwind CSS + Lucide React  
 **Date de session :** Juillet 2026  
 

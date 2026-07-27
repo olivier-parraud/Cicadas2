@@ -830,10 +830,8 @@ function DashboardAdmin() {
             case 'MTG': return 'TCG (Magic)';
             case 'ONE_PIECE': return 'TCG (One Piece)';
             case 'YUGIOH': return 'TCG (Yu-Gi-Oh!)';
-            case 'STAR_WARS': return 'TCG (Star Wars)';
             case 'LORCANA': return 'TCG (Lorcana)';
-            case 'FINAL_FF': return 'TCG (Final Fantasy)';
-            case 'ALTERED': return 'TCG (Altered)';
+            case 'RIFTBOUND': return 'TCG (Riftbound)';
             case 'DBS': return 'TCG (Dragon Ball)';
             case 'BOARD_GAME': return 'Jeu de société';
             case 'BYOG': return "J'apporte mon jeu";
@@ -1286,10 +1284,8 @@ function DashboardAdmin() {
                                                 <option>Magic: The Gathering</option>
                                                 <option>One Piece Card Game</option>
                                                 <option>Yu-Gi-Oh!</option>
-                                                <option>Star Wars: Unlimited</option>
                                                 <option>Disney Lorcana</option>
-                                                <option>Final Fantasy TCG</option>
-                                                <option>Altered</option>
+                                                <option>Riftbound TCG</option>
                                                 <option>Dragon Ball Super Card Game</option>
                                             </select>
                                         </div>
@@ -1541,10 +1537,8 @@ function DashboardAdmin() {
                                                     <option>Magic: The Gathering</option>
                                                     <option>One Piece Card Game</option>
                                                     <option>Yu-Gi-Oh!</option>
-                                                    <option>Star Wars: Unlimited</option>
                                                     <option>Disney Lorcana</option>
-                                                    <option>Final Fantasy TCG</option>
-                                                    <option>Altered</option>
+                                                    <option>Riftbound TCG</option>
                                                     <option>Dragon Ball Super Card Game</option>
                                                 </select>
                                             </div>
@@ -2344,10 +2338,8 @@ function DashboardAdmin() {
                                         <option>Pokémon TCG</option>
                                         <option>One Piece Card Game</option>
                                         <option>Yu-Gi-Oh!</option>
-                                        <option>Star Wars Unlimited</option>
                                         <option>Disney Lorcana</option>
-                                        <option>Final Fantasy TCG</option>
-                                        <option>Altered TCG</option>
+                                        <option>Riftbound TCG</option>
                                         <option>Dragon Ball Super Card Game</option>
                                     </select>
                                 </div>
@@ -2487,10 +2479,8 @@ function DashboardAdmin() {
                                         <option>Magic: The Gathering</option>
                                         <option>One Piece Card Game</option>
                                         <option>Yu-Gi-Oh!</option>
-                                        <option>Star Wars: Unlimited</option>
                                         <option>Disney Lorcana</option>
-                                        <option>Final Fantasy TCG</option>
-                                        <option>Altered</option>
+                                        <option>Riftbound TCG</option>
                                         <option>Dragon Ball Super Card Game</option>
                                     </select>
                                 </div>

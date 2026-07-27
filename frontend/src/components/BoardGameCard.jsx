@@ -20,19 +20,23 @@ function BoardGameCard({
     return (
         <div className="bg-[#140f2d]/90 backdrop-blur-md rounded-3xl border border-white/10 overflow-hidden flex flex-col justify-between hover:shadow-2xl hover:shadow-[#563D82]/30 hover:border-[#F4AF23]/50 transition-all duration-300 group hover:-translate-y-1">
             <div>
-                {/* Cover image */}
-                <div className="aspect-[4/3] w-full overflow-hidden bg-black/40 relative border-b border-white/10 flex items-center justify-center">
+                {/* Cover image (cliquable) */}
+                <div 
+                    onClick={onBookClick}
+                    className="aspect-[4/3] w-full overflow-hidden bg-black/40 relative border-b border-white/10 flex items-center justify-center cursor-pointer group/img"
+                    title={t ? t('boardgames_page.book_to_play') : 'Réserver pour y jouer'}
+                >
                     <img
                         src={game.image_url}
                         alt={game.name}
-                        className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-500"
+                        className="w-full h-full object-contain p-4 group-hover/img:scale-110 group-hover:scale-105 transition-transform duration-500"
                         onError={(e) => {
                             e.target.onerror = null;
                             e.target.src = 'https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?q=80&w=600';
                         }}
                     />
                     <span className="absolute top-4 left-4 inline-flex items-center py-1.5 px-3.5 rounded-full text-xs font-extrabold bg-[#563D82]/90 text-[#f0eaff] border-2 border-black shadow-lg backdrop-blur-md">
-                        {t('categories.' + game.category, { defaultValue: game.category })}
+                        {t ? t('categories.' + game.category, { defaultValue: game.category }) : game.category}
                     </span>
                     {(game.stock === 0) && (
                         <span className="absolute top-4 right-4 inline-flex items-center py-1.5 px-3 rounded-full text-xs font-extrabold bg-rose-600/95 text-white border-2 border-black shadow-lg backdrop-blur-md uppercase tracking-wider">

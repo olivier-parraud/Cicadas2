@@ -23,7 +23,7 @@ function About() {
         { name: 'Pokémon TCG', publisher: 'The Pokémon Company (Play!)', color: 'from-yellow-500/20 to-amber-600/20 border-yellow-500/40 text-yellow-300' },
         { name: 'Disney Lorcana', publisher: 'Ravensburger Hobby Store', color: 'from-cyan-500/20 to-blue-600/20 border-cyan-500/40 text-cyan-300' },
         { name: 'Yu-Gi-Oh!', publisher: 'Konami (Official Tournament Store)', color: 'from-red-500/20 to-rose-600/20 border-red-500/40 text-red-300' },
-        { name: 'Altered TCG', publisher: 'Equinox Official Partner', color: 'from-indigo-500/20 to-purple-600/20 border-indigo-500/40 text-indigo-300' },
+        { name: 'Riftbound TCG', publisher: 'Riot Games Official Store', color: 'from-violet-500/20 to-purple-600/20 border-purple-500/40 text-purple-300' },
     ];
 
     return (
@@ -140,11 +140,20 @@ function About() {
                     ))}
                 </div>
 
-                <div className="p-4 rounded-2xl bg-white/5 border border-white/10 text-xs text-slate-300 font-light flex items-center gap-3">
-                    <Sparkles className="w-5 h-5 text-[#F4AF23] shrink-0" />
-                    <span>
-                        Chaque participant aux tournois officiels reçoit les cartes promos officielles des éditeurs, accumule des points de classement de ligue et tente de décrocher les lots exclusifs réservés aux meilleurs duellistes.
-                    </span>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                    <div className="p-4 rounded-2xl bg-white/5 border border-white/10 text-xs text-slate-300 font-light flex items-center gap-3">
+                        <Sparkles className="w-5 h-5 text-[#F4AF23] shrink-0" />
+                        <span>
+                            Chaque participant aux tournois officiels reçoit les cartes promos officielles des éditeurs, accumule des points de classement de ligue et tente de décrocher les lots exclusifs réservés aux meilleurs duellistes.
+                        </span>
+                    </div>
+
+                    <div className="p-4 rounded-2xl bg-[#563D82]/30 border border-[#F4AF23]/30 text-xs text-slate-200 font-light flex items-center gap-3">
+                        <ShoppingBag className="w-5 h-5 text-[#F4AF23] shrink-0" />
+                        <span>
+                            <strong className="text-white font-extrabold">Vente Officielle de Boosters & Displays :</strong> Retrouvez en boutique physique les boosters, decks de démarrage, coffrets et displays officiels de nos partenaires (Magic, Pokémon, Lorcana, Yu-Gi-Oh!, Riftbound) !
+                        </span>
+                    </div>
                 </div>
             </section>
 
@@ -159,10 +168,10 @@ function About() {
                             Testez en session, repartez avec votre coup de cœur !
                         </h2>
                         <p className="text-slate-300 text-xs md:text-sm font-light leading-relaxed">
-                            Vous avez adoré un jeu de société découvert lors de votre session sur nos tables ? Bonne nouvelle : <strong className="text-white font-semibold">l'intégralité des jeux proposés à l'essai est disponible à l'achat immédiat dans notre boutique physique</strong> à la fin de votre partie !
+                            Vous avez adoré un jeu de société découvert lors de votre session sur nos tables ? Bonne nouvelle : <strong className="text-white font-semibold">l'intégralité des jeux proposés à l'essai ainsi que les boosters officiels TCG</strong> sont disponibles à l'achat immédiat dans notre boutique physique à la fin de votre partie !
                         </p>
                         <p className="text-amber-400/90 text-xs italic font-medium flex items-center gap-1.5">
-                            * Remarque : Les ventes de boîtes de jeux s'effectuent exclusivement en boutique physique sur place.
+                            * Remarque : Les ventes de boîtes de jeux, de boosters et d'accessoires de protection s'effectuent exclusivement en boutique physique sur place.
                         </p>
                     </div>
 

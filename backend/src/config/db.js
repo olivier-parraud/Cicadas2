@@ -50,6 +50,13 @@ export async function testConnection() {
             console.log("Colonne 'avatar_url' ajoutée à la table users");
         }
 
+        // Assurer que game_type accepte RIFTBOUND
+        try {
+            await connection.execute("ALTER TABLE reservations MODIFY COLUMN game_type VARCHAR(50) DEFAULT 'OTHER'");
+        } catch (e) {
+            // Ignorer si déjà fait
+        }
+
         // Créer l'administrateur par défaut s'il n'existe pas
         const [adminRows] = await connection.execute("SELECT * FROM users WHERE email = 'admin@cicados.fr'");
         if (adminRows.length === 0) {
@@ -168,15 +175,15 @@ export async function testConnection() {
             console.log("Colonne 'players_count' ajoutée à la table reservations");
         }
 
-        // Mettre à jour l'ENUM de la colonne game_type
+        // Mettre à jour la colonne game_type
         try {
             await connection.execute(`
                 ALTER TABLE reservations 
-                MODIFY COLUMN game_type ENUM('MTG', 'YUGIOH', 'POKEMON', 'LORCANA', 'ONE_PIECE', 'STAR_WARS', 'FINAL_FF', 'ALTERED', 'DBS', 'BOARD_GAME', 'BYOG', 'OTHER') DEFAULT 'OTHER'
+                MODIFY COLUMN game_type VARCHAR(50) DEFAULT 'OTHER'
             `);
-            console.log("Colonne 'game_type' de reservations mise à jour avec l'ENUM étendu");
+            console.log("Colonne 'game_type' de reservations mise à jour en VARCHAR(50)");
         } catch (err) {
-            console.error("Erreur lors de la mise à jour de game_type ENUM:", err);
+            console.error("Erreur lors de la mise à jour de game_type:", err);
         }
 
         // Créer la table des jeux de société si inexistante

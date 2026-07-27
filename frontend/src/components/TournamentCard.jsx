@@ -50,8 +50,7 @@ function TournamentCard({
         if (gameLower.includes('yu-gi-oh') || gameLower.includes('yugioh')) return 'bg-rose-500/10 text-rose-400 border-rose-500/20';
         if (gameLower.includes('star wars')) return 'bg-blue-500/10 text-blue-400 border-blue-500/20';
         if (gameLower.includes('lorcana')) return 'bg-purple-500/10 text-purple-400 border-purple-500/20';
-        if (gameLower.includes('final fantasy')) return 'bg-teal-500/10 text-teal-400 border-teal-500/20';
-        if (gameLower.includes('altered')) return 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20';
+        if (gameLower.includes('riftbound')) return 'bg-sky-500/10 text-sky-400 border-sky-500/20';
         if (gameLower.includes('dragon ball')) return 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20';
         return 'bg-slate-500/10 text-slate-400 border-slate-500/20';
     };
@@ -76,17 +75,11 @@ function TournamentCard({
         if (gameLower.includes('yu-gi-oh') || gameLower.includes('yugioh')) {
             return '/images/TCG/Yugioh.png'; // local yugioh image
         }
-        if (gameLower.includes('star wars')) {
-            return '/images/TCG/Star-Wars.jpeg'; // local star wars image
-        }
         if (gameLower.includes('lorcana')) {
             return '/images/TCG/Lorcana.webp'; // local lorcana image
         }
-        if (gameLower.includes('final fantasy')) {
-            return '/images/TCG/FF-logo.png'; // local FF image
-        }
-        if (gameLower.includes('altered')) {
-            return '/images/TCG/altered-logo.webp'; // local altered image
+        if (gameLower.includes('riftbound')) {
+            return '/images/TCG/Riftbound 2.webp'; // local riftbound image
         }
         if (gameLower.includes('dragon ball')) {
             return '/images/TCG/Dragon-ball.jpeg'; // local dragon ball image

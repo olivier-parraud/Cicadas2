@@ -29,10 +29,8 @@ function EventCard({
             case 'MTG': return 'Magic: The Gathering';
             case 'ONE_PIECE': return 'One Piece Card Game';
             case 'YUGIOH': return 'Yu-Gi-Oh!';
-            case 'STAR_WARS': return 'Star Wars: Unlimited';
             case 'LORCANA': return 'Disney Lorcana';
-            case 'FINAL_FF': return 'Final Fantasy TCG';
-            case 'ALTERED': return 'Altered';
+            case 'RIFTBOUND': return 'Riftbound TCG';
             case 'DBS': return 'Dragon Ball Super Card Game';
             case 'BOARD_GAME': return t('my_reservations_page.board_game_type', 'Jeux de société');
             case 'BYOG': return t('my_reservations_page.byog_type', 'BYOG');
@@ -51,10 +49,8 @@ function EventCard({
             case 'POKEMON': return '/images/TCG/Pokemon';
             case 'ONE_PIECE': return '/images/TCG/ONE-PIECE-LOGO.jpg';
             case 'YUGIOH': return '/images/TCG/Yugioh.png';
-            case 'STAR_WARS': return '/images/TCG/Star-Wars.jpeg';
             case 'LORCANA': return '/images/TCG/Lorcana.webp';
-            case 'FINAL_FF': return '/images/TCG/FF-logo.png';
-            case 'ALTERED': return '/images/TCG/altered-logo.webp';
+            case 'RIFTBOUND': return '/images/TCG/Riftbound 2.webp';
             case 'DBS': return '/images/TCG/Dragon-ball.jpeg';
             case 'BYOG': return 'https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?q=80&w=600';
             default: return '/images/TCG/Magic.jpg';

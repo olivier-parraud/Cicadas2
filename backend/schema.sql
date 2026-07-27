@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS reservations (
     room_id INT UNSIGNED NOT NULL,
     start_time DATETIME NOT NULL,
     end_time DATETIME NOT NULL,
-    game_type ENUM('MTG', 'YUGIOH', 'POKEMON', 'LORCANA', 'ONE_PIECE', 'STAR_WARS', 'FINAL_FF', 'ALTERED', 'DBS', 'BOARD_GAME', 'BYOG', 'OTHER') DEFAULT 'OTHER' COMMENT 'Type de jeu: Magic The Gathering, Jeu de société, etc.',
+    game_type VARCHAR(50) DEFAULT 'OTHER' COMMENT 'Type de jeu: MTG, RIFTBOUND, POKEMON, etc.',
     status ENUM('PENDING', 'CONFIRMED', 'CANCELLED') DEFAULT 'PENDING',
     specific_game VARCHAR(255) DEFAULT NULL,
     players_count INT UNSIGNED DEFAULT 2,

@@ -288,10 +288,8 @@ function MyReservations() {
             case 'MTG': return 'Magic: The Gathering';
             case 'ONE_PIECE': return 'One Piece Card Game';
             case 'YUGIOH': return 'Yu-Gi-Oh!';
-            case 'STAR_WARS': return 'Star Wars: Unlimited';
             case 'LORCANA': return 'Disney Lorcana';
-            case 'FINAL_FF': return 'Final Fantasy TCG';
-            case 'ALTERED': return 'Altered';
+            case 'RIFTBOUND': return 'Riftbound TCG';
             case 'DBS': return 'Dragon Ball Super Card Game';
             case 'BOARD_GAME': return t('my_reservations_page.board_game_type');
             case 'BYOG': return t('my_reservations_page.byog_type');
@@ -320,14 +318,10 @@ function MyReservations() {
                 return '/images/TCG/ONE-PIECE-LOGO.jpg';
             case 'YUGIOH':
                 return '/images/TCG/Yugioh.png';
-            case 'STAR_WARS':
-                return '/images/TCG/Star-Wars.jpeg';
             case 'LORCANA':
                 return '/images/TCG/Lorcana.webp';
-            case 'FINAL_FF':
-                return '/images/TCG/FF-logo.png';
-            case 'ALTERED':
-                return '/images/TCG/altered-logo.webp';
+            case 'RIFTBOUND':
+                return '/images/TCG/Riftbound 2.webp';
             case 'DBS':
                 return '/images/TCG/Dragon-ball.jpeg';
             case 'BYOG':
@@ -615,10 +609,8 @@ function MyReservations() {
                                     <option value="MTG">Magic: The Gathering</option>
                                     <option value="ONE_PIECE">One Piece Card Game</option>
                                     <option value="YUGIOH">Yu-Gi-Oh!</option>
-                                    <option value="STAR_WARS">Star Wars: Unlimited</option>
                                     <option value="LORCANA">Disney Lorcana</option>
-                                    <option value="FINAL_FF">Final Fantasy TCG</option>
-                                    <option value="ALTERED">Altered</option>
+                                    <option value="RIFTBOUND">Riftbound TCG</option>
                                     <option value="DBS">Dragon Ball Super Card Game</option>
                                     <option value="BOARD_GAME">{t('my_reservations_page.board_game_type')}</option>
                                     <option value="BYOG">{t('reservations_page.byog_label')}</option>

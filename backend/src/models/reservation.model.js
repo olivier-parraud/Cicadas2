@@ -66,8 +66,7 @@ const Reservation = {
             }
         }
 
-        // 5. Normaliser le type de jeu 
-        const allowedTypes = ['MTG', 'YUGIOH', 'POKEMON', 'LORCANA', 'ONE_PIECE', 'STAR_WARS', 'FINAL_FF', 'ALTERED', 'DBS', 'BOARD_GAME', 'BYOG', 'OTHER'];
+        const allowedTypes = ['MTG', 'YUGIOH', 'POKEMON', 'LORCANA', 'ONE_PIECE', 'RIFTBOUND', 'DBS', 'BOARD_GAME', 'BYOG', 'OTHER'];
         let safeGameType = allowedTypes.includes(gameType) ? gameType : 'OTHER';
 
         const sql = `
@@ -154,8 +153,7 @@ const Reservation = {
             }
         }
 
-        // 4. Normaliser le type de jeu 
-        const allowedTypes = ['MTG', 'YUGIOH', 'POKEMON', 'LORCANA', 'ONE_PIECE', 'STAR_WARS', 'FINAL_FF', 'ALTERED', 'DBS', 'BOARD_GAME', 'BYOG', 'OTHER'];
+        const allowedTypes = ['MTG', 'YUGIOH', 'POKEMON', 'LORCANA', 'ONE_PIECE', 'RIFTBOUND', 'DBS', 'BOARD_GAME', 'BYOG', 'OTHER'];
         let safeGameType = allowedTypes.includes(gameType) ? gameType : 'OTHER';
 
         const updateSql = `

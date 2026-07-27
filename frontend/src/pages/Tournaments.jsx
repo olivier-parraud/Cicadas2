@@ -159,10 +159,8 @@ function Tournaments() {
         if (filter === 'pokemon') return gameLower.includes('pokémon') || gameLower.includes('pokemon');
         if (filter === 'one_piece') return gameLower.includes('one piece');
         if (filter === 'yugioh') return gameLower.includes('yu-gi-oh') || gameLower.includes('yugioh');
-        if (filter === 'star_wars') return gameLower.includes('star wars');
         if (filter === 'lorcana') return gameLower.includes('lorcana');
-        if (filter === 'final_ff') return gameLower.includes('final fantasy');
-        if (filter === 'altered') return gameLower.includes('altered');
+        if (filter === 'riftbound') return gameLower.includes('riftbound');
         if (filter === 'dbs') return gameLower.includes('dragon ball');
         return false;
     });
@@ -203,10 +201,8 @@ function Tournaments() {
                         { id: 'mtg', name: 'Magic: The Gathering' },
                         { id: 'one_piece', name: 'One Piece' },
                         { id: 'yugioh', name: 'Yu-Gi-Oh!' },
-                        { id: 'star_wars', name: 'Star Wars' },
                         { id: 'lorcana', name: 'Lorcana' },
-                        { id: 'final_ff', name: 'Final Fantasy' },
-                        { id: 'altered', name: 'Altered' },
+                        { id: 'riftbound', name: 'Riftbound' },
                         { id: 'dbs', name: 'Dragon Ball' }
                     ].map(tcg => (
                         <button
