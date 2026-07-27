@@ -53,6 +53,12 @@ async function seedData() {
 
         // ─── 3. Insertion des Utilisateurs ───
         const hashedPassword = await bcrypt.hash('password123', 10);
+        const adminHashedPassword = await bcrypt.hash('admin123', 10);
+        await conn.execute(
+            "INSERT INTO users (email, password, firstname, lastname, pseudo, role) VALUES ('admin@cicados.fr', ?, 'Admin', 'Cicados', 'Admin', 'ADMIN')",
+            [adminHashedPassword]
+        );
+
         const testUsers = [
             ['testuser1@cicados.fr', hashedPassword, 'Pierre', 'Martin', 'Pierrot'],
             ['testuser2@cicados.fr', hashedPassword, 'Sophie', 'Dubois', 'Soph'],

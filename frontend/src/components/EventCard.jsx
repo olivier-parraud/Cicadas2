@@ -46,7 +46,7 @@ function EventCard({
         switch (type) {
             case 'MTG': return '/images/TCG/Magic.jpg';
             case 'POKEMON': return '/images/TCG/Pokemon';
-            case 'ONE_PIECE': return '/images/TCG/ONE-PIECE-LOGO.jpg';
+            case 'ONE_PIECE': return '/images/TCG/ONE PIECE LOGO2.avif';
             case 'YUGIOH': return '/images/TCG/Yugioh.png';
             case 'LORCANA': return '/images/TCG/Lorcana.webp';
             case 'RIFTBOUND': return '/images/TCG/Riftbound 2.webp';
@@ -207,7 +207,7 @@ function EventCard({
         const g = game ? game.toLowerCase() : '';
         if (g.includes('magic')) return '/images/TCG/Magic.jpg';
         if (g.includes('pokémon') || g.includes('pokemon')) return '/images/TCG/Pokemon';
-        if (g.includes('one piece')) return '/images/TCG/ONE-PIECE-LOGO.jpg';
+        if (g.includes('one piece')) return '/images/TCG/ONE PIECE LOGO2.avif';
         if (g.includes('yu-gi-oh') || g.includes('yugioh')) return '/images/TCG/Yugioh.png';
         if (g.includes('star wars')) return '/images/TCG/Star-Wars.jpeg';
         if (g.includes('lorcana')) return '/images/TCG/Lorcana.webp';

@@ -69,7 +69,7 @@ function TournamentCard({
             return '/images/TCG/Pokemon'; // local pokémon cards image
         }
         if (gameLower.includes('one piece')) {
-            return '/images/TCG/ONE-PIECE-LOGO.jpg'; // local one piece cards image
+            return '/images/TCG/ONE PIECE LOGO2.avif'; // local one piece cards image
         }
         if (gameLower.includes('yu-gi-oh') || gameLower.includes('yugioh')) {
             return '/images/TCG/Yugioh.png'; // local yugioh image

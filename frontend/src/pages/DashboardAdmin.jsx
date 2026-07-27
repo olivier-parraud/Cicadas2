@@ -985,7 +985,7 @@ function DashboardAdmin() {
                 <div className="absolute top-1/4 left-1/10 w-96 h-96 bg-[#563D82]/10 rounded-full blur-3xl pointer-events-none"></div>
                 <div className="absolute bottom-1/4 right-1/10 w-96 h-96 bg-[#F4AF23]/5 rounded-full blur-3xl pointer-events-none"></div>
 
-                <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
+                <div className="max-w-7xl mx-auto flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
                     <div>
                         <span className="text-[#F4AF23] font-bold text-xs uppercase tracking-wider">Console d'administration</span>
                         <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight bg-clip-text bg-gradient-to-r from-white via-[#FFE082] to-[#F4AF23] leading-tight mt-1">
@@ -993,63 +993,63 @@ function DashboardAdmin() {
                         </h1>
                     </div>
                     {/* Navigation tabs */}
-                    <div className="flex flex-wrap md:flex-nowrap gap-2.5 bg-slate-900/95 p-2 rounded-2xl border border-slate-800/85 w-full md:w-auto shadow-inner">
+                    <div className="admin-tab-bar flex flex-wrap sm:flex-nowrap items-center gap-1.5 p-1.5 rounded-2xl w-full lg:w-auto overflow-x-auto">
                         <button
                             onClick={() => { setActiveTab('reservations'); setMessage({ type: '', text: '' }); }}
-                            className={`py-3 px-6 md:px-8 rounded-xl text-sm font-extrabold text-center flex-1 md:flex-none tracking-wide transition duration-200 cursor-pointer ${
+                            className={`py-2.5 px-4 md:px-5 rounded-xl text-xs md:text-sm font-extrabold text-center flex-1 sm:flex-none whitespace-nowrap tracking-wide transition duration-200 cursor-pointer ${
                                 activeTab === 'reservations' 
                                 ? 'bg-[#563D82] text-[#F4AF23] border border-[#F4AF23]/30 shadow-lg shadow-[#563D82]/40' 
-                                : 'text-slate-400 hover:text-[#F4AF23] hover:bg-slate-800/30'
+                                : 'admin-tab-btn-inactive'
                             }`}
                         >
                             Réservations
                         </button>
                         <button
                             onClick={() => { setActiveTab('tournaments'); setMessage({ type: '', text: '' }); }}
-                            className={`py-3 px-6 md:px-8 rounded-xl text-sm font-extrabold text-center flex-1 md:flex-none tracking-wide transition duration-200 cursor-pointer ${
+                            className={`py-2.5 px-4 md:px-5 rounded-xl text-xs md:text-sm font-extrabold text-center flex-1 sm:flex-none whitespace-nowrap tracking-wide transition duration-200 cursor-pointer ${
                                 activeTab === 'tournaments' 
                                 ? 'bg-[#563D82] text-[#F4AF23] border border-[#F4AF23]/30 shadow-lg shadow-[#563D82]/40' 
-                                : 'text-slate-400 hover:text-[#F4AF23] hover:bg-slate-800/30'
+                                : 'admin-tab-btn-inactive'
                             }`}
                         >
                             Tournois
                         </button>
                         <button
                             onClick={() => { setActiveTab('events'); setMessage({ type: '', text: '' }); }}
-                            className={`py-3 px-6 md:px-8 rounded-xl text-sm font-extrabold text-center flex-1 md:flex-none tracking-wide transition duration-200 cursor-pointer ${
+                            className={`py-2.5 px-4 md:px-5 rounded-xl text-xs md:text-sm font-extrabold text-center flex-1 sm:flex-none whitespace-nowrap tracking-wide transition duration-200 cursor-pointer ${
                                 activeTab === 'events' 
                                 ? 'bg-[#563D82] text-[#F4AF23] border border-[#F4AF23]/30 shadow-lg shadow-[#563D82]/40' 
-                                : 'text-slate-400 hover:text-[#F4AF23] hover:bg-slate-800/30'
+                                : 'admin-tab-btn-inactive'
                             }`}
                         >
                             Événements
                         </button>
                         <button
                             onClick={() => { setActiveTab('boardgames'); setMessage({ type: '', text: '' }); }}
-                            className={`py-3 px-6 md:px-8 rounded-xl text-sm font-extrabold text-center flex-1 md:flex-none tracking-wide transition duration-200 cursor-pointer ${
+                            className={`py-2.5 px-4 md:px-5 rounded-xl text-xs md:text-sm font-extrabold text-center flex-1 sm:flex-none whitespace-nowrap tracking-wide transition duration-200 cursor-pointer ${
                                 activeTab === 'boardgames' 
                                 ? 'bg-[#563D82] text-[#F4AF23] border border-[#F4AF23]/30 shadow-lg shadow-[#563D82]/40' 
-                                : 'text-slate-400 hover:text-[#F4AF23] hover:bg-slate-800/30'
+                                : 'admin-tab-btn-inactive'
                             }`}
                         >
                             Jeux de société
                         </button>
                         <button
                             onClick={() => { setActiveTab('users'); setMessage({ type: '', text: '' }); }}
-                            className={`py-3 px-6 md:px-8 rounded-xl text-sm font-extrabold text-center flex-1 md:flex-none tracking-wide transition duration-200 cursor-pointer ${
+                            className={`py-2.5 px-4 md:px-5 rounded-xl text-xs md:text-sm font-extrabold text-center flex-1 sm:flex-none whitespace-nowrap tracking-wide transition duration-200 cursor-pointer ${
                                 activeTab === 'users' 
                                 ? 'bg-[#563D82] text-[#F4AF23] border border-[#F4AF23]/30 shadow-lg shadow-[#563D82]/40' 
-                                : 'text-slate-400 hover:text-[#F4AF23] hover:bg-slate-800/30'
+                                : 'admin-tab-btn-inactive'
                             }`}
                         >
                             Utilisateurs
                         </button>
                         <button
                             onClick={() => { setActiveTab('messages'); setMessage({ type: '', text: '' }); }}
-                            className={`py-3 px-6 md:px-8 rounded-xl text-sm font-extrabold text-center flex-1 md:flex-none tracking-wide transition duration-200 cursor-pointer relative ${
+                            className={`py-2.5 px-4 md:px-5 rounded-xl text-xs md:text-sm font-extrabold text-center flex-1 sm:flex-none whitespace-nowrap tracking-wide transition duration-200 cursor-pointer relative ${
                                 activeTab === 'messages' 
                                 ? 'bg-[#563D82] text-[#F4AF23] border border-[#F4AF23]/30 shadow-lg shadow-[#563D82]/40' 
-                                : 'text-slate-400 hover:text-[#F4AF23] hover:bg-slate-800/30'
+                                : 'admin-tab-btn-inactive'
                             }`}
                         >
                             Messages

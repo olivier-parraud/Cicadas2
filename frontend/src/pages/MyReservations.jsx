@@ -314,7 +314,7 @@ function MyReservations() {
             case 'POKEMON':
                 return '/images/TCG/Pokemon';
             case 'ONE_PIECE':
-                return '/images/TCG/ONE-PIECE-LOGO.jpg';
+                return '/images/TCG/ONE PIECE LOGO2.avif';
             case 'YUGIOH':
                 return '/images/TCG/Yugioh.png';
             case 'LORCANA':
