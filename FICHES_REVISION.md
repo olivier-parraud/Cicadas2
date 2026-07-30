@@ -74,6 +74,11 @@
 * **Problématique résolue** : Lors du clic sur le bouton "Liste des inscrits" d'un tournoi, l'événement remontait jusqu'à la carte parente et ouvrait simultanément la fiche Pokémon.
 * **Solution technique** : Utilisation de `e.stopPropagation()` sur le bouton de la modale pour stopper la propagation de l'événement dans l'arbre DOM.
 
+### ⚡ 6. Mise à Jour Optimiste & Uniformisation des En-têtes Lumineux
+* **Rendu Sans Clignotement (`DashboardAdmin.jsx`)** : Les actions administrateur (annulation/suppression de réservation) mettent à jour l'état local React immédiatement de façon optimiste. Le serveur est synchronisé de façon non bloquante via `fetchAdminData(false)` sans déclencher d'écran blanc ou de spinner de chargement (`loading = true`).
+* **Design System & Encarts Lumineux Délimités** : Toutes les pages (`Home`, `Events`, `Tournaments`, `BoardGames`, `Reservations`, `MyReservations`) disposent d'un en-tête unifié avec un encart délimité aux coins arrondis `rounded-3xl`, bordure dorée `border-[#F4AF23]/30`, ombre portée `shadow-2xl` et halos lumineux ambrés et violets (`bg-[#563D82]/25` et `bg-[#F4AF23]/15` en `blur-3xl`).
+* **Lisibilité & Polices Minimales (`index.css`)** : Rehaussement global des tailles de polices minimales (`.text-xs` à 13.6px, polices 10-11px à 12.8px) et mise en valeur des dates des cartes en jaune ambré `#F4AF23`.
+
 ---
 
 ## FICHE 3 : Backend (Node.js, Express, MVC & APIs Tierces)
@@ -220,3 +225,6 @@ Réponse JSON ◀── Controller ◀── Model (message.model.js) ◀── 
 
 #### Q5 : "Si l'API externe BoardGameGeek tombe en panne, que se passe-t-il ?"
 > **Réponse** : "J'ai mis en place un mécanisme de tolérance aux pannes (Failover). Si l'API BGG ou la base de données ne répond pas, mon modèle bascule automatiquement sur un fichier de secours local JSON (`boardgames_backup.json`), garantissant l'affichage continu du catalogue."
+
+#### Q6 : "Comment évitez-vous les clignotements d'écran lors des actions dans l'administration ?"
+> **Réponse** : "J'utilise le pattern de mise à jour optimiste de l'état React. Lors d'une suppression ou d'un changement de statut, l'état React local du composant `DashboardAdmin.jsx` est immédiatement modifié sans attendre le retour réseau. La resynchronisation avec la base MySQL s'exécute ensuite en arrière-plan de façon non bloquante via `fetchAdminData(false)` sans déclencher le spinner de chargement global, garantissant un rendu fluide à 60 FPS sans aucun clignotement."

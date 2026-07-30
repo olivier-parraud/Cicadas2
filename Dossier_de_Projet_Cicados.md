@@ -103,12 +103,23 @@ Initialement pensé comme un outil de réservation de tables et d'inscriptions a
   * Affichage d'un badge dynamique sur les cartes du catalogue (`BoardGameCard.jsx`) : *"En stock: X"* ou *"Rupture de stock"*.
   * Contrôle rapide du stock sur le Dashboard Admin grâce à des boutons d'incrémentation/décrémentation instantanés (`+ / -`) via des requêtes AJAX `PATCH /api/admin/boardgames/:id/stock`.
 
-#### 4. Isolation des Modales et Confort UI/UX (Nouveauté - Fix Overlay)
-* **Problématique** : Lors du clic sur la liste des inscrits d'un événement (ex: une DRAFT Pokémon ou un tournoi), la fiche latérale du jeu Pokémon s'ouvrait simultanément sur la droite, masquant partiellement l'écran et floutant toute la page sans que le formulaire ne soit utilisable.
-* **Besoin** : Rendre la consultation des participants complètement indépendante des tiroirs d'informations de jeux.
-* **Solution** : Découplage strict des états React (`openParticipantsId` vs `selectedGameDetail`) avec gestion d'arrêt de propagation d'événements (`e.stopPropagation()`), garantissant que la modale des inscrits s'affiche proprement au centre sans déclencher le volet latéral.
+#### 4. Isolation des Modales et Confort UI/UX (Nouveauté - Fix Overlay & Absence de Clignotement)
+* **Problématique** : Lors du clic sur la liste des inscrits d'un événement, la fiche latérale du jeu Pokémon s'ouvrait simultanément sur la droite. De plus, les actions sur le Dashboard Admin (annulation/suppression de réservation) provoquaient un clignotement blanc d'écran de demi-seconde à chaque rafraîchissement.
+* **Besoin** : Rendre la consultation des participants complètement indépendante et éliminer les rechargements d'écran gênants pour l'administrateur.
+* **Solution** : 
+  * Découplage strict des états React (`openParticipantsId` vs `selectedGameDetail`) avec gestion d'arrêt de propagation d'événements (`e.stopPropagation()`).
+  * Mises à jour optimistes de l'état local React dans `DashboardAdmin.jsx` couplées à un appel `fetchAdminData(false)` non bloquant qui ne déclenche plus l'indicateur de chargement global (`loading = true`), offrant des actions 100% fluides et instantanées.
 
-#### 5. Importation Automatisée de Ludothèque de Masse (Nouveauté)
+#### 5. Notification Pastille Admin & Accessibilité Typographique (Nouveauté)
+* **Problématique** : L'administrateur devait ouvrir l'onglet des messages pour vérifier les nouvelles demandes, et certaines petites polices du site manquaient de lisibilité sur mobile.
+* **Besoin** : Signaler instantanément les messages non lus dans la barre de navigation sans animation perturbatrice et améliorer la lisibilité globale.
+* **Solution** :
+  * Pastille rouge fixe (`adminUnreadCount`, sans rebond `animate-bounce`) sur le bouton `Admin` de la Navbar desktop et mobile, synchronisée via l'événement `messages_updated`.
+  * Rehaussement des tailles de polices minimales dans `index.css` (`.text-xs` de 12px à 13.6px, et polices 10-11px rehaussées à 12.8px).
+  * Mise en valeur des dates et heures des cartes de tournois et d'événements en jaune ambré éclatant (`#F4AF23`).
+  * Harmonisation des en-têtes de toutes les pages (`Home`, `Events`, `Tournaments`, `BoardGames`, `Reservations`, `MyReservations`) avec des encarts délimités aux coins arrondis `rounded-3xl`, bordure dorée `border-[#F4AF23]/30` et halos lumineux ambiants en verre dépoli (*Glassmorphism*).
+
+#### 6. Importation Automatisée de Ludothèque de Masse (Nouveauté)
 * **Problématique** : Saisir manuellement les caractéristiques techniques (joueurs, durée, catégorie, visuels) de 100 jeux populaires représentait des dizaines d'heures de travail de saisie pour le gérant.
 * **Besoin** : Alimenter le catalogue en un clic à partir de données de référence certifiées.
 * **Solution** : Un module d'importation BGG Hot (`POST /api/admin/boardgames/import-hot`) qui interroge l'API XML2 de BoardGameGeek, convertit les flux XML en JSON via `fast-xml-parser` et insère automatiquement les jeux les plus populaires en base de données.
@@ -472,6 +483,20 @@ En cas de coupure de la base de données SQL, le système bascule automatiquemen
 ### 7.5 Gestion fine de l'état React et Isolation des Modales (Fix overlay Pokémon)
 * **Problématique** : Cliquer sur la liste des joueurs d'une DRAFT ouvrait intempestivement le panneau d'informations Pokémon.
 * **Solution** : Séparation stricte de l'état d'ouverture des participants (`openParticipantsId`) et d'affichage des détails du jeu (`selectedGameDetail`) avec annulation de la propagation des clics (`e.stopPropagation()`).
+
+---
+
+### 7.6 Rendu Réactif sans Clignotement & Design System Harmonisé (Nouveauté UI/UX)
+* **1. Mise à Jour Optimiste sans Flash Réseau dans le Dashboard Admin** :
+  * Pour supprimer le micro-rechargement gênant de demi-seconde (écran blanc + spinner) lors de l'annulation ou de la suppression d'une réservation dans `DashboardAdmin.jsx`, les données sont d'abord filtrées/mises à jour de manière **optimiste** dans l'état React local (`setReservations(prev => ...)`).
+  * La fonction de synchronisation serveur `fetchAdminData(false)` s'exécute ensuite de façon totalement silencieuse en arrière-plan sans basculer la variable `loading` à `true`, garantissant une réactivité utilisateur instantanée à 60 FPS.
+* **2. Système de Notifications Fixe dans la Navbar (`Header.jsx`)** :
+  * Un badge rouge statique (sans animation perturbatrice `animate-bounce`) est affiché sur le lien `Admin` du Header lorsque `adminUnreadCount > 0`.
+  * La mise à jour est pilotée en temps réel par l'écouteur d'événement `messages_updated`.
+* **3. Harmonisation Visuelle "Glassmorphism & Encarts Lumineux"** :
+  * Toutes les pages (`Home`, `Events`, `Tournaments`, `BoardGames`, `Reservations`, `MyReservations`) partagent désormais un en-tête unifié avec des encarts délimités aux coins arrondis `rounded-3xl`, bordure dorée `border-[#F4AF23]/30`, ombre portée `shadow-2xl` et halos lumineux ambiants (`bg-[#563D82]/25` et `bg-[#F4AF23]/15` en `blur-3xl`).
+  * Les dates de tournois et d'événements sont mises en valeur en jaune ambré `#F4AF23`.
+  * Les polices minimales (`.text-xs`, `.text-[10px]`, `.text-2xs`) ont été rehaussées de +10% à +15% pour une lisibilité optimale sur écran mobile.
 
 ---
 
