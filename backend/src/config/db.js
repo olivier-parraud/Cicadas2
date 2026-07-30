@@ -61,12 +61,12 @@ export async function testConnection() {
         const [adminRows] = await connection.execute("SELECT * FROM users WHERE email = 'admin@cicados.fr'");
         if (adminRows.length === 0) {
             const bcrypt = await import('bcrypt');
-            const hashedPassword = await bcrypt.default.hash('admincicados', 10);
+            const hashedPassword = await bcrypt.default.hash('Admin123!', 10);
             await connection.execute(
                 "INSERT INTO users (email, password, firstname, lastname, role) VALUES ('admin@cicados.fr', ?, 'Admin', 'Cicados', 'ADMIN')",
                 [hashedPassword]
             );
-            console.log("Administrateur par défaut créé : admin@cicados.fr / admincicados");
+            console.log("Administrateur par défaut créé : admin@cicados.fr / Admin123!");
         }
 
         // Créer la table des tournois si inexistante

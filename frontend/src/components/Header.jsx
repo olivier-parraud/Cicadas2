@@ -18,6 +18,7 @@ function Header() {
     const [userProfile, setUserProfile] = useState(null);
 
     const [unreadMessagesCount, setUnreadMessagesCount] = useState(0);
+    const [adminUnreadCount, setAdminUnreadCount] = useState(0);
 
     // On vérifie si l'utilisateur est connecté (présence du token)
     const isAuthenticated = !!localStorage.getItem('token');
@@ -27,6 +28,7 @@ function Header() {
         if (!isAuthenticated) {
             setUserProfile(null);
             setUnreadMessagesCount(0);
+            setAdminUnreadCount(0);
             return;
         }
 
@@ -54,6 +56,7 @@ function Header() {
                 if (res.ok) {
                     const data = await res.json();
                     setUnreadMessagesCount(data.unreadCount || 0);
+                    setAdminUnreadCount(data.adminUnreadCount || 0);
                 }
             } catch (err) {
                 console.error("Erreur unread messages count :", err);
@@ -120,7 +123,14 @@ function Header() {
                     <Link to="/tournaments" className={`px-3.5 py-1.5 rounded-xl text-sm transition-all duration-300 ${isActive('/tournaments') ? 'text-[#F4AF23] bg-[#563D82]/40 border border-[#F4AF23]/40 shadow-sm shadow-[#F4AF23]/20 font-extrabold' : 'text-slate-200 border border-transparent hover:text-[#F4AF23] hover:bg-[#563D82]/25 hover:border-[#F4AF23]/30 font-medium'}`}>{t('nav.tournaments')}</Link>
                     <Link to="/events" className={`px-3.5 py-1.5 rounded-xl text-sm transition-all duration-300 ${isActive('/events') ? 'text-[#F4AF23] bg-[#563D82]/40 border border-[#F4AF23]/40 shadow-sm shadow-[#F4AF23]/20 font-extrabold' : 'text-slate-200 border border-transparent hover:text-[#F4AF23] hover:bg-[#563D82]/25 hover:border-[#F4AF23]/30 font-medium'}`}>{t('nav.events')}</Link>
                     {isAuthenticated && isAdmin && (
-                        <Link to="/admin" className={`px-3.5 py-1.5 rounded-xl text-sm transition-all duration-300 ${isActive('/admin') ? 'text-[#F4AF23] bg-[#563D82]/40 border border-[#F4AF23]/40 shadow-sm shadow-[#F4AF23]/20 font-extrabold' : 'text-slate-200 border border-transparent hover:text-[#F4AF23] hover:bg-[#563D82]/25 hover:border-[#F4AF23]/30 font-medium'}`}>{t('nav.admin')}</Link>
+                        <Link to="/admin" className={`relative px-3.5 py-1.5 rounded-xl text-sm transition-all duration-300 inline-flex items-center gap-1.5 ${isActive('/admin') ? 'text-[#F4AF23] bg-[#563D82]/40 border border-[#F4AF23]/40 shadow-sm shadow-[#F4AF23]/20 font-extrabold' : 'text-slate-200 border border-transparent hover:text-[#F4AF23] hover:bg-[#563D82]/25 hover:border-[#F4AF23]/30 font-medium'}`}>
+                            <span>{t('nav.admin')}</span>
+                            {adminUnreadCount > 0 && (
+                                <span className="w-5 h-5 bg-rose-500 text-white font-black text-[10px] rounded-full flex items-center justify-center border-2 border-black shadow-md shrink-0">
+                                    {adminUnreadCount}
+                                </span>
+                            )}
+                        </Link>
                     )}
                 </nav>
 
@@ -146,7 +156,7 @@ function Header() {
                                 </div>
 
                                 {unreadMessagesCount > 0 && (
-                                    <span className="absolute -top-1 -right-1 w-5 h-5 bg-rose-500 text-white font-black text-[10px] rounded-full flex items-center justify-center border-2 border-black shadow-md animate-bounce z-10">
+                                    <span className="absolute -top-1 -right-1 w-5 h-5 bg-rose-500 text-white font-black text-[10px] rounded-full flex items-center justify-center border-2 border-black shadow-md z-10">
                                         {unreadMessagesCount}
                                     </span>
                                 )}
@@ -205,7 +215,14 @@ function Header() {
                     <Link to="/tournaments" className={`px-4 py-2.5 rounded-xl text-sm transition-all duration-300 ${isActive('/tournaments') ? 'text-[#F4AF23] bg-[#563D82]/40 border border-[#F4AF23]/40 font-extrabold' : 'text-slate-200 hover:text-[#F4AF23] hover:bg-[#563D82]/25 font-medium'}`} onClick={closeMenu}>{t('nav.tournaments')}</Link>
                     <Link to="/events" className={`px-4 py-2.5 rounded-xl text-sm transition-all duration-300 ${isActive('/events') ? 'text-[#F4AF23] bg-[#563D82]/40 border border-[#F4AF23]/40 font-extrabold' : 'text-slate-200 hover:text-[#F4AF23] hover:bg-[#563D82]/25 font-medium'}`} onClick={closeMenu}>{t('nav.events')}</Link>
                     {isAuthenticated && isAdmin && (
-                        <Link to="/admin" className={`px-4 py-2.5 rounded-xl text-sm transition-all duration-300 ${isActive('/admin') ? 'text-[#F4AF23] bg-[#563D82]/40 border border-[#F4AF23]/40 font-extrabold' : 'text-slate-200 hover:text-[#F4AF23] hover:bg-[#563D82]/25 font-medium'}`} onClick={closeMenu}>{t('nav.admin')}</Link>
+                        <Link to="/admin" className={`relative flex items-center justify-between px-4 py-2.5 rounded-xl text-sm transition-all duration-300 ${isActive('/admin') ? 'text-[#F4AF23] bg-[#563D82]/40 border border-[#F4AF23]/40 font-extrabold' : 'text-slate-200 hover:text-[#F4AF23] hover:bg-[#563D82]/25 font-medium'}`} onClick={closeMenu}>
+                            <span>{t('nav.admin')}</span>
+                            {adminUnreadCount > 0 && (
+                                <span className="w-5 h-5 bg-rose-500 text-white font-black text-[10px] rounded-full flex items-center justify-center border-2 border-black shadow-md shrink-0">
+                                    {adminUnreadCount}
+                                </span>
+                            )}
+                        </Link>
                     )}
 
                     <div className="flex flex-col gap-4 pt-4">
@@ -228,7 +245,7 @@ function Header() {
                                         )}
                                     </div>
                                     {unreadMessagesCount > 0 && (
-                                        <span className="absolute -top-1 -right-1 w-5 h-5 bg-rose-500 text-white font-black text-[10px] rounded-full flex items-center justify-center border-2 border-black shadow-md animate-bounce z-10">
+                                        <span className="absolute -top-1 -right-1 w-5 h-5 bg-rose-500 text-white font-black text-[10px] rounded-full flex items-center justify-center border-2 border-black shadow-md z-10">
                                             {unreadMessagesCount}
                                         </span>
                                     )}

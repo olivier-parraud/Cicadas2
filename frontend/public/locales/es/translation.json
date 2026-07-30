@@ -1,0 +1,333 @@
+{
+  "nav": {
+    "home": "Inicio",
+    "about": "Acerca de",
+    "book_table": "Reservar una mesa",
+    "my_reservations": "Mis reservas",
+    "profile": "Perfil",
+    "boardgames": "Juegos de mesa",
+    "tournaments": "Torneos",
+    "events": "Eventos",
+    "admin": "Admin",
+    "logout": "Cerrar sesión",
+    "login": "Iniciar sesión",
+    "register": "Inscripción",
+    "language": "Idioma"
+  },
+  "home": {
+    "title": "Bienvenido al Starter Kit",
+    "subtitle": "Plantilla moderna de React + Node.js + MySQL",
+    "cta_start": "Empezar",
+    "cta_login": "Iniciar sesión",
+    "cta_dashboard": "Acceder al panel de control"
+  },
+  "login": {
+    "title": "Iniciar sesión",
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "submit": "Iniciar sesión",
+    "loading": "Iniciando sesión...",
+    "no_account": "¿No tienes cuenta?",
+    "register_link": "Registrarse"
+  },
+  "register": {
+    "title": "Crear una cuenta",
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "confirm_password": "Confirmar la contraseña",
+    "submit": "Registrarse",
+    "loading": "Inscripción...",
+    "already_account": "¿Ya tienes una cuenta?",
+    "login_link": "Iniciar sesión"
+  },
+  "dashboard": {
+    "title": "¡Bienvenido, {{name}}!",
+    "email_label": "Correo electrónico:"
+  },
+  "email": {
+    "title": "Enviar un correo electrónico",
+    "subtitle": "Prueba a enviar un correo electrónico transaccional a través de Brevo desde el kit de inicio.",
+    "to": "Destinatario",
+    "name": "Nombre (opcional)",
+    "subject": "Tema",
+    "message": "Mensaje",
+    "submit": "Enviar el correo electrónico",
+    "sending": "Envío en curso...",
+    "success": "El correo electrónico se ha enviado correctamente",
+    "error": "No se ha podido enviar el correo electrónico"
+  },
+  "errors": {
+    "passwords_mismatch": "Las contraseñas no coinciden",
+    "password_too_short": "La contraseña debe tener al menos 6 caracteres",
+    "login_error": "Error de conexión",
+    "register_error": "Error al registrarse"
+  },
+  "footer": {
+    "copyright": "© {{year}} Cigarras"
+  },
+  "home_page": {
+    "slides": {
+      "slide_1": {
+        "title": "Cicados Play Space",
+        "desc": "Zona principal con mesas preparadas para tus duelos"
+      },
+      "slide_2": {
+        "title": "La planta baja",
+        "desc": "Tienda, bar y estanterías de juegos"
+      },
+      "slide_3": {
+        "title": "El Rincón del Bar",
+        "desc": "Selección de bebidas para tus sesiones de juego"
+      },
+      "slide_4": {
+        "title": "La Mezzanine Gaming",
+        "desc": "Sala de estar en la planta superior con pufs y sillas cómodas"
+      }
+    },
+    "featured": {
+      "badge": "Ludoteca destacada",
+      "title": "Nuestros juegos de mesa más destacados",
+      "subtitle": "Descubre una selección de nuestros mejores juegos disponibles en la tienda. ¡Reserva una mesa y ven a competir!",
+      "book_to_play": "Reservar para jugar",
+      "view_all": "Ver todo el catálogo de juegos de mesa ➔"
+    },
+    "hero": {
+      "title": "Tu espacio definitivo para los juegos de cartas coleccionables y los juegos de mesa",
+      "description": "Cicados es el lugar ideal para tus partidas de juegos de cartas (TCG) y de mesa. Alquila una mesa de juego equipada, participa en nuestros torneos semanales y comparte momentos únicos con una comunidad de aficionados.",
+      "cta": "Reservar una mesa de juego"
+    },
+    "features": {
+      "title": "Nuestras principales funciones",
+      "subtitle": "Todo lo que necesitas para jugar en las mejores condiciones.",
+      "items": {
+        "booking": {
+          "title": "Reserva de mesa en línea",
+          "description": "Reserva tu espacio de juego con solo unos clics. Elige la hora, la mesa y la duración para ti y tus amigos."
+        },
+        "tournaments": {
+          "title": "Torneos de juegos de cartas coleccionables y juegos de mesa",
+          "description": "Participa en nuestros eventos semanales, ya sean competitivos o amistosos. ¡Enfréntate a los mejores jugadores y gana sobres!"
+        },
+        "groups": {
+          "title": "Espacios adaptados para grupos",
+          "description": "Mesas gigantes y modulares, ideales para el formato Commander, las partidas de draft con amigos o tus sesiones de juegos de mesa."
+        }
+      }
+    },
+    "how_it_works": {
+      "title": "¿Cómo funciona?",
+      "subtitle": "Tres sencillos pasos para unirte a la comunidad y empezar a jugar.",
+      "steps": {
+        "step_1": {
+          "title": "Elige tu plan",
+          "description": "Selecciona el juego de cartas (MTG, Yu-Gi-Oh!, Pokémon...) o el formato de mesa que desees."
+        },
+        "step_2": {
+          "title": "Reserva tu franja horaria",
+          "description": "Selecciona la fecha, la hora y la duración. Tu mesa quedará reservada al instante."
+        },
+        "step_3": {
+          "title": "Ponte cómodo y juega",
+          "description": "Acude a la recepción el día del evento. ¡Tus tapetes de juego y accesorios ya estarán preparados!"
+        }
+      }
+    },
+    "testimonials": {
+      "title": "Lo que dicen nuestros jugadores",
+      "subtitle": "Descubre las opiniones de nuestra apasionada comunidad de jugadores de cartas.",
+      "items": "[objeto Objeto],[objeto Objeto],[objeto Objeto]"
+    },
+    "cta": {
+      "title": "¿Listo para empezar tu próxima partida?",
+      "description": "Reserva tu mesa de juego hoy mismo o inscríbete en nuestro próximo torneo de cartas.",
+      "buttons": {
+        "book": "Reservar una mesa",
+        "tournaments": "Ver los torneos"
+      }
+    },
+    "faq": {
+      "title": "Preguntas frecuentes",
+      "subtitle": "Todo lo que necesitas saber sobre nuestra zona de juegos y las reservas.",
+      "items": "[objeto Objeto],[objeto Objeto],[objeto Objeto],[objeto Objeto]"
+    }
+  },
+  "login_page": {
+    "title": "Inicia sesión en tu cuenta",
+    "or": "O",
+    "create_account": "Crea una nueva cuenta en Cicados",
+    "email_label": "Dirección de correo electrónico",
+    "password_label": "Contraseña",
+    "submit": "Iniciar sesión",
+    "error_connection": "Error al conectarse al servidor",
+    "default_error": "Error al iniciar sesión"
+  },
+  "register_page": {
+    "title": "Crear una cuenta en Cicados",
+    "already_account": "¿Ya tienes una cuenta?",
+    "login_link": "Inicia sesión",
+    "firstname": "Nombre",
+    "lastname": "Nombre",
+    "pseudo": "Nombre de usuario",
+    "pseudo_placeholder": "Nombre del jugador",
+    "email_label": "Dirección de correo electrónico",
+    "password_label": "Contraseña",
+    "submit": "Registrarse",
+    "error_connection": "Error al conectarse al servidor",
+    "default_error": "Error al registrarse"
+  },
+  "reservations_page": {
+    "need_auth": "Debes haber iniciado sesión en tu cuenta de Cicados para poder reservar una mesa de juego.",
+    "login_btn": "Iniciar sesión",
+    "no_account": "¿Aún no tienes cuenta?",
+    "register_link": "Registrarse",
+    "badge": "Sala de juegos y juegos de cartas coleccionables",
+    "title": "Reservar una mesa",
+    "subtitle": "¡Elige tu juego, planifica tu sesión consultando los horarios disponibles y ven a competir a Cicados!",
+    "demand_title": "Solicitud de reserva",
+    "game_type_label": "Juego / Juego de cartas coleccionables",
+    "players_count_label": "Número de jugadores",
+    "player": "1 jugador",
+    "players": "{{count}} jugadores",
+    "players_8": "8 o más jugadores",
+    "specific_game_label": "Juego de mesa",
+    "specific_game_placeholder": "Por ejemplo: Catan, Azul...",
+    "no_game_found": "No se ha encontrado ningún juego (puedes escribir el nombre manualmente)",
+    "date_label": "Fecha",
+    "time_label": "Hora de llegada",
+    "duration_label": "Duración (horas)",
+    "submit_btn": "Reservar mi mesa",
+    "planning_title": "Disponibilidad de las mesas de juego",
+    "planning_subtitle": "Disponemos de 4 mesas de juego. Selecciona una fecha para consultar la disponibilidad y elegir una franja horaria libre.",
+    "no_date_selected": "No se ha seleccionado ninguna fecha",
+    "no_date_selected_desc": "Indica una fecha de visita en el formulario de la izquierda para consultar el horario de nuestras mesas.",
+    "loading_planning": "Consulta de la agenda de las mesas...",
+    "date_dispo_title": "Disponibilidad para el:",
+    "tables_free": "{{count}} tablas libres",
+    "table_free": "1 mesa libre",
+    "full": "Completo",
+    "legend_free": "Disponible (de 2 a 4 plazas libres)",
+    "legend_few": "Casi lleno (queda 1 plaza libre)",
+    "legend_full": "Completo (0 plazas libres)",
+    "view_my_reservations": "Ver mis reservas",
+    "success_msg": "¡Reserva realizada con éxito!",
+    "fill_form": "Rellena el formulario en su totalidad",
+    "byog_label": "Traigo mi juego",
+    "other_label": "Otros"
+  },
+  "my_reservations_page": {
+    "need_auth": "Es necesario iniciar sesión",
+    "need_auth_desc": "Debes iniciar sesión en tu cuenta de Cicados para consultar tus reservas e inscripciones.",
+    "login_btn": "Iniciar sesión",
+    "badge": "Tu agenda de Cicados",
+    "title": "Mis actividades",
+    "subtitle": "Aquí encontrarás tus mesas reservadas y los próximos torneos. Modifica tus franjas horarias o cancela tu inscripción con un solo clic.",
+    "tables_title": "Mis reservas de mesa",
+    "loading_tables": "Cargando tus tablas...",
+    "no_tables": "No hay ninguna mesa reservada",
+    "no_tables_desc": "De momento no tienes ninguna mesa reservada.",
+    "book_table_btn": "Reservar una mesa",
+    "edit_btn": "Modificar",
+    "cancel_btn": "Cancelar",
+    "tournaments_title": "Mis inscripciones en los torneos",
+    "loading_tourneys": "Cargando tus torneos...",
+    "no_tourneys": "No hay ningún torneo programado",
+    "no_tourneys_desc": "De momento no estás inscrito en ningún torneo de cartas o de juegos.",
+    "view_tourneys_btn": "Ver los torneos",
+    "unregister_tourney_btn": "Darse de baja del torneo",
+    "modal_edit_title": "Modificar la reserva",
+    "modal_close": "Cerrar",
+    "modal_save": "Guardar",
+    "confirm_cancel": "¿Estás seguro de que quieres cancelar esta reserva?",
+    "confirm_unregister": "¿Estás seguro de que quieres darte de baja de este torneo?",
+    "cancel_success": "¡Reserva cancelada con éxito!",
+    "unregister_success": "La baja se ha realizado correctamente.",
+    "edit_success": "¡Reserva modificada correctamente!",
+    "duration_hours": "Llegada a {{time}} (duración: {{duration}} h)",
+    "free_price": "Gratis",
+    "registered_players": "Lista de inscritos ({{count}})",
+    "no_registered_players": "De momento no hay nadie inscrito.",
+    "board_game_type": "Juegos de mesa",
+    "byog_type": "Traigo mi juego",
+    "other_type": "Otros",
+    "load_tables_error": "No se han podido cargar tus reservas.",
+    "load_tourneys_error": "No se han podido cargar tus inscripciones en los torneos.",
+    "events_title": "Mis inscripciones en los eventos",
+    "loading_events": "Cargando tus eventos...",
+    "no_events": "No hay eventos programados",
+    "no_events_desc": "De momento no estás inscrito en ningún evento ni en ninguna sesión de iniciación.",
+    "view_events_btn": "Ver eventos",
+    "unregister_event_btn": "Darse de baja del evento",
+    "confirm_unregister_event": "¿Estás seguro de que quieres darte de baja de este evento?",
+    "load_events_error": "No se han podido cargar tus inscripciones a los eventos.",
+    "err_conn": "Error al conectarse al servidor.",
+    "filter_all": "Mostrar todo",
+    "filter_tables": "Reservas de mesa",
+    "filter_tournaments": "Torneos",
+    "filter_events": "Eventos"
+  },
+  "boardgames_page": {
+    "badge": "Sala de juegos de la tienda",
+    "title": "Nuestros juegos de mesa disponibles",
+    "subtitle": "Echa un vistazo a nuestro catálogo de juegos de libre acceso en la tienda. ¡Reserva una mesa y ven a pasar un rato agradable con la familia o los amigos!",
+    "search_label": "Buscar un juego",
+    "search_placeholder": "Buscar por nombre, descripción...",
+    "category_label": "Categoría",
+    "all_categories": "Todas las categorías",
+    "players_label": "Número de jugadores",
+    "players_placeholder": "Ej.: 4",
+    "loading": "Cargando la ludoteca...",
+    "no_game": "No se ha encontrado ningún juego",
+    "no_game_desc": "Por el momento no hay juegos que se ajusten a tus criterios de búsqueda. ¡Inténtalo de nuevo con otros filtros!",
+    "players_count": "{{min}} - {{max}} jugadores",
+    "duration": "{{time}} minutos",
+    "rules_link": "Ver la página web oficial / Normas ↗",
+    "book_to_play": "Reservar una mesa para jugar",
+    "see_more": "Ver más",
+    "see_less": "Ver menos",
+    "load_err": "Error al cargar los juegos de mesa"
+  },
+  "tournaments_page": {
+    "badge": "Eventos oficiales de Cicados",
+    "title": "Torneos",
+    "subtitle": "¡Participa en nuestras competiciones locales, enfréntate a la comunidad e intenta ganar sobres promocionales y premios exclusivos!",
+    "all_tournaments": "Todos los torneos",
+    "loading": "Cargando eventos...",
+    "no_tourneys": "No hay ningún torneo programado",
+    "no_tourneys_desc": "De momento no hay torneos que correspondan a esta categoría. ¡Vuelve pronto!",
+    "free": "Gratis",
+    "capacity": "Capacidad: {{registered}} / {{capacity}} jugadores",
+    "registered_list": "Lista de inscritos ({{count}})",
+    "no_registered": "De momento no hay nadie inscrito.",
+    "login_required": "Es necesario iniciar sesión para participar",
+    "unregister": "Darse de baja",
+    "full": "Completo",
+    "register": "Registrarse",
+    "success_register": "¡Inscripción en el torneo completada! Tu plaza está reservada.",
+    "success_unregister": "La baja se ha realizado correctamente.",
+    "err_conn": "No se puede establecer conexión con el servidor."
+  },
+  "categories": {
+    "Stratégie": "Estrategia",
+    "Pose de tuiles": "Colocación de tejas",
+    "Famille": "Familia",
+    "Abstrait": "Resumen",
+    "Ambiance": "Ambiente",
+    "Autre": "Otros"
+  },
+  "events_page": {
+    "title": "Próximos eventos",
+    "subtitle": "¡Participa en nuestros preestrenos, drafts e iniciaciones, y descubre nuevas formas de jugar!",
+    "badge": "AGENDA",
+    "all_events": "Todos los eventos",
+    "prerelease": "Preestreno",
+    "draft": "Borrador",
+    "initiation": "Introducción",
+    "btn_register": "Registrarse",
+    "btn_registered": "Registrado",
+    "btn_full": "Completo",
+    "price_free": "Gratis",
+    "spots_left": "{{count}} plaza disponible",
+    "spots_left_plural": "{{count}} plazas disponibles",
+    "no_events": "De momento no hay ningún evento programado. ¡Vuelve más tarde!"
+  }
+}

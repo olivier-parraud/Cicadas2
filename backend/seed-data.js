@@ -53,10 +53,10 @@ async function seedData() {
 
         // ─── 3. Insertion des Utilisateurs ───
         const hashedPassword = await bcrypt.hash('password123', 10);
-        const adminHashedPassword = await bcrypt.hash('admin123', 10);
+        const adminPasswordHash = await bcrypt.hash('Admin123!', 10);
         await conn.execute(
             "INSERT INTO users (email, password, firstname, lastname, pseudo, role) VALUES ('admin@cicados.fr', ?, 'Admin', 'Cicados', 'Admin', 'ADMIN')",
-            [adminHashedPassword]
+            [adminPasswordHash]
         );
 
         const testUsers = [
@@ -222,6 +222,27 @@ async function seedData() {
             }
             console.log(`✅ ${reservationList.length} réservations de tables créées.`);
         }
+
+        // ─── 7. Insertion des Messages Contact Admin ───
+        const sampleMessages = [
+            { idx: 0, subject: 'Réservation de table pour une soirée JDR D&D', content: 'Bonjour l\'équipe Cicados ! Est-ce qu\'il est possible de réserver la grande table Premium TCG pour une session Donjons & Dragons ce vendredi soir à 19h ? Nous serons 6 joueurs.', is_read: 0, admin_reply: null, replied_at: null, user_read: 0 },
+            { idx: 1, subject: 'Disponibilité des boosters Pokémon TCG Écarlate et Violet', content: 'Bonjour, avez-vous du stock sur le dernier coffret dresseur d\'élite Pokémon TCG en magasin ? Merci d\'avance !', is_read: 1, admin_reply: 'Bonjour Sophie, oui nous avons encore quelques coffrets ETB en stock à la boutique ! N\'hésite pas à passer aujourd\'hui.', replied_at: '2026-07-28 14:30:00', user_read: 1 },
+            { idx: 2, subject: 'Question sur le format du tournoi Magic Modern du FNM', content: 'Hello, pour le tournoi FNM Modern ce vendredi, les proxies sont-elles autorisées pour les cartes de réserve ?', is_read: 0, admin_reply: null, replied_at: null, user_read: 0 },
+            { idx: 3, subject: 'Initiation Disney Lorcana pour débutants', content: 'Coucou ! Mon frère et moi souhaitons découvrir Disney Lorcana. Proposez-vous des initiations guidées les samedis après-midi ?', is_read: 1, admin_reply: 'Bonjour Julie ! Oui, tous les samedis à 14h30 nos animateurs proposent des initiations gratuites Lorcana.', replied_at: '2026-07-29 11:15:00', user_read: 1 },
+            { idx: 4, subject: 'Privatisation mezzanine pour un anniversaire', content: 'Bonjour, je souhaiterais organiser un anniversaire surprise pour un ami fan de jeux de société. Proposez-vous une formule de privatisation du salon Mezzanine pour 12 personnes ?', is_read: 0, admin_reply: null, replied_at: null, user_read: 0 },
+            { idx: 5, subject: 'Recherche de joueurs pour une campagne Riftbound TCG', content: 'Salut à l\'équipe ! Avez-vous un serveur Discord ou un groupe WhatsApp pour organiser des parties amicales de Riftbound TCG pendant la semaine ?', is_read: 1, admin_reply: 'Salut Alex ! Oui, tu peux rejoindre notre Discord communautaire via le lien sur la page À Propos !', replied_at: '2026-07-29 16:45:00', user_read: 1 },
+            { idx: 6, subject: 'Commande spéciale jeu de société Brass Birmingham', content: 'Bonjour, est-il possible de commander l\'édition Deluxe de Brass Birmingham via votre boutique ?', is_read: 0, admin_reply: null, replied_at: null, user_read: 0 },
+            { idx: 7, subject: 'Deckbox oubliée hier soir', content: 'Bonsoir, j\'ai participé au tournoi One Piece hier soir et j\'ai l\'impression d\'avoir oublié ma deckbox violette sur la Table 3. L\'auriez-vous retrouvée ?', is_read: 1, admin_reply: 'Bonjour Lucas ! Oui, nous avons bien récupéré ta deckbox violette à l\'accueil. Tu peux passer la chercher quand tu veux !', replied_at: '2026-07-30 09:10:00', user_read: 0 }
+        ];
+
+        for (const m of sampleMessages) {
+            const uId = userIds[m.idx % userIds.length];
+            await conn.execute(
+                'INSERT INTO messages (user_id, subject, content, is_read, admin_reply, replied_at, user_read) VALUES (?, ?, ?, ?, ?, ?, ?)',
+                [uId, m.subject, m.content, m.is_read, m.admin_reply, m.replied_at, m.user_read]
+            );
+        }
+        console.log(`✅ ${sampleMessages.length} messages de contact insérés pour l'administration.`);
 
         console.log('\n🎉 Seeding complet des tournois et événements jusqu\'à JUILLET 2027 terminé avec succès !');
     } catch (err) {

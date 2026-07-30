@@ -142,8 +142,8 @@ function EventCard({
                         {/* Details */}
                         <div className="space-y-2 text-xs font-light text-slate-600">
                             <div className="flex items-center gap-2.5">
-                                <Calendar className="w-4 h-4 text-indigo-400 shrink-0" />
-                                <span className="capitalize">{formattedDate}</span>
+                                <Calendar className="w-4 h-4 text-[#F4AF23] shrink-0" />
+                                <span className="capitalize font-extrabold text-[#F4AF23] bg-[#F4AF23]/10 px-2.5 py-1 rounded-lg border border-[#F4AF23]/25">{formattedDate}</span>
                             </div>
                             <div className="flex items-center gap-2.5">
                                 <Clock className="w-4 h-4 text-indigo-400 shrink-0" />
@@ -262,8 +262,8 @@ function EventCard({
                     {/* Date and spots left */}
                     <div className="space-y-2 text-xs font-light text-slate-400">
                         <div className="flex items-center gap-2.5">
-                            <Calendar className="w-4 h-4 text-indigo-400 shrink-0" />
-                            <span className="capitalize">{formattedDate}</span>
+                            <Calendar className="w-4 h-4 text-[#F4AF23] shrink-0" />
+                            <span className="capitalize font-extrabold text-[#F4AF23] bg-[#F4AF23]/10 px-2.5 py-1 rounded-lg border border-[#F4AF23]/25">{formattedDate}</span>
                         </div>
                         <div className="flex items-center gap-2.5">
                             <Users className="w-4 h-4 text-indigo-400 shrink-0" />

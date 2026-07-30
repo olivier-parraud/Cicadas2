@@ -214,7 +214,7 @@ function DashboardAdmin() {
                     } else {
                         setIsAdmin(true);
                         // User is admin, fetch data
-                        fetchAdminData();
+                        fetchAdminData(true);
                     }
                 } else {
                     setIsAdmin(false);
@@ -230,8 +230,8 @@ function DashboardAdmin() {
         verifyAdmin();
     }, [token]);
 
-    const fetchAdminData = async () => {
-        setLoading(true);
+    const fetchAdminData = async (showLoading = false) => {
+        if (showLoading) setLoading(true);
         try {
             // Fetch reservations
             const resRes = await fetch('http://localhost:5050/api/admin/reservations', {
@@ -284,7 +284,7 @@ function DashboardAdmin() {
             console.error("Erreur chargement données admin :", error);
             setMessage({ type: 'error', text: 'Erreur lors du chargement des données.' });
         } finally {
-            setLoading(false);
+            if (showLoading) setLoading(false);
         }
     };
 
@@ -297,6 +297,7 @@ function DashboardAdmin() {
             });
             if (res.ok) {
                 setMessages(prev => prev.map(m => m.id === id ? { ...m, is_read: 1 } : m));
+                window.dispatchEvent(new Event('messages_updated'));
             }
         } catch (error) {
             console.error("Erreur marquage message lu :", error);
@@ -320,6 +321,7 @@ function DashboardAdmin() {
                 setMessage({ type: 'success', text: "Réponse envoyée au membre avec succès !" });
                 setReplyingMessageId(null);
                 setReplyText('');
+                window.dispatchEvent(new Event('messages_updated'));
             } else {
                 setMessage({ type: 'error', text: "Erreur lors de l'envoi de la réponse." });
             }
@@ -341,6 +343,7 @@ function DashboardAdmin() {
             if (res.ok) {
                 setMessages(prev => prev.filter(m => m.id !== id));
                 setMessage({ type: 'success', text: "Message supprimé avec succès." });
+                window.dispatchEvent(new Event('messages_updated'));
             } else {
                 setMessage({ type: 'error', text: "Erreur lors de la suppression." });
             }
@@ -366,8 +369,9 @@ function DashboardAdmin() {
                 body: JSON.stringify({ status: newStatus })
             });
             if (res.ok) {
+                setReservations(prev => prev.map(r => r.id === id ? { ...r, status: newStatus } : r));
                 setMessage({ type: 'success', text: 'Statut de réservation mis à jour !' });
-                fetchAdminData();
+                fetchAdminData(false);
             } else {
                 const data = await res.json();
                 setMessage({ type: 'error', text: data.error || 'Erreur lors de la modification.' });
@@ -419,7 +423,18 @@ function DashboardAdmin() {
             });
             if (res.ok) {
                 setMessage({ type: 'success', text: successMsg });
-                fetchAdminData();
+                if (type === 'reservation') {
+                    setReservations(prev => prev.filter(r => r.id !== id));
+                } else if (type === 'user') {
+                    setUsers(prev => prev.filter(u => u.id !== id));
+                } else if (type === 'tournament') {
+                    setTournaments(prev => prev.filter(t => t.id !== id));
+                } else if (type === 'boardgame') {
+                    setBoardGames(prev => prev.filter(b => b.id !== id));
+                } else if (type === 'event') {
+                    setEvents(prev => prev.filter(e => e.id !== id));
+                }
+                fetchAdminData(false);
             } else {
                 const data = await res.json();
                 setMessage({ type: 'error', text: data.error || 'Erreur de suppression.' });

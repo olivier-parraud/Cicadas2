@@ -43,6 +43,13 @@ const Message = {
         return res[0]?.count || 0;
     },
 
+    // Compter les messages utilisateurs non lus pour les administrateurs
+    async getUnreadAdminCount() {
+        const sql = 'SELECT COUNT(*) as count FROM messages WHERE is_read = 0';
+        const res = await query(sql);
+        return res[0]?.count || 0;
+    },
+
     // Marquer un message comme lu
     async markAsRead(id) {
         const sql = 'UPDATE messages SET is_read = 1 WHERE id = ?';

@@ -1,366 +1,333 @@
 {
   "nav": {
     "home": "Home",
-    "about": "About Us",
-    "book_table": "Book a Table",
+    "about": "About",
+    "book_table": "Reserve a table",
     "my_reservations": "My Reservations",
     "profile": "Profile",
     "boardgames": "Board Games",
     "tournaments": "Tournaments",
     "events": "Events",
     "admin": "Admin",
-    "logout": "Logout",
-    "login": "Login",
-    "register": "Register",
+    "logout": "Log Out",
+    "login": "Log In",
+    "register": "Registration",
     "language": "Language"
   },
   "home": {
     "title": "Welcome to the Starter Kit",
-    "subtitle": "Modern React + Node.js + MySQL template",
-    "cta_start": "Start",
-    "cta_login": "Login",
-    "cta_dashboard": "Access Dashboard"
+    "subtitle": "Modern React + Node.js + MySQL Template",
+    "cta_start": "Get Started",
+    "cta_login": "Log In",
+    "cta_dashboard": "Go to the Dashboard"
   },
   "login": {
-    "title": "Login",
+    "title": "Log In",
     "email": "Email",
     "password": "Password",
-    "submit": "Login",
+    "submit": "Log In",
     "loading": "Logging in...",
-    "no_account": "Don't have an account?",
-    "register_link": "Register"
+    "no_account": "Don&#x27;t have an account?",
+    "register_link": "Sign Up"
   },
   "register": {
-    "title": "Create an Account",
+    "title": "Create an account",
     "email": "Email",
     "password": "Password",
     "confirm_password": "Confirm Password",
-    "submit": "Register",
-    "loading": "Registering...",
+    "submit": "Sign Up",
+    "loading": "Registration...",
     "already_account": "Already have an account?",
-    "login_link": "Login"
+    "login_link": "Log In"
   },
   "dashboard": {
-    "title": "Welcome {{name}}!",
+    "title": "Welcome, {{name}}!",
     "email_label": "Email:"
   },
   "email": {
-    "title": "Send Email",
-    "subtitle": "Test sending transactional email via Brevo from starter kit.",
+    "title": "Send an email",
+    "subtitle": "Test sending a transactional email via Brevo using the starter kit.",
     "to": "Recipient",
-    "name": "Name (optional)",
-    "subject": "Subject",
+    "name": "Last Name (optional)",
+    "subject": "Topic",
     "message": "Message",
-    "submit": "Send Email",
+    "submit": "Send the email",
     "sending": "Sending...",
     "success": "Email sent successfully",
-    "error": "Failed to send email"
+    "error": "Unable to send the email"
   },
   "errors": {
-    "passwords_mismatch": "Passwords do not match",
-    "password_too_short": "Password must be at least 6 characters long",
-    "login_error": "Connection error",
-    "register_error": "Registration error"
+    "passwords_mismatch": "The passwords do not match",
+    "password_too_short": "The password must be at least 6 characters long",
+    "login_error": "Connection Error",
+    "register_error": "Error during registration"
   },
   "footer": {
-    "copyright": "© {{year}} Cicados"
+    "copyright": "© {{year}} Cicadas"
   },
   "home_page": {
     "slides": {
       "slide_1": {
         "title": "Cicados Play Space",
-        "desc": "Main area with tables ready for your duels"
+        "desc": "Main area with tables set up for your duels"
       },
       "slide_2": {
         "title": "The Ground Floor",
-        "desc": "Shop, drinks bar & board game shelves"
+        "desc": "Store, Beverage Bar &amp; Game Shelves"
       },
       "slide_3": {
-        "title": "The Bar Area",
-        "desc": "Selection of drinks for your gaming sessions"
+        "title": "The Bar Corner",
+        "desc": "A selection of drinks for your gaming sessions"
       },
       "slide_4": {
-        "title": "The Gaming Mezzanine",
-        "desc": "Upstairs lounge with beanbags & comfortable chairs"
+        "title": "La Mezzanine Gaming",
+        "desc": "Upstairs lounge with beanbags and comfortable chairs"
       }
     },
     "featured": {
-      "badge": "Featured Games",
+      "badge": "Featured Game Library",
       "title": "Our Featured Board Games",
-      "subtitle": "Discover a selection of our best games available at the shop. Book a table and come play!",
-      "book_to_play": "Book to play it",
-      "view_all": "View all board game catalog ➔"
+      "subtitle": "Check out a selection of our best games available in-store. Reserve a table and come compete!",
+      "book_to_play": "Reserve a spot to play",
+      "view_all": "View the entire board game catalog ➔"
     },
     "hero": {
-      "title": "Your Ultimate TCG & Board Game Play Space",
-      "description": "Cicados is the perfect place for your card games (TCG) and board games. Rent an equipped gaming table, join our weekly tournaments and share unique moments with a passionate community.",
-      "cta": "Book a gaming table"
+      "title": "Your Ultimate TCG &amp; Board Game Hub",
+      "description": "Cicados is the perfect place for your trading card games (TCG) and board games. Rent a fully equipped game table, participate in our weekly tournaments, and share unforgettable moments with a community of enthusiasts.",
+      "cta": "Reserve a gaming table"
     },
     "features": {
-      "title": "Our Main Features",
-      "subtitle": "Everything you need to play under the best conditions.",
+      "title": "Our Key Features",
+      "subtitle": "Everything you need to play at your best.",
       "items": {
         "booking": {
-          "title": "Online Table Reservation",
-          "description": "Book your play space in just a few clicks. Select the time, table, and duration for you and your friends."
+          "title": "Online Table Reservations",
+          "description": "Reserve your gaming space in just a few clicks. Choose the time, table, and duration for you and your friends."
         },
         "tournaments": {
-          "title": "TCG & Board Game Tournaments",
-          "description": "Join our weekly competitive or casual events. Face the best players and win promo boosters!"
+          "title": "TCG Tournaments &amp; Board Games",
+          "description": "Join our weekly competitive or friendly events. Take on the best players and win booster packs!"
         },
         "groups": {
-          "title": "Group-friendly Spaces",
-          "description": "Large and modular tables ideal for Commander format, drafts with friends, or your board game sessions."
+          "title": "Group-Friendly Spaces",
+          "description": "Giant, modular tables that are perfect for Commander games, drafts with friends, or your board game sessions."
         }
       }
     },
     "how_it_works": {
-      "title": "How it works?",
+      "title": "How does it work?",
       "subtitle": "Three simple steps to join the community and start playing.",
       "steps": {
         "step_1": {
-          "title": "Choose your format",
-          "description": "Select the card game (MTG, Yu-Gi-Oh!, Pokémon...) or the board game table format you want."
+          "title": "Choose your plan",
+          "description": "Select the card game (MTG, Yu-Gi-Oh!, Pokémon...) or the table format you want."
         },
         "step_2": {
-          "title": "Book your slot",
-          "description": "Select the date, time, and duration. Your table is instantly reserved for you."
+          "title": "Book your time slot",
+          "description": "Select the date, time, and duration. Your table will be reserved instantly."
         },
         "step_3": {
-          "title": "Get ready and play",
-          "description": "Come to the counter on the day of your visit. Your playmats and gaming accessories are already set up!"
+          "title": "Sit back and play",
+          "description": "Please check in at the reception desk on the day of the event. Your playmats and gaming accessories will already be set up!"
         }
       }
     },
     "testimonials": {
-      "title": "What our players say",
-      "subtitle": "Find out what our passionate card gaming community thinks of our space.",
-      "items": [
-        {
-          "name": "Alexandre D.",
-          "role": "TCG Player (Commander)",
-          "quote": "The atmosphere is amazing and the tables are super spacious! It has become our weekly HQ for Commander games."
-        },
-        {
-          "name": "Sophie M.",
-          "role": "Tournament Organizer",
-          "quote": "Great event management. The infrastructure is top-notch for running drafts and players love the comfort."
-        },
-        {
-          "name": "Lucas R.",
-          "role": "Competitive TCG Player",
-          "quote": "Finally a clean, well-lit, and quiet place to playtest our decks before major events. I highly recommend it!"
-        }
-      ]
+      "title": "What Our Players Say",
+      "subtitle": "Check out the feedback from our passionate community of card players.",
+      "items": "[object Object],[object Object],[object Object]"
     },
     "cta": {
-      "title": "Ready to launch your next game?",
-      "description": "Book your gaming table today or register for our next card game tournament.",
+      "title": "Ready to start your next game?",
+      "description": "Reserve your gaming table today or sign up for our next card tournament.",
       "buttons": {
-        "book": "Book a table",
-        "tournaments": "See tournaments"
+        "book": "Reserve a table",
+        "tournaments": "View Tournaments"
       }
     },
     "faq": {
       "title": "Frequently Asked Questions",
-      "subtitle": "Everything you need to know about our play space and booking.",
-      "items": [
-        {
-          "question": "What are the table booking rates?",
-          "answer": "Booking a standard table starts at €2 per hour per player, or is free when buying snacks/drinks or boosters at the counter."
-        },
-        {
-          "question": "Do I need to bring my own cards?",
-          "answer": "Yes, for free play and constructed tournaments, you must bring your decks. However, we sell boosters, starter decks, and we sometimes lend demo decks."
-        },
-        {
-          "question": "How do I register for a TCG or board game tournament?",
-          "answer": "You can register directly online from the 'Tournaments' page or on-site at the counter up to 15 minutes before the event begins."
-        },
-        {
-          "question": "Can I bring my own food and drinks?",
-          "answer": "We offer a cafe area with cold/hot drinks and snacks. To preserve tables and other players' cards, outside food and drinks are not allowed."
-        }
-      ]
+      "subtitle": "Everything you need to know about our play area and reservations.",
+      "items": "[object Object],[object Object],[object Object],[object Object]"
     }
   },
   "login_page": {
-    "title": "Login to your account",
+    "title": "Sign in to your account",
     "or": "Or",
-    "create_account": "create a new Cicados account",
+    "create_account": "Create a new Cicados account",
     "email_label": "Email address",
     "password_label": "Password",
-    "submit": "Login",
+    "submit": "Log In",
     "error_connection": "Error connecting to the server",
-    "default_error": "An error occurred during login"
+    "default_error": "Error while logging in"
   },
   "register_page": {
     "title": "Create a Cicados account",
-    "already_account": "Already have an account?",
-    "login_link": "Login here",
+    "already_account": "Do you already have an account?",
+    "login_link": "Log in",
     "firstname": "First Name",
     "lastname": "Last Name",
-    "pseudo": "Pseudo",
-    "pseudo_placeholder": "Summoner / player name",
+    "pseudo": "Username",
+    "pseudo_placeholder": "Player Name",
     "email_label": "Email address",
     "password_label": "Password",
-    "submit": "Register",
+    "submit": "Sign Up",
     "error_connection": "Error connecting to the server",
-    "default_error": "An error occurred during registration"
+    "default_error": "Error during registration"
   },
   "reservations_page": {
-    "need_auth": "You must be logged in to your Cicados account to book a gaming table.",
-    "login_btn": "Login",
-    "no_account": "Don't have an account yet?",
-    "register_link": "Register",
-    "badge": "Play Space & TCG",
-    "title": "Book a Table",
-    "subtitle": "Choose your game, plan your session by checking free slots, and come play at Cicados!",
-    "demand_title": "Booking request",
+    "need_auth": "You must be logged in to your Cicados account to reserve a gaming table.",
+    "login_btn": "Log In",
+    "no_account": "Don&#x27;t have an account yet?",
+    "register_link": "Sign Up",
+    "badge": "Game Room &amp; Trading Card Game",
+    "title": "Reserve a table",
+    "subtitle": "Choose your game, plan your session by checking the available time slots, and come compete at Cicados!",
+    "demand_title": "Reservation Request",
     "game_type_label": "Game / TCG",
     "players_count_label": "Number of players",
     "player": "1 player",
     "players": "{{count}} players",
     "players_8": "8+ players",
-    "specific_game_label": "Board Game",
-    "specific_game_placeholder": "E.g. Catan, Azul...",
-    "no_game_found": "No game found (you can write the name manually)",
+    "specific_game_label": "Board game",
+    "specific_game_placeholder": "Examples: Catan, Azul...",
+    "no_game_found": "No games found (you can type the name manually)",
     "date_label": "Date",
-    "time_label": "Arrival Time",
+    "time_label": "Arrival time",
     "duration_label": "Duration (hours)",
-    "submit_btn": "Book my table",
-    "planning_title": "Gaming tables availability",
-    "planning_subtitle": "We have 4 gaming tables. Select a date to view current bookings and choose a free slot.",
+    "submit_btn": "Reserve a table",
+    "planning_title": "Availability of Gaming Tables",
+    "planning_subtitle": "We have 4 gaming tables. Select a date to view availability and choose an open time slot.",
     "no_date_selected": "No date selected",
-    "no_date_selected_desc": "Please select a visit date in the left form to load the tables schedule.",
-    "loading_planning": "Checking tables schedule...",
+    "no_date_selected_desc": "Please enter a visit date in the form on the left to view our table schedule.",
+    "loading_planning": "Querying the table schedule...",
     "date_dispo_title": "Availability for:",
-    "tables_free": "{{count}} free tables",
-    "table_free": "1 free table",
-    "full": "Full",
-    "legend_free": "Available (2 to 4 free)",
-    "legend_few": "Almost full (1 free)",
-    "legend_full": "Full (0 free)",
+    "tables_free": "{{count}} available tables",
+    "table_free": "1 open table",
+    "full": "Sold Out",
+    "legend_free": "Available (2 to 4 open slots)",
+    "legend_few": "Almost full (1 spot available)",
+    "legend_full": "Fully booked (0 available)",
     "view_my_reservations": "View my reservations",
     "success_msg": "Reservation successful!",
     "fill_form": "Please fill out the entire form",
-    "byog_label": "I bring my own game",
+    "byog_label": "I&#x27;m bringing my game",
     "other_label": "Other"
   },
   "my_reservations_page": {
-    "need_auth": "Authentication required",
-    "need_auth_desc": "You must be logged in to your Cicados account to view your bookings and registrations.",
-    "login_btn": "Login",
-    "badge": "Your Cicados Agenda",
+    "need_auth": "Login required",
+    "need_auth_desc": "You must be logged in to your Cicados account to view your reservations and registrations.",
+    "login_btn": "Log In",
+    "badge": "Your Cicados Calendar",
     "title": "My Activities",
-    "subtitle": "Find your booked tables and upcoming tournaments here. Edit your slots or unregister in one click.",
-    "tables_title": "My Table Bookings",
+    "subtitle": "View your reserved tables and upcoming tournaments here. Change your time slots or cancel your registration with just one click.",
+    "tables_title": "My table reservations",
     "loading_tables": "Loading your tables...",
-    "no_tables": "No table booked",
-    "no_tables_desc": "You have no booked tables at the moment.",
-    "book_table_btn": "Book a Table",
+    "no_tables": "No reserved tables",
+    "no_tables_desc": "You don&#x27;t have a table reserved at this time.",
+    "book_table_btn": "Reserve a table",
     "edit_btn": "Edit",
     "cancel_btn": "Cancel",
-    "tournaments_title": "My Tournament Registrations",
+    "tournaments_title": "My tournament entries",
     "loading_tourneys": "Loading your tournaments...",
-    "no_tourneys": "No upcoming tournament",
-    "no_tourneys_desc": "You are not registered in any card or board game tournament for now.",
-    "view_tourneys_btn": "See tournaments",
-    "unregister_tourney_btn": "Unregister from tournament",
+    "no_tourneys": "No tournaments scheduled",
+    "no_tourneys_desc": "You are not currently registered for any card or game tournaments.",
+    "view_tourneys_btn": "View Tournaments",
+    "unregister_tourney_btn": "Withdraw from the tournament",
     "modal_edit_title": "Edit Reservation",
     "modal_close": "Close",
-    "modal_save": "Save Changes",
+    "modal_save": "Save",
     "confirm_cancel": "Are you sure you want to cancel this reservation?",
-    "confirm_unregister": "Are you sure you want to unregister from this tournament?",
-    "cancel_success": "Reservation successfully cancelled!",
-    "unregister_success": "Successfully unregistered.",
-    "edit_success": "Reservation successfully modified!",
-    "duration_hours": "Arrival at {{time}} (duration {{duration}}h)",
+    "confirm_unregister": "Are you sure you want to withdraw from this tournament?",
+    "cancel_success": "Reservation successfully canceled!",
+    "unregister_success": "Unsubscription successful.",
+    "edit_success": "Reservation successfully updated!",
+    "duration_hours": "Arrival at {{time}} (duration: {{duration}} hours)",
     "free_price": "Free",
-    "registered_players": "Registrations list ({{count}})",
-    "no_registered_players": "No registrations yet.",
+    "registered_players": "List of Registrants ({{count}})",
+    "no_registered_players": "No one has registered yet.",
     "board_game_type": "Board Games",
-    "byog_type": "I bring my own game",
+    "byog_type": "I&#x27;m bringing my game",
     "other_type": "Other",
-    "load_tables_error": "Unable to load your bookings.",
-    "load_tourneys_error": "Unable to load your tournament registrations.",
+    "load_tables_error": "Unable to load your reservations.",
+    "load_tourneys_error": "We were unable to load your tournament registrations.",
     "events_title": "My Event Registrations",
     "loading_events": "Loading your events...",
-    "no_events": "No upcoming event",
-    "no_events_desc": "You are not registered in any event or initiation at the moment.",
-    "view_events_btn": "See events",
-    "unregister_event_btn": "Unregister from event",
-    "confirm_unregister_event": "Are you sure you want to unregister from this event?",
-    "load_events_error": "Unable to load your event registrations.",
-    "err_conn": "Server connection error.",
-    "filter_all": "All activities",
-    "filter_tables": "Table bookings",
+    "no_events": "No events scheduled",
+    "no_events_desc": "You are not currently registered for any events or introductory sessions.",
+    "view_events_btn": "View events",
+    "unregister_event_btn": "Unsubscribe from the event",
+    "confirm_unregister_event": "Are you sure you want to unsubscribe from this event?",
+    "load_events_error": "We were unable to load your event registrations.",
+    "err_conn": "Error connecting to the server.",
+    "filter_all": "Show All",
+    "filter_tables": "Table Reservations",
     "filter_tournaments": "Tournaments",
     "filter_events": "Events"
   },
   "boardgames_page": {
-    "badge": "Shop Game Collection",
+    "badge": "The Boutique&#x27;s Game Library",
     "title": "Our Available Board Games",
-    "subtitle": "Browse our collection of free-to-play board games at the shop. Book a table and come share a fun moment with family or friends!",
-    "search_label": "Search a game",
+    "subtitle": "Browse our catalog of games, which are available for free play at the store. Reserve a table and come enjoy some quality time with family or friends!",
+    "search_label": "Search for a game",
     "search_placeholder": "Search by name, description...",
     "category_label": "Category",
     "all_categories": "All Categories",
     "players_label": "Number of players",
-    "players_placeholder": "E.g. 4",
-    "loading": "Loading collection...",
+    "players_placeholder": "Ex: 4",
+    "loading": "Loading the game library...",
     "no_game": "No games found",
-    "no_game_desc": "There are no games matching your search criteria. Try changing filters!",
+    "no_game_desc": "There are currently no games that match your search criteria. Please try again with different filters!",
     "players_count": "{{min}} - {{max}} players",
-    "duration": "{{time}} mins",
-    "rules_link": "Official Website / Rules ↗",
-    "book_to_play": "Book a table to play it",
+    "duration": "{{time}} minutes",
+    "rules_link": "Visit the official website / Rules ↗",
+    "book_to_play": "Reserve a table to play there",
     "see_more": "See more",
-    "see_less": "See less",
+    "see_less": "Show less",
     "load_err": "Error loading board games"
   },
   "tournaments_page": {
     "badge": "Cicados Official Events",
     "title": "Tournaments",
-    "subtitle": "Join our local competitions, challenge the community and win promo boosters and exclusive prizes!",
+    "subtitle": "Join our local tournaments, challenge the community, and try to win promo booster packs and exclusive prizes!",
     "all_tournaments": "All Tournaments",
     "loading": "Loading events...",
-    "no_tourneys": "No tournaments planned",
-    "no_tourneys_desc": "There are no tournaments matching this category for now. Check back soon!",
+    "no_tourneys": "No tournaments scheduled",
+    "no_tourneys_desc": "There are currently no tournaments in this category. Check back soon!",
     "free": "Free",
     "capacity": "Capacity: {{registered}} / {{capacity}} players",
-    "registered_list": "Registered players ({{count}})",
-    "no_registered": "No registered players yet.",
-    "login_required": "Login required to participate",
-    "unregister": "Unregister",
-    "full": "Full",
-    "register": "Register",
-    "success_register": "Successfully registered! Your slot is reserved.",
-    "success_unregister": "Successfully unregistered.",
-    "err_conn": "Could not connect to the server."
+    "registered_list": "List of Registrants ({{count}})",
+    "no_registered": "No one has registered yet.",
+    "login_required": "You must be logged in to participate",
+    "unregister": "Unsubscribe",
+    "full": "Sold Out",
+    "register": "Sign Up",
+    "success_register": "Tournament registration successful! Your spot is reserved.",
+    "success_unregister": "Unsubscription successful.",
+    "err_conn": "Unable to contact the server."
   },
   "categories": {
     "Stratégie": "Strategy",
-    "Pose de tuiles": "Tile placement",
+    "Pose de tuiles": "Tile Installation",
     "Famille": "Family",
     "Abstrait": "Abstract",
-    "Ambiance": "Party",
+    "Ambiance": "Atmosphere",
     "Autre": "Other"
   },
   "events_page": {
     "title": "Upcoming Events",
-    "subtitle": "Join our pre-releases, drafts, initiations and discover new ways to play!",
-    "badge": "SCHEDULE",
+    "subtitle": "Join our previews, drafts, and introductory sessions, and discover new ways to play!",
+    "badge": "CALENDAR",
     "all_events": "All Events",
-    "prerelease": "Pre-release",
+    "prerelease": "Preview",
     "draft": "Draft",
-    "initiation": "Initiation",
-    "btn_register": "Register",
+    "initiation": "Introduction",
+    "btn_register": "Sign Up",
     "btn_registered": "Registered",
-    "btn_full": "Full",
+    "btn_full": "Sold Out",
     "price_free": "Free",
-    "spots_left": "{{count}} spot left",
-    "spots_left_plural": "{{count}} spots left",
-    "no_events": "No events scheduled at the moment. Check back soon!"
+    "spots_left": "{{count}} seats remaining",
+    "spots_left_plural": "{{count}} seats remaining",
+    "no_events": "No events scheduled at this time. Check back later!"
   }
 }

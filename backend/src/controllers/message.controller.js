@@ -39,7 +39,11 @@ export const getUnreadCount = async (req, res) => {
     try {
         const userId = req.user.id;
         const count = await Message.getUnreadUserCount(userId);
-        res.json({ unreadCount: count });
+        let adminUnreadCount = 0;
+        if (req.user.role === 'ADMIN') {
+            adminUnreadCount = await Message.getUnreadAdminCount();
+        }
+        res.json({ unreadCount: count, adminUnreadCount });
     } catch (error) {
         console.error("Erreur nombre messages non lus :", error);
         res.status(500).json({ error: "Erreur lors de la récupération du nombre de messages non lus." });

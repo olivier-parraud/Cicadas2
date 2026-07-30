@@ -9,12 +9,27 @@ function Register() {
     const [pseudo, setPseudo] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
+
+        if (password.length < 8) {
+            setError('Le mot de passe doit contenir au moins 8 caractères.');
+            return;
+        }
+        if (!/[^a-zA-Z0-9]/.test(password)) {
+            setError('Le mot de passe doit contenir au moins 1 caractère spécial.');
+            return;
+        }
+        if (password !== confirmPassword) {
+            setError('Les mots de passe ne correspondent pas.');
+            return;
+        }
+
         try {
             const response = await fetch('http://localhost:5050/api/auth/register', {
                 method: 'POST',
@@ -91,9 +106,24 @@ function Register() {
 
                         <div>
                             <label className="block text-sm font-medium text-slate-350">{t('register_page.password_label')}</label>
-                            <input type="password" required minLength="6"
+                            <input type="password" required minLength="8"
                                 className="mt-1 appearance-none block w-full px-3.5 py-2.5 border border-white/5 bg-[#0c0919] text-white rounded-xl shadow-sm placeholder-gray-500 focus:outline-none focus:border-[#F4AF23]/50 sm:text-sm font-light"
                                 value={password} onChange={(e) => setPassword(e.target.value)} />
+                            
+                            <div className="mt-2.5 p-3 bg-indigo-500/10 border border-indigo-500/25 rounded-xl text-xs text-indigo-200">
+                                <p className="font-bold text-indigo-300">Préréquis du mot de passe :</p>
+                                <ul className="list-disc list-inside mt-1 space-y-0.5 text-slate-300 font-light">
+                                    <li>Au moins <strong className="font-semibold text-white">8 caractères</strong></li>
+                                    <li>Au moins <strong className="font-semibold text-white">1 caractère spécial</strong></li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-medium text-slate-350">Confirmer le mot de passe</label>
+                            <input type="password" required minLength="8"
+                                className="mt-1 appearance-none block w-full px-3.5 py-2.5 border border-white/5 bg-[#0c0919] text-white rounded-xl shadow-sm placeholder-gray-500 focus:outline-none focus:border-[#F4AF23]/50 sm:text-sm font-light"
+                                value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
                         </div>
 
                         <div>

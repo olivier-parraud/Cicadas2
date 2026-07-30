@@ -138,8 +138,8 @@ function TournamentCard({
                     {/* Date and details */}
                     <div className={`space-y-2 text-xs font-light ${detailTextClass}`}>
                         <div className="flex items-center gap-2.5">
-                            <Calendar className="w-4 h-4 text-indigo-400 shrink-0" />
-                            <span className="capitalize">
+                            <Calendar className="w-4 h-4 text-[#F4AF23] shrink-0" />
+                            <span className="capitalize font-extrabold text-[#F4AF23] bg-[#F4AF23]/10 px-2.5 py-1 rounded-lg border border-[#F4AF23]/25">
                                 {formattedDate}{formattedTime ? ` à ${formattedTime}` : ''}
                             </span>
                         </div>

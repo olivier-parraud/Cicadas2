@@ -1,0 +1,333 @@
+{
+  "nav": {
+    "home": "ホーム",
+    "about": "「について」",
+    "book_table": "テーブルを予約する",
+    "my_reservations": "私の予約",
+    "profile": "プロフィール",
+    "boardgames": "ボードゲーム",
+    "tournaments": "トーナメント",
+    "events": "イベント",
+    "admin": "管理者",
+    "logout": "ログアウト",
+    "login": "ログイン",
+    "register": "登録",
+    "language": "言語"
+  },
+  "home": {
+    "title": "スターターキットへようこそ",
+    "subtitle": "React + Node.js + MySQL を使ったモダンなテンプレート",
+    "cta_start": "始める",
+    "cta_login": "ログイン",
+    "cta_dashboard": "ダッシュボードにアクセスする"
+  },
+  "login": {
+    "title": "ログイン",
+    "email": "メールアドレス",
+    "password": "パスワード",
+    "submit": "ログイン",
+    "loading": "接続中...",
+    "no_account": "アカウントをお持ちではありませんか？",
+    "register_link": "登録する"
+  },
+  "register": {
+    "title": "アカウントを作成する",
+    "email": "メールアドレス",
+    "password": "パスワード",
+    "confirm_password": "パスワードの確認",
+    "submit": "登録する",
+    "loading": "登録...",
+    "already_account": "すでにアカウントをお持ちですか？",
+    "login_link": "ログイン"
+  },
+  "dashboard": {
+    "title": "{{name}}さん、ようこそ！",
+    "email_label": "メールアドレス："
+  },
+  "email": {
+    "title": "メールを送信する",
+    "subtitle": "スターターキットからBrevo経由でトランザクションメールを送信するテストを行ってください。",
+    "to": "宛先",
+    "name": "氏名（任意）",
+    "subject": "件名",
+    "message": "メッセージ",
+    "submit": "メールを送信する",
+    "sending": "送信中...",
+    "success": "メールの送信に成功しました",
+    "error": "メールを送信できません"
+  },
+  "errors": {
+    "passwords_mismatch": "パスワードが一致しません",
+    "password_too_short": "パスワードは6文字以上でなければなりません",
+    "login_error": "接続エラー",
+    "register_error": "登録中にエラーが発生しました"
+  },
+  "footer": {
+    "copyright": "© {{year}} Cicados"
+  },
+  "home_page": {
+    "slides": {
+      "slide_1": {
+        "title": "Cicados Play Space",
+        "desc": "対決の準備が整ったテーブルが並ぶメインエリア"
+      },
+      "slide_2": {
+        "title": "1階",
+        "desc": "ショップ、ドリンクバー、ゲームコーナー"
+      },
+      "slide_3": {
+        "title": "「ル・コワン・バー」",
+        "desc": "ゲームプレイにぴったりのドリンクセレクション"
+      },
+      "slide_4": {
+        "title": "ラ・メザニン・ゲーミング",
+        "desc": "2階のラウンジには、プーフや快適な椅子が置かれています"
+      }
+    },
+    "featured": {
+      "badge": "注目のゲームライブラリー",
+      "title": "当社の人気ボードゲーム",
+      "subtitle": "当店でご用意している厳選された人気ゲームの数々をご覧ください。テーブルを予約して、ぜひ対戦しに来てください！",
+      "book_to_play": "プレイするために予約する",
+      "view_all": "ボードゲームの全カタログを見る ➔"
+    },
+    "hero": {
+      "title": "究極のTCG＆ボードゲーム空間",
+      "description": "Cicadosは、トレーディングカードゲーム（TCG）やボードゲームを楽しむのに最適な場所です。設備の整ったゲームテーブルを貸し切り、毎週開催されるトーナメントに参加し、熱心なファンたちとのコミュニティで特別なひとときを共有しましょう。",
+      "cta": "ゲームテーブルを予約する"
+    },
+    "features": {
+      "title": "主な機能",
+      "subtitle": "最高の環境でプレイするために必要なものがすべて揃っています。",
+      "items": {
+        "booking": {
+          "title": "オンラインでのテーブル予約",
+          "description": "わずか数クリックでプレイスペースを予約できます。ご自身やご友人のために、時間、テーブル、プレイ時間をお選びください。"
+        },
+        "tournaments": {
+          "title": "TCG大会＆ボードゲーム大会",
+          "description": "毎週開催される対戦イベントやフレンドリーマッチに参加しましょう。トッププレイヤーたちと対戦して、ブースターパックをゲットしましょう！"
+        },
+        "groups": {
+          "title": "団体向けスペース",
+          "description": "「コマンダー」形式や、友人とのドラフト、ボードゲームのセッションに最適な、巨大で組み替え可能なテーブルです。"
+        }
+      }
+    },
+    "how_it_works": {
+      "title": "仕組みは？",
+      "subtitle": "コミュニティに参加してゲームを始めるための、3つの簡単なステップ。",
+      "steps": {
+        "step_1": {
+          "title": "プランをお選びください",
+          "description": "ご希望のカードゲーム（MTG、遊戯王、ポケモンなど）または対戦形式を選択してください。"
+        },
+        "step_2": {
+          "title": "ご希望の時間帯をご予約ください",
+          "description": "日付、時間、所要時間を選択してください。すぐにテーブルが予約されます。"
+        },
+        "step_3": {
+          "title": "どうぞお座りになって、ゲームをお楽しみください",
+          "description": "当日、受付にお越しください。プレイマットやゲーム用アクセサリーはすでに用意されています！"
+        }
+      }
+    },
+    "testimonials": {
+      "title": "プレイヤーたちの声",
+      "subtitle": "カードゲームに情熱を注ぐ私たちのコミュニティからの感想をご覧ください。",
+      "items": "[object Object],[object Object],[object Object]"
+    },
+    "cta": {
+      "title": "次のゲームを始める準備はできましたか？",
+      "description": "今すぐゲームテーブルをご予約いただくか、次回のカードトーナメントにご登録ください。",
+      "buttons": {
+        "book": "テーブルを予約する",
+        "tournaments": "トーナメント一覧を見る"
+      }
+    },
+    "faq": {
+      "title": "よくある質問",
+      "subtitle": "当施設のプレイエリアと予約について、知っておくべきことをすべてご紹介します。",
+      "items": "[object Object],[object Object],[object Object],[object Object]"
+    }
+  },
+  "login_page": {
+    "title": "アカウントにログインしてください",
+    "or": "または",
+    "create_account": "Cicadosの新しいアカウントを作成する",
+    "email_label": "メールアドレス",
+    "password_label": "パスワード",
+    "submit": "ログイン",
+    "error_connection": "サーバーへの接続エラー",
+    "default_error": "接続中にエラーが発生しました"
+  },
+  "register_page": {
+    "title": "Cicadosのアカウントを作成する",
+    "already_account": "すでにアカウントをお持ちですか？",
+    "login_link": "ログインしてください",
+    "firstname": "名前",
+    "lastname": "氏名",
+    "pseudo": "ハンドルネーム",
+    "pseudo_placeholder": "プレイヤー名",
+    "email_label": "メールアドレス",
+    "password_label": "パスワード",
+    "submit": "登録する",
+    "error_connection": "サーバーへの接続エラー",
+    "default_error": "登録中にエラーが発生しました"
+  },
+  "reservations_page": {
+    "need_auth": "ゲームテーブルを予約するには、Cicadosアカウントにログインする必要があります。",
+    "login_btn": "ログイン",
+    "no_account": "まだアカウントをお持ちではありませんか？",
+    "register_link": "登録する",
+    "badge": "ゲームルーム＆TCG",
+    "title": "テーブルを予約する",
+    "subtitle": "プレイしたいゲームを選び、空き時間を確認してスケジュールを立て、Cicadosで対戦しましょう！",
+    "demand_title": "予約のお申し込み",
+    "game_type_label": "ゲーム / トレーディングカードゲーム",
+    "players_count_label": "プレイヤー数",
+    "player": "1人用",
+    "players": "{{count}} 人のプレイヤー",
+    "players_8": "8人以上",
+    "specific_game_label": "ボードゲーム",
+    "specific_game_placeholder": "例：『カタン』、『アズール』…",
+    "no_game_found": "ゲームが見つかりませんでした（手動で名前を入力してください）",
+    "date_label": "日付",
+    "time_label": "到着時刻",
+    "duration_label": "所要時間（時間）",
+    "submit_btn": "テーブルを予約する",
+    "planning_title": "ゲームテーブルの空き状況",
+    "planning_subtitle": "当施設にはゲームテーブルが4台ございます。日付を選択して空き状況を確認し、空いている時間帯をお選びください。",
+    "no_date_selected": "日付が選択されていません",
+    "no_date_selected_desc": "左側のフォームに訪問日を入力していただくと、各テーブルの時間割が表示されます。",
+    "loading_planning": "テーブルのスケジュール照会...",
+    "date_dispo_title": "以下の日程の空き状況：",
+    "tables_free": "{{count}} 空きテーブル",
+    "table_free": "空いているテーブルが1つ",
+    "full": "満席",
+    "legend_free": "在庫あり（2～4個空きあり）",
+    "legend_few": "ほぼ満室（空き1室）",
+    "legend_full": "満席（空き0）",
+    "view_my_reservations": "予約を確認する",
+    "success_msg": "予約が完了しました！",
+    "fill_form": "フォームにすべて記入してください",
+    "byog_label": "ゲームを持ってきます",
+    "other_label": "その他"
+  },
+  "my_reservations_page": {
+    "need_auth": "ログインが必要です",
+    "need_auth_desc": "ご予約や登録内容を確認するには、Cicadosアカウントにログインする必要があります。",
+    "login_btn": "ログイン",
+    "badge": "Cicadosのスケジュール",
+    "title": "私の活動",
+    "subtitle": "こちらで、ご予約済みのテーブルや今後のトーナメントをご確認いただけます。ワンクリックで参加枠の変更やキャンセルが可能です。",
+    "tables_title": "私のテーブル予約",
+    "loading_tables": "テーブルを読み込んでいます...",
+    "no_tables": "予約済みのテーブルはありません",
+    "no_tables_desc": "現時点では、ご予約のテーブルはありません。",
+    "book_table_btn": "テーブルを予約する",
+    "edit_btn": "編集",
+    "cancel_btn": "キャンセル",
+    "tournaments_title": "トーナメントへのエントリー",
+    "loading_tourneys": "トーナメントの読み込み中...",
+    "no_tourneys": "予定されているトーナメントはありません",
+    "no_tourneys_desc": "現在、カードゲームやボードゲームのトーナメントには登録されていません。",
+    "view_tourneys_btn": "トーナメント一覧を見る",
+    "unregister_tourney_btn": "トーナメントから登録を解除する",
+    "modal_edit_title": "予約の変更",
+    "modal_close": "閉じる",
+    "modal_save": "保存",
+    "confirm_cancel": "この予約をキャンセルしてもよろしいですか？",
+    "confirm_unregister": "このトーナメントから退会してもよろしいですか？",
+    "cancel_success": "予約のキャンセルが完了しました！",
+    "unregister_success": "登録解除が完了しました。",
+    "edit_success": "予約の変更が完了しました！",
+    "duration_hours": "{{time}}に到着（所要時間 {{duration}}時間）",
+    "free_price": "無料",
+    "registered_players": "登録者一覧 ({{count}})",
+    "no_registered_players": "現時点では登録者はいません。",
+    "board_game_type": "ボードゲーム",
+    "byog_type": "ゲームを持ってきます",
+    "other_type": "その他",
+    "load_tables_error": "ご予約データを読み込めませんでした。",
+    "load_tourneys_error": "トーナメントへのエントリーデータを読み込めませんでした。",
+    "events_title": "イベントへの登録状況",
+    "loading_events": "イベントを読み込んでいます...",
+    "no_events": "予定されているイベントはありません",
+    "no_events_desc": "現在、登録されているイベントや体験会はございません。",
+    "view_events_btn": "イベントを見る",
+    "unregister_event_btn": "イベントの登録を解除する",
+    "confirm_unregister_event": "このイベントの登録を解除してもよろしいですか？",
+    "load_events_error": "イベントへの登録データを読み込めませんでした。",
+    "err_conn": "サーバーへの接続エラーが発生しました。",
+    "filter_all": "すべて表示",
+    "filter_tables": "テーブルの予約",
+    "filter_tournaments": "トーナメント",
+    "filter_events": "イベント"
+  },
+  "boardgames_page": {
+    "badge": "ブティックのゲームライブラリー",
+    "title": "取り扱い中のボードゲーム",
+    "subtitle": "当店のゲームカタログをぜひご覧ください。テーブルを予約して、ご家族やご友人と楽しいひとときをお過ごしください！",
+    "search_label": "ゲームを検索する",
+    "search_placeholder": "名前や説明などで検索...",
+    "category_label": "カテゴリ",
+    "all_categories": "すべてのカテゴリ",
+    "players_label": "プレイヤー数",
+    "players_placeholder": "例：4",
+    "loading": "ゲームライブラリの読み込み中...",
+    "no_game": "該当するゲームが見つかりませんでした",
+    "no_game_desc": "現在、検索条件に一致するゲームはありません。他のフィルターを使って再度お試しください！",
+    "players_count": "{{min}} - {{max}} 人の選手",
+    "duration": "{{time}} 分",
+    "rules_link": "公式サイトを見る / ルール ↗",
+    "book_to_play": "そこで遊ぶためのテーブルを予約する",
+    "see_more": "もっと見る",
+    "see_less": "表示を縮小",
+    "load_err": "ボードゲームの読み込み中にエラーが発生しました"
+  },
+  "tournaments_page": {
+    "badge": "Cicados公式イベント",
+    "title": "トーナメント",
+    "subtitle": "地元の大会に参加して、コミュニティのプレイヤーたちと競い合い、プロモブースターや限定賞品を獲得しよう！",
+    "all_tournaments": "すべてのトーナメント",
+    "loading": "イベントを読み込み中...",
+    "no_tourneys": "予定されているトーナメントはありません",
+    "no_tourneys_desc": "現在、このカテゴリーに該当するトーナメントはありません。また近いうちにご覧ください！",
+    "free": "無料",
+    "capacity": "定員：{{registered}} / {{capacity}} 名",
+    "registered_list": "登録者一覧 ({{count}})",
+    "no_registered": "現時点では登録者はいません。",
+    "login_required": "参加にはログインが必要です",
+    "unregister": "登録解除",
+    "full": "満席",
+    "register": "登録する",
+    "success_register": "トーナメントへの登録が完了しました！参加枠が確保されました。",
+    "success_unregister": "登録解除が完了しました。",
+    "err_conn": "サーバーに接続できません。"
+  },
+  "categories": {
+    "Stratégie": "戦略",
+    "Pose de tuiles": "瓦の敷設",
+    "Famille": "家族",
+    "Abstrait": "要旨",
+    "Ambiance": "雰囲気",
+    "Autre": "その他"
+  },
+  "events_page": {
+    "title": "今後のイベント",
+    "subtitle": "プレビューイベント、ドラフト、入門講座などに参加して、新しい遊び方を発見しましょう！",
+    "badge": "スケジュール",
+    "all_events": "すべてのイベント",
+    "prerelease": "先行上映",
+    "draft": "草案",
+    "initiation": "入門",
+    "btn_register": "登録する",
+    "btn_registered": "登録済み",
+    "btn_full": "満席",
+    "price_free": "無料",
+    "spots_left": "{{count}} 残席数",
+    "spots_left_plural": "{{count}} 残席数",
+    "no_events": "現在、予定されているイベントはありません。また後ほどご確認ください！"
+  }
+}

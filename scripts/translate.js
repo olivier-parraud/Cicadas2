@@ -137,13 +137,15 @@ async function translateLanguage(translator, lang, deeplLang, sourceMap, previou
 
 async function translateAll() {
     loadEnv();
-    if (!process.env.DEEPL_API_KEY) {
-        throw new Error('DEEPL_API_KEY manquant dans backend/.env');
+    const apiKey = process.env.DEEPL_API_KEY;
+    if (!apiKey || apiKey === 'your_deepl_api_key' || apiKey === 'ta_cle_deepl' || apiKey.trim() === '') {
+        console.warn('⚠️ DEEPL_API_KEY non configurée dans backend/.env. La traduction automatique DeepL est en pause.');
+        return;
     }
 
     const sourceMap = flattenObject(readJson(SOURCE_FILE));
     const previousSourceMap = readJson(CACHE_FILE);
-    const translator = new Translator(process.env.DEEPL_API_KEY);
+    const translator = new Translator(apiKey);
 
     for (const [lang, deeplLang] of Object.entries(TARGETS)) {
         await translateLanguage(translator, lang, deeplLang, sourceMap, previousSourceMap);
@@ -156,7 +158,11 @@ async function run() {
     try {
         await translateAll();
     } catch (error) {
-        console.error(error.message);
+        if (error.message.includes('Authorization failure') || error.message.includes('auth_key') || error.message.includes('Forbidden')) {
+            console.warn('⚠️ Clé DeepL API invalide (Authorization failure / Forbidden). Renseignez une clé API DeepL valide dans backend/.env sous DEEPL_API_KEY.');
+        } else {
+            console.error('Erreur traduction DeepL :', error.message);
+        }
         if (!WATCH_MODE) {
             process.exit(1);
         }

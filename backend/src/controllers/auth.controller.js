@@ -16,6 +16,12 @@ export const register = async (req, res) => {
         if (!email || !password) {
             return res.status(400).json({ error: 'Email et mot de passe requis' });
         }
+        if (password.length < 8) {
+            return res.status(400).json({ error: 'Le mot de passe doit contenir au moins 8 caractères.' });
+        }
+        if (!/[^a-zA-Z0-9]/.test(password)) {
+            return res.status(400).json({ error: 'Le mot de passe doit contenir au moins 1 caractère spécial.' });
+        }
         const existingUser = await User.findByEmail(email);
         if (existingUser) {
             return res.status(409).json({ error: 'Email déjà utilisé' });

@@ -1,0 +1,333 @@
+{
+  "nav": {
+    "home": "首页",
+    "about": "关于",
+    "book_table": "预订餐桌",
+    "my_reservations": "我的预订",
+    "profile": "个人资料",
+    "boardgames": "桌游",
+    "tournaments": "锦标赛",
+    "events": "活动",
+    "admin": "管理员",
+    "logout": "注销",
+    "login": "登录",
+    "register": "注册",
+    "language": "语言"
+  },
+  "home": {
+    "title": "欢迎使用入门套件",
+    "subtitle": "现代 React + Node.js + MySQL 模板",
+    "cta_start": "开始",
+    "cta_login": "登录",
+    "cta_dashboard": "访问仪表盘"
+  },
+  "login": {
+    "title": "登录",
+    "email": "电子邮件",
+    "password": "密码",
+    "submit": "登录",
+    "loading": "正在登录...",
+    "no_account": "还没有账号吗？",
+    "register_link": "注册"
+  },
+  "register": {
+    "title": "注册账户",
+    "email": "电子邮件",
+    "password": "密码",
+    "confirm_password": "确认密码",
+    "submit": "注册",
+    "loading": "注册...",
+    "already_account": "已有账号了吗？",
+    "login_link": "登录"
+  },
+  "dashboard": {
+    "title": "欢迎 {{name}}！",
+    "email_label": "电子邮箱："
+  },
+  "email": {
+    "title": "发送电子邮件",
+    "subtitle": "通过入门套件测试通过Brevo发送一封交易邮件。",
+    "to": "收件人",
+    "name": "姓名（可选）",
+    "subject": "主题",
+    "message": "消息",
+    "submit": "发送电子邮件",
+    "sending": "正在发送...",
+    "success": "邮件已成功发送",
+    "error": "无法发送电子邮件"
+  },
+  "errors": {
+    "passwords_mismatch": "密码不匹配",
+    "password_too_short": "密码必须至少包含6个字符",
+    "login_error": "连接错误",
+    "register_error": "注册时出现错误"
+  },
+  "footer": {
+    "copyright": "© {{year}} Cicados"
+  },
+  "home_page": {
+    "slides": {
+      "slide_1": {
+        "title": "Cicados 游乐区",
+        "desc": "主赛区已备好桌子，供您进行对决"
+      },
+      "slide_2": {
+        "title": "一楼",
+        "desc": "商店、饮品吧和游戏架"
+      },
+      "slide_3": {
+        "title": "“Le Coin Bar”",
+        "desc": "为您游戏时光精选的饮品"
+      },
+      "slide_4": {
+        "title": "Mezzanine Gaming",
+        "desc": "楼上的休闲区配有舒适的坐垫和椅子"
+      }
+    },
+    "featured": {
+      "badge": "精选游戏库",
+      "title": "我们的明星桌游",
+      "subtitle": "快来探索我们店内精选的顶级游戏吧。预订一张桌子，来一决高下吧！",
+      "book_to_play": "预订以进行游戏",
+      "view_all": "查看所有桌游目录 ➔"
+    },
+    "hero": {
+      "title": "您专属的集换式卡牌游戏与桌游乐园",
+      "description": "Cicados 是您进行卡牌游戏（TCG）和桌游的理想场所。您可以租用配备齐全的游戏桌，参加我们的每周锦标赛，并与一群志同道合的爱好者共同度过难忘的时光。",
+      "cta": "预订赌桌"
+    },
+    "features": {
+      "title": "我们的主要功能",
+      "subtitle": "让您在最佳状态下畅玩所需的一切。",
+      "items": {
+        "booking": {
+          "title": "在线预订餐桌",
+          "description": "只需点击几下，即可预订您的游戏区域。为您和您的朋友选择时间、桌位及游戏时长。"
+        },
+        "tournaments": {
+          "title": "卡牌游戏与桌游锦标赛",
+          "description": "欢迎参加我们每周举办的竞技或友谊赛。与顶尖玩家一较高下，赢取卡包！"
+        },
+        "groups": {
+          "title": "适合团体活动的场所",
+          "description": "这些巨型且可自由组合的桌子，非常适合《指挥官》模式、与朋友进行选牌赛，或是进行桌游活动。"
+        }
+      }
+    },
+    "how_it_works": {
+      "title": "它是如何运作的？",
+      "subtitle": "只需三个简单步骤，即可加入社区并开始游戏。",
+      "steps": {
+        "step_1": {
+          "title": "选择您的套餐",
+          "description": "请选择您想要的卡牌游戏（MTG、游戏王、宝可梦等）或对战模式。"
+        },
+        "step_2": {
+          "title": "预订您的时段",
+          "description": "请选择日期、时间和用餐时长。您的餐桌将立即为您预订。"
+        },
+        "step_3": {
+          "title": "坐下来，开始玩吧",
+          "description": "活动当天请前往接待处报到。您的游戏垫和游戏配件已经准备就绪！"
+        }
+      }
+    },
+    "testimonials": {
+      "title": "玩家们怎么说",
+      "subtitle": "快来看看我们这群热情的纸牌玩家社区的反馈吧。",
+      "items": "[object Object],[object Object],[object Object]"
+    },
+    "cta": {
+      "title": "准备好开始下一局了吗？",
+      "description": "立即预订您的牌桌，或报名参加我们即将举行的扑克锦标赛。",
+      "buttons": {
+        "book": "预订餐桌",
+        "tournaments": "查看赛事"
+      }
+    },
+    "faq": {
+      "title": "常见问题",
+      "subtitle": "关于我们的游乐区及预订，您需要了解的一切。",
+      "items": "[object Object],[object Object],[object Object],[object Object]"
+    }
+  },
+  "login_page": {
+    "title": "登录您的账户",
+    "or": "或者",
+    "create_account": "创建一个新的Cicados账户",
+    "email_label": "电子邮箱地址",
+    "password_label": "密码",
+    "submit": "登录",
+    "error_connection": "连接服务器时发生错误",
+    "default_error": "连接时发生错误"
+  },
+  "register_page": {
+    "title": "注册Cicados账户",
+    "already_account": "您已有账户了吗？",
+    "login_link": "登录",
+    "firstname": "名字",
+    "lastname": "姓名",
+    "pseudo": "昵称",
+    "pseudo_placeholder": "玩家姓名",
+    "email_label": "电子邮箱地址",
+    "password_label": "密码",
+    "submit": "注册",
+    "error_connection": "连接服务器时发生错误",
+    "default_error": "注册时出现错误"
+  },
+  "reservations_page": {
+    "need_auth": "您必须登录您的Cicados账户才能预订游戏桌。",
+    "login_btn": "登录",
+    "no_account": "还没有账号吗？",
+    "register_link": "注册",
+    "badge": "游戏室与卡牌游戏区",
+    "title": "预订餐桌",
+    "subtitle": "选择您想玩的游戏，查看空闲时段并安排好您的游戏时间，快来Cicados一决高下吧！",
+    "demand_title": "预订申请",
+    "game_type_label": "游戏 / 集换式卡牌游戏",
+    "players_count_label": "玩家人数",
+    "player": "1名玩家",
+    "players": "{{count}} 名球员",
+    "players_8": "8名及以上玩家",
+    "specific_game_label": "桌游",
+    "specific_game_placeholder": "例如：《卡坦岛》、《阿祖尔》……",
+    "no_game_found": "未找到游戏（您可以手动输入名称）",
+    "date_label": "日期",
+    "time_label": "到达时间",
+    "duration_label": "时长（小时）",
+    "submit_btn": "预订餐桌",
+    "planning_title": "游戏桌的可用情况",
+    "planning_subtitle": "我们共有4张游戏桌。请选择一个日期，查看预订情况并选择一个空闲时段。",
+    "no_date_selected": "未选择日期",
+    "no_date_selected_desc": "请在左侧表格中填写到店日期，以便查看各餐桌的时间安排。",
+    "loading_planning": "查询表的日程安排……",
+    "date_dispo_title": "可用情况：",
+    "tables_free": "{{count}} 空闲表",
+    "table_free": "还有1张空桌",
+    "full": "已满",
+    "legend_free": "有空（2至4个空位）",
+    "legend_few": "几乎满员（还剩1个空位）",
+    "legend_full": "已满（0个空位）",
+    "view_my_reservations": "查看我的预订",
+    "success_msg": "预订成功！",
+    "fill_form": "请完整填写此表格",
+    "byog_label": "我带了我的游戏来",
+    "other_label": "其他"
+  },
+  "my_reservations_page": {
+    "need_auth": "需要登录",
+    "need_auth_desc": "您必须登录您的Cicados账户，才能查看您的预订和报名信息。",
+    "login_btn": "登录",
+    "badge": "您的Cicados日程表",
+    "title": "我的活动",
+    "subtitle": "您可以在这里查看已预订的牌桌和即将举行的锦标赛。只需点击一下，即可修改时间段或取消报名。",
+    "tables_title": "我的订位",
+    "loading_tables": "正在加载您的表格……",
+    "no_tables": "没有预留的餐桌",
+    "no_tables_desc": "您目前尚未预订餐桌。",
+    "book_table_btn": "预订餐桌",
+    "edit_btn": "编辑",
+    "cancel_btn": "取消",
+    "tournaments_title": "我的赛事报名情况",
+    "loading_tourneys": "正在加载您的赛事...",
+    "no_tourneys": "暂无计划中的比赛",
+    "no_tourneys_desc": "您目前尚未报名参加任何纸牌或游戏比赛。",
+    "view_tourneys_btn": "查看赛事",
+    "unregister_tourney_btn": "退出比赛",
+    "modal_edit_title": "修改预订",
+    "modal_close": "关闭",
+    "modal_save": "保存",
+    "confirm_cancel": "您确定要取消此预订吗？",
+    "confirm_unregister": "您确定要退出本次比赛吗？",
+    "cancel_success": "预订已成功取消！",
+    "unregister_success": "已成功取消订阅。",
+    "edit_success": "预订已成功修改！",
+    "duration_hours": "抵达 {{time}}（耗时 {{duration}} 小时）",
+    "free_price": "免费",
+    "registered_players": "报名名单 ({{count}})",
+    "no_registered_players": "目前尚无报名者。",
+    "board_game_type": "桌游",
+    "byog_type": "我带了我的游戏来",
+    "other_type": "其他",
+    "load_tables_error": "无法加载您的预订信息。",
+    "load_tourneys_error": "无法加载您的赛事报名信息。",
+    "events_title": "我报名参加的活动",
+    "loading_events": "正在加载您的活动...",
+    "no_events": "没有计划中的活动",
+    "no_events_desc": "您目前尚未报名参加任何活动或入门课程。",
+    "view_events_btn": "查看活动",
+    "unregister_event_btn": "取消参加该活动",
+    "confirm_unregister_event": "您确定要取消参加此活动吗？",
+    "load_events_error": "无法加载您的活动报名信息。",
+    "err_conn": "与服务器连接失败。",
+    "filter_all": "显示全部",
+    "filter_tables": "预订餐桌",
+    "filter_tournaments": "锦标赛",
+    "filter_events": "活动"
+  },
+  "boardgames_page": {
+    "badge": "精品店游戏库",
+    "title": "我们提供的桌游",
+    "subtitle": "欢迎浏览我们商店中免费开放的游戏目录。预订一张桌子，和家人或朋友一起来享受一段愉快的时光吧！",
+    "search_label": "搜索游戏",
+    "search_placeholder": "按名称、描述等搜索...",
+    "category_label": "分类",
+    "all_categories": "所有分类",
+    "players_label": "玩家人数",
+    "players_placeholder": "例：4",
+    "loading": "正在加载游戏库……",
+    "no_game": "未找到任何游戏",
+    "no_game_desc": "目前没有符合您搜索条件的游戏。请尝试使用其他筛选条件！",
+    "players_count": "{{min}} - {{max}} 名选手",
+    "duration": "{{time}} 分钟",
+    "rules_link": "查看官方网站 / 规则 ↗",
+    "book_to_play": "预订一张桌子来玩",
+    "see_more": "查看更多",
+    "see_less": "收起",
+    "load_err": "加载桌游时发生错误"
+  },
+  "tournaments_page": {
+    "badge": "Cicados官方活动",
+    "title": "锦标赛",
+    "subtitle": "快来参加我们的本地赛事，向社区玩家发起挑战，争取赢取促销补充包和独家奖品吧！",
+    "all_tournaments": "所有赛事",
+    "loading": "正在加载活动...",
+    "no_tourneys": "暂无计划中的比赛",
+    "no_tourneys_desc": "目前该类别下暂无相关赛事。敬请期待！",
+    "free": "免费",
+    "capacity": "容量：{{registered}} / {{capacity}} 名玩家",
+    "registered_list": "报名名单 ({{count}})",
+    "no_registered": "目前尚无报名者。",
+    "login_required": "参与活动需登录",
+    "unregister": "取消订阅",
+    "full": "已满",
+    "register": "注册",
+    "success_register": "比赛报名成功！您的名额已预留。",
+    "success_unregister": "已成功取消订阅。",
+    "err_conn": "无法连接到服务器。"
+  },
+  "categories": {
+    "Stratégie": "战略",
+    "Pose de tuiles": "铺设瓦片",
+    "Famille": "家庭",
+    "Abstrait": "摘要",
+    "Ambiance": "氛围",
+    "Autre": "其他"
+  },
+  "events_page": {
+    "title": "即将举办的活动",
+    "subtitle": "参加我们的试玩会、选秀活动和入门课程，探索全新的游戏方式！",
+    "badge": "日程安排",
+    "all_events": "所有活动",
+    "prerelease": "抢先看",
+    "draft": "草稿",
+    "initiation": "入门",
+    "btn_register": "注册",
+    "btn_registered": "已注册",
+    "btn_full": "已满",
+    "price_free": "免费",
+    "spots_left": "{{count}} 个名额",
+    "spots_left_plural": "{{count}} 个剩余名额",
+    "no_events": "目前暂无活动安排。请稍后再来查看！"
+  }
+}

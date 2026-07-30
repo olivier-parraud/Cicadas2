@@ -203,7 +203,7 @@ function Home() {
         }
 
         const isEvent = !!activity.type;
-        const url = isEvent 
+        const url = isEvent
             ? `http://localhost:5050/api/events/${activity.id}/register`
             : `http://localhost:5050/api/tournaments/${activity.id}/register`;
         const method = isRegistered ? 'DELETE' : 'POST';
@@ -530,8 +530,8 @@ function Home() {
                         {upcomingEvents.map((activity) => {
                             const isEvent = !!activity.type;
                             const uniqueKey = `${isEvent ? 'event' : 'tourney'}-${activity.id}`;
-                            const isReg = isEvent 
-                                ? myEventRegistrations.includes(activity.id) 
+                            const isReg = isEvent
+                                ? myEventRegistrations.includes(activity.id)
                                 : myTourneyRegistrations.includes(activity.id);
                             return (
                                 <TournamentCard
@@ -673,7 +673,7 @@ function Home() {
                 <div className="bg-[#130f25]/60 border border-[#563D82]/20 rounded-3xl p-8 backdrop-blur-md space-y-6 relative overflow-hidden">
                     <div className="absolute -top-12 -left-12 w-24 h-24 bg-[#F4AF23]/10 rounded-full blur-2xl pointer-events-none"></div>
                     <div className="absolute -bottom-12 -right-12 w-24 h-24 bg-[#563D82]/10 rounded-full blur-2xl pointer-events-none"></div>
-                    
+
                     <div className="max-w-2xl mx-auto space-y-3 relative z-10 flex flex-col items-center">
                         <MessageSquare className="w-10 h-10 text-[#F4AF23]" />
                         <h2 className="text-2xl font-extrabold text-white tracking-tight">
@@ -748,7 +748,7 @@ function Home() {
                                 <Mail className="w-5 h-5 text-[#F4AF23]" />
                                 <h3 className="text-xl font-extrabold text-white tracking-tight">Nouveau Message</h3>
                             </div>
-                            <button 
+                            <button
                                 onClick={() => setIsContactModalOpen(false)}
                                 className="text-white/60 hover:text-white transition cursor-pointer"
                             >
@@ -791,7 +791,7 @@ function Home() {
                             <form onSubmit={handleContactSubmit} className="space-y-4 relative z-10">
                                 <div className="space-y-1">
                                     <label className="text-xs font-bold text-white/50 uppercase tracking-wider">Objet</label>
-                                    <input 
+                                    <input
                                         type="text"
                                         value={contactSubject}
                                         onChange={(e) => setContactSubject(e.target.value)}

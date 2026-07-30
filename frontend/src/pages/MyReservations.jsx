@@ -352,23 +352,26 @@ function MyReservations() {
     }
 
     return (
-        <div className="min-h-screen bg-[#05040a] text-white selection:bg-[#F4AF23] selection:text-[#05040a] pb-20">
-            {/* Header Section */}
-            <div className="relative overflow-hidden bg-gradient-to-br from-black via-[#130f25] to-black text-white py-20 px-4 border-b border-white/5 text-center">
-                <div className="absolute top-1/4 left-1/10 w-96 h-96 bg-[#563D82]/10 rounded-full blur-3xl pointer-events-none"></div>
-                <div className="absolute bottom-1/4 right-1/10 w-96 h-96 bg-[#F4AF23]/5 rounded-full blur-3xl pointer-events-none"></div>
+        <div className="min-h-screen text-white selection:bg-[#F4AF23] selection:text-[#05040a] pb-20">
+            {/* Header Section delimited in a card with About page background */}
+            <div className="max-w-7xl mx-auto pt-10 px-4 md:px-8">
+                <div className="relative overflow-hidden bg-gradient-to-br from-[#181232] via-[#130f25] to-[#0c0919] border border-[#F4AF23]/30 rounded-3xl p-8 md:p-12 shadow-2xl space-y-4 text-center">
+                    {/* Ambient background glows like About page */}
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[#563D82]/25 rounded-full blur-3xl pointer-events-none"></div>
+                    <div className="absolute top-0 right-0 w-80 h-80 bg-[#F4AF23]/15 rounded-full blur-3xl pointer-events-none"></div>
 
-                <div className="max-w-4xl mx-auto space-y-6 relative z-10">
-                    <h1 className="text-3xl md:text-5xl font-black tracking-tight bg-clip-text bg-gradient-to-r from-white via-[#FFE082] to-[#F4AF23] leading-tight">
-                        {t('my_reservations_page.title')}
-                    </h1>
-                    <p className="text-base md:text-lg text-slate-400 max-w-2xl mx-auto leading-relaxed font-light">
-                        {t('my_reservations_page.subtitle')}
-                    </p>
+                    <div className="max-w-3xl mx-auto space-y-4 relative z-10">
+                        <h1 className="text-3xl md:text-5xl font-black tracking-tight bg-clip-text bg-gradient-to-r from-white via-[#FFE082] to-[#F4AF23] leading-tight">
+                            {t('my_reservations_page.title')}
+                        </h1>
+                        <p className="text-base md:text-lg text-slate-300 max-w-2xl mx-auto leading-relaxed font-light">
+                            {t('my_reservations_page.subtitle')}
+                        </p>
+                    </div>
                 </div>
             </div>
 
-            <div className="max-w-7xl mx-auto py-12 px-4 md:px-8 space-y-12">
+            <div className="max-w-7xl mx-auto py-8 px-4 md:px-8 space-y-12">
 
                 {/* Filter Controls */}
                 <div className="flex flex-wrap justify-center gap-3">

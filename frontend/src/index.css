@@ -378,3 +378,19 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   filter: invert(0.85) !important;
   cursor: pointer;
 }
+
+/* --- Readability & Font Size Enhancement --- */
+/* Augmentation de la taille de police des plus petites polices du site */
+.text-xs {
+  font-size: 0.85rem !important; /* ~13.6px au lieu de 12px */
+  line-height: 1.35rem !important;
+}
+
+.text-\[10px\],
+.text-\[11px\],
+.text-\[12px\],
+.text-2xs,
+.text-3xs {
+  font-size: 0.8rem !important; /* ~12.8px au lieu de 10-11px */
+  line-height: 1.25rem !important;
+}

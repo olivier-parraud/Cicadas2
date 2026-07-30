@@ -201,7 +201,7 @@
     "firstname": "Prénom",
     "lastname": "Nom",
     "pseudo": "Pseudo",
-    "pseudo_placeholder": "Nom d'invocateur / de joueur",
+    "pseudo_placeholder": "Nom de joueur",
     "email_label": "Adresse email",
     "password_label": "Mot de passe",
     "submit": "S'inscrire",
