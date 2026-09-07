@@ -12,6 +12,7 @@ import BoardGames from './pages/BoardGames.jsx';
 import MyReservations from './pages/MyReservations.jsx';
 import Profile from './pages/Profile.jsx';
 import About from './pages/About.jsx';
+import PrivacyPolicy from './pages/PrivacyPolicy.jsx';
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
         <Route path="/events" element={<Events />} />
         <Route path="/admin" element={<DashboardAdmin />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
       </Route>
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>

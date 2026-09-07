@@ -10,6 +10,7 @@ function Register() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
+    const [acceptTerms, setAcceptTerms] = useState(false);
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
@@ -17,6 +18,10 @@ function Register() {
         e.preventDefault();
         setError('');
 
+        if (!acceptTerms) {
+            setError('Veuillez accepter la politique de confidentialité et de protection des données (RGPD) pour vous inscrire.');
+            return;
+        }
         if (password.length < 8) {
             setError('Le mot de passe doit contenir au moins 8 caractères.');
             return;
@@ -76,37 +81,37 @@ function Register() {
                         )}
                         <div className="grid grid-cols-2 gap-4">
                             <div>
-                                <label className="block text-sm font-medium text-slate-350">{t('register_page.firstname')}</label>
-                                <input type="text" required
+                                <label htmlFor="firstname" className="block text-sm font-medium text-slate-350">{t('register_page.firstname')}</label>
+                                <input type="text" id="firstname" required
                                     className="mt-1 appearance-none block w-full px-3.5 py-2.5 border border-white/5 bg-[#0c0919] text-white rounded-xl shadow-sm placeholder-gray-500 focus:outline-none focus:border-[#F4AF23]/50 sm:text-sm font-light"
                                     value={firstname} onChange={(e) => setFirstname(e.target.value)} />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-slate-350">{t('register_page.lastname')}</label>
-                                <input type="text" required
+                                <label htmlFor="lastname" className="block text-sm font-medium text-slate-350">{t('register_page.lastname')}</label>
+                                <input type="text" id="lastname" required
                                     className="mt-1 appearance-none block w-full px-3.5 py-2.5 border border-white/5 bg-[#0c0919] text-white rounded-xl shadow-sm placeholder-gray-500 focus:outline-none focus:border-[#F4AF23]/50 sm:text-sm font-light"
                                     value={lastname} onChange={(e) => setLastname(e.target.value)} />
                             </div>
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-slate-350">{t('register_page.pseudo')}</label>
-                            <input type="text" required
+                            <label htmlFor="pseudo" className="block text-sm font-medium text-slate-350">{t('register_page.pseudo')}</label>
+                            <input type="text" id="pseudo" required
                                 className="mt-1 appearance-none block w-full px-3.5 py-2.5 border border-white/5 bg-[#0c0919] text-white rounded-xl shadow-sm placeholder-slate-500 focus:outline-none focus:border-[#F4AF23]/50 sm:text-sm font-light"
                                 placeholder={t('register_page.pseudo_placeholder')}
                                 value={pseudo} onChange={(e) => setPseudo(e.target.value)} />
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-slate-350">{t('register_page.email_label')}</label>
-                            <input type="email" required
+                            <label htmlFor="email" className="block text-sm font-medium text-slate-350">{t('register_page.email_label')}</label>
+                            <input type="email" id="email" required
                                 className="mt-1 appearance-none block w-full px-3.5 py-2.5 border border-white/5 bg-[#0c0919] text-white rounded-xl shadow-sm placeholder-gray-500 focus:outline-none focus:border-[#F4AF23]/50 sm:text-sm font-light"
                                 value={email} onChange={(e) => setEmail(e.target.value)} />
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-slate-350">{t('register_page.password_label')}</label>
-                            <input type="password" required minLength="8"
+                            <label htmlFor="password" className="block text-sm font-medium text-slate-350">{t('register_page.password_label')}</label>
+                            <input type="password" id="password" required minLength="8"
                                 className="mt-1 appearance-none block w-full px-3.5 py-2.5 border border-white/5 bg-[#0c0919] text-white rounded-xl shadow-sm placeholder-gray-500 focus:outline-none focus:border-[#F4AF23]/50 sm:text-sm font-light"
                                 value={password} onChange={(e) => setPassword(e.target.value)} />
                             
@@ -120,10 +125,25 @@ function Register() {
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-slate-350">Confirmer le mot de passe</label>
-                            <input type="password" required minLength="8"
+                            <label htmlFor="confirmPassword" className="block text-sm font-medium text-slate-350">Confirmer le mot de passe</label>
+                            <input type="password" id="confirmPassword" required minLength="8"
                                 className="mt-1 appearance-none block w-full px-3.5 py-2.5 border border-white/5 bg-[#0c0919] text-white rounded-xl shadow-sm placeholder-gray-500 focus:outline-none focus:border-[#F4AF23]/50 sm:text-sm font-light"
                                 value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
+                        </div>
+
+                        {/* Checkbox RGPD & Consentement */}
+                        <div className="flex items-start gap-3 p-3 rounded-xl bg-[#0c0919]/60 border border-white/5">
+                            <input 
+                                type="checkbox" 
+                                id="acceptTerms" 
+                                required
+                                checked={acceptTerms} 
+                                onChange={(e) => setAcceptTerms(e.target.checked)}
+                                className="mt-1 h-4 w-4 rounded border-white/20 bg-[#0c0919] text-[#F4AF23] focus:ring-[#F4AF23] cursor-pointer"
+                            />
+                            <label htmlFor="acceptTerms" className="text-xs text-slate-300 leading-relaxed cursor-pointer select-none">
+                                J'ai lu et j'accepte les <Link to="/privacy-policy" target="_blank" className="text-[#F4AF23] underline hover:text-[#ffbe3b]">Conditions Générales & la Politique de Confidentialité (RGPD)</Link>. Mes données sont recueillies exclusivement pour la gestion de mes réservations et ne seront jamais cédées.
+                            </label>
                         </div>
 
                         <div>

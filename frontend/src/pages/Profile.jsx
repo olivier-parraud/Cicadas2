@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { User, Mail, Lock, Shield, Calendar, AlertCircle, CheckCircle, MessageSquare, X, Send } from 'lucide-react';
+import { User, Mail, Lock, Shield, Calendar, AlertCircle, CheckCircle, MessageSquare, X, Send, Trash2 } from 'lucide-react';
 
 function Profile() {
     const { t } = useTranslation();
@@ -15,6 +15,8 @@ function Profile() {
     const [replyingMessageId, setReplyingMessageId] = useState(null);
     const [userReplyText, setUserReplyText] = useState('');
     const [userReplyLoading, setUserReplyLoading] = useState(false);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [deleteLoading, setDeleteLoading] = useState(false);
     
     // Form fields
     const [pseudo, setPseudo] = useState('');
@@ -205,6 +207,35 @@ function Profile() {
             setMessage({ type: 'error', text: 'Erreur réseau.' });
         } finally {
             setActionLoading(false);
+        }
+    };
+
+    const handleDeleteAccount = async () => {
+        setDeleteLoading(true);
+        try {
+            const res = await fetch('http://localhost:5050/api/auth/delete-account', {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (res.ok) {
+                localStorage.removeItem('token');
+                localStorage.removeItem('user_role');
+                window.dispatchEvent(new Event('storage'));
+                navigate('/', { replace: true });
+            } else {
+                const data = await res.json();
+                setMessage({ type: 'error', text: data.error || 'Erreur lors de la suppression du compte.' });
+                setShowDeleteModal(false);
+            }
+        } catch (err) {
+            console.error("Erreur suppression compte :", err);
+            setMessage({ type: 'error', text: 'Erreur réseau lors de la suppression.' });
+            setShowDeleteModal(false);
+        } finally {
+            setDeleteLoading(false);
         }
     };
 
@@ -529,7 +560,67 @@ function Profile() {
                     </div>
                 )}
             </div>
+
+            {/* RGPD & Droit à l'effacement Section */}
+            <div className="bg-[#130f25]/80 border border-rose-500/20 rounded-3xl p-6 md:p-8 shadow-xl space-y-4 backdrop-blur-md">
+                <div className="flex items-center justify-between border-b border-white/5 pb-4">
+                    <div className="flex items-center gap-3">
+                        <Shield className="w-5 h-5 text-[#F4AF23]" />
+                        <h2 className="text-base md:text-lg font-bold text-white">Données Personnelles & Droit à l'Oubli (RGPD)</h2>
+                    </div>
+                    <Link to="/privacy-policy" className="text-xs text-[#F4AF23] hover:underline">
+                        Politique de confidentialité
+                    </Link>
+                </div>
+                <p className="text-xs text-slate-400 font-light leading-relaxed">
+                    Conformément à l'Article 17 du RGPD (Droit à l'effacement), vous disposez du droit de supprimer définitivement votre compte à tout moment. Toutes vos réservations, participations aux tournois et échanges de messagerie seront instantanément purgés de notre base de données sans laisser aucune donnée résiduelle.
+                </p>
+                <div className="pt-2 flex justify-end">
+                    <button
+                        type="button"
+                        onClick={() => setShowDeleteModal(true)}
+                        className="px-4 py-2 text-xs font-bold text-rose-400 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 rounded-xl transition flex items-center gap-2 cursor-pointer"
+                    >
+                        <Trash2 className="w-4 h-4" /> Supprimer définitivement mon compte
+                    </button>
+                </div>
+            </div>
+
         </div>
+
+        {/* Modal de confirmation suppression de compte (RGPD) */}
+        {showDeleteModal && (
+            <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+                <div className="bg-[#130f25] border border-rose-500/30 rounded-3xl p-6 max-w-md w-full space-y-5 shadow-2xl">
+                    <div className="flex items-center gap-3 text-rose-400">
+                        <AlertCircle className="w-6 h-6 shrink-0" />
+                        <h3 className="text-lg font-bold text-white">Supprimer définitivement votre compte ?</h3>
+                    </div>
+                    <p className="text-xs text-slate-300 leading-relaxed font-light">
+                        Cette action est <strong className="text-rose-400">irréversible</strong>. En validant, votre compte ainsi que l'ensemble de vos données associées (réservations, inscriptions, messages) seront définitivement effacés de la base de données conformément à l'Article 17 du RGPD.
+                    </p>
+                    <div className="flex justify-end gap-3 pt-2">
+                        <button
+                            type="button"
+                            onClick={() => setShowDeleteModal(false)}
+                            disabled={deleteLoading}
+                            className="px-4 py-2 text-xs font-semibold text-slate-400 hover:text-white rounded-xl border border-white/10 transition cursor-pointer"
+                        >
+                            Annuler
+                        </button>
+                        <button
+                            type="button"
+                            onClick={handleDeleteAccount}
+                            disabled={deleteLoading}
+                            className="px-4 py-2 text-xs font-bold text-white bg-rose-600 hover:bg-rose-700 rounded-xl transition flex items-center gap-1.5 shadow-lg shadow-rose-900/30 cursor-pointer disabled:opacity-50"
+                        >
+                            {deleteLoading ? 'Suppression en cours...' : 'Oui, supprimer mon compte'}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        )}
+
     </div>
 );
 }

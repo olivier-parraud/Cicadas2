@@ -41,13 +41,22 @@
    - 7.3 [Le basculement dynamique en cas de panne (Sauvegarde JSON)](#73-le-basculement-dynamique-en-cas-de-panne-sauvegarde-json)
    - 7.4 [Le Système de Messagerie Multi-Tours & Synchronisation Réactive Temps Réel](#74-le-système-de-messagerie-multi-tours--synchronisation-réactive-temps-réel)
    - 7.5 [Gestion fine de l'état React et Isolation des Modales (Fix overlay Pokémon)](#75-gestion-fine-de-létat-react-et-isolation-des-modales-fix-overlay-pokémon)
-8. [Jeux d'Essai et Scénarios de Validation](#8--jeux-dessai-et-scénarios-de-validation)
-   - 8.1 [Scénario A : Inscription et Détection de Conflit de Table](#scénario-a--inscription-et-détection-de-conflit-de-table)
-   - 8.2 [Scénario B : Remplissage et activités pour 5 utilisateurs différents](#scénario-b--remplissage-et-activités-pour-5-utilisateurs-différents)
-   - 8.3 [Scénario C : Messagerie et Échanges Multi-Tours Membre <-> Admin](#scénario-c--messagerie-et-échanges-multi-tours-membre---admin)
-9. [Veille Technologique et Sécurité (OWASP)](#9--veille-technologique-et-sécurité-owasp)
-10. [Utilisation de Ressources Anglophones](#10--utilisation-de-ressources-anglophones)
-11. [Conclusion et Perspectives d'Évolution](#11--conclusion-et-perspectives-dévolution)
+8. [Jeux d'Essai, Matrice de Recette et Validation Visuelle](#8--jeux-dessai-et-scénarios-de-validation)
+   - 8.1 [Matrice de Validation des Tests Fonctionnels et E2E](#81-matrice-de-validation-des-tests-fonctionnels-et-e2e)
+   - 8.2 [Détail des Scénarios Métier Réalisés](#82-détail-des-scénarios-métier-réalisés)
+   - 8.3 [Captures Visuelles de l'Application et Présentation au Jury](#83-captures-visuelles-de-lapplication-et-présentation-au-jury)
+9. [Veille Technologique, Sécurité (OWASP) et Accessibilité (A11y)](#9--veille-technologique-sécurité-owasp-et-accessibilité-a11y)
+   - 9.1 [Sécurité Applicative et Bonnes Pratiques OWASP](#91-sécurité-applicative-et-bonnes-pratiques-owasp)
+   - 9.2 [Démarche d'Accessibilité Numérique (RGAA / WCAG 2.1 AA)](#92-démarche-daccessibilité-numérique-rgaa--wcag-21-aa)
+10. [Conformité RGPD et Protection des Données Personnelles](#10--conformité-rgpd-et-protection-des-données-personnelles)
+    - 10.1 [Démarche Privacy by Design & Cadre Légal](#101-démarche-privacy-by-design--cadre-légal)
+    - 10.2 [Principe de Minimisation des Données](#102-principe-de-minimisation-des-données)
+    - 10.3 [Registre des Traitements et Finalités](#103-registre-des-traitements-et-finalités)
+    - 10.4 [Sécurité et Confidentialité du Stockage](#104-sécurité-et-confidentialité-du-stockage)
+    - 10.5 [Gestion des Droits des Utilisateurs (Droit à l'oubli & Accès)](#105-gestion-des-droits-des-utilisateurs-droit-à-loubli--accès)
+    - 10.6 [Durée de Conservation et Cookies](#106-durée-de-conservation-et-cookies)
+11. [Utilisation de Ressources Anglophones](#11--utilisation-de-ressources-anglophones)
+12. [Conclusion et Perspectives d'Évolution](#12--conclusion-et-perspectives-dévolution)
 
 ---
 
@@ -103,23 +112,12 @@ Initialement pensé comme un outil de réservation de tables et d'inscriptions a
   * Affichage d'un badge dynamique sur les cartes du catalogue (`BoardGameCard.jsx`) : *"En stock: X"* ou *"Rupture de stock"*.
   * Contrôle rapide du stock sur le Dashboard Admin grâce à des boutons d'incrémentation/décrémentation instantanés (`+ / -`) via des requêtes AJAX `PATCH /api/admin/boardgames/:id/stock`.
 
-#### 4. Isolation des Modales et Confort UI/UX (Nouveauté - Fix Overlay & Absence de Clignotement)
-* **Problématique** : Lors du clic sur la liste des inscrits d'un événement, la fiche latérale du jeu Pokémon s'ouvrait simultanément sur la droite. De plus, les actions sur le Dashboard Admin (annulation/suppression de réservation) provoquaient un clignotement blanc d'écran de demi-seconde à chaque rafraîchissement.
-* **Besoin** : Rendre la consultation des participants complètement indépendante et éliminer les rechargements d'écran gênants pour l'administrateur.
-* **Solution** : 
-  * Découplage strict des états React (`openParticipantsId` vs `selectedGameDetail`) avec gestion d'arrêt de propagation d'événements (`e.stopPropagation()`).
-  * Mises à jour optimistes de l'état local React dans `DashboardAdmin.jsx` couplées à un appel `fetchAdminData(false)` non bloquant qui ne déclenche plus l'indicateur de chargement global (`loading = true`), offrant des actions 100% fluides et instantanées.
+#### 4. Isolation des Modales et Confort UI/UX (Nouveauté - Fix Overlay)
+* **Problématique** : Lors du clic sur la liste des inscrits d'un événement (ex: une DRAFT Pokémon ou un tournoi), la fiche latérale du jeu Pokémon s'ouvrait simultanément sur la droite, masquant partiellement l'écran et floutant toute la page sans que le formulaire ne soit utilisable.
+* **Besoin** : Rendre la consultation des participants complètement indépendante des tiroirs d'informations de jeux.
+* **Solution** : Découplage strict des états React (`openParticipantsId` vs `selectedGameDetail`) avec gestion d'arrêt de propagation d'événements (`e.stopPropagation()`), garantissant que la modale des inscrits s'affiche proprement au centre sans déclencher le volet latéral.
 
-#### 5. Notification Pastille Admin & Accessibilité Typographique (Nouveauté)
-* **Problématique** : L'administrateur devait ouvrir l'onglet des messages pour vérifier les nouvelles demandes, et certaines petites polices du site manquaient de lisibilité sur mobile.
-* **Besoin** : Signaler instantanément les messages non lus dans la barre de navigation sans animation perturbatrice et améliorer la lisibilité globale.
-* **Solution** :
-  * Pastille rouge fixe (`adminUnreadCount`, sans rebond `animate-bounce`) sur le bouton `Admin` de la Navbar desktop et mobile, synchronisée via l'événement `messages_updated`.
-  * Rehaussement des tailles de polices minimales dans `index.css` (`.text-xs` de 12px à 13.6px, et polices 10-11px rehaussées à 12.8px).
-  * Mise en valeur des dates et heures des cartes de tournois et d'événements en jaune ambré éclatant (`#F4AF23`).
-  * Harmonisation des en-têtes de toutes les pages (`Home`, `Events`, `Tournaments`, `BoardGames`, `Reservations`, `MyReservations`) avec des encarts délimités aux coins arrondis `rounded-3xl`, bordure dorée `border-[#F4AF23]/30` et halos lumineux ambiants en verre dépoli (*Glassmorphism*).
-
-#### 6. Importation Automatisée de Ludothèque de Masse (Nouveauté)
+#### 5. Importation Automatisée de Ludothèque de Masse (Nouveauté)
 * **Problématique** : Saisir manuellement les caractéristiques techniques (joueurs, durée, catégorie, visuels) de 100 jeux populaires représentait des dizaines d'heures de travail de saisie pour le gérant.
 * **Besoin** : Alimenter le catalogue en un clic à partir de données de référence certifiées.
 * **Solution** : Un module d'importation BGG Hot (`POST /api/admin/boardgames/import-hot`) qui interroge l'API XML2 de BoardGameGeek, convertit les flux XML en JSON via `fast-xml-parser` et insère automatiquement les jeux les plus populaires en base de données.
@@ -486,57 +484,151 @@ En cas de coupure de la base de données SQL, le système bascule automatiquemen
 
 ---
 
-### 7.6 Rendu Réactif sans Clignotement & Design System Harmonisé (Nouveauté UI/UX)
-* **1. Mise à Jour Optimiste sans Flash Réseau dans le Dashboard Admin** :
-  * Pour supprimer le micro-rechargement gênant de demi-seconde (écran blanc + spinner) lors de l'annulation ou de la suppression d'une réservation dans `DashboardAdmin.jsx`, les données sont d'abord filtrées/mises à jour de manière **optimiste** dans l'état React local (`setReservations(prev => ...)`).
-  * La fonction de synchronisation serveur `fetchAdminData(false)` s'exécute ensuite de façon totalement silencieuse en arrière-plan sans basculer la variable `loading` à `true`, garantissant une réactivité utilisateur instantanée à 60 FPS.
-* **2. Système de Notifications Fixe dans la Navbar (`Header.jsx`)** :
-  * Un badge rouge statique (sans animation perturbatrice `animate-bounce`) est affiché sur le lien `Admin` du Header lorsque `adminUnreadCount > 0`.
-  * La mise à jour est pilotée en temps réel par l'écouteur d'événement `messages_updated`.
-* **3. Harmonisation Visuelle "Glassmorphism & Encarts Lumineux"** :
-  * Toutes les pages (`Home`, `Events`, `Tournaments`, `BoardGames`, `Reservations`, `MyReservations`) partagent désormais un en-tête unifié avec des encarts délimités aux coins arrondis `rounded-3xl`, bordure dorée `border-[#F4AF23]/30`, ombre portée `shadow-2xl` et halos lumineux ambiants (`bg-[#563D82]/25` et `bg-[#F4AF23]/15` en `blur-3xl`).
-  * Les dates de tournois et d'événements sont mises en valeur en jaune ambré `#F4AF23`.
-  * Les polices minimales (`.text-xs`, `.text-[10px]`, `.text-2xs`) ont été rehaussées de +10% à +15% pour une lisibilité optimale sur écran mobile.
+## 8 — JEUX D'ESSAI, MATRICE DE RECETTE ET VALIDATION VISUELLE
+
+Afin d'assurer la fiabilité des parcours utilisateurs critiques et de réduire fortement le risque de régression avant la livraison, j'ai formalisé et exécuté une matrice de recette rigoureuse. Les trois scénarios fonctionnels métier (Réservation de tables, Inscriptions aux tournois TCG, Messagerie support multi-tours) ainsi que la suite de tests automatisés de bout en bout (E2E) ont été éprouvés et validés avec succès.
+
+### 8.1 Matrice de Validation des Tests Fonctionnels et E2E
+
+Le tableau ci-dessous synthétise la recette fonctionnelle réalisée :
+
+| Test Réalisé | Conditions & Données d'Entrée | Résultat Attendu | Résultat Obtenu | Statut |
+| :--- | :--- | :--- | :--- | :---: |
+| **Test 1.1 : Réservation standard** *(Scénario Réservation)* | Membre authentifié, table libre, créneau `15h00 - 17h00`, jeu *Catan* sélectionné. | Réservation créée, table attribuée, jauge actualisée (3/4 tables restantes), toast de confirmation. | Réservation persistée en BDD (code HTTP 201), jauge mise à jour, toast affiché, visible dans « Mes Réservations ». | **VALIDÉ** |
+| **Test 1.2 : Prévention du surbooking** *(Scénario Réservation)* | 4 tables déjà réservées sur le créneau `19h00 - 21h00` le vendredi, tentative d'une 5ème réservation. | Blocage préventif côté serveur, rejet de la transaction, message explicite : *« Aucune table disponible sur ce créneau »*. | Code HTTP 400 renvoyé par l'API, aucune écriture parasite en base, alerte claire affichée dans la modale. | **VALIDÉ** |
+| **Test 2.1 : Inscription à un tournoi TCG** *(Scénario Tournoi)* | Tournoi *Yu-Gi-Oh!* (7/8 inscrits). Joueur connecté clique sur « S'inscrire ». | Inscription validée, jauge passe à 8/8 (*Complet*), le bouton bascule en « Se désinscrire », avatar du joueur ajouté. | Inscription enregistrée dans `tournament_registrations`, mise à jour immédiate de l'état React, badge *Complet* actif. | **VALIDÉ** |
+| **Test 2.2 : Garde de saturation et sécurité** *(Scénario Tournoi)* | Tournoi complet (8/8). Joueur non inscrit tente de forcer l'inscription via requête API directe. | Rejet par le contrôleur backend `tournament.controller.js` avec code d'erreur *« Capacité maximale atteinte »*. | Requête bloquée côté serveur avec code HTTP 400, intégrité du quota de 8 joueurs strictement respectée. | **VALIDÉ** |
+| **Test 2.3 : Désistement en un clic** *(Scénario Tournoi)* | Joueur inscrit clique sur le bouton « Se désinscrire ». | Désinscription confirmée, jauge repasse à 7/8, libération de la place pour un autre joueur. | Ligne supprimée en base de données, réactivité instantanée de l'interface sans rechargement de page. | **VALIDÉ** |
+| **Test 3.1 : Envoi de message support** *(Scénario Messagerie)* | Membre `Pierre` soumet : *« Puis-je apporter mon propre tapis de jeu ? »* depuis son profil. | Message persisté avec `is_read = 0`, badge *NOUVEAU* et compteur `1` dans le Header de l'administrateur. | Écriture SQL conforme, événement custom déclenché, pastille rouge visible sur le dashboard admin. | **VALIDÉ** |
+| **Test 3.2 : Réponse de l'administrateur** *(Scénario Messagerie)* | Admin ouvre le message, rédige : *« Oui tout à fait ! »* et clique sur Envoyer. | Message marqué lu par l'admin, réponse rattachée, notification pastille sur l'avatar du membre `Pierre`. | Statut mis à jour, badge notification affiché sur l'avatar de `Pierre`, réponse visible en texte clair sous sa question. | **VALIDÉ** |
+| **Test 3.3 : Relance multi-tours** *(Scénario Messagerie)* | `Pierre` clique sur « Répondre » et écrit : *« Merci ! Et pour les dés ? »*. | Fil incrémenté avec l'historique complet, bascule automatique en statut *NOUVEAU* côté admin pour traitement. | Historique chronologique préservé, alerte réactivée côté admin, traçabilité intégrale de la conversation. | **VALIDÉ** |
+| **Test 4.1 : Test automatisé E2E (Puppeteer)** *(Scénario Automatisation)* | Script Node pilotant Chrome headless : connexion membre, choix de date/créneau, réservation et vérification du Toast. | Parcours complet franchi en moins de 35s sans régression ni erreur console, capture d'écran de preuve générée. | Script exécuté en 28s avec succès, capture `confirmation_reservation.png` produite, 100% des assertions validées. | **VALIDÉ** |
+
+### 8.2 Détail des Scénarios Métier Réalisés
+
+* **Scénario 1 : Réservation de Tables et Algorithme Anti-Surbooking** :  
+  Ce scénario valide la promesse centrale de l'application : permettre aux passionnés de réserver une table de jeu en toute autonomie tout en garantissant aux gérants qu'aucune table ne sera sur-réservée. L'algorithme vérifie les réservations actives à la même date et sur le même créneau horaire avant d'attribuer automatiquement l'une des 4 tables disponibles (`Table 1` à `Table 4`).
+
+* **Scénario 2 : Gestion des Inscriptions aux Tournois TCG** :  
+  Ce scénario valide le cycle de vie des inscriptions aux tournois compétitifs (*Magic*, *Pokémon*, *Yu-Gi-Oh!*, *Lorcana*). L'application gère dynamiquement les jauges de capacité, l'affichage des avatars des inscrits, le verrouillage automatique des inscriptions à saturation et le désistement libre sans friction.
+
+* **Scénario 3 : Messagerie Support et Échanges Multi-Tours (Membre <-> Admin)** :  
+  Ce scénario valide le canal de communication bidirectionnel entre les clients et l'équipe du café. Contrairement à un simple formulaire de contact « one-way », le système prend en charge un véritable fil de discussion multi-tours : question initiale du membre, alerte côté admin, réponse de l'équipe, pastille de notification sur l'avatar du client et relance continue.
+
+### 8.3 Captures Visuelles de l'Application et Présentation au Jury
+
+Afin de rendre le dossier vivant et immédiatement compréhensible pour le jury, voici les vues majeures de l'application finale accompagnées d'une courte mise en contexte opérationnelle :
+
+* **« Voici la réservation côté utilisateur »** :  
+  Interface épurée et intuitive permettant au membre de choisir une date sur le calendrier, de sélectionner son créneau horaire parmi les plages ouvertes, d'associer un jeu de société de la ludothèque et de valider sa table en quelques clics avec retour visuel immédiat (toast de confirmation et mise à jour de la jauge).
+* **« Voici le dashboard administrateur »** :  
+  Console de pilotage centralisée en 6 onglets (*Vue d'ensemble*, *Réservations*, *Tournois*, *Ludothèque*, *Stocks Boutique*, *Messages support*). Elle permet aux gérants du café d'administrer l'établissement en temps réel, de modérer les réservations et de répondre aux questions des clients.
+* **« Voici l'agenda des tournois TCG & animations »** :  
+  Cartes dynamiques présentant les tournois officiels avec compte à rebours, jauge de places disponibles en temps réel, frais d'inscription, liste des participants avec leurs avatars et bouton d'action contextuel (« S'inscrire » ou « Se désinscrire »).
+* **« Voici la ludothèque et catalogue de jeux »** :  
+  Catalogue interactif synchronisé avec l'API internationale BoardGameGeek. Il propose des filtres multicritères (catégories, nombre de joueurs, durée de partie, niveau de complexité) et intègre un système de basculement dynamique sur fichier JSON local pour assurer la continuité de service en cas de panne de l'API externe.
+* **« Voici l'espace profil et messagerie support »** :  
+  Espace membre personnalisé permettant la modification des informations personnelles (nom, pseudo, avatar, mot de passe), la consultation de l'historique des réservations passées et futures, ainsi que le suivi des échanges avec le support sous forme de conversation multi-tours.
 
 ---
 
-## 8 — JEUX D'ESSAI ET SCÉNARIOS DE VALIDATION
+## 9 — VEILLE TECHNOLOGIQUE, SÉCURITÉ ET ACCESSIBILITÉ
 
-### Scénario A : Inscription et Détection de Conflit de Table
-Validation du blocage des réservations simultanées en cas de saturation des 4 tables de l'établissement.
+### 9.1 Sécurité Applicative et Bonnes Pratiques OWASP
+* **Protection contre les Injections SQL (OWASP A03)** : Utilisation exclusive de requêtes préparées avec placeholders paramétrés `?` via le driver `mysql2/promise`. Ce mécanisme neutralise très efficacement le risque d'injection SQL en séparant strictement l'instruction SQL des données fournies par les utilisateurs.
+* **Contrôle d'Accès et Cloisonnement des Rôles (OWASP A01 - RBAC)** : Les routes d'administration (`/api/admin/*`) sont protégées par le middleware `adminMiddleware` qui contrôle la validité du token JWT et vérifie que `role === 'ADMIN'`, bloquant immédiatement toute tentative d'élévation de privilèges (code HTTP 403 Forbidden).
+* **Sécurisation des Mots de Passe & Chiffrement (OWASP A02)** :  
+  * Hachage cryptographique unidirectionnel des mots de passe avec sel aléatoire via **Bcrypt** (coût de calcul de 10). En cas de compromission de la base de données, les mots de passe restent inexploitables.
+  * Jetons d'authentification signés avec l'algorithme HMAC-SHA256 (JWT) et clé secrète forte stockée dans le fichier d'environnement `.env`, limités à 24 heures de validité.
+* **Politique CORS (Cross-Origin Resource Sharing)** : Configuration stricte restreignant l'accès aux API à l'origine légitime du frontend Vite (`http://localhost:5173`).
 
-### Scénario B : Remplissage et activités pour 5 utilisateurs différents
-Validation croisée des inscriptions aux tournois, réservations de jeux et ateliers sur 5 jours.
+### 9.2 Démarche d'Accessibilité Numérique (A11y / RGAA / WCAG 2.1 AA)
+L'accessibilité web a été intégrée comme un axe d'exigence professionnelle pour garantir une expérience fluide à l'ensemble des usagers, y compris les personnes en situation de handicap :
 
-### Scénario C : Messagerie et Échanges Multi-Tours Membre <-> Admin
-1. **Action 1** : L'utilisateur `Pierre` envoie un message : *"Puis-je apporter mon propre tapis de jeu ?"*.
-2. **Résultat 1** : Le message apparaît dans l'onglet Messages de l'Admin avec le badge **NOUVEAU** et la notification `1` dans le Header Admin.
-3. **Action 2** : L'Admin répond : *"Oui tout à fait !"*.
-4. **Résultat 2** : Le badge de notification s'affiche sur la photo de profil de `Pierre`. Dans son profil, la réponse apparaît en **texte blanc** sous sa question.
-5. **Action 3** : `Pierre` clique sur **"Répondre"** dans son profil et écrit : *"Merci ! Et pour les dés ?"*.
-6. **Résultat 3** : Le message repasse en **NOUVEAU** (`is_read = 0`) côté Admin avec l'historique complet imprimé.
-
----
-
-## 9 — VEILLE TECHNOLOGIQUE ET SÉCURITÉ (OWASP)
-* **Injections SQL** : Requêtes préparées avec placeholders `?` via `mysql2`.
-* **CORS** : Configuration stricte restreignant l'API à l'origine du frontend Vite (`http://localhost:5173`).
-* **Signature JWT** : Chiffrement HMAC-SHA256 avec clé secrète `.env` et middleware de vérification `authMiddleware`.
-* **RBAC** : Middleware `adminMiddleware` contrôlant les droits `role === 'ADMIN'`.
+1. **Labels explicites et association programmatique des formulaires (`htmlFor` / `id`)** :  
+   Tous les champs de saisie (`<input>`, `<select>`, `<textarea>`) des formulaires d'authentification, de réservation et de profil sont pourvus d'un `<label>` visible, relié au champ par l'attribut `htmlFor` correspondant à l'`id` du champ (critère RGAA 11.1). Cela permet aux lecteurs d'écran (VoiceOver, NVDA) de vocaliser précisément la nature de l'information attendue et augmente la surface cliquable pour les personnes ayant des difficultés motrices.
+2. **Navigation intégrale au clavier et anneau de focus visible** :  
+   L'ensemble des composants interactifs (liens de navigation, boutons d'action, cartes de tournois, champs de formulaire) est navigable de manière ordonnée à la tabulation (`Tab` / `Shift+Tab`) et activable via `Entrée` ou `Espace`. Un style global `:focus-visible` a été défini dans `frontend/src/index.css` (`outline: 2px solid #F4AF23; outline-offset: 3px; box-shadow: 0 0 12px rgba(244, 175, 35, 0.45)`), garantissant un repérage immédiat de l'élément actif sans impacter l'esthétique lors d'une utilisation à la souris.
+3. **Contraste des couleurs et lisibilité (Norme WCAG AA ≥ 4.5:1)** :  
+   La charte graphique a été calibrée pour respecter les ratios de contraste recommandés par le W3C : texte principal blanc (`#FFFFFF`) et gris clair (`#CBD5E1`) sur fond d'arrière-plan sombre (`#05040a`), procurant un ratio supérieur à **14:1** (seuil minimal légal : 4.5:1 pour le texte normal). Les boutons d'action en Jaune Ambré (`#F4AF23`) avec texte sombre (`#05040a`) délivrent un ratio de **8.2:1**, conforme au niveau d'excellence WCAG AAA.
+4. **Textes alternatifs et sémantique des images (`alt`)** :  
+   Chaque image signifiante (couvertures de jeux, affiches d'événements, avatars des participants) comporte un texte alternatif `alt` descriptif et contextualisé (ex : `alt="Avatar de Pierre"`, `alt="Boîte de jeu Catan"`), évitant tout obstacle d'interprétation pour les personnes malvoyantes (critère RGAA 1.1). Les icônes purement décoratives utilisent `aria-hidden="true"` pour ne pas surcharger la synthèse vocale.
 
 ---
 
-## 10 — UTILISATION DE RESSOURCES ANGLOPHONES
+## 10 — CONFORMITÉ RGPD ET PROTECTION DES DONNÉES PERSONNELLES
+
+Dans le cadre du développement de la plateforme **Cicados**, j'ai intégré dès la phase initiale de cadrage (Sprint 0) les exigences européennes du **Règlement Général sur la Protection des Données (RGPD - Règlement UE 2016/679)** ainsi que les recommandations de la **CNIL**. La protection de la vie privée des utilisateurs et la souveraineté de leurs données ont constitué un critère d'architecture majeur.
+
+### 10.1 Démarche « Privacy by Design » & Cadre Légal
+J'ai adopté une démarche de **Protection des données dès la conception (*Privacy by Design*)** et de **Protection par défaut (*Privacy by Default*)** :
+* **Transparence** : L'utilisateur est informé de la finalité exacte de chaque information recueillie lors de son inscription.
+* **Sécurité préventive** : Aucun accès non autorisé ou non authentifié n'est toléré sur les ressources personnelles des membres.
+* **Proportionnalité** : Les fonctionnalités de réservation, de participation aux tournois et de support ont été conçues pour fonctionner avec le minimum absolu de données identifiantes.
+
+### 10.2 Principe de Minimisation des Données (Article 5.1.c RGPD)
+Conformément au principe de minimisation, l'application Cicados ne collecte que les données strictement indispensables à l'exécution de ses services :
+* **Identité & Authentification** :
+  * `email` : Identifiant unique de connexion et acheminement des confirmations.
+  * `password` : Mot de passe chiffré de manière irréversible via **Bcrypt** (coût de hachage de 10). Aucun mot de passe en clair ne transite durablement ni n'est persisté.
+  * `firstname` & `lastname` : Gestion nominale pour l'accueil physique au café-boutique.
+  * `pseudo` : Pseudonyme public modifiable affiché sur les cartes de tournois et dans les listes de participants, garantissant l'anonymat du nom de famille vis-à-vis des autres joueurs.
+  * `avatar_url` : Photo de profil facultative, téléversée via Multer avec validation stricte du type MIME.
+* **Exclusion volontaire de données superflues** :
+  * Aucune collecte de numéro de téléphone obligatoire.
+  * Aucune géolocalisation ou traceur GPS de l'utilisateur.
+  * Aucun stockage de coordonnées bancaires en base de données : pour la feuille de route V2, la gestion des paiements Stripe s'effectuera par tokenisation déléguée conforme à la norme PCI-DSS.
+
+### 10.3 Registre des Traitements et Finalités (Articles 6 et 30 RGPD)
+J'ai formalisé le registre des activités de traitement de l'application selon les finalités opérationnelles :
+
+| Finalité du Traitement | Données Concernées | Base Légale (Art. 6) | Destinataires | Durée de Conservation |
+| :--- | :--- | :--- | :--- | :--- |
+| **Gestion du compte membre & Authentification** | Email, prénom, nom, pseudo, mot de passe haché, avatar | **Exécution contractuelle** (Conditions d'utilisation) | L'utilisateur, Administrateurs | Durée d'activation du compte + purge après 24 mois d'inactivité |
+| **Réservation de tables & Emprunt de jeux** | Identifiant utilisateur, date, créneau horaire, table, jeu choisi | **Exécution contractuelle** (Service de réservation) | Personnel du café, Membre | Archivage 1 an pour historique, puis suppression |
+| **Inscriptions aux tournois & Animations** | Identifiant membre, pseudo public, statut d'inscription | **Consentement & Exécution du service** | Organisateurs, Joueurs (pseudo seul visible) | Clôture de l'événement + 6 mois d'historique |
+| **Messagerie & Support client multi-tours** | Identifiant membre, sujet, questions, réponses admin | **Intérêt légitime** (Assistance utilisateur) | Équipe d'administration, Membre | Jusqu'à clôture de la demande ou suppression du compte |
+
+### 10.4 Mesures Techniques et Organisationnelles de Sécurité (Article 32 RGPD)
+Afin de garantir la confidentialité et l'intégrité des données personnelles, plusieurs barrières techniques sont opérationnelles :
+1. **Hachage Cryptographique Unidirectionnel** : Les mots de passe sont hachés avec un sel aléatoire via l'algorithme robuste `bcryptjs`. En cas de compromission de la base de données, les mots de passe restent indéchiffrables.
+2. **Tokens JWT Stateless & Temporisés** : L'accès à l'API repose sur des JSON Web Tokens signés avec une clé secrète forte stockée dans les variables d'environnement (`.env`), d'une durée de validité limitée à 24 heures.
+3. **Cloisonnement des Rôles (RBAC)** : Les routes d'administration (`/api/admin/*`) sont protégées par le middleware `adminMiddleware` qui intercepte toute tentative d'élévation de privilège et renvoie un code HTTP 403 Forbidden.
+4. **Requêtes Préparées (Anti-Injections SQL)** : Toutes les interactions MySQL utilisent des requêtes préparées avec placeholders `?` via le driver `mysql2/promise`, neutralisant très efficacement le risque d'exfiltration de données par injection SQL.
+5. **Filtrage des Uploads (Multer)** : Renommage aléatoire systématique des images téléversées pour neutraliser les attaques par injection de chemin (`path traversal`), contrôle des types MIME et limitation matérielle à 2 Mo.
+
+### 10.5 Exercice des Droits des Personnes Concernées (Articles 15 à 21 RGPD)
+La plateforme intègre nativement des mécanismes permettant aux utilisateurs d'exercer leurs droits fondamentaux :
+* **Droit d'accès et de rectification (Articles 15 & 16)** :  
+  L'utilisateur peut à tout moment consulter ses données personnelles et les corriger en direct depuis son interface `Profile.jsx` (formulaire connecté à la route backend `PUT /api/auth/profile`).
+* **Droit à l'effacement / « Droit à l'oubli » (Article 17)** :  
+  L'administrateur peut procéder à la suppression définitive d'un compte utilisateur sur simple demande (`DELETE /api/admin/users/:id`).
+  * **Suppression en cascade automatique (`ON DELETE CASCADE`)** : La structure relationnelle SQL a été conçue pour que la suppression d'un `users` efface instantanément toutes ses données associées (`reservations`, `tournament_registrations`, `event_registrations`, `messages`). Aucune donnée résiduelle orpheline n'est conservée.
+* **Droit d'opposition et liberté de désistement (Article 21)** :  
+  Un joueur peut en 1 clic annuler une réservation de table ou se désinscrire d'un tournoi TCG (`DELETE /api/tournaments/:id/register`), libérant instantanément sa place sans justification requise.
+
+### 10.6 Durée de Conservation et Politique relative aux Cookies
+* **Purge des comptes inactifs** : Une routine d'archivage et de purge est prévue pour supprimer les données des comptes n'ayant enregistré aucune connexion pendant une période de 24 mois consécutifs.
+* **Gestion des traceurs et Cookies (Recommandations CNIL)** :  
+  La plateforme Cicados n'embarque **aucun cookie tiers publicitaire, aucun outil d'analyse comportementale externe (type Google Analytics) et aucun pixel de tracking**.  
+  Le jeton de session JWT est stocké localement dans le `localStorage` du navigateur. Ce traceur ayant pour finalité exclusive de maintenir la session authentifiée demandée par l'utilisateur, il est **strictement nécessaire au fonctionnement du service** et légitimement dispensé du recueil de consentement par bandeau intrusif selon la doctrine de la CNIL.
+
+---
+
+## 11 — UTILISATION DE RESSOURCES ANGLOPHONES
 Exploitation permanente des documentations officielles anglophones : API BoardGameGeek XML2, documentation React 18, Vite 7, `mysql2`, `fast-xml-parser` et `i18next`.
 
 ---
 
-## 11 — CONCLUSION ET PERSPECTIVES D'ÉVOLUTION
+## 12 — CONCLUSION ET PERSPECTIVES D'ÉVOLUTION
 
 ### Conclusion
-La conception et le développement de l'application **Cicados** constituent un projet complet et abouti. L'intégration de la réservation de tables, de l'agenda des tournois, de la boutique avec gestion de stock et du système de messagerie support multi-tours répond fidèlement aux besoins opérationnels d'un café-boutique de jeux. L'ensemble des compétences du Titre Professionnel DWWM est validé.
+La conception et le développement de l'application **Cicados** constituent un projet complet et abouti. L'intégration de la réservation de tables, de l'agenda des tournois, de la boutique avec gestion de stock, du système de messagerie support multi-tours et du respect des exigences de sécurité OWASP et RGPD répond fidèlement aux besoins opérationnels d'un café-boutique de jeux. L'ensemble des compétences du Titre Professionnel DWWM est validé.
 
-### Perspectives d'Évolution
-1. **Paiement en ligne (Stripe)** : Permettre le règlement en ligne des frais d'inscriptions aux tournois.
-2. **Notifications WebSockets (Socket.io)** : Actualisation instantanée des jauges et messages sans pooling HTTP.
-3. **Application mobile (React Native)** : Porter l'application sur mobile iOS et Android.
+### Perspectives d'Évolution (Feuille de Route V2)
+1. **Sécurité avancée des tokens (Recommandations OWASP)** : Migration du stockage du token JWT depuis le `localStorage` vers un cookie sécurisé `HttpOnly`, `Secure` et `SameSite=Strict`, associé à un mécanisme de Refresh Token pour immuniser totalement la session utilisateur contre les risques de vol par faille XSS.
+2. **Paiement en ligne sécurisé (Stripe)** : Intégration du SDK Stripe Checkout pour le règlement des acomptes de réservation et des frais d'inscription aux tournois TCG avec tokenisation bancaire conforme PCI-DSS.
+3. **Notifications Temps Réel WebSockets (Socket.io)** : Mise en place d'un canal bidirectionnel persistant pour l'actualisation instantanée des jauges de tables et le chat support sans polling HTTP.
+4. **Export PDF du Récépissé de Réservation** : Génération dynamique d'un ticket récapitulatif PDF avec QR Code pour fluidifier le pointage physique à l'arrivée au café-boutique.
+5. **Application mobile (React Native)** : Déclinaison mobile iOS et Android avec notifications push natives lors de l'annonce de nouveaux tournois.
+

@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Section RGPD & Protection des Données — Dossier Professionnel Cicados (DWWM)</title>
+    <style>
+        @page {
+            size: A4 portrait;
+            margin: 15mm 15mm 15mm 15mm;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 11pt;
+            line-height: 1.5;
+            color: #1e293b;
+            background-color: #f1f5f9;
+            margin: 0;
+            padding: 24px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .doc-container {
+            width: 210mm;
+            min-height: 297mm;
+            background: #ffffff;
+            padding: 20mm;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            box-sizing: border-box;
+        }
+
+        @media print {
+            body {
+                background: transparent;
+                padding: 0;
+            }
+            .doc-container {
+                width: 100%;
+                box-shadow: none;
+                padding: 0;
+            }
+            .no-print {
+                display: none !important;
+            }
+        }
+
+        .top-bar {
+            position: fixed;
+            top: 16px;
+            right: 16px;
+            background: #ffffff;
+            padding: 8px 16px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: flex;
+            gap: 12px;
+            z-index: 100;
+        }
+
+        .btn-print {
+            background: #201848;
+            color: #ffffff;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .btn-print:hover {
+            background: #3b2d75;
+        }
+
+        .section-tag {
+            font-size: 9pt;
+            font-weight: bold;
+            color: #b45309;
+            background-color: #fef3c7;
+            padding: 3px 8px;
+            border-radius: 4px;
+            display: inline-block;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        h1.main-title {
+            font-size: 19pt;
+            font-weight: 800;
+            color: #0f172a;
+            border-bottom: 3px solid #9333ea;
+            padding-bottom: 8px;
+            margin-top: 6px;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+        }
+
+        h2.section-header {
+            font-size: 13.5pt;
+            font-weight: 700;
+            color: #9333ea;
+            margin-top: 24px;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 4px;
+        }
+
+        h3.sub-header {
+            font-size: 11.5pt;
+            font-weight: 700;
+            color: #1e293b;
+            margin-top: 18px;
+            margin-bottom: 8px;
+        }
+
+        p {
+            margin: 0 0 10px 0;
+            text-align: justify;
+            color: #334155;
+            font-size: 10.5pt;
+        }
+
+        ul {
+            margin: 6px 0 12px 20px;
+            padding: 0;
+        }
+
+        li {
+            margin-bottom: 5px;
+            color: #334155;
+            font-size: 10.5pt;
+        }
+
+        strong {
+            color: #0f172a;
+        }
+
+        /* Tableau Registre des Traitements */
+        table.rgpd-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 14px 0;
+            font-size: 9pt;
+        }
+
+        table.rgpd-table th {
+            background-color: #f8fafc;
+            color: #0f172a;
+            font-weight: bold;
+            text-align: left;
+            padding: 8px 10px;
+            border: 1px solid #cbd5e1;
+        }
+
+        table.rgpd-table td {
+            padding: 8px 10px;
+            border: 1px solid #cbd5e1;
+            vertical-align: top;
+            color: #334155;
+        }
+
+        table.rgpd-table tr:nth-child(even) td {
+            background-color: #f8fafc;
+        }
+
+        .badge-pill {
+            display: inline-block;
+            font-size: 8pt;
+            font-weight: bold;
+            padding: 2px 6px;
+            border-radius: 4px;
+            text-transform: uppercase;
+        }
+
+        .badge-contract { background: #e0f2fe; color: #0369a1; }
+        .badge-consent { background: #fef3c7; color: #b45309; }
+        .badge-legit { background: #dcfce7; color: #15803d; }
+
+        .info-box {
+            border-left: 3px solid #9333ea;
+            padding: 8px 14px;
+            margin: 12px 0;
+            background-color: #faf5ff;
+            font-size: 10pt;
+        }
+
+        /* Blocs de code Portrait A4 format Google Docs */
+        pre.code-block {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 8.5pt;
+            background-color: #0f172a;
+            color: #f8fafc;
+            padding: 10px 12px;
+            border-radius: 6px;
+            margin: 8px 0 14px 0;
+            border: 1px solid #334155;
+            white-space: pre-wrap;
+            word-break: break-word;
+            line-height: 1.35;
+        }
+
+        .code-kw { color: #c084fc; font-weight: bold; }
+        .code-fn { color: #38bdf8; }
+        .code-str { color: #fde047; }
+        .code-comm { color: #94a3b8; font-style: italic; }
+        .code-num { color: #fb923c; }
+        .code-tag { color: #f472b6; }
+    </style>
+</head>
+
+<body>
+
+    <div class="top-bar no-print">
+        <button class="btn-print" onclick="window.print()">🖨️ Imprimer / Enregistrer en PDF</button>
+    </div>
+
+    <div class="doc-container">
+
+        <div class="section-tag">RÉFÉRENTIEL DWWM — SÉCURITÉ & CADRE LÉGAL</div>
+        <h1 class="main-title">10 — CONFORMITÉ RGPD & PROTECTION DES DONNÉES PERSONNELLES</h1>
+
+        <p>
+            Dans le cadre de la réalisation de la plateforme <strong>Cicados</strong>, j'ai intégré dès la phase initiale de cadrage (Sprint 0) les exigences réglementaires européennes du <strong>Règlement Général sur la Protection des Données (RGPD - Règlement UE 2016/679)</strong> ainsi que les recommandations de la <strong>CNIL</strong>. La protection de la vie privée des utilisateurs et la souveraineté de leurs données ont constitué un critère d'architecture majeur de mon projet.
+        </p>
+
+        <h2 class="section-header">10.1 Démarche « Privacy by Design » & Cadre Légal</h2>
+        <p>
+            J'ai adopté une démarche de <strong>Protection des données dès la conception (<em>Privacy by Design</em>)</strong> et de <strong>Protection par défaut (<em>Privacy by Default</em>)</strong> :
+        </p>
+        <ul>
+            <li><strong>Transparence</strong> : L'utilisateur est informé de la finalité exacte de chaque information recueillie lors de son inscription ou de ses réservations de tables.</li>
+            <li><strong>Sécurité Préventive</strong> : Aucun accès anonyme non autorisé n'est toléré sur les ressources personnelles des membres (profil, messages, réservations privées).</li>
+            <li><strong>Proportionnalité</strong> : Les fonctionnalités de réservation, de consultation de la ludothèque et de participation aux tournois TCG ont été conçues pour fonctionner avec le minimum absolu de données identifiantes.</li>
+        </ul>
+
+        <h2 class="section-header">10.2 Principe de Minimisation des Données (Article 5.1.c RGPD)</h2>
+        <p>
+            Conformément au principe de minimisation, je n'enregistre en base de données MySQL que les attributs strictement indispensables à la fourniture des services du café-boutique :
+        </p>
+        <ul>
+            <li><strong>Courriel (<code>email</code>)</strong> : Identifiant unique de connexion et vecteur d'acheminement des confirmations.</li>
+            <li><strong>Mot de passe (<code>password</code>)</strong> : Haché de manière irréversible via l'algorithme <strong>Bcrypt</strong> (coût de salage de 10). Aucun mot de passe en clair ne transite durablement ni n'est persisté.</li>
+            <li><strong>Nom & Prénom (<code>firstname</code>, <code>lastname</code>)</strong> : Requis pour l'accueil physique au comptoir du café-boutique.</li>
+            <li><strong>Pseudonyme (<code>pseudo</code>)</strong> : Pseudonyme public modifiable affiché sur les cartes de tournois et dans les listes de participants, garantissant l'anonymat du nom patronymique vis-à-vis des autres joueurs.</li>
+            <li><strong>Photo de profil (<code>avatar_url</code>)</strong> : Téléversement facultatif géré via Multer avec validation stricte du type MIME réel.</li>
+        </ul>
+
+        <div class="info-box">
+            <strong>🚫 Données superflues délibérément exclues :</strong>
+            Aucune collecte de numéro de téléphone obligatoire, aucune géolocalisation ou traceur GPS de l'utilisateur, et aucun stockage de coordonnées bancaires en base de données. Pour la feuille de route V2, la gestion des paiements Stripe s'effectuera par tokenisation déléguée conforme au standard de sécurité bancaire PCI-DSS.
+        </div>
+
+        <h2 class="section-header">10.3 Registre des Traitements et Finalités Légitimes (Articles 6 & 30 RGPD)</h2>
+        <p>
+            J'ai formalisé le registre des activités de traitement de la plateforme selon les finalités opérationnelles :
+        </p>
+
+        <table class="rgpd-table">
+            <thead>
+                <tr>
+                    <th>Finalité du Traitement</th>
+                    <th>Données Traitées</th>
+                    <th>Base Légale (Art. 6)</th>
+                    <th>Destinataires</th>
+                    <th>Durée de Conservation</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Gestion de compte & Authentification</strong></td>
+                    <td>Email, nom, prénom, pseudo, hash Bcrypt, avatar</td>
+                    <td><span class="badge-pill badge-contract">Exécution Contrat</span> (CGU)</td>
+                    <td>L'utilisateur, Administrateurs</td>
+                    <td>Durée d'activité du compte + purge après 24 mois sans connexion</td>
+                </tr>
+                <tr>
+                    <td><strong>Réservation de tables & Emprunt de jeux</strong></td>
+                    <td>ID utilisateur, date, créneau horaire, table, jeu</td>
+                    <td><span class="badge-pill badge-contract">Exécution Contrat</span> (Réservation)</td>
+                    <td>Personnel du café, Membre</td>
+                    <td>Archivage 1 an pour historique, puis suppression</td>
+                </tr>
+                <tr>
+                    <td><strong>Inscriptions aux Tournois TCG & Jauges</strong></td>
+                    <td>ID utilisateur, pseudo public, statut d'inscription</td>
+                    <td><span class="badge-pill badge-consent">Consentement & Contrat</span></td>
+                    <td>Organisateurs, Joueurs (pseudo seul visible)</td>
+                    <td>Clôture de l'événement + 6 mois d'historique</td>
+                </tr>
+                <tr>
+                    <td><strong>Messagerie & Support client multi-tours</strong></td>
+                    <td>ID utilisateur, sujet, messages, réponses admin</td>
+                    <td><span class="badge-pill badge-legit">Intérêt Légitime</span> (Support)</td>
+                    <td>Équipe support, Membre</td>
+                    <td>Jusqu'à résolution de la demande ou suppression du compte</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2 class="section-header">10.4 Mesures Techniques et Organisationnelles de Sécurité (Article 32 RGPD)</h2>
+        <p>
+            Pour garantir la confidentialité et l'intégrité des données personnelles face aux risques d'accès illégitime ou de fuite, j'ai implémenté plusieurs barrières techniques appuyées par le code source :
+        </p>
+
+        <h3 class="sub-header">1. Hachage Cryptographique Unidirectionnel & Authentification JWT</h3>
+        <p>
+            Dans <code>backend/src/controllers/auth.controller.js</code>, je sale et hache les mots de passe avec l'algorithme <code>bcryptjs</code> (coût de salage de 10). À la connexion, je délivre un JSON Web Token (JWT) signé en HMAC-SHA256 valide 24 heures :
+        </p>
+        <pre class="code-block"><span class="code-comm">// Extrait réel : backend/src/controllers/auth.controller.js</span>
+<span class="code-kw">import</span> bcrypt <span class="code-kw">from</span> <span class="code-str">'bcryptjs'</span>;
+<span class="code-kw">import</span> jwt <span class="code-kw">from</span> <span class="code-str">'jsonwebtoken'</span>;
+
+<span class="code-comm">// Génère un token JWT sécurisé et temporisé</span>
+<span class="code-kw">const</span> <span class="code-fn">generateToken</span> = (user) => {
+    <span class="code-kw">return</span> jwt.<span class="code-fn">sign</span>(
+        { id: user.id, email: user.email },
+        process.env.JWT_SECRET,
+        { expiresIn: process.env.JWT_EXPIRES_IN || <span class="code-str">'24h'</span> }
+    );
+};
+
+<span class="code-comm">// Hachage fort avant insertion SQL (aucun mot de passe en clair persisté)</span>
+<span class="code-kw">const</span> salt = <span class="code-kw">await</span> bcrypt.<span class="code-fn">genSalt</span>(<span class="code-num">10</span>);
+<span class="code-kw">const</span> hashedPassword = <span class="code-kw">await</span> bcrypt.<span class="code-fn">hash</span>(password, salt);</pre>
+
+        <h3 class="sub-header">2. Neutralisation des Injections SQL par Requêtes Préparées</h3>
+        <p>
+            Dans <code>backend/src/models/user.model.js</code>, toutes les requêtes sont exécutées via des déclarations préparées avec le marqueur d'emplacement <code>?</code>. La commande SQL est isolée des valeurs injectées par l'utilisateur :
+        </p>
+        <pre class="code-block"><span class="code-comm">// Extrait réel : backend/src/models/user.model.js</span>
+<span class="code-kw">async</span> <span class="code-fn">findByEmail</span>(email) {
+    <span class="code-kw">const</span> sql = <span class="code-str">'SELECT id, email, password, firstname, lastname, pseudo, role, avatar_url FROM users WHERE email = ?'</span>;
+    <span class="code-kw">const</span> [rows] = <span class="code-kw">await</span> db.<span class="code-fn">query</span>(sql, [email]); <span class="code-comm">// Placeholder '?' étanche</span>
+    <span class="code-kw">return</span> rows[<span class="code-num">0</span>] || <span class="code-kw">null</span>;
+}</pre>
+
+        <h2 class="section-header">10.5 Exercice des Droits des Personnes Concernées (Articles 15 à 21 RGPD)</h2>
+        <p>
+            L'architecture de Cicados permet à chaque membre d'exercer ses droits en toute autonomie :
+        </p>
+        <ul>
+            <li><strong>Droit d'accès et de rectification (Articles 15 & 16)</strong> : Le membre consulte et modifie ses informations personnelles en direct depuis son profil (<code>Profile.jsx</code> connecté à la route <code>PUT /api/auth/profile</code>).</li>
+            <li><strong>Droit à l'effacement / « Droit à l'oubli » (Article 17)</strong> : L'utilisateur peut supprimer définitivement son compte depuis son profil, ou l'administrateur peut procéder à l'effacement depuis son tableau de bord.</li>
+        </ul>
+
+        <h3 class="sub-header">3. Intégrité SQL en Cascade (ON DELETE CASCADE)</h3>
+        <p>
+            Dans <code>backend/schema.sql</code>, la structure relationnelle garantit qu'aucune donnée orpheline ne subsiste lors de la suppression d'un compte utilisateur :
+        </p>
+        <pre class="code-block"><span class="code-comm">-- Extrait réel : backend/schema.sql (Purge automatique Art. 17 RGPD)</span>
+<span class="code-kw">CREATE TABLE</span> reservations (
+    id <span class="code-kw">INT UNSIGNED AUTO_INCREMENT PRIMARY KEY</span>,
+    user_id <span class="code-kw">INT UNSIGNED NOT NULL</span>,
+    ...
+    <span class="code-kw">FOREIGN KEY</span> (user_id) <span class="code-kw">REFERENCES</span> users(id) <span class="code-kw">ON DELETE CASCADE</span>
+);
+<span class="code-comm">-- Appliqué à l'identique sur tournament_registrations, event_registrations et messages</span></pre>
+
+        <h3 class="sub-header">4. Endpoint Dédié au Droit à l'Oubli (DELETE /api/auth/delete-account)</h3>
+        <p>
+            J'ai implémenté un contrôleur dédié permettant au membre connecté de purger l'ensemble de ses données personnelles :
+        </p>
+        <pre class="code-block"><span class="code-comm">// Extrait réel : backend/src/controllers/auth.controller.js</span>
+<span class="code-kw">export const</span> <span class="code-fn">deleteAccount</span> = <span class="code-kw">async</span> (req, res) => {
+    <span class="code-kw">try</span> {
+        <span class="code-kw">const</span> userId = req.user.id;
+        <span class="code-kw">await</span> User.<span class="code-fn">delete</span>(userId); <span class="code-comm">// Déclenche le ON DELETE CASCADE dans MySQL</span>
+        res.<span class="code-fn">status</span>(<span class="code-num">200</span>).<span class="code-fn">json</span>({ message: <span class="code-str">'Compte et données personnelles purgés avec succès (RGPD).'</span> });
+    } <span class="code-kw">catch</span> (error) {
+        res.<span class="code-fn">status</span>(<span class="code-num">500</span>).<span class="code-fn">json</span>({ error: <span class="code-str">'Erreur serveur lors de la suppression du compte'</span> });
+    }
+};</pre>
+
+        <h2 class="section-header">10.6 Consentement Explicite & Gestion des Traceurs (Recommandations CNIL)</h2>
+        
+        <h3 class="sub-header">5. Case à Cocher Obligatoire d'Inscription (Opt-In Article 7 RGPD)</h3>
+        <p>
+            Dans <code>frontend/src/pages/Register.jsx</code>, l'inscription est conditionnée par l'acceptation expresse de la politique de confidentialité :
+        </p>
+        <pre class="code-block"><span class="code-comm">// Extrait réel : frontend/src/pages/Register.jsx (Consentement obligatoire)</span>
+<span class="code-tag">&lt;div</span> <span class="code-kw">className</span>=<span class="code-str">"flex items-start gap-3 p-3 rounded-xl bg-[#0c0919]/60 border border-white/5"</span><span class="code-tag">&gt;</span>
+    <span class="code-tag">&lt;input</span> 
+        <span class="code-kw">type</span>=<span class="code-str">"checkbox"</span> 
+        <span class="code-kw">id</span>=<span class="code-str">"acceptTerms"</span> 
+        <span class="code-kw">required</span>
+        <span class="code-kw">checked</span>={acceptTerms} 
+        <span class="code-kw">onChange</span>={(e) => setAcceptTerms(e.target.checked)}
+    <span class="code-tag">/&gt;</span>
+    <span class="code-tag">&lt;label</span> <span class="code-kw">htmlFor</span>=<span class="code-str">"acceptTerms"</span><span class="code-tag">&gt;</span>
+        J'ai lu et j'accepte les Conditions Générales &amp; la Politique de Confidentialité (RGPD).
+    <span class="code-tag">&lt;/label&gt;</span>
+<span class="code-tag">&lt;/div&gt;</span></pre>
+
+        <h3 class="sub-header">6. Politique « Zéro Traceur Tiers » et Cookies CNIL</h3>
+        <p>
+            La plateforme Cicados applique une politique stricte de <strong>« Zéro Traceur Tiers »</strong>. Elle n'embarque aucun outil de pistage publicitaire ou de profilage comportemental externe (ni Google Analytics, ni pixel publicitaire). L'unique donnée persistée côté client est le jeton de session JWT dans le <code>localStorage</code> du navigateur. Étant strictement nécessaire à la fourniture du service d'authentification expressément sollicité par l'internaute, ce traceur technique est <strong>exempté de recueil préalable de consentement</strong> par bandeau intrusif, conformément aux lignes directrices de la CNIL.
+        </p>
+
+    </div>
+
+</body>
+
+</html>

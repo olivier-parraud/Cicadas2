@@ -228,3 +228,10 @@ Réponse JSON ◀── Controller ◀── Model (message.model.js) ◀── 
 
 #### Q6 : "Comment évitez-vous les clignotements d'écran lors des actions dans l'administration ?"
 > **Réponse** : "J'utilise le pattern de mise à jour optimiste de l'état React. Lors d'une suppression ou d'un changement de statut, l'état React local du composant `DashboardAdmin.jsx` est immédiatement modifié sans attendre le retour réseau. La resynchronisation avec la base MySQL s'exécute ensuite en arrière-plan de façon non bloquante via `fetchAdminData(false)` sans déclencher le spinner de chargement global, garantissant un rendu fluide à 60 FPS sans aucun clignotement."
+
+#### Q7 : "Comment votre projet respecte-t-il le RGPD et les directives de la CNIL ?"
+> **Réponse** : "J'applique le principe de Privacy by Design et de minimisation des données (Article 5 RGPD) : je ne collecte que les informations strictement nécessaires (email, pseudo pour l'anonymat en tournoi, mot de passe haché Bcrypt), sans traceur tiers ni coordonnées bancaires stockées. Côté cookies, seul le token JWT de session est persisté dans le `localStorage`, ce qui constitue un traceur technique exempt de consentement selon la CNIL. Enfin, chaque membre peut rectifier ses données sur son profil ou demander la suppression définitive de son compte."
+
+#### Q8 : "Que se passe-t-il en base de données si un utilisateur demande l'effacement de son compte (Droit à l'oubli) ?"
+> **Réponse** : "J'ai configuré l'intégrité référentielle avec des clés étrangères en `ON DELETE CASCADE` dans MySQL InnoDB. Lorsque l'administrateur valide la suppression d'un utilisateur (`DELETE /api/admin/users/:id`), toutes les données associées (réservations de tables, inscriptions aux tournois, messages support) sont automatiquement purgées de la base, évitant toute donnée personnelle orpheline résiduelle."
+

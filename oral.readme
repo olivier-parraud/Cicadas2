@@ -1,0 +1,7 @@
+1 
+
+token JWT stocké dans local storage 
+choix simplicité V1
+V2 Prévu pour correspondre a OWASP,
+Migrer vers un Cookie + Refresh Token 
+

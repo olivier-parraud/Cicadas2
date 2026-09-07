@@ -3,7 +3,7 @@ import { Router } from 'express'; // Import nommé ⬅️
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
-import { register, login, getProfile, updateProfile } from '../controllers/auth.controller.js';
+import { register, login, getProfile, updateProfile, deleteAccount } from '../controllers/auth.controller.js';
 import authMiddleware from '../middlewares/auth.middleware.js';
 
 // Configuration de Multer pour les Avatars
@@ -30,9 +30,10 @@ const router = Router();
 // Routes publiques
 router.post('/register', register);
 router.post('/login', login);
-// Routes protégées
+// Routes protégées (Membre connecté)
 router.get('/me', authMiddleware, getProfile);
 router.put('/profile', authMiddleware, updateProfile);
+router.delete('/delete-account', authMiddleware, deleteAccount); // Droit à l'oubli RGPD
 
 // Route de téléversement d'avatar
 router.post('/upload-avatar', authMiddleware, upload.single('avatar'), (req, res) => {

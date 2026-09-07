@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Partie 5 - Réalisations Techniques et Étude du Code Source (Cicados DWWM)</title>
+    <style>
+        @page {
+            size: A4 portrait;
+            margin: 15mm 15mm 15mm 15mm;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 11pt;
+            line-height: 1.45;
+            color: #1e293b;
+            background-color: #ffffff;
+            margin: 0;
+            padding: 20px;
+        }
+
+        /* Container conçu pour un copier-coller parfait dans Google Docs */
+        .doc-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #ffffff;
+        }
+
+        h1.main-title {
+            font-size: 20pt;
+            font-weight: 800;
+            color: #0f172a;
+            border-bottom: 3px solid #9333ea;
+            padding-bottom: 8px;
+            margin-top: 10px;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        h2.section-header {
+            font-size: 14pt;
+            font-weight: 700;
+            color: #9333ea;
+            margin-top: 26px;
+            margin-bottom: 12px;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 4px;
+        }
+
+        h3.file-title {
+            font-size: 12pt;
+            font-weight: 700;
+            color: #0f172a;
+            margin-top: 22px;
+            margin-bottom: 8px;
+        }
+
+        .badge-at {
+            display: inline-block;
+            background-color: #f3e8ff;
+            color: #7e22ce;
+            border: 1px solid #d8b4fe;
+            border-radius: 4px;
+            padding: 2px 8px;
+            font-size: 9pt;
+            font-weight: bold;
+            margin-left: 6px;
+            vertical-align: middle;
+        }
+
+        .info-box {
+            border-left: 3px solid #9333ea;
+            padding-left: 14px;
+            margin: 10px 0 14px 0;
+            background-color: #faf5ff;
+            padding-top: 8px;
+            padding-bottom: 8px;
+        }
+
+        .info-box p {
+            margin: 3px 0;
+            font-size: 10.5pt;
+        }
+
+        ul.mechanics-list {
+            margin: 6px 0 12px 0;
+            padding-left: 22px;
+        }
+
+        ul.mechanics-list li {
+            margin-bottom: 5px;
+            font-size: 10.5pt;
+        }
+
+        /* Blocs de code au format Portrait A4 pour Google Docs (sans débordement horizontal) */
+        pre.code-block {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 9pt;
+            line-height: 1.35;
+            background-color: #0f172a;
+            color: #f8fafc;
+            padding: 12px 14px;
+            border-radius: 6px;
+            border: 1px solid #334155;
+            white-space: pre-wrap;
+            word-break: break-word;
+            margin: 10px 0 18px 0;
+        }
+
+        /* Coloration syntaxique */
+        .c-comment { color: #94a3b8; font-style: italic; }
+        .c-keyword { color: #c084fc; font-weight: bold; }
+        .c-func    { color: #60a5fa; }
+        .c-str     { color: #4ade80; }
+        .c-num     { color: #fbbf24; }
+
+        .divider {
+            border: none;
+            border-top: 1px dashed #cbd5e1;
+            margin: 28px 0;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="doc-container">
+
+    <!-- TITRE DE LA PARTIE 5 -->
+    <h1 class="main-title">5 — RÉALISATIONS TECHNIQUES ET ÉTUDE DU CODE SOURCE</h1>
+
+    <p>
+        Dans cette section, je présente les réalisations logicielles majeures que j'ai conçues et développées pour le projet <b>Cicados</b>. J'ai choisi de mettre en avant ces fichiers pour leur forte valeur métier et leur pertinence technique au regard des deux activités-types de mon <b>Titre Professionnel Développeur Web et Web Mobile (DWWM)</b> :
+    </p>
+    <ul>
+        <li><b>Activité-Type 1 (AT1) :</b> Développer la partie front-end d’une application web ou web mobile sécurisée.</li>
+        <li><b>Activité-Type 2 (AT2) :</b> Développer la partie back-end d’une application web ou web mobile.</li>
+    </ul>
+
+    <hr class="divider">
+
+    <!-- ========================================================================= -->
+    <!-- CÔTÉ FRONT-END -->
+    <!-- ========================================================================= -->
+    <h2 class="section-header">5.1 ÉTUDE DES FICHIERS CLÉS DU FRONT-END (ACTIVITÉ-TYPE 1)</h2>
+
+    <!-- 5.1.1 RESERVATIONS.JSX -->
+    <h3 class="file-title">1. Composant de Réservation & Planning Interactif : <code>frontend/src/pages/Reservations.jsx</code> <span class="badge-at">AT1 : Interface dynamique</span></h3>
+
+    <div class="info-box">
+        <p><b>• Mon rôle & objectif métier :</b> J'ai développé l'interface principale de réservation permettant aux clients de réserver une table de jeu physique (duels TCG ou jeux de société) sur un créneau horaire précis, avec calcul dynamique des disponibilités en direct.</p>
+        <p><b>• Pourquoi je présente ce fichier au jury :</b> Il démontre ma capacité à concevoir un calendrier interactif personnalisé sans dépendance tierce lourde, à orchestrer plusieurs flux d'API asynchrones en parallèle et à gérer un état réactif complexe en temps réel.</p>
+    </div>
+
+    <p><b>Fonctionnement clé de mon code :</b></p>
+    <ul class="mechanics-list">
+        <li><b>Calendrier sur-mesure (<code>getDaysInMonth</code>) :</b> J'ai implémenté un algorithme qui génère la grille mensuelle exacte, gère l'alignement des jours de la semaine (du lundi au dimanche) et désactive automatiquement les dates passées (<code>isDayPast</code>).</li>
+        <li><b>Orchestration asynchrone multi-sources :</b> Dès que l'utilisateur sélectionne une date ou un horaire, j'exécute trois requêtes coordonnées : le chargement des jeux (<code>/api/boardgames</code>), l'état d'occupation du planning (<code>/api/reservations?date=...</code>) et la disponibilité du jeu choisi (<code>/api/reservations/game-availability</code>).</li>
+        <li><b>Calcul d'occupation côté client (<code>getOccupiedTablesCount</code>) :</b> J'ai créé une fonction qui filtre les réservations actives afin d'indiquer en direct au client le taux de remplissage des 4 tables pour chaque créneau horaire, sans solliciter inutilement le serveur.</li>
+    </ul>
+
+<pre class="code-block">
+<span class="c-comment">// Extrait : Mon calcul du taux d'occupation par tranche horaire dans Reservations.jsx</span>
+<span class="c-keyword">const</span> <span class="c-func">getOccupiedTablesCount</span> = (slotTime) => {
+    <span class="c-keyword">if</span> (!formData.date || !existingReservations.length) <span class="c-keyword">return</span> <span class="c-num">0</span>;
+
+    <span class="c-keyword">const</span> slotDateTime = <span class="c-keyword">new</span> Date(<span class="c-str">`${formData.date} ${slotTime}:00`</span>);
+
+    <span class="c-keyword">return</span> existingReservations.<span class="c-func">filter</span>(res => {
+        <span class="c-keyword">const</span> start = <span class="c-keyword">new</span> Date(res.start_time);
+        <span class="c-keyword">const</span> end = <span class="c-keyword">new</span> Date(res.end_time);
+        <span class="c-comment">// Je vérifie si l'heure analysée est comprise dans une réservation existante</span>
+        <span class="c-keyword">return</span> slotDateTime >= start && slotDateTime < end;
+    }).length;
+};
+</pre>
+
+    <!-- 5.1.2 TOURNAMENTS.JSX -->
+    <h3 class="file-title">2. Gestion des Tournois TCG & Inscriptions Réactives : <code>frontend/src/pages/Tournaments.jsx</code> <span class="badge-at">AT1 : Asynchronisme & État</span></h3>
+
+    <div class="info-box">
+        <p><b>• Mon rôle & objectif métier :</b> J'ai conçu la page de consultation des tournois officiels (Magic: The Gathering, Pokémon, Lorcana, Riftbound) intégrant les jauges de places restantes et l'inscription/désinscription instantanée.</p>
+        <p><b>• Pourquoi je présente ce fichier au jury :</b> J'y illustre ma maîtrise de la gestion d'état asynchrone avancée avec actions conditionnelles, feedback utilisateur instantané (Toasts) et isolation du chargement par carte de tournoi.</p>
+    </div>
+
+    <p><b>Fonctionnement clé de mon code :</b></p>
+    <ul class="mechanics-list">
+        <li><b>Action unifiée (<code>handleAction</code>) :</b> J'ai factorisé la logique pour détecter si le joueur est déjà inscrit afin de basculer dynamiquement entre un appel HTTP <code>POST</code> (inscription) ou <code>DELETE</code> (désinscription), tout en redirigeant vers <code>/login</code> si l'utilisateur est non authentifié.</li>
+        <li><b>Isolation de l'état de chargement (<code>actionLoadingId</code>) :</b> J'isole l'indicateur de chargement uniquement sur le bouton du tournoi cliqué, ce qui évite de bloquer l'interaction sur les autres cartes.</li>
+        <li><b>Accordéon réactif des participants (<code>toggleParticipants</code>) :</b> J'ai développé un affichage accordéon permettant de consulter instantanément la liste nominative des joueurs inscrits avec leurs avatars sans recharger l'arbre des composants.</li>
+    </ul>
+
+<pre class="code-block">
+<span class="c-comment">// Extrait réel : frontend/src/pages/Tournaments.jsx (lignes 89 à 118)</span>
+<span class="c-keyword">const</span> <span class="c-func">handleAction</span> = <span class="c-keyword">async</span> (tourneyId, isRegistered) => {
+    <span class="c-keyword">if</span> (!isAuthenticated) {
+        navigate(<span class="c-str">'/login'</span>);
+        <span class="c-keyword">return</span>;
+    }
+
+    setActionLoadingId(tourneyId);
+
+    <span class="c-keyword">try</span> {
+        <span class="c-keyword">const</span> token = localStorage.getItem(<span class="c-str">'token'</span>);
+        <span class="c-keyword">const</span> url = <span class="c-str">`http://localhost:5050/api/tournaments/${tourneyId}/register`</span>;
+        <span class="c-keyword">const</span> method = isRegistered ? <span class="c-str">'DELETE'</span> : <span class="c-str">'POST'</span>;
+
+        <span class="c-keyword">const</span> response = <span class="c-keyword">await</span> fetch(url, {
+            method,
+            headers: { <span class="c-str">'Authorization'</span>: <span class="c-str">`Bearer ${token}`</span> }
+        });
+
+        <span class="c-keyword">const</span> data = <span class="c-keyword">await</span> response.json();
+
+        <span class="c-keyword">if</span> (response.ok) {
+            <span class="c-comment">// Mise à jour réactive locale de mon état sans recharger la page</span>
+            setMyRegistrations(prev =>
+                isRegistered
+                    ? prev.<span class="c-func">filter</span>(id => id !== tourneyId)
+                    : [...prev, tourneyId]
+            );
+            <span class="c-comment">// Mise à jour dynamique de la liste des participants</span>
+            setTournaments(prevTournaments =>
+                prevTournaments.<span class="c-func">map</span>(t => t.id === tourneyId ? { ...t, ... } : t)
+            );
+        }
+    } <span class="c-keyword">finally</span> {
+        setActionLoadingId(<span class="c-keyword">null</span>);
+    }
+};
+</pre>
+
+    <!-- 5.1.3 DASHBOARDADMIN.JSX -->
+    <h3 class="file-title">3. Console d'Administration & Back-Office : <code>frontend/src/pages/DashboardAdmin.jsx</code> <span class="badge-at">AT1 : Sécurisation & Tri</span></h3>
+
+    <div class="info-box">
+        <p><b>• Mon rôle & objectif métier :</b> J'ai développé un tableau de bord complet permettant aux administrateurs de piloter l'ensemble des données de la plateforme (Réservations, Tournois, Événements, Jeux en ludothèque, Utilisateurs et Support).</p>
+        <p><b>• Pourquoi je présente ce fichier au jury :</b> Il prouve ma capacité à structurer un back-office à fort volume de données, à implémenter un moteur de tri dynamique multi-colonnes et à sécuriser l'accès client selon les rôles (RBAC).</p>
+    </div>
+
+    <p><b>Fonctionnement clé de mon code :</b></p>
+    <ul class="mechanics-list">
+        <li><b>Protection d'accès côté client :</b> Je contrôle le rôle utilisateur stocké dans le jeton dès le montage du composant : si le profil n'est pas <code>ADMIN</code>, je déclenche une redirection immédiate vers la page d'accueil.</li>
+        <li><b>Moteur de tri dynamique (<code>handleSort</code>) :</b> J'ai créé un gestionnaire permettant de réordonner les tables de données par date, capacité, client ou statut en cliquant sur les en-têtes de colonnes (alternance croissant/décroissant).</li>
+        <li><b>Modales de confirmation (<code>deleteConfirmId</code>) :</b> J'ai sécurisé toutes les opérations destructives en imposant une confirmation explicite avant d'émettre la requête HTTP <code>DELETE</code>.</li>
+    </ul>
+
+<pre class="code-block">
+<span class="c-comment">// Extrait réel : frontend/src/pages/DashboardAdmin.jsx (lignes 39 à 46 et 925 à 952)</span>
+<span class="c-comment">// 1. Inversion du tri au clic sur une colonne de tableau</span>
+<span class="c-keyword">const</span> <span class="c-func">handleSort</span> = (key) => {
+    <span class="c-keyword">if</span> (resSortKey === key) {
+        setResSortOrder(prev => prev === <span class="c-str">'asc'</span> ? <span class="c-str">'desc'</span> : <span class="c-str">'asc'</span>);
+    } <span class="c-keyword">else</span> {
+        setResSortKey(key);
+        setResSortOrder(<span class="c-str">'asc'</span>);
+    }
+};
+
+<span class="c-comment">// 2. Comparateur dynamique selon le type de données (dates, noms ou statuts)</span>
+<span class="c-keyword">const</span> sortedReservations = filteredReservations.<span class="c-func">sort</span>((a, b) => {
+    <span class="c-keyword">if</span> (!resSortKey) <span class="c-keyword">return</span> <span class="c-num">0</span>;
+
+    <span class="c-keyword">let</span> valA = <span class="c-str">''</span>, valB = <span class="c-str">''</span>;
+    <span class="c-keyword">if</span> (resSortKey === <span class="c-str">'start_time'</span>) {
+        valA = <span class="c-keyword">new</span> Date(a.start_time).<span class="c-func">getTime</span>();
+        valB = <span class="c-keyword">new</span> Date(b.start_time).<span class="c-func">getTime</span>();
+    } <span class="c-keyword">else if</span> (resSortKey === <span class="c-str">'user'</span>) {
+        valA = <span class="c-str">`${a.firstname || ''} ${a.lastname || ''}`</span>.<span class="c-func">toLowerCase</span>().<span class="c-func">trim</span>();
+        valB = <span class="c-str">`${b.firstname || ''} ${b.lastname || ''}`</span>.<span class="c-func">toLowerCase</span>().<span class="c-func">trim</span>();
+    }
+
+    <span class="c-keyword">if</span> (valA < valB) <span class="c-keyword">return</span> resSortOrder === <span class="c-str">'asc'</span> ? -<span class="c-num">1</span> : <span class="c-num">1</span>;
+    <span class="c-keyword">if</span> (valA > valB) <span class="c-keyword">return</span> resSortOrder === <span class="c-str">'asc'</span> ? <span class="c-num">1</span> : -<span class="c-num">1</span>;
+    <span class="c-keyword">return</span> <span class="c-num">0</span>;
+});
+</pre>
+
+    <hr class="divider">
+
+    <!-- ========================================================================= -->
+    <!-- CÔTÉ BACK-END -->
+    <!-- ========================================================================= -->
+    <h2 class="section-header">5.2 ÉTUDE DES FICHIERS CLÉS DU BACK-END (ACTIVITÉ-TYPE 2)</h2>
+
+    <!-- 5.2.1 RESERVATION.MODEL.JS -->
+    <h3 class="file-title">4. Algorithme d'Overlap Temporel & Allocation : <code>backend/src/models/reservation.model.js</code> <span class="badge-at">AT2 : Requêtes SQL & Logique métier</span></h3>
+
+    <div class="info-box">
+        <p><b>• Mon rôle & objectif métier :</b> J'ai conçu l'algorithme central qui empêche tout surbooking sur les 4 tables physiques du café et qui garantit qu'un jeu de société à exemplaire unique ne puisse pas être réservé deux fois en même temps.</p>
+        <p><b>• Pourquoi je présente ce fichier au jury :</b> C'est la pièce maîtresse technique de mon projet. Il démontre ma maîtrise des requêtes SQL préparées, de la gestion mathématique des intervalles temporels et de la sécurité transactionnelle.</p>
+    </div>
+
+    <p><b>Fonctionnement clé de mon code :</b></p>
+    <ul class="mechanics-list">
+        <li><b>Calcul précis de l'intervalle :</b> Je calcule dynamiquement la date et l'heure de fin via <code>endTime = startTime + duration</code>.</li>
+        <li><b>Formule mathématique de détection de chevauchement (Overlap Temporel) :</b>
+            <br><code>Condition de conflit : start_time &lt; :newEndTime AND end_time &gt; :newStartTime AND status != 'CANCELLED'</code>
+        </li>
+        <li><b>Allocation dynamique de table physique :</b> J'extrais l'ensemble des tables disponibles (<code>!occupiedIds.includes(r.id)</code>) et j'assigne automatiquement la première table libre. Si toutes les tables sont occupées, je lève une exception qui renvoie un code HTTP 400.</li>
+        <li><b>Contrôle du stock unique (Stock = 1) :</b> Lorsqu'un client sélectionne un jeu spécifique, je vérifie qu'aucune réservation active n'emprunte cet exemplaire sur la plage horaire souhaitée.</li>
+        <li><b>Sécurité transactionnelle :</b> Dès qu'une contrainte échoue, j'interromps le script immédiatement avec un <code>throw new Error(...)</code> : aucune ligne n'est insérée en base de données.</li>
+    </ul>
+
+<pre class="code-block">
+<span class="c-comment">// Extrait : Ma détection des tables occupées et mon allocation dans reservation.model.js</span>
+<span class="c-keyword">const</span> sqlOccupied = <span class="c-str">`
+    SELECT room_id FROM reservations 
+    WHERE start_time < ? AND end_time > ? AND status != 'CANCELLED'
+`</span>;
+<span class="c-keyword">const</span> occupiedRooms = <span class="c-keyword">await</span> query(sqlOccupied, [endTime, startTime]);
+<span class="c-keyword">const</span> occupiedIds = occupiedRooms.<span class="c-func">map</span>(r => r.room_id);
+
+<span class="c-comment">// J'attribue la première table physique disponible</span>
+<span class="c-keyword">const</span> availableRoom = rooms.<span class="c-func">find</span>(r => !occupiedIds.includes(r.id));
+<span class="c-keyword">if</span> (!availableRoom) {
+    <span class="c-keyword">throw new</span> Error(<span class="c-str">"Toutes les tables de jeux sont complètes pour ce créneau horaire."</span>);
+}
+</pre>
+
+    <!-- 5.2.2 AUTH.CONTROLLER & MIDDLEWARE -->
+    <h3 class="file-title">5. Sécurité JWT, Hashage Bcrypt & Middlewares RBAC : <code>auth.controller.js</code> & <code>auth.middleware.js</code> <span class="badge-at">AT2 : Sécurité & OWASP</span></h3>
+
+    <div class="info-box">
+        <p><b>• Mon rôle & objectif métier :</b> J'ai mis en place l'authentification sécurisée des utilisateurs, la délivrance des jetons signés cryptographiquement et la protection des points d'accès de mon API REST.</p>
+        <p><b>• Pourquoi je présente ce fichier au jury :</b> J'y applique strictement les recommandations du référentiel DWWM et de l'OWASP : chiffrement irréversible des mots de passe, tokens temporisés et contrôle d'accès basé sur les rôles (RBAC).</p>
+    </div>
+
+    <p><b>Fonctionnement clé de mon code :</b></p>
+    <ul class="mechanics-list">
+        <li><b>Hashage Bcrypt :</b> Je sale et je hache les mots de passe avec un coût de 10 avant tout enregistrement en base SQL. Aucun mot de passe en clair n'est stocké.</li>
+        <li><b>Signature numérique JWT :</b> Lors de la connexion, je délivre un jeton JWT contenant l'identifiant et le rôle de l'utilisateur, signé avec une clé secrète et valide 24 heures.</li>
+        <li><b>Pipeline Middleware (<code>authMiddleware</code>) :</b> J'extrais le jeton dans l'en-tête <code>Authorization: Bearer</code>, je valide cryptographiquement la signature via <code>jwt.verify()</code> et j'injecte l'utilisateur dans l'objet requête <code>req.user</code>.</li>
+        <li><b>Contrôle RBAC (<code>adminMiddleware</code>) :</b> Je vérifie la présence du rôle <code>ADMIN</code> et je bloque toute tentative non autorisée avec un statut HTTP standard <code>403 Forbidden</code>.</li>
+    </ul>
+
+<pre class="code-block">
+<span class="c-comment">// Extrait : Mon middleware d'authentification JWT (backend/src/middlewares/auth.middleware.js)</span>
+<span class="c-keyword">const</span> <span class="c-func">authMiddleware</span> = <span class="c-keyword">async</span> (req, res, next) => {
+    <span class="c-keyword">try</span> {
+        <span class="c-keyword">const</span> authHeader = req.headers.authorization;
+        <span class="c-keyword">if</span> (!authHeader || !authHeader.startsWith(<span class="c-str">'Bearer '</span>)) {
+            <span class="c-keyword">return</span> res.status(<span class="c-num">401</span>).json({ error: <span class="c-str">'Token manquant'</span> });
+        }
+
+        <span class="c-keyword">const</span> token = authHeader.split(<span class="c-str">' '</span>)[<span class="c-num">1</span>];
+        <span class="c-keyword">const</span> decoded = jwt.verify(token, process.env.JWT_SECRET);
+        <span class="c-keyword">const</span> user = <span class="c-keyword">await</span> User.findById(decoded.id);
+
+        <span class="c-keyword">if</span> (!user) <span class="c-keyword">return</span> res.status(<span class="c-num">401</span>).json({ error: <span class="c-str">'Utilisateur non trouvé'</span> });
+
+        req.user = user; <span class="c-comment">// J'injecte l'utilisateur validé dans la requête</span>
+        next();
+    } <span class="c-keyword">catch</span> (error) {
+        <span class="c-keyword">return</span> res.status(<span class="c-num">401</span>).json({ error: <span class="c-str">'Token invalide ou expiré'</span> });
+    }
+};
+</pre>
+
+    <!-- 5.2.3 TOURNAMENT.CONTROLLER.JS -->
+    <h3 class="file-title">6. Gestion de Concurrence & Intégrité SQL : <code>backend/src/controllers/tournament.controller.js</code> <span class="badge-at">AT2 : Intégrité BDD</span></h3>
+
+    <div class="info-box">
+        <p><b>• Mon rôle & objectif métier :</b> J'ai programmé la gestion des inscriptions aux tournois TCG en assurant le respect des jauges de places et l'interdiction stricte des doublons.</p>
+        <p><b>• Pourquoi je présente ce fichier au jury :</b> Il prouve ma maîtrise de l'intégrité relationnelle SQL (clés composites) et ma gestion des exceptions natives du moteur MySQL (<code>ER_DUP_ENTRY</code>).</p>
+    </div>
+
+    <p><b>Fonctionnement clé de mon code :</b></p>
+    <ul class="mechanics-list">
+        <li><b>Contrôle des jauges de capacité :</b> Je vérifie avant toute écriture que <code>registeredCount < capacity</code>, et je renvoie un code HTTP 400 explicite si le quota est atteint.</li>
+        <li><b>Clé composite & Interception d'erreur SQL :</b> Ma table <code>tournament_participants</code> s'appuie sur une clé primaire composite <code>(tournament_id, user_id)</code>. Si un utilisateur tente de s'inscrire deux fois, le moteur MySQL génère l'erreur <code>ER_DUP_ENTRY</code> que j'intercepte dans le bloc <code>catch</code> pour informer proprement le client sans planter le serveur.</li>
+    </ul>
+
+<pre class="code-block">
+<span class="c-comment">// Extrait : Mon inscription sécurisée avec capture du doublon SQL (tournament.controller.js)</span>
+<span class="c-keyword">export const</span> <span class="c-func">registerForTournament</span> = <span class="c-keyword">async</span> (req, res) => {
+    <span class="c-keyword">try</span> {
+        <span class="c-keyword">const</span> tournamentId = req.params.id;
+        <span class="c-keyword">const</span> userId = req.user.id;
+
+        <span class="c-keyword">const</span> tourneyInfo = <span class="c-keyword">await</span> Tournament.getCapacityAndCount(tournamentId);
+        <span class="c-keyword">if</span> (tourneyInfo.registeredCount >= tourneyInfo.capacity) {
+            <span class="c-keyword">return</span> res.status(<span class="c-num">400</span>).json({ error: <span class="c-str">"Ce tournoi est complet."</span> });
+        }
+
+        <span class="c-keyword">await</span> Tournament.register(tournamentId, userId);
+        res.status(<span class="c-num">201</span>).json({ message: <span class="c-str">"Inscription réussie !"</span> });
+    } <span class="c-keyword">catch</span> (error) {
+        <span class="c-keyword">if</span> (error.code === <span class="c-str">'ER_DUP_ENTRY'</span>) {
+            <span class="c-keyword">return</span> res.status(<span class="c-num">400</span>).json({ error: <span class="c-str">"Vous êtes déjà inscrit à ce tournoi."</span> });
+        }
+        res.status(<span class="c-num">500</span>).json({ error: <span class="c-str">"Erreur serveur lors de l'inscription."</span> });
+    }
+};
+</pre>
+
+    <!-- 5.2.4 BGG & FAILOVER -->
+    <h3 class="file-title">7. Proxy API Externe & Résilience (Failover) : <code>bgg.controller.js</code> & <code>boardgame.controller.js</code> <span class="badge-at">AT2 : Résilience & APIs</span></h3>
+
+    <div class="info-box">
+        <p><b>• Mon rôle & objectif métier :</b> J'ai développé un proxy serveur pour importer les données officielles de BoardGameGeek (BGG) et j'ai implémenté un système de secours (Failover) assurant la continuité de service en cas de panne de la base de données.</p>
+        <p><b>• Pourquoi je présente ce fichier au jury :</b> J'y résous deux problématiques d'architecture concrètes : le contournement des restrictions de sécurité CORS du navigateur et la mise en œuvre de la Haute Disponibilité (High Availability).</p>
+    </div>
+
+    <p><b>Fonctionnement clé de mon code :</b></p>
+    <ul class="mechanics-list">
+        <li><b>Proxy Edge (<code>bgg.controller.js</code>) :</b> J'exécute la requête HTTP depuis mon backend Node.js vers l'API XML2 de BGG pour contourner la politique CORS, puis je convertis l'arbre XML complexe en JSON exploitable grâce à <code>fast-xml-parser</code>.</li>
+        <li><b>Mécanisme de basculement de secours (Failover) :</b> Dans <code>boardgame.controller.js</code>, si ma base MySQL ne répond pas, mon bloc <code>catch</code> prend le relais de façon transparente en lisant de manière asynchrone le fichier local <code>boardgame-list.json</code>. L'utilisateur continue de naviguer dans le catalogue sans jamais subir d'écran blanc.</li>
+    </ul>
+
+<pre class="code-block">
+<span class="c-comment">// Extrait réel : backend/src/controllers/boardgame.controller.js (lignes 10 à 42)</span>
+<span class="c-keyword">export const</span> <span class="c-func">getBoardGames</span> = <span class="c-keyword">async</span> (req, res) => {
+    <span class="c-keyword">try</span> {
+        <span class="c-keyword">const</span> games = <span class="c-keyword">await</span> BoardGame.findAll();
+        res.json(games);
+    } <span class="c-keyword">catch</span> (error) {
+        console.error(<span class="c-str">"Erreur récupération BDD, tentative de basculement sur le fichier JSON local :"</span>, error);
+        <span class="c-keyword">try</span> {
+            <span class="c-keyword">const</span> jsonPath = path.join(__dirname, <span class="c-str">'..'</span>, <span class="c-str">'data'</span>, <span class="c-str">'boardgame-list.json'</span>);
+            <span class="c-keyword">const</span> data = <span class="c-keyword">await</span> fs.readFile(jsonPath, <span class="c-str">'utf8'</span>);
+            <span class="c-keyword">const</span> gamesList = JSON.parse(data);
+
+            <span class="c-comment">// Je mappe les données de secours avec des valeurs par défaut compatibles avec l'UI</span>
+            <span class="c-keyword">const</span> fallbackGames = gamesList.<span class="c-func">map</span>((game, index) => ({
+                id: index + <span class="c-num">10000</span>, <span class="c-comment">// IDs virtuels élevés</span>
+                name: game.name,
+                min_players: <span class="c-num">2</span>,
+                max_players: <span class="c-num">4</span>,
+                play_time: <span class="c-num">45</span>,
+                category: <span class="c-str">"Famille"</span>,
+                description: <span class="c-str">`Jeu de société : ${game.name}. (Données de secours chargées depuis le fichier local).`</span>
+            }));
+
+            res.json(fallbackGames);
+        } <span class="c-keyword">catch</span> (jsonError) {
+            res.status(<span class="c-num">500</span>).json({ error: <span class="c-str">"Impossible de charger les jeux (panne BDD et secours indisponible)."</span> });
+        }
+    }
+};
+</pre>
+
+</div>
+
+</body>
+</html>

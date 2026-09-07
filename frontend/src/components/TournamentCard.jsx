@@ -175,7 +175,7 @@ function TournamentCard({
                                     activity.participants.map((p, index) => (
                                         <div key={index} className="text-xs flex items-center gap-2 mb-2 last:mb-0">
                                             {p.avatar_url ? (
-                                                <img src={p.avatar_url} alt="" className="w-5 h-5 rounded-full object-cover border border-white/10 shrink-0" />
+                                                <img src={p.avatar_url} alt={p.name ? `Avatar de ${p.name}` : "Avatar participant"} className="w-5 h-5 rounded-full object-cover border border-white/10 shrink-0" />
                                             ) : (
                                                 <div className="w-5 h-5 rounded-full bg-slate-200/10 border border-white/10 flex items-center justify-center shrink-0">
                                                     <User className="w-3 h-3 text-slate-450" />

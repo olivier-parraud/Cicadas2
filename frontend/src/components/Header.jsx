@@ -105,7 +105,7 @@ function Header() {
     };
 
     return (
-        <header className="bg-black/90 backdrop-blur-md text-white shadow-lg border-b border-white/5 relative z-50">
+        <header className="sticky top-0 z-50 bg-[#05040a]/90 backdrop-blur-md text-white shadow-xl border-b border-white/10 transition-all duration-300">
             <div className="container mx-auto px-4 py-4 flex justify-between items-center">
                 <Link to="/" className="text-3xl font-brand transition" onClick={closeMenu}>
                     Cicados

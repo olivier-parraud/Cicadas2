@@ -60,7 +60,7 @@ function Login() {
                             </div>
                         )}
                         <div>
-                            <label className="block text-sm font-medium text-slate-350">{t('login_page.email_label')}</label>
+                            <label htmlFor="email" className="block text-sm font-medium text-slate-350">{t('login_page.email_label')}</label>
                             <div className="mt-1">
                                 <input id="email" type="email" required
                                     className="appearance-none block w-full px-3.5 py-2.5 border border-white/5 bg-[#0c0919] text-white rounded-xl shadow-sm placeholder-gray-500 focus:outline-none focus:border-[#F4AF23]/50 sm:text-sm font-light"
@@ -69,7 +69,7 @@ function Login() {
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-slate-350">{t('login_page.password_label')}</label>
+                            <label htmlFor="password" className="block text-sm font-medium text-slate-350">{t('login_page.password_label')}</label>
                             <div className="mt-1">
                                 <input id="password" type="password" required
                                     className="appearance-none block w-full px-3.5 py-2.5 border border-white/5 bg-[#0c0919] text-white rounded-xl shadow-sm placeholder-gray-500 focus:outline-none focus:border-[#F4AF23]/50 sm:text-sm font-light"

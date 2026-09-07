@@ -96,3 +96,18 @@ export const updateProfile = async (req, res) => {
         res.status(500).json({ error: 'Erreur serveur lors de la mise à jour du profil' });
     }
 };
+
+// DELETE /api/auth/delete-account (Droit à l'effacement - RGPD Article 17)
+export const deleteAccount = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        if (!userId) {
+            return res.status(401).json({ error: 'Utilisateur non authentifié' });
+        }
+        await User.delete(userId);
+        res.status(200).json({ message: 'Votre compte et l\'intégralité de vos données personnelles ont été supprimés avec succès conformément au RGPD.' });
+    } catch (error) {
+        console.error("Erreur suppression compte utilisateur :", error);
+        res.status(500).json({ error: 'Erreur serveur lors de la suppression du compte' });
+    }
+};

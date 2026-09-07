@@ -301,6 +301,18 @@ textarea:focus {
   outline: none;
 }
 
+/* Accessibility: High-contrast visible focus outline for keyboard navigation (WCAG 2.4.7 Focus Visible) */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid #F4AF23 !important;
+  outline-offset: 3px !important;
+  box-shadow: 0 0 12px rgba(244, 175, 35, 0.45) !important;
+}
+
 /* Purple buttons styling (remapping bg-indigo-600) */
 .bg-indigo-600 {
   background-color: #563D82 !important;

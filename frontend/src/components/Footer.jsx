@@ -45,6 +45,7 @@ function Footer() {
                         <Link to="/reservations" className="hover:text-[#F4AF23] transition-colors w-fit">Réserver une table</Link>
                         <Link to="/tournaments" className="hover:text-[#F4AF23] transition-colors w-fit">Tournois</Link>
                         <Link to="/events" className="hover:text-[#F4AF23] transition-colors w-fit">Événements</Link>
+                        <Link to="/privacy-policy" className="hover:text-[#F4AF23] transition-colors w-fit text-slate-400 font-medium">Mentions Légales & RGPD</Link>
                     </nav>
                 </div>
  
@@ -69,13 +70,18 @@ function Footer() {
                         </div>
                     </div>
                 </div>
- 
+
             </div>
  
             {/* Bottom Copyright Bar */}
-            <div className="max-w-7xl mx-auto px-4 md:px-8 border-t border-white/5 mt-10 pt-6 text-center text-xs text-slate-500 font-light">
+            <div className="max-w-7xl mx-auto px-4 md:px-8 border-t border-white/5 mt-10 pt-6 text-center text-xs text-slate-500 font-light flex flex-col sm:flex-row items-center justify-between gap-3">
                 <p>
                     {t('footer.copyright', { year: new Date().getFullYear() })} - Conçu pour les passionnés de jeux.
+                </p>
+                <p>
+                    <Link to="/privacy-policy" className="hover:text-[#F4AF23] transition-colors underline">
+                        Protection des données & RGPD
+                    </Link>
                 </p>
             </div>
         </footer>
