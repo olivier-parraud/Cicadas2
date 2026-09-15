@@ -95,15 +95,15 @@ const Reservation = {
         return query(sql, [date]);
     },
 
-    // Récupérer toutes les réservations d'un utilisateur donné (actives & passées)
+    // Récupérer les réservations à venir d'un utilisateur donné (actives et non passées)
     async findByUserId(userId) {
         const sql = `
             SELECT r.*, rm.name as room_name, rm.capacity as room_capacity, bg.image_url as boardgame_image_url
             FROM reservations r
             JOIN rooms rm ON r.room_id = rm.id
             LEFT JOIN board_games bg ON LOWER(TRIM(r.specific_game)) = LOWER(TRIM(bg.name))
-            WHERE r.user_id = ?
-            ORDER BY r.start_time DESC
+            WHERE r.user_id = ? AND r.end_time >= NOW() AND r.status != 'CANCELLED'
+            ORDER BY r.start_time ASC
         `;
         return query(sql, [userId]);
     },

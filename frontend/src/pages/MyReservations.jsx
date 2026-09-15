@@ -59,7 +59,12 @@ function MyReservations() {
             });
             if (response.ok) {
                 const data = await response.json();
-                setReservations(data);
+                const now = new Date();
+                const activeUpcoming = data.filter(res => {
+                    const endTime = new Date(res.end_time || res.start_time);
+                    return endTime >= now && res.status !== 'CANCELLED';
+                });
+                setReservations(activeUpcoming);
             } else {
                 setReservationsError(t('my_reservations_page.load_tables_error'));
             }
@@ -82,7 +87,9 @@ function MyReservations() {
             });
             if (response.ok) {
                 const data = await response.json();
-                setTournaments(data);
+                const now = new Date();
+                const activeUpcoming = data.filter(item => new Date(item.date) >= now);
+                setTournaments(activeUpcoming);
             } else {
                 setTournamentsError(t('my_reservations_page.load_tourneys_error'));
             }
@@ -105,7 +112,9 @@ function MyReservations() {
             });
             if (response.ok) {
                 const data = await response.json();
-                setEvents(data);
+                const now = new Date();
+                const activeUpcoming = data.filter(item => new Date(item.date) >= now);
+                setEvents(activeUpcoming);
             } else {
                 setEventsError(t('my_reservations_page.load_events_error', 'Impossible de charger vos événements.'));
             }

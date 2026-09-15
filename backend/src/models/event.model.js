@@ -66,14 +66,14 @@ const Event = {
         return regs.map(r => r.event_id);
     },
 
-    // Récupérer les détails des événements d'un utilisateur connecté
+    // Récupérer les détails des événements à venir d'un utilisateur connecté
     async findByUserId(userId) {
         const sql = `
             SELECT e.*, COUNT(er_all.id) as registeredCount
             FROM event_registrations er
             JOIN events e ON er.event_id = e.id
             LEFT JOIN event_registrations er_all ON e.id = er_all.event_id
-            WHERE er.user_id = ?
+            WHERE er.user_id = ? AND e.date >= NOW()
             GROUP BY e.id
             ORDER BY e.date ASC
         `;

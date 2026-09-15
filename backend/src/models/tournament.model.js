@@ -66,14 +66,14 @@ const Tournament = {
         return regs.map(r => r.tournament_id);
     },
 
-    // Récupérer les détails des tournois d'un utilisateur connecté
+    // Récupérer les détails des tournois à venir d'un utilisateur connecté
     async findByUserId(userId) {
         const sql = `
             SELECT t.*, COUNT(tr_all.id) as registeredCount
             FROM tournament_registrations tr
             JOIN tournaments t ON tr.tournament_id = t.id
             LEFT JOIN tournament_registrations tr_all ON t.id = tr_all.tournament_id
-            WHERE tr.user_id = ?
+            WHERE tr.user_id = ? AND t.date >= NOW()
             GROUP BY t.id
             ORDER BY t.date ASC
         `;
